@@ -272,7 +272,7 @@ window.LESSON = {
     },
 
     {
-      type: 'game', title: 'Symmetry Challenge', short: 'Game 2', minutes: 5,
+      type: 'game', title: 'Symmetry Challenge', short: 'Game 2', minutes: 8,
       rounds: [
         Object.assign({
           game: 'pixelcopy', title: 'Mirror alien', mirror: true,
@@ -287,6 +287,32 @@ window.LESSON = {
           say: 'Hunt for the hidden words! Drag across a word – or tap the first letter, then the last.',
           size: 10,
           words: ['PIXEL', 'GRID', 'PALETTE', 'OUTLINE', 'SHADING', 'MIRROR', 'SCREEN', 'DESIGN'],
+        },
+        {
+          game: 'invaders', title: 'Pixel Invaders',
+          intro: 'Read each mission at the top of the screen, then shoot only the right aliens!',
+          say: 'Tap above an alien to fly there and fire!',
+          waves: [
+            {
+              prompt: 'Shoot the SYMMETRICAL letters!',
+              items: [
+                { label: 'A', ok: true }, { label: 'H', ok: true }, { label: 'O', ok: true }, { label: 'T', ok: true },
+                { label: 'F', ok: false, why: 'F is not the same on both sides.' },
+                { label: 'J', ok: false, why: 'J is not the same on both sides.' },
+                { label: 'R', ok: false, why: 'R is not the same on both sides.' },
+                { label: 'S', ok: false, why: 'S is not the same on both sides.' },
+              ],
+            },
+            {
+              prompt: 'Shoot the things made of PIXELS!',
+              items: [
+                { label: '📺 TV screen', ok: true }, { label: '📱 tablet', ok: true }, { label: '🎮 video game', ok: true }, { label: '💻 laptop', ok: true },
+                { label: '🖍️ crayon', ok: false, why: 'Crayon drawings are on paper – no pixels!' },
+                { label: '📕 paper book', ok: false, why: 'A paper book is printed – no pixels!' },
+                { label: '🧱 brick', ok: false, why: 'A brick has no screen, so no pixels.' },
+              ],
+            },
+          ],
         },
       ],
     },

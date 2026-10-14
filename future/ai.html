@@ -137,7 +137,7 @@ window.LESSON = {
     },
 
     {
-      type: 'game', title: 'AI Spotter', short: 'Game 1', minutes: 4,
+      type: 'game', title: 'AI Spotter', short: 'Game 1', minutes: 7,
       rounds: [
         {
           game: 'sort', title: 'AI or not?',
@@ -171,6 +171,33 @@ window.LESSON = {
             { text: 'People build and train AI.', answer: true, why: 'Artificial means made by people.' },
             { text: 'It is fine to tell an AI your home address.', answer: false, why: 'Never share personal information with an AI.' },
             { text: 'A calculator is a kind of AI.', answer: false, why: 'A calculator follows fixed rules. It never learns.' },
+          ],
+        },
+        {
+          game: 'invaders', title: 'AI Invaders',
+          intro: 'Aliens have landed! Each one carries something. Read the mission at the top – then shoot ONLY the right ones!',
+          say: 'Tap above an alien to fly there and fire!',
+          waves: [
+            {
+              prompt: 'Shoot the things that USE AI!',
+              items: [
+                { label: '🗣️ smart speaker', ok: true }, { label: '📱 face unlock', ok: true },
+                { label: '🚗 robot car', ok: true }, { label: '🌍 translator', ok: true },
+                { label: '💡 light switch', ok: false, why: 'A light switch just goes on and off – no learning.' },
+                { label: '✏️ pencil', ok: false, why: 'A pencil is not even a computer!' },
+                { label: '🧮 calculator', ok: false, why: 'A calculator follows fixed rules – it never learns.' },
+                { label: '🔦 torch', ok: false, why: 'A torch just shines.' },
+              ],
+            },
+            {
+              prompt: 'Shoot what is SAFE to tell an AI!',
+              items: [
+                { label: '🦖 fave dino', ok: true }, { label: '🎨 fave colour', ok: true }, { label: '🍕 fave food', ok: true },
+                { label: '🏠 my address', ok: false, why: 'Your address is personal information – keep it private!' },
+                { label: '🔑 password', ok: false, why: 'NEVER share a password!' },
+                { label: '🏫 my school', ok: false, why: 'Your school is personal information.' },
+              ],
+            },
           ],
         },
       ],

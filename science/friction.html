@@ -168,7 +168,7 @@ window.LESSON = {
     },
 
     {
-      type: 'game', title: 'Force Finder', short: 'Game 1', minutes: 5,
+      type: 'game', title: 'Force Finder', short: 'Game 1', minutes: 8,
       rounds: [
         {
           game: 'sort', title: 'Push or pull?',
@@ -199,6 +199,22 @@ window.LESSON = {
           say: 'Hunt for the hidden words! Drag across a word – or tap the first letter, then the last.',
           size: 10,
           words: ['PUSH', 'PULL', 'FORCE', 'FRICTION', 'ROUGH', 'SMOOTH', 'GRIP', 'SLIDE'],
+        },
+        {
+          game: 'platformer', title: 'Force Run', ice: true,
+          intro: 'Run and jump! Collect the **pushes**, dodge the **pulls** – and watch out for **ice**. It has less friction, so you will SLIDE!',
+          say: '◀ ▶ to run, ⬆ to jump. Collect the PUSHES!',
+          prompt: 'Collect the PUSHES – dodge the PULLS!',
+          items: [
+            { label: '⚽ kick', ok: true },
+            { label: '🔔 press', ok: true },
+            { label: '🛒 push trolley', ok: true },
+            { label: '🎳 bowl', ok: true },
+            { label: '🪢 tug', ok: false, why: 'Tug of war is a PULL – the rope comes towards you.' },
+            { label: '🍎 pick', ok: false, why: 'Picking an apple is a PULL.' },
+            { label: '🧳 drag', ok: false, why: 'Dragging a suitcase is a PULL.' },
+          ],
+          done: 'LEVEL COMPLETE! Did you notice how you slid on the ice? Less friction!',
         },
       ],
     },

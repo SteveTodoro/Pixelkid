@@ -181,7 +181,7 @@ window.LESSON = {
     },
 
     {
-      type: 'game', title: 'Design Detective', short: 'Game 1', minutes: 6,
+      type: 'game', title: 'Design Detective', short: 'Game 1', minutes: 9,
       rounds: [
         {
           game: 'questions', title: 'Spot the better poster',
@@ -208,6 +208,19 @@ window.LESSON = {
             { answer: 'AUDIENCE', clue: 'The people your poster is for' },
             { answer: 'SHAPE', clue: 'A circle, a square or a star' },
             { answer: 'CONTRAST', clue: 'Dark on light has strong…' },
+          ],
+        },
+        {
+          game: 'platformer', title: 'Design Dash',
+          intro: 'Run through the design world! Collect the **good design** choices and dodge the bad ones.',
+          say: '◀ ▶ to run, ⬆ to jump. Collect the GOOD design choices!',
+          prompt: 'Collect GOOD design – dodge BAD design!',
+          items: [
+            { label: 'BIG title', ok: true }, { label: 'dark on light', ok: true },
+            { label: 'when & where', ok: true }, { label: 'lined up', ok: true },
+            { label: 'tiny title', ok: false, why: 'Titles should be BIG so people can read them from far away!' },
+            { label: 'yellow on white', ok: false, why: 'Yellow on white is too hard to read – low contrast!' },
+            { label: '15 stickers', ok: false, why: 'Too many stickers is clutter!' },
           ],
         },
       ],

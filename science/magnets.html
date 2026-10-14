@@ -154,7 +154,7 @@ window.LESSON = {
     },
 
     {
-      type: 'game', title: 'Magnet Detective', short: 'Game 1', minutes: 4,
+      type: 'game', title: 'Magnet Detective', short: 'Game 1', minutes: 7,
       rounds: [
         {
           game: 'sort', title: 'Three chests',
@@ -196,6 +196,30 @@ window.LESSON = {
             { text: 'A gold ring will stick to a magnet.', answer: false, why: 'Gold is a metal, but it is not magnetic.' },
             { text: 'Wood can be magnetic if it is very thick.', answer: false, why: 'Wood is never magnetic, however thick it is.' },
           ],
+        },
+        {
+          game: 'blocks', title: 'Magnet Bridge',
+          intro: 'Help Professor Bolt cross the river! A giant magnet under the water holds the bridge up – so only **magnetic** blocks will stay. Everything else goes SPLASH!',
+          say: 'Build a bridge with MAGNETIC blocks – iron, steel and nickel!',
+          map: [
+            '............',
+            '............',
+            '............',
+            'R..........F',
+            'gggwwwwwgggg',
+            'dddwwwwwdddd',
+          ],
+          blocks: [
+            { id: 'wood', label: 'Wood', count: 3, sinks: true, why: 'Wood is not magnetic, so the river magnet cannot hold it up!' },
+            { id: 'iron', label: 'Iron', count: 2 },
+            { id: 'gold', label: 'Gold', count: 2, sinks: true, why: 'Gold is a metal, but it is NOT magnetic!' },
+            { id: 'steel', label: 'Steel', count: 2 },
+            { id: 'plastic', label: 'Plastic', count: 2, sinks: true, why: 'Plastic is never magnetic.' },
+            { id: 'foil', label: 'Foil', count: 2, sinks: true, why: 'Foil is aluminium – a metal, but not magnetic!' },
+            { id: 'nickel', label: 'Nickel', count: 1 },
+          ],
+          hintWater: '💦 Splash! The bridge must reach ALL the way across – using only MAGNETIC blocks.',
+          done: 'I made it across! Only magnetic blocks stick to the river magnet!',
         },
       ],
     },

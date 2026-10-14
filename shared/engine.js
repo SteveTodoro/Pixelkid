@@ -1,7 +1,8 @@
 /* Year 3 Lesson Engine
  * Renders an interactive lesson from the data in window.LESSON.
  * Stage types: welcome, review, read, video, game, break, quiz (optionally a boss battle).
- * Game types: sort, match, label, order, truefalse, questions, wordsearch, crossword, trainai, pixelcopy, pixelstudio, poster.
+ * Game types: sort, match, label, order, truefalse, questions, wordsearch, crossword, trainai, pixelcopy, pixelstudio, poster,
+ *   and arcade games: invaders, platformer, blocks.
  * Questions can set optionsHtml: true to show pictures (HTML) as the answer buttons.
  * Question types (quiz, video, questions game): mcq, tf, gap, order.
  */
@@ -1452,6 +1453,488 @@
         h('button', { class: 'btn ghost', type: 'button', onclick: download }, '⬇️ Download poster'),
         finishBtn),
       h('div', { class: 'panel-inner px-gallery-wrap' }, h('h3', null, '🖼️ My Posters'), gallery));
+  };
+
+  // ---------- arcade helpers (canvas games) ----------
+  function spriteCanvas(rows, pal, scale = 1) {
+    const w = Math.max(...rows.map(r => r.length)), hh = rows.length;
+    const c = document.createElement('canvas');
+    c.width = w * scale; c.height = hh * scale;
+    const x = c.getContext('2d');
+    rows.forEach((r, y) => [...r].forEach((ch, i) => { if (pal[ch]) { x.fillStyle = pal[ch]; x.fillRect(i * scale, y * scale, scale, scale); } }));
+    return c;
+  }
+  function arcadeCanvas(W, H) {
+    const cv = h('canvas', { class: 'arcade-canvas' });
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    cv.width = W * dpr; cv.height = H * dpr;
+    const ctx = cv.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.imageSmoothingEnabled = false;
+    return { cv, ctx };
+  }
+  const toGame = (cv, W, H, e) => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) / r.width * W, (e.clientY - r.top) / r.height * H]; };
+  // runs step(dt) every frame until the game is removed from the page (or stop() is called)
+  function gameLoop(root, step) {
+    let last = null, stopped = false, started = false;
+    const f = t => {
+      if (stopped) return;
+      if (!root.isConnected) { if (started) return; requestAnimationFrame(f); return; }
+      started = true;
+      // time between frames, from the frame timestamps only (capped so a slow frame never jumps the game)
+      const dt = last == null ? 0 : Math.min(0.05, Math.max(0, (t - last) / 1000)); last = t;
+      step(dt);
+      requestAnimationFrame(f);
+    };
+    requestAnimationFrame(f);
+    return () => { stopped = true; };
+  }
+  function pxText(ctx, text, x, y, size, color = '#fff', align = 'center') {
+    ctx.font = `700 ${size}px "Pixelify Sans", monospace`;
+    ctx.textAlign = align; ctx.textBaseline = 'middle';
+    ctx.lineJoin = 'round'; ctx.lineWidth = Math.max(3, size / 4); ctx.strokeStyle = '#000';
+    ctx.strokeText(text, x, y); ctx.fillStyle = color; ctx.fillText(text, x, y);
+  }
+  // hold-to-press on-screen buttons (multi-touch friendly) + keyboard
+  function holdButton(label, cls, onDown, onUp) {
+    const b = h('button', { class: 'arc-btn ' + cls, type: 'button', 'aria-label': label }, label);
+    b.addEventListener('pointerdown', e => { e.preventDefault(); try { b.setPointerCapture(e.pointerId); } catch (_) { /* ignore */ } b.classList.add('down'); onDown(); });
+    const up = () => { b.classList.remove('down'); if (onUp) onUp(); };
+    b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up); b.addEventListener('lostpointercapture', up);
+    b.addEventListener('contextmenu', e => e.preventDefault());
+    return b;
+  }
+  function keys(root, map) {
+    const down = e => { if (!root.isConnected) return cleanup(); const f = map[e.key]; if (f && f[0]) { e.preventDefault(); f[0](); } };
+    const up = e => { if (!root.isConnected) return cleanup(); const f = map[e.key]; if (f && f[1]) { e.preventDefault(); f[1](); } };
+    const cleanup = () => { document.removeEventListener('keydown', down); document.removeEventListener('keyup', up); };
+    document.addEventListener('keydown', down); document.addEventListener('keyup', up);
+  }
+  const SPR = {
+    alienA: ['...p...p...', '....g.g....', '..ggggggg..', '.ggkwgwkgg.', 'ggggggggggg', 'gg.ggggg.gg', 'g..g...g..g', '..gg...gg..'],
+    alienB: ['...p...p...', '....g.g....', '..ggggggg..', '.ggwkgkwgg.', 'ggggggggggg', 'gg.ggggg.gg', '.g.g...g.g.', 'g.........g'],
+    ship: ['.....r.....', '....www....', '....wcw....', '..wwwwwww..', '.wwwwwwwww.', 'wwwwwwwwwww', 'rr.r...r.rr'],
+    robot: ['.....yy.....', '.....kk.....', '..kkkkkkkk..', '.kllllllllk.', '.klccllcclk.', '.klccllcclk.', '.kllllllllk.', '.kllkkkkllk.', '.kllllllllk.', '..kkkkkkkk..', '.kkggggggkk.', 'kgkgrggygkgk', 'kgkggggggkgk', '..kggggggk..', '..kgk..kgk..', '..kkk..kkk..'],
+    robotRun: ['.....yy.....', '.....kk.....', '..kkkkkkkk..', '.kllllllllk.', '.klccllcclk.', '.klccllcclk.', '.kllllllllk.', '.kllkkkkllk.', '.kllllllllk.', '..kkkkkkkk..', '.kkggggggkk.', 'kgkgrggygkgk', 'kgkggggggkgk', '..kggggggk..', '.kgk....kgk.', '.kkk....kkk.'],
+    flag: ['k.......', 'kggggg..', 'kgggggg.', 'kggggg..', 'k.......', 'k.......', 'k.......', 'k.......', 'k.......', 'k.......'],
+  };
+  const ROBOT_PAL = { k: '#1b1b1b', l: '#d9dde3', c: '#2ee6d6', g: '#8e9aa8', y: '#ffcc33', r: '#ff5252' };
+
+  // ===== Answer Invaders: shoot the aliens carrying the right answers =====
+  // r.waves: [{ prompt, items: [{ label, ok, why }] }]
+  GAMES.invaders = function (r, key, done) {
+    const W = 640, H = 440;
+    const { cv, ctx } = arcadeCanvas(W, H);
+    const colors = ['#7cfc3a', '#ff7eb6', '#2ee6d6', '#ffb800', '#b44dff', '#ff8c1a'];
+    const alienSpr = colors.map(c => [SPR.alienA, SPR.alienB].map(rows => spriteCanvas(rows, { g: c, p: '#ffffff', k: '#1b1b1b', w: '#ffffff' }, 4)));
+    const shipSpr = spriteCanvas(SPR.ship, { w: '#e8f4ff', c: '#2ee6d6', r: '#ff5252' }, 4);
+    const stars = Array.from({ length: 70 }, () => ({ x: Math.random() * W, y: Math.random() * H, s: Math.random() < 0.2 ? 3 : 2, t: Math.random() * 6 }));
+    let wi = -1, aliens = [], ox = 0, oy = 0, dir = 1, shot = null, cool = 0, banner = null, finished = false, time = 0;
+    const ship = { x: W / 2, target: null, fireOnArrive: false, move: 0 };
+    const parts = [];
+    let autopilot = false;
+
+    function startWave() {
+      wi++;
+      if (wi >= r.waves.length) { finished = true; banner = { text: 'ALL WAVES CLEAR!', t: 99 }; done(); return; }
+      const wave = r.waves[wi];
+      const items = shuffle(wave.items);
+      const perRow = Math.min(4, Math.ceil(items.length / 2));
+      aliens = items.map((it, i) => ({
+        it, col: i % perRow, row: Math.floor(i / perRow), alive: true, flash: 0, color: i % colors.length, leaving: 0,
+        // rows are staggered like bricks, so no alien ever hides behind another
+        bx: (i % perRow - (perRow - 1) / 2) * 136 + (Math.floor(i / perRow) % 2 ? 34 : -34), by: 96 + Math.floor(i / perRow) * 92,
+      }));
+      ox = 0; oy = 0; dir = 1;
+      banner = { text: `WAVE ${wi + 1}`, t: 1.4 };
+      say(wave.prompt);
+    }
+    const alienPos = a => [W / 2 + a.bx + ox, a.by + oy];
+    function fire() {
+      if (shot || cool > 0 || finished) return;
+      shot = { x: ship.x, y: H - 58 }; cool = 0.3; sfx.tap();
+    }
+    function hit(a) {
+      const [x, y] = alienPos(a);
+      if (a.it.ok) {
+        a.alive = false; sfx.good();
+        for (let k = 0; k < 18; k++) parts.push({ x, y, vx: (Math.random() - 0.5) * 360, vy: (Math.random() - 0.5) * 360, life: 0.7, c: colors[a.color] });
+        award(`${key}:${wi}:${a.it.label}`, cv); say(a.it.yes || praise());
+        if (!aliens.some(o => o.alive && o.it.ok)) {
+          aliens.forEach(o => { if (o.alive) o.leaving = 0.001; });
+          banner = { text: 'WAVE CLEAR!', t: 1.6 }; sfx.win();
+          setTimeout(startWave, 1700);
+        }
+      } else {
+        a.flash = 0.6; sfx.bad(); say(a.it.why ? '💡 ' + a.it.why : 'Not that one – read the mission again!');
+      }
+    }
+    const step = dt => {
+      time += dt; cool = Math.max(0, cool - dt);
+      // autopilot (used by the automated tests)
+      if (autopilot && !finished) {
+        const tgt = aliens.filter(a => a.alive && a.it.ok && !a.leaving).sort((a, b) => b.by - a.by)[0];
+        if (tgt) { ship.target = alienPos(tgt)[0]; ship.fireOnArrive = true; }
+      }
+      // formation drift
+      const live = aliens.filter(a => a.alive && !a.leaving);
+      if (live.length && !finished) {
+        ox += dir * 26 * dt;
+        const xs = live.map(a => W / 2 + a.bx + ox);
+        if (Math.max(...xs) > W - 70) { dir = -1; oy += 10; }
+        if (Math.min(...xs) < 70) { dir = 1; oy += 10; }
+        if (Math.max(...live.map(a => a.by + oy)) > H - 150) oy = 0; // gently back to the top – no game over
+      }
+      // ship
+      if (ship.move) { ship.x += ship.move * 330 * dt; ship.target = null; }
+      if (ship.target != null) {
+        const d = ship.target - ship.x;
+        ship.x += Math.sign(d) * Math.min(Math.abs(d), 420 * dt);
+        if (Math.abs(d) < 3) { ship.target = null; if (ship.fireOnArrive) { ship.fireOnArrive = false; fire(); } }
+      }
+      ship.x = Math.max(30, Math.min(W - 30, ship.x));
+      // shot
+      if (shot) {
+        shot.y -= 640 * dt;
+        for (const a of aliens) {
+          if (!a.alive || a.leaving) continue;
+          const [x, y] = alienPos(a);
+          if (Math.abs(shot.x - x) < 44 && shot.y < y + 36 && shot.y > y - 24) { hit(a); shot = null; break; }
+        }
+        if (shot && shot.y < 0) shot = null;
+      }
+      aliens.forEach(a => { a.flash = Math.max(0, a.flash - dt); if (a.leaving) a.leaving += dt; });
+      parts.forEach(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.life -= dt; });
+      for (let i = parts.length - 1; i >= 0; i--) if (parts[i].life <= 0) parts.splice(i, 1);
+      if (banner) banner.t -= dt;
+
+      // ----- draw -----
+      ctx.fillStyle = '#0b0f2a'; ctx.fillRect(0, 0, W, H);
+      stars.forEach(s => { ctx.fillStyle = (Math.sin(time * 2 + s.t) > 0.6) ? '#ffffff' : '#7f8bb3'; ctx.fillRect(s.x, s.y, s.s, s.s); });
+      ctx.fillStyle = '#1e2a5a'; ctx.fillRect(0, H - 14, W, 14);
+      const frame = Math.floor(time * 2) % 2;
+      aliens.forEach(a => {
+        if (!a.alive || a.leaving > 1.2) return;
+        let [x, y] = alienPos(a);
+        if (a.leaving) y -= a.leaving * a.leaving * 500;
+        if (a.flash) x += Math.sin(a.flash * 60) * 6;
+        const spr = alienSpr[a.color][frame];
+        ctx.globalAlpha = a.flash ? 0.6 : 1;
+        ctx.drawImage(spr, x - spr.width / 2, y - spr.height / 2 - 10);
+        ctx.globalAlpha = 1;
+        ctx.font = '700 15px "Pixelify Sans", monospace';
+        const tw = ctx.measureText(a.it.label).width + 14;
+        ctx.fillStyle = a.flash ? 'rgba(229,57,53,.9)' : 'rgba(0,0,0,.7)';
+        ctx.fillRect(x - tw / 2, y + 22, tw, 24);
+        pxText(ctx, a.it.label, x, y + 34, 15, '#fff');
+      });
+      if (shot) { ctx.fillStyle = '#7cfc3a'; ctx.fillRect(shot.x - 2, shot.y - 12, 4, 16); ctx.fillStyle = '#e8ffe0'; ctx.fillRect(shot.x - 1, shot.y - 12, 2, 6); }
+      parts.forEach(p => { ctx.fillStyle = p.c; ctx.fillRect(p.x, p.y, 5, 5); });
+      ctx.drawImage(shipSpr, ship.x - shipSpr.width / 2, H - 52);
+      if (ship.target != null) { ctx.fillStyle = 'rgba(124,252,58,.35)'; ctx.fillRect(ship.target - 1, H - 70, 2, 14); }
+      const wave = r.waves[Math.min(wi, r.waves.length - 1)];
+      ctx.fillStyle = 'rgba(0,0,0,.6)'; ctx.fillRect(0, 0, W, 40);
+      if (wave) pxText(ctx, wave.prompt, W / 2, 21, 20, '#ffd43b');
+      const left = aliens.filter(a => a.alive && a.it.ok).length;
+      pxText(ctx, `🎯 ${left} left`, W - 12, H - 30, 14, '#fff', 'right');
+      pxText(ctx, `WAVE ${Math.min(wi + 1, r.waves.length)}/${r.waves.length}`, 12, H - 30, 14, '#fff', 'left');
+      if (banner && banner.t > 0) pxText(ctx, banner.text, W / 2, H / 2 + 40, 40, '#7cfc3a');
+    };
+    const stopLoop = gameLoop(cv, step);
+    // controls: tap the space to fly there and fire; or ◀ 🔥 ▶ buttons; or arrow keys + space
+    cv.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      const [x] = toGame(cv, W, H, e);
+      ship.target = x; ship.fireOnArrive = true;
+    });
+    const root = h('div', { class: 'game arcade invaders' },
+      h('div', { class: 'arc-screen' }, cv),
+      h('div', { class: 'arc-controls' },
+        holdButton('◀', 'arc-left', () => { ship.move = -1; }, () => { if (ship.move < 0) ship.move = 0; }),
+        holdButton('🔥 FIRE', 'arc-fire', fire),
+        holdButton('▶', 'arc-right', () => { ship.move = 1; }, () => { if (ship.move > 0) ship.move = 0; })),
+      h('p', { class: 'arc-tip' }, '👆 Tap above an alien to fly there and fire – or use ◀ 🔥 ▶. Only shoot the RIGHT answers!'));
+    keys(root, {
+      ArrowLeft: [() => { ship.move = -1; }, () => { if (ship.move < 0) ship.move = 0; }],
+      ArrowRight: [() => { ship.move = 1; }, () => { if (ship.move > 0) ship.move = 0; }],
+      ' ': [fire],
+    });
+    root._test = { frames(n) { for (let i = 0; i < n; i++) step(1 / 60); }, autopilot() { autopilot = true; }, shootWrong() { const a = aliens.find(o => o.alive && !o.it.ok); if (a) hit(a); }, get finished() { return finished; } };
+    startWave();
+    root._stop = stopLoop;
+    return root;
+  };
+
+  // ===== Platformer: run, jump, collect the right answers, reach the flag =====
+  // r.items: [{ label, ok, why }] · r.ice: true adds slippery ice patches (less friction!)
+  GAMES.platformer = function (r, key, done) {
+    const T = 32, W = 640, H = 384, ROWS = 12;
+    const { cv, ctx } = arcadeCanvas(W, H);
+    const items = shuffle(r.items);
+    // ----- build the level -----
+    const cols = 10 + items.length * 7 + 8;
+    const tile = Array.from({ length: ROWS }, () => Array(cols).fill(0)); // 0 air, 1 ground, 2 platform, 3 ice
+    for (let x = 0; x < cols; x++) { tile[10][x] = 1; tile[11][x] = 1; }
+    const placed = [];
+    let x = 8;
+    items.forEach((it, i) => {
+      const kind = i % 3; // 0: gap jump, 1: floating platform, 2: ice run
+      if (kind === 0) { tile[10][x + 2] = tile[11][x + 2] = tile[10][x + 3] = tile[11][x + 3] = 0; placed.push({ it, x: (x + 5.5) * T, y: 9 * T - 6 }); }
+      if (kind === 1) { for (let k = 2; k < 5; k++) tile[7][x + k] = 2; placed.push({ it, x: (x + 3.5) * T, y: 6 * T - 6 }); }
+      if (kind === 2) { for (let k = 1; k < 6; k++) if (r.ice !== false && r.ice) tile[10][x + k] = 3; placed.push({ it, x: (x + 4.5) * T, y: 9 * T - 6 }); }
+      x += 7;
+    });
+    const flagX = (cols - 4) * T;
+    const solid = (tx, ty) => ty >= 0 && ty < ROWS && tx >= 0 && tx < cols && tile[ty][tx] > 0;
+    // ----- tiles & sprites -----
+    const tileSpr = {
+      1: spriteCanvas(['gggggggg', 'GgGgGgGg', 'dddDdddd', 'dDdddddD', 'ddddDddd', 'dddddddd', 'DddDdddd', 'dddddDdd'], { g: '#5bbf3a', G: '#3d8a26', d: '#8a5a32', D: '#6b4425' }, 4),
+      0.5: spriteCanvas(['dddDdddd', 'dDdddddD', 'ddddDddd', 'dddddddd', 'DddDdddd', 'dddddDdd', 'dDdddddd', 'ddddddDd'], { d: '#8a5a32', D: '#6b4425' }, 4),
+      2: spriteCanvas(['wwwwwwww', 'WWWWWWWW', 'w..w..w.', 'wwwwwwww', 'WWWWWWWW', '........', '........', '........'], { w: '#c08a52', W: '#6b4423' }, 4),
+      3: spriteCanvas(['iiiiiiii', 'iIIiiiii', 'iiiIIiii', 'iiiiiIIi', 'iiiiiiii', 'iIiiiiii', 'iiiiiiii', 'iiiiiiii'], { i: '#bfefff', I: '#ffffff' }, 4),
+    };
+    const run = [spriteCanvas(SPR.robot, ROBOT_PAL, 2), spriteCanvas(SPR.robotRun, ROBOT_PAL, 2)];
+    const flagSpr = [spriteCanvas(SPR.flag, { k: '#1b1b1b', g: '#8b8b8b' }, 4), spriteCanvas(SPR.flag, { k: '#1b1b1b', g: '#7cfc3a' }, 4)];
+    const clouds = Array.from({ length: 8 }, (_, i) => ({ x: i * 260 + Math.random() * 120, y: 30 + Math.random() * 90 }));
+    // ----- player -----
+    const p = { x: 2 * T, y: 9 * T - 32, vx: 0, vy: 0, w: 22, h: 30, ground: false, onIce: false, face: 1, safeX: 2 * T, bump: 0 };
+    let left = false, right = false, jumpQ = false, cam = 0, got = 0, finished = false, time = 0, msg = null;
+    const need = items.filter(i => i.ok).length;
+    const collect = pl => {
+      if (pl.done) return;
+      if (pl.it.ok) {
+        pl.done = true; got++; sfx.good(); award(`${key}:${pl.it.label}`, cv);
+        say(got === need ? '🚩 You got them all! Run to the flag!' : (pl.it.yes || praise()));
+      } else if (p.bump <= 0) {
+        p.bump = 0.9; p.vx = -p.face * 260; p.vy = -260; sfx.bad();
+        say(pl.it.why ? '💡 ' + pl.it.why : 'Oops – that is not one of the right answers!');
+      }
+    };
+    const step = dt => {
+      time += dt; p.bump = Math.max(0, p.bump - dt);
+      if (!finished) {
+        // horizontal: accelerate when holding, slow down by friction (much less on ice!)
+        const acc = p.onIce ? 500 : 1500, fr = p.onIce ? 120 : 1800, max = 210;
+        if (left && !right) { p.vx -= acc * dt; p.face = -1; } else if (right && !left) { p.vx += acc * dt; p.face = 1; } else if (p.ground) {
+          const s = Math.sign(p.vx); p.vx -= s * fr * dt; if (Math.sign(p.vx) !== s) p.vx = 0;
+        }
+        p.vx = Math.max(-max * 1.3, Math.min(max * 1.3, p.vx));
+        if (jumpQ && p.ground) { p.vy = -560; p.ground = false; sfx.tap(); }
+        jumpQ = false;
+        p.vy = Math.min(900, p.vy + 1500 * dt);
+        // move x
+        p.x += p.vx * dt;
+        const rows = [Math.floor(p.y / T), Math.floor((p.y + p.h - 1) / T)];
+        if (p.vx > 0) { const tx = Math.floor((p.x + p.w) / T); if (rows.some(ty => solid(tx, ty) && tile[ty][tx] !== 2)) { p.x = tx * T - p.w; p.vx = 0; } }
+        if (p.vx < 0) { const tx = Math.floor(p.x / T); if (rows.some(ty => solid(tx, ty) && tile[ty][tx] !== 2)) { p.x = (tx + 1) * T; p.vx = 0; } }
+        p.x = Math.max(0, Math.min(cols * T - p.w, p.x));
+        // move y (platforms are one-way: you can jump up through them)
+        const prevBottom = p.y + p.h;
+        p.y += p.vy * dt;
+        p.ground = false; p.onIce = false;
+        const cx = [Math.floor(p.x / T), Math.floor((p.x + p.w - 1) / T)];
+        if (p.vy >= 0) {
+          const ty = Math.floor((p.y + p.h) / T);
+          const hitT = cx.find(tx => solid(tx, ty) && (tile[ty][tx] !== 2 || prevBottom <= ty * T + 1));
+          if (hitT != null) { p.y = ty * T - p.h; p.vy = 0; p.ground = true; p.onIce = cx.some(tx => tile[ty][tx] === 3); if (tile[ty][hitT] !== 2) p.safeX = p.x; }
+        } else {
+          const ty = Math.floor(p.y / T);
+          if (cx.some(tx => solid(tx, ty) && tile[ty][tx] !== 2)) { p.y = (ty + 1) * T; p.vy = 0; }
+        }
+        if (p.y > H + 40) { p.x = Math.max(T, p.safeX - T); p.y = 9 * T - 32; p.vx = 0; p.vy = 0; sfx.bad(); say('Whoops! Jump over the gaps – press ⬆ just before the edge.'); }
+        // collect / bump into answers
+        placed.forEach(pl => { if (!pl.done && Math.abs(p.x + p.w / 2 - pl.x) < 28 && Math.abs(p.y + p.h / 2 - pl.y) < 30) collect(pl); });
+        // flag
+        if (p.x + p.w > flagX + 8 && p.x < flagX + 40) {
+          if (got === need) { finished = true; sfx.win(); confetti(80); done(); }
+          else if (!msg || msg.t <= 0) { msg = { t: 1.5 }; say(`Collect all the right answers first! (${got}/${need})`); }
+        }
+        if (msg) msg.t -= dt;
+      }
+      cam = Math.max(0, Math.min(cols * T - W, p.x - W / 3));
+      // ----- draw -----
+      const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#5fb8f5'); g.addColorStop(1, '#c4e8ff');
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = 'rgba(255,255,255,.85)';
+      clouds.forEach(c => { const x0 = ((c.x - cam * 0.3) % (W + 300) + W + 300) % (W + 300) - 150; ctx.fillRect(x0, c.y, 90, 14); ctx.fillRect(x0 + 14, c.y - 12, 56, 12); });
+      const c0 = Math.floor(cam / T), c1 = Math.min(cols - 1, c0 + Math.ceil(W / T) + 1);
+      for (let ty = 0; ty < ROWS; ty++) for (let tx = c0; tx <= c1; tx++) {
+        const v = tile[ty][tx]; if (!v) continue;
+        const spr = v === 1 && ty > 0 && tile[ty - 1][tx] === 1 ? tileSpr[0.5] : tileSpr[v];
+        ctx.drawImage(spr, tx * T - cam, ty * T);
+      }
+      ctx.drawImage(flagSpr[got === need ? 1 : 0], flagX - cam, 10 * T - 40);
+      placed.forEach(pl => {
+        if (pl.done) return;
+        const bob = Math.sin(time * 3 + pl.x) * 4, x = pl.x - cam, y = pl.y + bob;
+        ctx.font = '700 14px "Pixelify Sans", monospace';
+        const tw = Math.max(40, ctx.measureText(pl.it.label).width + 16);
+        ctx.fillStyle = '#ffffff'; ctx.fillRect(x - tw / 2, y - 14, tw, 28);
+        ctx.strokeStyle = '#000'; ctx.lineWidth = 3; ctx.strokeRect(x - tw / 2, y - 14, tw, 28);
+        ctx.fillStyle = '#1b1b1b'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(pl.it.label, x, y + 1);
+      });
+      const spr = run[p.ground && Math.abs(p.vx) > 20 ? Math.floor(time * 10) % 2 : 0];
+      ctx.save();
+      if (p.bump > 0 && Math.floor(time * 20) % 2) ctx.globalAlpha = 0.4;
+      ctx.translate(p.x - cam + p.w / 2, p.y);
+      ctx.scale(p.face, 1);
+      ctx.drawImage(spr, -spr.width / 2, p.h - spr.height);
+      ctx.restore();
+      if (p.onIce && Math.abs(p.vx) > 40) pxText(ctx, 'WHEEE! ICE = LESS FRICTION', p.x - cam + 10, p.y - 18, 12, '#bfefff');
+      ctx.fillStyle = 'rgba(0,0,0,.6)'; ctx.fillRect(0, 0, W, 36);
+      pxText(ctx, r.prompt || 'Collect the right answers!', W / 2, 19, 18, '#ffd43b');
+      pxText(ctx, `✔ ${got}/${need}`, W - 12, 56, 18, '#7cfc3a', 'right');
+      if (finished) pxText(ctx, 'LEVEL COMPLETE!', W / 2, H / 2, 40, '#7cfc3a');
+    };
+    const stopLoop = gameLoop(cv, step);
+    const root = h('div', { class: 'game arcade platformer' },
+      h('div', { class: 'arc-screen' }, cv),
+      h('div', { class: 'arc-controls' },
+        h('div', { class: 'arc-pad' },
+          holdButton('◀', 'arc-left', () => { left = true; }, () => { left = false; }),
+          holdButton('▶', 'arc-right', () => { right = true; }, () => { right = false; })),
+        holdButton('⬆ JUMP', 'arc-jump', () => { jumpQ = true; })),
+      h('p', { class: 'arc-tip' }, '◀ ▶ to run, ⬆ to jump. Grab the RIGHT answers, dodge the wrong ones, then reach the 🚩!'));
+    keys(root, {
+      ArrowLeft: [() => { left = true; }, () => { left = false; }],
+      ArrowRight: [() => { right = true; }, () => { right = false; }],
+      ArrowUp: [() => { jumpQ = true; }], ' ': [() => { jumpQ = true; }],
+    });
+    root._test = {
+      frames(n) { for (let i = 0; i < n; i++) step(1 / 60); },
+      state: () => ({ x: p.x, y: p.y, vx: p.vx, vy: p.vy, ground: p.ground, onIce: p.onIce, got, need, finished }),
+      hold(dir, on) { if (dir < 0) left = on; else right = on; },
+      jump() { jumpQ = true; },
+      bumpWrong() { const pl = placed.find(o => !o.it.ok); if (pl) collect(pl); p.bump = 0; },
+      collectAll() { placed.filter(o => o.it.ok).forEach(collect); },
+      toFlag() { p.x = flagX - 4; p.y = 9 * T - 32; p.vy = 0; },
+      iceX: () => { for (let tx = 0; tx < cols; tx++) if (tile[10][tx] === 3) return tx * T; return null; },
+      teleport(x0) { p.x = x0; p.y = 9 * T - 32; p.vx = 0; p.vy = 0; },
+    };
+    root._stop = stopLoop;
+    return root;
+  };
+
+  // ===== Block Builder: place blocks on a grid so the robot can reach the flag =====
+  // r.map: rows of terrain letters (g grass, d dirt, s stone, w water, R robot start, F flag, '.' air)
+  // r.blocks: [{ id, label, count, sinks: true|false, why }] – blocks that "sink" fall into water when placed over it
+  const BLOCK_TEX = {
+    g: [['gggggggg', 'GgGgGgGg', 'dddDdddd', 'dDdddddD', 'ddddDddd', 'dddddddd', 'DddDdddd', 'dddddDdd'], { g: '#5bbf3a', G: '#3d8a26', d: '#8a5a32', D: '#6b4425' }],
+    d: [['dddDdddd', 'dDdddddD', 'ddddDddd', 'dddddddd', 'DddDdddd', 'dddddDdd', 'dDdddddd', 'ddddddDd'], { d: '#8a5a32', D: '#6b4425' }],
+    s: [['ssSsssss', 'sssssSss', 'sSssssss', 'ssssSsss', 'sssssssS', 'sSssssss', 'ssssSsss', 'ssSsssss'], { s: '#9a9a9a', S: '#6f6f6f' }],
+    w: [['wwwwwwww', 'wWWwwwWW', 'wwwwwwww', 'wwwwwwww', 'WWwwwWWw', 'wwwwwwww', 'wwwwwwww', 'wwwwwwww'], { w: '#2f7fd8', W: '#7fc3ff' }],
+    iron: [['kkkkkkkk', 'kiiiiiik', 'kiIiiIik', 'kiiiiiik', 'kiiiiiik', 'kiIiiIik', 'kiiiiiik', 'kkkkkkkk'], { k: '#4b4b4b', i: '#c9c9c9', I: '#7a7a7a' }],
+    steel: [['kkkkkkkk', 'kbbbbbbk', 'kbWbbbbk', 'kbbWbbbk', 'kbbbWbbk', 'kbbbbWbk', 'kbbbbbbk', 'kkkkkkkk'], { k: '#2c3e50', b: '#8fa7bd', W: '#e8f1fa' }],
+    nickel: [['kkkkkkkk', 'knnnnnnk', 'knWnnnnk', 'knnnnnnk', 'knnnnWnk', 'knnnnnnk', 'knnnnnnk', 'kkkkkkkk'], { k: '#5d5d4f', n: '#b8b59a', W: '#f2f0e0' }],
+    wood: [['bbbbbbbb', 'wwwwwwww', 'wWwwwwww', 'bbbbbbbb', 'wwwwwWww', 'wwwwwwww', 'bbbbbbbb', 'wwWwwwww'], { b: '#6b4423', w: '#c08a52', W: '#9c6b3c' }],
+    plastic: [['pppppppp', 'pPPppppp', 'pPpppppp', 'pppppppp', 'pppppppp', 'pppppppp', 'ppppppqp', 'pppppqqp'], { p: '#ff5fa2', P: '#ffc2dd', q: '#c2306f' }],
+    gold: [['kkkkkkkk', 'kyyyyyyk', 'kyWyyyyk', 'kyyWyyyk', 'kyyyyyyk', 'kyyyyOyk', 'kyyyyyyk', 'kkkkkkkk'], { k: '#8a5d00', y: '#ffd43b', W: '#fff6c2', O: '#e09a00' }],
+    glass: [['kkkkkkkk', 'kgggggWk', 'kggggWgk', 'kgggWggk', 'kggWgggk', 'kgWggggk', 'kWgggggk', 'kkkkkkkk'], { k: '#5a9bb0', g: '#d9f6ff', W: '#ffffff' }],
+    foil: [['ffffffff', 'fFfffFff', 'ffffffff', 'ffFfffff', 'ffffffFf', 'ffffffff', 'fFffffff', 'ffffFfff'], { f: '#d7dde3', F: '#ffffff' }],
+  };
+  const texURL = {};
+  const blockTex = id => texURL[id] || (texURL[id] = BLOCK_TEX[id] ? spriteCanvas(BLOCK_TEX[id][0], BLOCK_TEX[id][1], 4).toDataURL() : '');
+  GAMES.blocks = function (r, key, done) {
+    const rows = r.map.length, cols = Math.max(...r.map.map(x => x.length));
+    const terr = r.map.map(row => [...row.padEnd(cols, '.')]);
+    let start = null, flag = null;
+    terr.forEach((row, y) => row.forEach((ch, x) => { if (ch === 'R') { start = [x, y]; row[x] = '.'; } if (ch === 'F') { flag = [x, y]; row[x] = '.'; } }));
+    const inv = {};
+    (r.blocks || []).forEach(b => { inv[b.id] = b.count; });
+    const placedB = {}; // "x,y" -> block id
+    let selId = (r.blocks || [])[0] && r.blocks[0].id, busy = false, finished = false;
+    const isWater = (x, y) => terr[y] && terr[y][x] === 'w';
+    const solidAt = (x, y) => y >= rows || (terr[y] && 'gds'.includes(terr[y][x])) || !!placedB[x + ',' + y];
+    const gridEl = h('div', { class: 'bb-grid', style: `--c:${cols};--r:${rows}` });
+    const cells = [];
+    const robot = h('div', { class: 'bb-robot' }, h('img', { src: spriteCanvas(SPR.robot, ROBOT_PAL, 4).toDataURL(), alt: 'robot' }));
+    const flagEl = h('div', { class: 'bb-flag' }, '🚩');
+    const invEl = h('div', { class: 'bb-inv' });
+    const statusEl = h('div', { class: 'bb-status' });
+    const posRobot = (x, y, instant) => {
+      robot.style.transition = instant ? 'none' : '';
+      robot.style.left = `${x / cols * 100}%`; robot.style.top = `${y / rows * 100}%`;
+    };
+    function drawCell(x, y) {
+      const c = cells[y * cols + x], id = placedB[x + ',' + y], t = terr[y][x];
+      const tex = id ? blockTex(id) : ('gdsw'.includes(t) ? blockTex(t) : '');
+      c.style.backgroundImage = tex ? `url(${tex})` : '';
+      c.classList.toggle('placed', !!id);
+    }
+    for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
+      const c = h('div', { class: 'bb-cell' });
+      c.addEventListener('click', () => tapCell(x, y));
+      cells.push(c); gridEl.append(c);
+    }
+    function drawInv() {
+      put(invEl, (r.blocks || []).map(b => h('button', {
+        class: 'bb-block' + (b.id === selId ? ' on' : ''), type: 'button', disabled: !inv[b.id],
+        onclick() { selId = b.id; sfx.tap(); drawInv(); },
+      }, h('img', { src: blockTex(b.id), alt: '' }), h('span', null, b.label), h('b', null, '×' + inv[b.id]))));
+    }
+    function tapCell(x, y) {
+      if (busy || finished) return;
+      const k = x + ',' + y;
+      if (placedB[k]) { inv[placedB[k]]++; delete placedB[k]; drawCell(x, y); drawInv(); sfx.tap(); return; } // tap again to pick it back up
+      if (solidAt(x, y) || isWater(x, y) || (start[0] === x && start[1] === y) || (flag[0] === x && flag[1] === y)) return;
+      if (!selId || !inv[selId]) { say('Pick a block from your inventory first!'); return; }
+      const b = r.blocks.find(o => o.id === selId);
+      inv[selId]--; placedB[k] = selId; drawCell(x, y); drawInv(); sfx.tap();
+      // a "sinking" block placed over the water drops in with a splash
+      if (b.sinks && isWater(x, y + 1)) {
+        busy = true; cells[y * cols + x].classList.add('bb-sink');
+        setTimeout(() => {
+          delete placedB[k]; inv[b.id]++; cells[y * cols + x].classList.remove('bb-sink'); drawCell(x, y); drawInv();
+          sfx.bad(); say('💦 SPLASH! ' + (b.why || 'That block can\'t be used here.')); busy = false;
+        }, 650);
+      }
+    }
+    // the robot walks right: steps up one block, falls down gaps, stops at walls
+    async function go() {
+      if (busy || finished) return;
+      busy = true; sfx.good(); say('Here I go…');
+      let [x, y] = start;
+      posRobot(x, y, true);
+      const pause = ms => new Promise(res => setTimeout(res, ms));
+      let result = null;
+      for (let steps = 0; steps < 200 && !result; steps++) {
+        if (x === flag[0] && y === flag[1]) { result = 'win'; break; }
+        // fall first
+        if (!solidAt(x, y + 1)) {
+          if (isWater(x, y + 1) || y + 1 >= rows) { y++; posRobot(x, y); await pause(260); result = 'water'; break; }
+          y++; posRobot(x, y); await pause(160); continue;
+        }
+        const nx = x + 1;
+        if (nx >= cols) { result = 'edge'; break; }
+        if (!solidAt(nx, y)) { x = nx; }
+        else if (!solidAt(nx, y - 1) && !solidAt(x, y - 1)) { x = nx; y--; } // step up one block
+        else { result = 'wall'; break; }
+        posRobot(x, y); await pause(260);
+      }
+      if (result === 'win') {
+        finished = true; sfx.win(); confetti(90); award(key + ':done', gridEl); say(r.done || 'I made it! Brilliant building!');
+        put(statusEl, '🏁 Puzzle solved!'); busy = false; done(); return;
+      }
+      sfx.bad();
+      say(result === 'water' ? (r.hintWater || '💦 Splash! I fell in. Build a bridge across the gap!') : result === 'wall' ? (r.hintWall || 'A wall is in the way! I can only climb ONE block at a time – build some steps.') : (r.hint || 'Hmm, try a different build!'));
+      await pause(900); posRobot(start[0], start[1], true); busy = false;
+    }
+    const reset = () => { if (busy) return; Object.keys(placedB).forEach(k => { inv[placedB[k]]++; delete placedB[k]; }); for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) drawCell(x, y); drawInv(); sfx.tap(); };
+    for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) drawCell(x, y);
+    flagEl.style.left = `${flag[0] / cols * 100}%`; flagEl.style.top = `${flag[1] / rows * 100}%`;
+    flagEl.style.width = robot.style.width = `${100 / cols}%`; flagEl.style.height = robot.style.height = `${100 / rows}%`;
+    posRobot(start[0], start[1], true);
+    drawInv();
+    put(statusEl, '👆 Pick a block, then tap the grid to place it. Tap a block again to pick it back up.');
+    const root = h('div', { class: 'game blocks' },
+      h('div', { class: 'bb-board' }, gridEl, flagEl, robot),
+      statusEl,
+      h('div', { class: 'panel-inner bb-inv-wrap' }, h('h3', null, '🎒 Inventory'), invEl),
+      h('div', { class: 'btn-row' },
+        h('button', { class: 'btn ghost', type: 'button', onclick: reset }, '↺ Reset'),
+        h('button', { class: 'btn big green', type: 'button', onclick: go }, '▶ GO, ROBOT!')));
+    root._test = { tap: tapCell, go, select(id) { selId = id; drawInv(); }, get finished() { return finished; } };
+    return root;
   };
 
   // Places words in a grid (left→right and top→bottom; diagonals optional) and fills the gaps.
