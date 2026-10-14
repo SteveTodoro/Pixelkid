@@ -1,7 +1,7 @@
 /* Year 3 Lesson Engine
  * Renders an interactive lesson from the data in window.LESSON.
  * Stage types: welcome, review, read, video, game, break, quiz (optionally a boss battle).
- * Game types: sort, match, label, order, truefalse, questions, wordsearch, crossword.
+ * Game types: sort, match, label, order, truefalse, questions, wordsearch, crossword, trainai.
  * Question types (quiz, video, questions game): mcq, tf, gap, order.
  */
 (function () {
@@ -966,6 +966,101 @@
       setTimeout(() => select(across[0] || down[0]), 0);
       return root;
     },
+  };
+
+  // Teach the robot: the child labels training examples, then judges the robot's guesses on new things.
+  // The robot guesses by finding the taught example with the most matching features (a tiny "nearest neighbour" AI).
+  GAMES.trainai = function (r, key, done) {
+    const box = h('div', { class: 'game trainai' });
+    const memory = [];
+    const memEl = h('div', { class: 'ai-memory' });
+    const labelOf = id => r.labels[id] || id;
+    const feats = it => r.features.map(f => h('span', { class: 'ai-feat' }, `${f}: ${it[f]}`));
+    const memPanel = () => h('div', { class: 'panel-inner ai-mem-panel' },
+      h('h3', null, `🧠 ${M.name}'s memory (training data)`), memEl);
+    function drawMemory() {
+      put(memEl, memory.length ? memory.map(m => h('div', { class: 'ai-mem-row' },
+        h('span', { class: 'ai-emoji' }, m.emoji), feats(m), h('b', null, '→ ' + labelOf(m.label))))
+        : h('p', { class: 'ai-empty' }, 'Empty! Teach me some examples…'));
+    }
+    function guess(it) {
+      let best = null;
+      memory.forEach(m => {
+        const same = r.features.filter(f => m[f] === it[f]);
+        if (!best || same.length > best.same.length) best = { m, same };
+      });
+      return best;
+    }
+
+    // Phase 1: teaching
+    let ti = 0;
+    function teach() {
+      const it = r.train[ti];
+      const btns = Object.keys(r.labels).map(id => h('button', {
+        class: 'opt', type: 'button',
+        onclick(e) {
+          if (id !== it.label) {
+            shake(e.currentTarget); sfx.bad();
+            say(r.wrongTeach || "Oops! If you teach me the wrong answer, I'll learn the wrong thing!");
+            return;
+          }
+          memory.push(it); drawMemory(); sfx.good(); award(`${key}:t${ti}`, e.currentTarget);
+          say(`Saved to my memory: ${it.name} = ${labelOf(id)}!`);
+          ti++;
+          if (ti < r.train.length) teach(); else testIntro();
+        },
+      }, labelOf(id)));
+      put(box,
+        h('div', { class: 'ai-phase' }, `STEP 1: TEACH ME · example ${ti + 1} of ${r.train.length}`),
+        h('div', { class: 'ai-card' }, h('div', { class: 'ai-big' }, it.emoji), h('div', { class: 'ai-name' }, it.name), h('div', null, feats(it))),
+        h('p', { class: 'instr' }, 'What is it? Tap the right label to teach me:'),
+        h('div', { class: 'opts' }, btns),
+        memPanel());
+      drawMemory();
+    }
+
+    // Phase 2: testing
+    function testIntro() {
+      sfx.win();
+      say("Training complete! Now I'll guess some NEW things. You decide if I'm right!");
+      put(box,
+        h('div', { class: 'ai-phase' }, 'TRAINING COMPLETE!'),
+        h('p', { class: 'lead' }, `${M.name} has learned from ${memory.length} examples. Now let's test the AI on things it has never seen before…`),
+        memPanel(),
+        h('div', { class: 'btn-row' }, h('button', { class: 'btn big green ready', type: 'button', onclick: () => test(0) }, '🧪 Test the AI!')));
+      drawMemory();
+    }
+    function test(qi) {
+      const it = r.test[qi];
+      const g = guess(it);
+      const robotRight = g.m.label === it.is;
+      const why = h('div', { class: 'why', hidden: true });
+      const nextBtn = h('button', { class: 'btn', type: 'button', hidden: true, onclick() { sfx.tap(); if (qi + 1 < r.test.length) test(qi + 1); else done(); } },
+        qi + 1 < r.test.length ? 'Next test ▶' : 'Finish ✔');
+      const judge = (sayRight, btn) => {
+        bY.disabled = bN.disabled = true;
+        const correct = sayRight === robotRight;
+        if (correct) { btn.classList.add('right'); sfx.good(); award(`${key}:j${qi}`, btn); say(praise()); }
+        else { btn.classList.add('wrong'); shake(btn); sfx.bad(); say('Look again – what is it REALLY?'); }
+        why.innerHTML = (robotRight ? `✅ ${M.name} was RIGHT. ` : `❌ ${M.name} was WRONG – it's ${esc(it.truth || labelOf(it.is))}! `) + fmt(it.why || '', false);
+        why.hidden = false; nextBtn.hidden = false;
+      };
+      const bY = h('button', { class: 'opt', type: 'button', onclick: e => judge(true, e.currentTarget) }, `✅ ${M.name} is right`);
+      const bN = h('button', { class: 'opt', type: 'button', onclick: e => judge(false, e.currentTarget) }, `❌ ${M.name} is wrong`);
+      put(box,
+        h('div', { class: 'ai-phase' }, `STEP 2: TEST THE AI · ${qi + 1} of ${r.test.length}`),
+        h('div', { class: 'ai-card' }, h('div', { class: 'ai-big' }, it.emoji), h('div', { class: 'ai-name' }, 'New thing!'), h('div', null, feats(it))),
+        h('div', { class: 'ai-think' },
+          h('div', null, `🤖 Thinking… ${g.same.length ? 'it has the same ' + g.same.join(' and ') + ' as my ' + g.m.name : 'nothing matches, so I will just guess'}…`),
+          h('div', { class: 'ai-guess' }, `I'm SURE it's: ${labelOf(g.m.label).toUpperCase()}!`)),
+        h('p', { class: 'instr' }, `Is ${M.name} right?`),
+        h('div', { class: 'tf-row' }, bY, bN), why,
+        h('div', { class: 'btn-row' }, nextBtn));
+      say('Hmm, let me check my memory…');
+    }
+
+    teach();
+    return box;
   };
 
   // Places words in a grid (left→right and top→bottom; diagonals optional) and fills the gaps.

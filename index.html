@@ -17,6 +17,7 @@
     .tab.science[aria-selected="true"] { background: #19b3a3; }
     .tab.maths[aria-selected="true"] { background: #e09a00; }
     .tab.english[aria-selected="true"] { background: #d9433b; }
+    .tab.future[aria-selected="true"] { background: #7c4dff; }
     .shelf { position: relative; z-index: 1; max-width: 1040px; margin: 0 auto; padding: 16px 16px 90px; display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); }
     .lesson-card {
       position: relative; display: flex; flex-direction: column; gap: 4px; padding: 16px; min-height: 190px;
@@ -91,6 +92,22 @@ const LIBRARY = {
       { title: 'Poetry Playground', emoji: '🎵', unit: 'Poetry' },
       { title: 'Non-fiction Detectives', emoji: '🔎', unit: 'Non-fiction' },
       { title: 'Inference Investigators', emoji: '🕵️', unit: 'Reading Skills' },
+    ],
+  },
+  future: {
+    label: '🚀 Future Skills',
+    lessons: [
+      { id: 'future-ai', title: 'How Does AI Work?', emoji: '🤖', unit: 'AI & Computers', file: 'future/ai.html' },
+      { title: 'Asking Great Questions', emoji: '💬', unit: 'AI & Computers' },
+      { title: 'Real or Fake?', emoji: '🕵️', unit: 'Thinking Online' },
+      { title: 'Search Detective', emoji: '🔎', unit: 'Thinking Online' },
+      { title: 'Staying Safe Online', emoji: '🛡️', unit: 'Thinking Online' },
+      { title: 'Think Like a Coder', emoji: '🧩', unit: 'Coding' },
+      { title: 'Pixel Art Studio', emoji: '🎨', unit: 'Creative Tech' },
+      { title: 'Design a Poster', emoji: '🖼️', unit: 'Creative Tech' },
+      { title: 'Video Editing: Tell a Story', emoji: '🎬', unit: 'Creative Tech' },
+      { title: 'Money Smarts', emoji: '🪙', unit: 'Life Skills' },
+      { title: 'Be the Boss of Screen Time', emoji: '⏰', unit: 'Life Skills' },
     ],
   },
 };
