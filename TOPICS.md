@@ -59,4 +59,11 @@ Practical, modern skills for growing up with AI and the internet. Always grown-u
 **Quiz types:** `mcq`, `tf`, `gap`, `order`. Set `optionsHtml: true` to use pictures (HTML) as the answer buttons.
 **Pixel sprites:** `Pixel.sprites.robot / magnet / magnetron`, or draw your own with `Pixel.svg(rows, palette)`.
 **Video tip:** check a video exists and read its transcript before writing questions about it.
+
+**Question-writing rules (so children read rather than scan):**
+- Answers are shuffled automatically, so write the right answer anywhere. Use `keepOrder: true` only if the order matters.
+- Reading-page checks should test understanding, not word-matching. Ask about a **new example** or a **"what would happen if…"**, and word the right answer differently from the page. Avoid "X is called a…" questions where the answer is the highlighted word.
+- Keep **bold** out of reading-page text (yellow [[glossary]] words are fine). Never bold the exact phrase a question asks about.
+- Wrong options should be believable, not silly, at least for the reading checks.
+- Only a first-try answer earns the gem on a reading page; a wrong guess makes the child re-read for a few seconds.
 **Text tricks:** `**bold**` and `[[word]]` (tappable glossary word — add the word to `glossary`).

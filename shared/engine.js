@@ -411,25 +411,47 @@
 
       let check = null;
       if (c.check) {
+        // Answers are shuffled, and only a first-try answer earns the gem. A wrong guess hides the
+        // answers for a few seconds ("read the page again") and shuffles them, so guessing never pays.
         const fb = h('div', { class: 'feedback', hidden: true });
-        const opts = c.check.options.map((o, oi) => h('button', {
-          class: 'opt' + (answered && oi === c.check.answer ? ' right' : ''), type: 'button', disabled: answered,
-          onclick(e) {
-            const b = e.currentTarget;
-            if (oi === c.check.answer) {
-              b.classList.add('right'); opts.forEach(x => { x.disabled = true; });
-              sfx.good(); award(key, b); say(c.check.yes || praise());
-              fb.className = 'feedback good'; fb.hidden = false; fb.innerHTML = '✔ ' + fmt(c.check.explain || 'Correct!', false);
-              answered = true; nav.set(label, goNext);
-            } else {
-              b.classList.add('wrong'); b.disabled = true; shake(b); sfx.bad();
-              say(c.check.hint || 'Look back at the page to find the answer!');
-            }
-          },
-        }, o));
+        const optsBox = h('div', { class: 'opts' });
+        let firstTry = true, waitId = 0;
+        const deal = () => {
+          const order = answered ? c.check.options.map((_, k) => k) : shuffle(c.check.options.map((_, k) => k));
+          const opts = order.map(oi => h('button', {
+            class: 'opt' + (answered && oi === c.check.answer ? ' right' : ''), type: 'button', disabled: answered,
+            onclick(e) {
+              const b = e.currentTarget;
+              if (oi === c.check.answer) {
+                b.classList.add('right'); opts.forEach(x => { x.disabled = true; });
+                sfx.good();
+                if (firstTry) { award(key, b); say(c.check.yes || praise()); } else say('You got there! Next time, read carefully first to win the gem.');
+                fb.className = 'feedback good'; fb.hidden = false; fb.innerHTML = '✔ ' + fmt(c.check.explain || 'Correct!', false);
+                answered = true; nav.set(label, goNext);
+              } else {
+                firstTry = false;
+                b.classList.add('wrong'); opts.forEach(x => { x.disabled = true; }); shake(b); sfx.bad();
+                say(c.check.hint || 'Not quite! Read the page again to find the answer.');
+                let left = 5;
+                const msg = h('div', { class: 'reread' }, `📖 Read the page again! The answers come back in ${left}…`);
+                setTimeout(() => { if (optsBox.isConnected) put(optsBox, msg); }, 700);
+                const tick = () => {
+                  left--;
+                  if (!optsBox.isConnected) return;
+                  if (left > 0) { msg.textContent = `📖 Read the page again! The answers come back in ${left}…`; waitId = setTimeout(tick, 1000); } else deal();
+                };
+                waitId = setTimeout(tick, 1700);
+              }
+            },
+          }, o(oi)));
+          put(optsBox, opts);
+        };
+        const o = oi => c.check.options[oi];
+        deal();
+        cleanup = () => clearTimeout(waitId);
         check = h('div', { class: 'check' },
           h('div', { class: 'check-q' }, h('b', null, '🔍 CHECK: '), c.check.q),
-          h('div', { class: 'opts' }, opts), fb);
+          optsBox, fb);
       }
 
       put(area, h('div', { class: 'story-anim' },
@@ -466,7 +488,9 @@
       blank = h('span', { class: 'blank' }, '?');
       text = h('p', { class: 'q-text' }, before, blank, after || '');
     } else text = h('p', { class: 'q-text', html: fmt(q.q, false) });
-    const btns = options.map((o, oi) => h('button', {
+    // shuffle the answers each time (true/false keeps its order; keepOrder: true opts out)
+    const order = q.type === 'tf' || q.keepOrder ? options.map((_, k) => k) : shuffle(options.map((_, k) => k));
+    const btns = order.map(oi => [options[oi], oi]).map(([o, oi]) => h('button', {
       class: 'opt' + (q.optionsHtml ? ' opt-pic' : ''), type: 'button', html: q.optionsHtml ? o : null,
       onclick(e) {
         const b = e.currentTarget;
