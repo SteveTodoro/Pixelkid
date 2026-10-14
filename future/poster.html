@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Design a Poster</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <script src="../shared/pixel.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// ---------- mini posters for the Design Detective game ----------
+const mp = (label, bg, inner) => `<div class="mini-poster" style="background:${bg}"><span class="mp-label">${label}</span>${inner}</div>`;
+const tx = (text, color, size, font = 'Lexend', extra = '') =>
+  `<div style="color:${color};font-size:${size}cqw;font-family:${font};font-weight:700;text-align:center;${extra}">${text}</div>`;
+const at = (x, y, html) => `<div style="position:absolute;left:${x}%;top:${y}%;transform:translate(-50%,-50%)">${html}</div>`;
+const em = (e, size) => `<div style="font-size:${size}cqw;line-height:1">${e}</div>`;
+
+const D = {
+  contrastBad: mp('A', '#ffffff', tx('PET SHOW', '#ffe66b', 16) + em('🐶', 30) + tx('Saturday 2pm', '#c6f6ef', 9)),
+  contrastGood: mp('B', '#fff3a8', tx('PET SHOW', '#1f2a6b', 16) + em('🐶', 30) + tx('Saturday 2pm', '#1f2a6b', 9)),
+  bigTitle: mp('A', '#1e6fd9', tx('SPACE<br>PARTY', '#ffffff', 20, '"Pixelify Sans"') + em('🚀', 30) + tx('Friday 6pm', '#ffffff', 8)),
+  tinyTitle: mp('B', '#1e6fd9', tx('space party', '#ffffff', 6, '"Pixelify Sans"') + em('🚀', 30) + tx('Friday 6pm · School Hall · Bring a friend · Wear silver', '#ffffff', 8)),
+  clutter: mp('A', '#ffffff', at(50, 50, tx('BAKE SALE', '#e53935', 14)) +
+    [['🍰', 15, 15], ['🧁', 80, 12], ['🍪', 30, 75], ['🎉', 85, 80], ['⭐', 60, 25], ['🍩', 12, 50], ['🎈', 88, 45], ['🍭', 45, 88], ['🌈', 70, 65], ['🍫', 20, 92], ['☀️', 50, 12], ['🎂', 35, 30]]
+      .map(([e, x, y]) => at(x, y, em(e, 16))).join('')),
+  clean: mp('B', '#ffffff', tx('BAKE SALE', '#e53935', 16) + em('🧁', 34) + tx('Monday 3pm<br>Class 3', '#1b1b1b', 9)),
+  aligned: mp('A', '#2e9e3e', tx('FOOTBALL<br>FUN DAY', '#ffffff', 15, '"Arial Black", Impact') + em('⚽', 28) + tx('Sunday 10am', '#ffffff', 9) + tx('The Park', '#ffffff', 9)),
+  messy: mp('B', '#2e9e3e', at(28, 14, tx('FOOTBALL', '#ffffff', 13, '"Arial Black", Impact')) + at(72, 32, tx('FUN DAY', '#ffffff', 13, '"Arial Black", Impact')) +
+    at(30, 55, em('⚽', 26)) + at(78, 74, tx('Sunday 10am', '#ffffff', 9)) + at(22, 90, tx('The Park', '#ffffff', 9))),
+  noInfo: mp('A', '#8e5cff', tx('MOVIE<br>NIGHT', '#ffffff', 18) + em('🍿', 36)),
+  info: mp('B', '#8e5cff', tx('MOVIE<br>NIGHT', '#ffffff', 18) + em('🍿', 26) + tx('Saturday 7pm<br>The Lounge', '#fff3a8', 9)),
+};
+const HERO = mp('', '#1f2a6b', tx('ROBOT<br>DISCO', '#ffd43b', 18, '"Pixelify Sans"') + em('🤖', 32) + tx('Friday 6pm · School Hall', '#ffffff', 8)).replace('<span class="mp-label"></span>', '');
+
+// the boss: the Clutter Monster, a jumble of every colour at once
+const CLUTTER_MONSTER = Pixel.svg([
+  '..kk..kkk...',
+  '.kyykkrrrk..',
+  'kyyyrrrrbbk.',
+  'kgggwkrwkbbk',
+  'kgggrrrrrbbk',
+  'kpppkkkkkbbk',
+  'kpppkwkwkook',
+  '.kppooooook.',
+  '..kkoookkk..',
+  '...k.kk.k...',
+], { k: '#1b1b1b', y: '#ffd43b', r: '#e53935', b: '#1e6fd9', g: '#7cfc3a', w: '#ffffff', p: '#ff7eb6', o: '#ff8c1a' });
+
+// a deliberately messy poster for the Fix-It challenge
+const MESSY_POSTER = {
+  bg: '#ffffff',
+  items: [
+    { t: 'sticker', emoji: '🤖', x: 32, y: 42, size: 22 },
+    { t: 'text', text: 'robot disco', x: 70, y: 12, size: 4, color: '#ffd43b', font: 'fun' },
+    { t: 'text', text: 'Friday 6pm', x: 18, y: 98, size: 5, color: '#7cfc3a', font: 'pixel' },
+    { t: 'text', text: 'School Hall', x: 82, y: 66, size: 5, color: '#2ee6d6', font: 'bold' },
+    { t: 'sticker', emoji: '🎵', x: 80, y: 84, size: 10 },
+    { t: 'sticker', emoji: '🎉', x: 10, y: 55, size: 10 },
+    { t: 'sticker', emoji: '⭐', x: 62, y: 32, size: 9 },
+    { t: 'sticker', emoji: '🌈', x: 45, y: 74, size: 12 },
+    { t: 'sticker', emoji: '🍕', x: 90, y: 22, size: 8 },
+    { t: 'sticker', emoji: '🎈', x: 18, y: 14, size: 10 },
+  ],
+};
+
+// ---------- the lesson ----------
+window.LESSON = {
+  id: 'future-poster',
+  subject: 'future',
+  title: 'Design a Poster',
+  emoji: '🖼️',
+  home: '../index.html',
+  mascot: {
+    name: 'Professor Bolt',
+    sprite: Pixel.sprites.robot,
+    praise: ['Great design eye!', 'Brilliant, designer!', 'Critical hit!', 'That stands out!', 'Epic thinking!', 'Bolt-tastic!', 'Nailed it!'],
+    oops: ['Oops! Try again.', 'Not quite – have another go!', 'Hmm, look again!', 'So close! One more try.'],
+  },
+  achievements: { designer: { icon: '🖼️', name: 'Graphic Designer' } },
+  glossary: {
+    'graphic design': { emoji: '🖼️', def: 'Arranging words, pictures, shapes and colours to share a message.' },
+    audience: { emoji: '👥', def: 'The people your design is for.' },
+    font: { emoji: '🔤', def: 'The style of the letters. Some fonts look fun, some look serious.' },
+    contrast: { emoji: '🌗', def: 'How different two colours are. Dark on light (or light on dark) has strong contrast and is easy to read.' },
+    align: { emoji: '📏', def: 'To line things up neatly – for example, all in the middle.' },
+    palette: { emoji: '🎨', def: 'A set of colours that work well together.' },
+    clutter: { emoji: '🧸', def: 'Too many things squashed together, so it looks messy.' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'Design a Poster', short: 'Start', minutes: 1,
+      pic: HERO,
+      hello: 'Beep boop! Today you become a GRAPHIC DESIGNER – the people who design posters, game menus and app icons!',
+      question: 'What makes people stop and look at a poster?',
+      intro: 'Learn the secret rules designers use, play Design Detective, fix a terrible poster – then **design your own poster** and print it!',
+      nameLabel: 'Designer name:',
+    },
+
+    {
+      type: 'review', title: 'Last time…', short: 'Recap', minutes: 3,
+      from: { title: 'Pixel Art Studio', emoji: '🎨', url: 'pixel-art.html' },
+      facts: [
+        'A **pixel** is one tiny coloured square. Pixel is short for **picture element**.',
+        'A **palette** is the set of colours you choose. Pros use only a few!',
+        'Draw the **outline** first, then fill in the colours.',
+        '**Shading** (darker colour) makes things look round. A **highlight** makes them shiny. The **mirror** tool makes things symmetrical.',
+      ],
+      questions: [
+        { type: 'mcq', q: 'Pixel is short for…', options: ['picture element', 'pick some yellow', 'pizza slice'], answer: 0 },
+        { type: 'mcq', q: 'To make something look shiny, you add a…', options: ['highlight', 'shadow', 'pizza'], answer: 0 },
+        { type: 'tf', q: 'A symmetrical picture is the same on both sides.', answer: true },
+        { type: 'mcq', q: 'What do pixel artists usually draw first?', options: ['the outline', 'the sprinkles', 'the background'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'read', title: 'What is graphic design?', short: 'Read 1', minutes: 4,
+      cards: [
+        {
+          title: 'Design is everywhere', pic: '📦🎮🚸',
+          text: [
+            'Cereal boxes, game menus, road signs, book covers and app icons were all designed by someone!',
+            '[[graphic design|Graphic design]] means arranging words, pictures, shapes and colours to **share a message**.',
+          ],
+          check: { q: 'Graphic designers arrange words, pictures and colours to…', options: ['share a message', 'make noise', 'cook dinner'], answer: 0 },
+        },
+        {
+          title: "A poster's job", pic: HERO,
+          text: [
+            'A poster has two jobs. First, **grab attention** – even from far away.',
+            'Second, tell people the important information: **what** is happening, **when** and **where**.',
+          ],
+          check: { q: 'Which information does an event poster need?', options: ['what, when and where', 'your password', 'your shoe size'], answer: 0 },
+        },
+        {
+          title: 'The 3-second test', pic: '🚶‍♀️👀⏱️',
+          text: [
+            'People walking past a poster only look for about **3 seconds**.',
+            'A good poster can be understood in one quick look. If it takes ages to work out, people walk away!',
+          ],
+          check: { q: 'The 3-second test checks that…', options: ['people understand your poster in a quick look', 'you can draw it in 3 seconds', 'it has 3 titles'], answer: 0 },
+        },
+        {
+          title: 'Who is it for?', pic: '👧🧓',
+          text: [
+            'Designers always ask: who is this for? The people a design is for are called the [[audience]].',
+            'A poster for a toddler\'s party looks very different from a poster for a grown-up\'s football match!',
+          ],
+          check: { q: 'The people your poster is for are called your…', options: ['audience', 'alarm', 'avocado'], answer: 0 },
+        },
+        {
+          title: 'Choosing a font', pic: '🔤✨',
+          text: [
+            'A [[font]] is the style of the letters. Some fonts look fun, some look serious, some look like pixels!',
+            'The most important thing is that it is **easy to read**. Designers usually use just **1 or 2** fonts on a poster.',
+          ],
+          check: { q: 'How many fonts do designers usually use on one poster?', options: ['1 or 2', '10 or more', 'none'], answer: 0 },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'Graphic Design for Kids', short: 'Video 1', minutes: 9,
+      video: { id: '0PEbCwHT7Y4', title: 'Learn with Ms. C — Graphic Design for Kids', channel: 'Design Elementary', duration: '7:42' },
+      say: 'Ms. C is a real designer! Watch her first lesson, then come back for my questions.',
+      clues: [
+        'What things is design made of?',
+        'What are some examples of design?',
+        'What tools can designers use?',
+        'Are there different types of designers?',
+      ],
+      questions: [
+        { type: 'gap', q: 'Ms. C said design is a mix of fonts, shapes, images, colours and ___.', options: ['lines', 'noodles', 'socks'], answer: 0, hint: 'Remember her song: fonts, shapes, colours, …' },
+        { type: 'mcq', q: 'Which of these are examples of design?', options: ['logos, posters and websites', 'clouds and rain', 'rocks and pebbles'], answer: 0 },
+        { type: 'mcq', q: 'A designer uses design to…', options: ['share a message or an idea', 'make things heavier', 'grow plants'], answer: 0 },
+        { type: 'tf', q: 'Designers can create on iPads, laptops or phones.', answer: true },
+        { type: 'tf', q: 'There is only one type of designer.', answer: false, explain: 'There are lots – app, website, video, print, motion designers and more!' },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Design Detective', short: 'Game 1', minutes: 6,
+      rounds: [
+        {
+          game: 'questions', title: 'Spot the better poster',
+          intro: 'Look closely at each pair of posters. Tap the one that does the job better!',
+          say: 'Use the 3-second test! Which one would YOU understand in a quick look?',
+          questions: [
+            { q: 'Which poster is EASIER to read?', optionsHtml: true, options: [D.contrastBad, D.contrastGood], answer: 1, hint: 'Pale yellow on white is very hard to see!', explain: 'Dark writing on a light background has strong contrast.' },
+            { q: 'Which title can you read from far away?', optionsHtml: true, options: [D.bigTitle, D.tinyTitle], answer: 0, hint: 'The most important words should be the biggest.', explain: 'A BIG title grabs attention from across the room.' },
+            { q: 'Which poster is NOT cluttered?', optionsHtml: true, options: [D.clutter, D.clean], answer: 1, hint: 'Which one is squashed full of stickers?', explain: 'Fewer, bigger things are easier to understand.' },
+            { q: 'Which poster is lined up neatly?', optionsHtml: true, options: [D.aligned, D.messy], answer: 0, hint: 'Which one has everything in a neat line down the middle?', explain: 'Lining things up makes a poster look calm and tidy.' },
+            { q: 'Which poster tells you WHEN and WHERE?', optionsHtml: true, options: [D.noInfo, D.info], answer: 1, hint: 'Look for a day, a time and a place.', explain: 'Without when and where, nobody knows when to come!' },
+          ],
+        },
+        {
+          game: 'crossword', title: 'Design Crossword',
+          intro: 'Solve the crossword! Tap a clue, then type the answer with the letter keys.',
+          say: 'Crossword time! Stuck? Press 💡 Hint for a free letter.',
+          entries: [
+            { answer: 'POSTER', clue: 'A big sign that tells people about an event' },
+            { answer: 'FONT', clue: 'The style of the letters' },
+            { answer: 'TITLE', clue: 'The biggest words at the top of a poster' },
+            { answer: 'COLOUR', clue: 'Red, blue and yellow are each a…' },
+            { answer: 'DESIGN', clue: 'Fonts, shapes, colours and lines put together to share a message' },
+            { answer: 'AUDIENCE', clue: 'The people your poster is for' },
+            { answer: 'SHAPE', clue: 'A circle, a square or a star' },
+            { answer: 'CONTRAST', clue: 'Dark on light has strong…' },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'read', title: 'Design superpowers', short: 'Read 2', minutes: 4,
+      say: 'Here are the 5 superpowers every designer uses!',
+      cards: [
+        {
+          title: '1. Size shows importance', pic: D.bigTitle,
+          text: [
+            'Make the **most important** words the **biggest** – usually the title.',
+            'Smaller words, like the time and place, come next. The eye reads the big things first!',
+          ],
+          check: { q: 'What should be the biggest thing on a poster?', options: ['the most important words', 'the tiniest detail', 'the date'], answer: 0 },
+        },
+        {
+          title: '2. Contrast', pic: D.contrastGood,
+          text: [
+            'Words must stand out from what is behind them. This is called [[contrast]].',
+            'Dark on light, or light on dark, is easy to read. Yellow on white is almost invisible!',
+          ],
+          check: { q: 'Which is easiest to read?', options: ['dark blue on pale yellow', 'pale yellow on white', 'light grey on white'], answer: 0 },
+        },
+        {
+          title: '3. Line it up', pic: D.aligned,
+          text: [
+            'Designers [[align]] things – they line them up neatly, often all down the middle.',
+            'Things scattered all over the place look messy and are harder to read.',
+          ],
+          check: { q: 'Lining things up neatly is called…', options: ['alignment', 'an alien', 'an assignment'], answer: 0 },
+        },
+        {
+          title: '4. Space to breathe', pic: D.clean,
+          text: [
+            'Too many things squashed together is called [[clutter]]. It makes a poster hard to understand.',
+            'Leave some **empty space**. Fewer, bigger things work better than lots of tiny ones.',
+          ],
+          check: { q: 'Your poster has 15 stickers squashed together. What should you do?', options: ['Take some away so it can breathe', 'Add 15 more', 'Make them all tiny'], answer: 0 },
+        },
+        {
+          title: '5. Colours with feelings', pic: '🔴🔵🟢',
+          text: [
+            'Colours make us feel things. Red feels exciting, blue feels calm, green feels like nature.',
+            'Designers pick a [[palette]] – a few colours that work well together and match the message.',
+          ],
+          check: { q: 'A colour palette is…', options: ['a few colours that work well together', 'a paintbrush', 'one colour only'], answer: 0 },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'Learn Colours with Ms. C', short: 'Video 2', minutes: 7,
+      video: { id: 'HAqSFD0ig3A', title: 'Learn Colors pt. 2 with Ms. C — Graphic Design for Kids', channel: 'Design Elementary', duration: '5:29' },
+      say: 'Ms. C is back to teach you about colour palettes. There is a fun fact about a queen, too!',
+      clues: [
+        'What is a colour palette?',
+        'Which queen got her own colour?',
+        'Which flag uses that colour?',
+        'What tool helps Ms. C choose colours?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'A colour palette is…', options: ['a range of colours that work well together', 'a type of paintbrush', 'a single colour'], answer: 0 },
+        { type: 'mcq', q: 'The colour royal blue was created for…', options: ['👑 Queen Charlotte', '⚽ a football team', '🦖 a dinosaur'], answer: 0 },
+        { type: 'mcq', q: 'Royal blue is on which flag?', options: ['the Union Jack (UK flag)', 'a pirate flag', 'no flag at all'], answer: 0 },
+        { type: 'tf', q: 'Colours can change how people feel.', answer: true },
+        { type: 'mcq', q: 'Ms. C picks colours on a circle called a…', options: ['colour wheel', 'colour ladder', 'colour sandwich'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Fix-It Poster', short: 'Game 2', minutes: 7,
+      rounds: [
+        {
+          game: 'poster', title: 'Rescue the Robot Disco',
+          intro: 'Oh no! The Robot Disco poster is a **disaster**. Use your design superpowers to fix it!',
+          say: 'Tap something on the poster to select it, then use the buttons. Drag things to move them!',
+          start: MESSY_POSTER,
+          maxStickers: 4,
+          checkTitle: '🔧 Fix-it checklist',
+          checklist: [
+            { text: 'The title is **BIG** (select it, then ➕ Bigger)', auto: 'bigTitle' },
+            { text: 'Every word is easy to read – no ⚠️ warnings', auto: 'contrast' },
+            { text: 'Not cluttered – **4 stickers or fewer**', auto: 'clutter' },
+            { text: 'Nothing is falling off the edges', auto: 'inside' },
+            { text: 'Things are **lined up** neatly (tick when done)' },
+          ],
+          done: 'POSTER RESCUED! Now everyone will know about the Robot Disco!',
+        },
+      ],
+    },
+
+    {
+      type: 'break', title: 'Brain Break', short: 'Break', minutes: 2,
+      say: 'Designers need breaks too! Stand up and move!',
+      wiggle: {
+        title: '🕺 Designer Moves!',
+        seconds: 60,
+        moves: [
+          '📏 Line up! Stand tall and straight like neat writing.',
+          '🔤 Make letters! Use your body to make a T, then a Y.',
+          '⭐ Be a star shape! Arms and legs out wide.',
+          '🔍 Zoom in! Crouch down small… then ZOOM up tall!',
+          '👀 Eye break! Look at something far away for 10 seconds.',
+          '😌 Take a big, slow breath.',
+        ],
+      },
+      tryit: {
+        title: '🔍 Try it at home: Poster Hunt',
+        intro: 'Next time you are out, be a design detective with a grown-up!',
+        steps: [
+          'Find a poster or sign in a shop, a school or a bus stop.',
+          'Do the **3-second test**: can you tell what it is about in one quick look?',
+          'Is the title big? Is it easy to read? Is it cluttered?',
+          'Give it a score out of 10!',
+        ],
+        tip: 'Then make a real paper poster for something at home – like a family movie night!',
+      },
+    },
+
+    {
+      type: 'game', title: 'Poster Studio', short: 'Studio', icon: '🖼️', minutes: 10,
+      rounds: [
+        {
+          game: 'poster', title: 'My event poster',
+          intro: 'Your turn! Design a poster for an event you would love to go to.',
+          say: 'The studio is yours! Start with a big title, then add when and where. Save your best ones!',
+          start: { bg: '#fff3a8', items: [{ t: 'text', text: 'MY EVENT', x: 50, y: 18, size: 12, color: '#1f2a6b', font: 'bold' }] },
+          briefTitle: '📋 Design brief: an event poster',
+          brief: [
+            'Pick an event: a pet show, a birthday party, a game tournament, a movie night… or make one up!',
+            'Change the title to your event – make it **BIG**.',
+            'Add **when** and **where**.',
+            'Add a picture, and choose colours with good **contrast**.',
+            'Keep it tidy – remember the **3-second test**!',
+          ],
+          checklist: [
+            { text: 'Big title', auto: 'bigTitle' },
+            { text: 'Easy to read – no ⚠️ warnings', auto: 'contrast' },
+            { text: 'Has a picture or shape', auto: 'picture' },
+            { text: 'Not cluttered', auto: 'clutter' },
+            { text: 'Says **what**, **when** and **where** (tick when done)' },
+            { text: 'Passes the **3-second test** (tick when done)' },
+          ],
+          minItems: 4,
+          done: 'WOW! That is a real designer\'s poster! It is saved in your gallery – download it to print!',
+        },
+      ],
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: The Clutter Monster', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      say: 'Oh no! THE CLUTTER MONSTER wants to make every poster messy and impossible to read! Stop it, {name}!',
+      boss: { name: 'The Clutter Monster', sprite: CLUTTER_MONSTER },
+      questions: [
+        { type: 'mcq', q: 'Graphic designers arrange words, pictures and colours to…', options: ['share a message', 'make noise', 'cook dinner'], answer: 0 },
+        { type: 'mcq', q: 'Which text is easiest to read on a white poster?', options: ['dark navy', 'pale yellow', 'light grey'], answer: 0, hint: 'Look for the strongest contrast.' },
+        { type: 'tf', q: 'The most important words on a poster should be the biggest.', answer: true },
+        { type: 'mcq', q: 'The 3-second test means…', options: ['people should understand your poster in one quick look', 'you have 3 seconds to draw it', 'it needs 3 titles'], answer: 0 },
+        { type: 'mcq', q: 'The people a poster is made for are called the…', options: ['audience', 'alarm', 'avocado'], answer: 0 },
+        { type: 'mcq', q: 'The Clutter Monster squashed 15 stickers onto your poster. What do you do?', options: ['Take some away so it can breathe', 'Add 15 more', 'Make the title tiny'], answer: 0 },
+        { type: 'gap', q: 'A ___ is a set of colours that work well together.', options: ['palette', 'pancake', 'puddle'], answer: 0 },
+        { type: 'mcq', q: 'An event poster MUST say…', options: ['what, when and where', 'your password', 'your shoe size'], answer: 0 },
+        { type: 'tf', q: 'Using lots of different fonts makes a poster easier to read.', answer: false, explain: 'Designers usually use just 1 or 2 fonts.' },
+        { type: 'mcq', q: 'Lining things up neatly is called…', options: ['alignment', 'an alien', 'an assignment'], answer: 0 },
+        { type: 'mcq', q: 'Ms. C said design is made of fonts, shapes, images, colours and…', options: ['lines', 'lollies', 'lasers'], answer: 0 },
+        { type: 'order', q: 'Put the poster-making steps in order.', items: ['💡 Decide what your poster is for.', '🔤 Add a BIG title.', '📅 Add when and where.', '✅ Check it with the 3-second test.'], hint: 'Start by deciding what it is for!' },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>

@@ -1,7 +1,8 @@
 /* Year 3 Lesson Engine
  * Renders an interactive lesson from the data in window.LESSON.
  * Stage types: welcome, review, read, video, game, break, quiz (optionally a boss battle).
- * Game types: sort, match, label, order, truefalse, questions, wordsearch, crossword, trainai, pixelcopy, pixelstudio.
+ * Game types: sort, match, label, order, truefalse, questions, wordsearch, crossword, trainai, pixelcopy, pixelstudio, poster.
+ * Questions can set optionsHtml: true to show pictures (HTML) as the answer buttons.
  * Question types (quiz, video, questions game): mcq, tf, gap, order.
  */
 (function () {
@@ -185,6 +186,7 @@
     perfect: { icon: '🏆', name: 'Perfect Score!' },
     level5: { icon: '🚀', name: 'Reached Level 5' },
     artist: { icon: '🎨', name: 'Pixel Artist' },
+    designer: { icon: '🖼️', name: 'Graphic Designer' },
   }, L.achievements);
   function achieve(id) {
     const a = ACH[id];
@@ -452,7 +454,7 @@
       text = h('p', { class: 'q-text' }, before, blank, after || '');
     } else text = h('p', { class: 'q-text', html: fmt(q.q, false) });
     const btns = options.map((o, oi) => h('button', {
-      class: 'opt', type: 'button',
+      class: 'opt' + (q.optionsHtml ? ' opt-pic' : ''), type: 'button', html: q.optionsHtml ? o : null,
       onclick(e) {
         const b = e.currentTarget;
         if (oi === answer) {
@@ -463,7 +465,7 @@
           wrong = true; b.classList.add('wrong'); b.disabled = true; shake(b); sfx.bad(); onMiss(b);
         }
       },
-    }, o));
+    }, q.optionsHtml ? null : o));
     return [text, h('div', { class: 'opts' }, btns)];
   }
 
@@ -1234,6 +1236,222 @@
         h('button', { class: 'btn ghost', type: 'button', onclick: download }, '⬇️ Download picture'),
         finishBtn),
       h('div', { class: 'panel-inner px-gallery-wrap' }, h('h3', null, '🖼️ My Gallery'), gallery));
+  };
+
+  // ---------- poster editor (graphic design) ----------
+  // Elements: { t:'text', text, x, y, size, color, font } · { t:'sticker', emoji, x, y, size } · { t:'shape', shape:'rect'|'circle'|'star', x, y, w, h, color }
+  // x / y are the centre in % of the poster; size is a % of the poster width; w / h are % of the width / height.
+  const POSTER_FONTS = {
+    pixel: { label: 'Pixel', css: '"Pixelify Sans", monospace' },
+    clean: { label: 'Clean', css: 'Lexend, system-ui, sans-serif' },
+    fun: { label: 'Fun', css: '"Chalkboard SE", "Comic Sans MS", "Marker Felt", cursive' },
+    bold: { label: 'Bold', css: '"Arial Black", Impact, "Helvetica Neue", sans-serif' },
+  };
+  const POSTER_STICKERS = ['⭐', '🎉', '🤖', '🐶', '🐱', '🎮', '🚀', '🎈', '🍕', '🎵', '⚽', '🏆', '🌈', '🦖', '🎂', '🍿', '🎨', '❤️', '👾', '☀️'];
+  const POSTER_COLORS = ['#1b1b1b', '#ffffff', '#e53935', '#ff8c1a', '#ffd43b', '#7cfc3a', '#2e9e3e', '#2ee6d6', '#1e6fd9', '#1f2a6b', '#8e5cff', '#ff7eb6', '#8a5a32', '#fff3a8'];
+  const lum = hex => {
+    const v = hex.replace('#', '').match(/../g).map(x => parseInt(x, 16) / 255).map(c => c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4));
+    return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2];
+  };
+  const contrast = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
+  const PKEY_POSTERS = 'y3:posters';
+
+  function posterPNG(model, W = 600) {
+    const H = W * 4 / 3, c = document.createElement('canvas');
+    c.width = W; c.height = H;
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = model.bg; ctx.fillRect(0, 0, W, H);
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    model.items.forEach(e => {
+      const cx = e.x / 100 * W, cy = e.y / 100 * H;
+      if (e.t === 'shape') {
+        const w = e.w / 100 * W, hh = e.h / 100 * H;
+        ctx.fillStyle = e.color; ctx.beginPath();
+        if (e.shape === 'circle') ctx.ellipse(cx, cy, w / 2, hh / 2, 0, 0, Math.PI * 2);
+        else if (e.shape === 'star') {
+          for (let k = 0; k < 10; k++) {
+            const a = -Math.PI / 2 + k * Math.PI / 5, rr = k % 2 ? 0.4 : 1;
+            ctx.lineTo(cx + Math.cos(a) * w / 2 * rr, cy + Math.sin(a) * hh / 2 * rr);
+          }
+        } else ctx.rect(cx - w / 2, cy - hh / 2, w, hh);
+        ctx.fill();
+      } else {
+        const px = e.size / 100 * W;
+        const lines = (e.t === 'sticker' ? e.emoji : e.text).split('\n');
+        ctx.fillStyle = e.color || '#000';
+        ctx.font = e.t === 'sticker' ? `${px}px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`
+          : `700 ${px}px ${(POSTER_FONTS[e.font] || POSTER_FONTS.clean).css}`;
+        lines.forEach((ln, i) => ctx.fillText(ln, cx, cy + (i - (lines.length - 1) / 2) * px * 1.15));
+      }
+    });
+    return c.toDataURL('image/png');
+  }
+
+  GAMES.poster = function (r, key, done) {
+    const clone = o => JSON.parse(JSON.stringify(o));
+    let model = clone(r.start || { bg: '#ffffff', items: [] });
+    let sel = null, finished = false;
+    const posterEl = h('div', { class: 'poster' });
+    const elOf = new Map();
+    const ticks = {};
+
+    const bgUnder = e => {
+      // the colour behind a text: the top-most shape under its centre, otherwise the poster background
+      const idx = model.items.indexOf(e);
+      for (let i = idx - 1; i >= 0; i--) {
+        const s = model.items[i];
+        if (s.t === 'shape' && Math.abs(e.x - s.x) <= s.w / 2 && Math.abs(e.y - s.y) <= s.h / 2) return s.color;
+      }
+      return model.bg;
+    };
+    const lowContrast = e => e.t === 'text' && contrast(e.color, bgUnder(e)) < 3;
+    const AUTO = {
+      bigTitle: () => model.items.some(e => e.t === 'text' && e.size >= 10),
+      contrast: () => model.items.filter(e => e.t === 'text').length > 0 && !model.items.some(lowContrast),
+      clutter: () => model.items.filter(e => e.t === 'sticker').length <= (r.maxStickers || 4),
+      picture: () => model.items.some(e => e.t === 'sticker' || e.t === 'shape'),
+      inside: () => model.items.every(e => e.x >= 5 && e.x <= 95 && e.y >= 4 && e.y <= 96),
+    };
+
+    function renderPoster() {
+      posterEl.style.background = model.bg;
+      posterEl.replaceChildren();
+      elOf.clear();
+      model.items.forEach(e => {
+        const d = h('div', { class: 'pe pe-' + e.t + (e === sel ? ' sel' : '') });
+        d.style.left = e.x + '%'; d.style.top = e.y + '%';
+        if (e.t === 'shape') {
+          Object.assign(d.style, { width: e.w + '%', height: e.h + '%', background: e.color });
+          d.classList.add('pe-' + e.shape);
+        } else {
+          d.style.fontSize = `calc(${e.size} * 1cqw)`;
+          d.textContent = e.t === 'sticker' ? e.emoji : e.text;
+          if (e.t === 'text') { d.style.color = e.color; d.style.fontFamily = (POSTER_FONTS[e.font] || POSTER_FONTS.clean).css; }
+          if (lowContrast(e)) d.append(h('span', { class: 'pe-warn', title: 'Hard to read!' }, '⚠️'));
+        }
+        drag(d, e);
+        elOf.set(e, d);
+        posterEl.append(d);
+      });
+      renderTools(); renderChecks();
+    }
+    function drag(d, e) {
+      d.addEventListener('pointerdown', ev => {
+        ev.preventDefault(); ev.stopPropagation();
+        if (sel !== e) { sel = e; renderPoster(); d = elOf.get(e); }
+        const rect = posterEl.getBoundingClientRect(), sx = ev.clientX, sy = ev.clientY, ox = e.x, oy = e.y;
+        try { d.setPointerCapture(ev.pointerId); } catch (_) { /* ignore */ }
+        const move = m => {
+          e.x = Math.max(0, Math.min(100, ox + (m.clientX - sx) / rect.width * 100));
+          e.y = Math.max(0, Math.min(100, oy + (m.clientY - sy) / rect.height * 100));
+          d.style.left = e.x + '%'; d.style.top = e.y + '%';
+        };
+        const up = () => { d.removeEventListener('pointermove', move); d.removeEventListener('pointerup', up); d.removeEventListener('pointercancel', up); renderPoster(); };
+        d.addEventListener('pointermove', move); d.addEventListener('pointerup', up); d.addEventListener('pointercancel', up);
+      });
+    }
+    posterEl.addEventListener('pointerdown', () => { if (sel) { sel = null; renderPoster(); } });
+
+    // ----- toolbar -----
+    const tools = h('div', { class: 'pe-tools' });
+    const swatchRow = (colors, current, onPick) => h('div', { class: 'pe-swatches' }, colors.map(c => h('button', {
+      class: 'px-swatch' + (c === current ? ' on' : ''), type: 'button', style: `background:${c}`, 'aria-label': c,
+      onclick() { onPick(c); sfx.tap(); },
+    })));
+    const add = item => { model.items.push(item); sel = item; sfx.good(); renderPoster(); };
+    let trayOpen = false;
+    function renderTools() {
+      const s = sel;
+      const addRow = h('div', { class: 'pe-row' },
+        h('b', null, 'Add: '),
+        h('button', { class: 'px-tool', type: 'button', onclick: () => add({ t: 'text', text: 'Your text', x: 50, y: 50, size: 8, color: '#1b1b1b', font: 'clean' }) }, '🔤 Text'),
+        h('button', { class: 'px-tool' + (trayOpen ? ' on' : ''), type: 'button', onclick() { trayOpen = !trayOpen; renderTools(); } }, '😀 Sticker'),
+        h('button', { class: 'px-tool', type: 'button', onclick: () => add({ t: 'shape', shape: 'rect', x: 50, y: 50, w: 80, h: 18, color: '#ffd43b' }) }, '▬ Banner'),
+        h('button', { class: 'px-tool', type: 'button', onclick: () => add({ t: 'shape', shape: 'circle', x: 50, y: 50, w: 40, h: 30, color: '#2ee6d6' }) }, '⬤ Circle'),
+        h('button', { class: 'px-tool', type: 'button', onclick: () => add({ t: 'shape', shape: 'star', x: 50, y: 50, w: 40, h: 30, color: '#ff8c1a' }) }, '★ Star'));
+      const tray = trayOpen && h('div', { class: 'pe-tray' }, (r.stickers || POSTER_STICKERS).map(em => h('button', {
+        class: 'pe-sticker', type: 'button', onclick() { trayOpen = false; add({ t: 'sticker', emoji: em, x: 50, y: 50, size: 14 }); },
+      }, em)));
+      let selPanel;
+      if (!s) selPanel = h('p', { class: 'pe-hint' }, '👆 Tap something on the poster to change it. Drag it to move it.');
+      else {
+        const resize = f => { if (s.t === 'shape') { s.w = Math.max(5, Math.min(100, s.w * f)); s.h = Math.max(4, Math.min(100, s.h * f)); } else s.size = Math.max(2, Math.min(40, Math.round(s.size * f * 10) / 10)); sfx.tap(); renderPoster(); };
+        const textIn = s.t === 'text' && h('input', { class: 'pe-input', type: 'text', value: s.text, maxlength: '40', 'aria-label': 'Edit text' });
+        if (textIn) textIn.addEventListener('input', () => { s.text = textIn.value || ' '; const d = elOf.get(s); if (d) d.firstChild.textContent = s.text; renderChecks(); });
+        selPanel = h('div', { class: 'pe-sel' },
+          h('div', { class: 'pe-row' }, h('b', null, s.t === 'text' ? 'Text: ' : s.t === 'sticker' ? 'Sticker: ' : 'Shape: '),
+            h('button', { class: 'px-tool', type: 'button', onclick: () => resize(1 / 1.2) }, '➖ Smaller'),
+            h('button', { class: 'px-tool', type: 'button', onclick: () => resize(1.2) }, '➕ Bigger'),
+            h('button', { class: 'px-tool', type: 'button', onclick() { model.items.splice(model.items.indexOf(s), 1); model.items.push(s); sfx.tap(); renderPoster(); } }, '⬆️ Front'),
+            h('button', { class: 'px-tool', type: 'button', onclick() { model.items.splice(model.items.indexOf(s), 1); sel = null; sfx.tap(); renderPoster(); } }, '🗑️ Delete')),
+          textIn && h('div', { class: 'pe-row' }, textIn),
+          s.t === 'text' && h('div', { class: 'pe-row' }, h('b', null, 'Font: '), Object.entries(POSTER_FONTS).map(([id, f]) => h('button', {
+            class: 'px-tool' + (s.font === id ? ' on' : ''), type: 'button', style: `font-family:${f.css}`, onclick() { s.font = id; sfx.tap(); renderPoster(); },
+          }, f.label))),
+          s.t !== 'sticker' && h('div', { class: 'pe-row' }, h('b', null, 'Colour: '), swatchRow(r.colors || POSTER_COLORS, s.color, c => { s.color = c; renderPoster(); })),
+          lowContrast(s) && h('p', { class: 'pe-warn-text' }, '⚠️ Hard to read! Pick a colour that stands out from what is behind it.'));
+      }
+      put(tools, addRow, tray, selPanel,
+        h('div', { class: 'pe-row' }, h('b', null, 'Background: '), swatchRow(r.colors || POSTER_COLORS, model.bg, c => { model.bg = c; renderPoster(); })));
+    }
+
+    // ----- checklist -----
+    const checksEl = h('div', { class: 'panel-inner pe-checks' });
+    const finishBtn = h('button', {
+      class: 'btn big green', type: 'button',
+      onclick() {
+        if (finished) return;
+        finished = true; sel = null; renderPoster(); savePoster();
+        sfx.win(); confetti(120); award(key + ':done', finishBtn); achieve('designer');
+        say(r.done || 'WOW! That is a real designer\'s poster! It is saved in your gallery.');
+        finishBtn.textContent = '✔ Saved!'; done();
+      },
+    }, "✔ I'm finished!");
+    function renderChecks() {
+      let all = true;
+      const list = (r.checklist || []).map((c, i) => {
+        const auto = c.auto && AUTO[c.auto];
+        const ok = auto ? auto() : !!ticks[i];
+        if (!ok) all = false;
+        return h('li', { class: ok ? 'ok' : '' },
+          auto ? h('span', { class: 'pe-box' }, ok ? '✅' : '⬜')
+            : h('button', { class: 'pe-box', type: 'button', onclick() { ticks[i] = !ticks[i]; sfx.tap(); renderChecks(); } }, ok ? '✅' : '⬜'),
+          h('span', { html: fmt(c.text, false) }), auto && h('small', null, ' (auto-check)'));
+      });
+      const enough = model.items.length >= (r.minItems || 3);
+      finishBtn.disabled = !finished && !(all && enough);
+      put(checksEl, h('h3', null, r.checkTitle || '✅ Designer checklist'), h('ul', null, list),
+        !enough && h('p', { class: 'pe-hint' }, `Add at least ${r.minItems || 3} things to your poster.`));
+    }
+
+    // ----- gallery -----
+    const gallery = h('div', { class: 'px-gallery' });
+    function drawGallery() {
+      const items = store.get(PKEY_POSTERS, []);
+      put(gallery, items.length ? items.map((m, gi) => h('div', { class: 'px-thumb pe-thumb' },
+        h('img', { src: posterPNG(m, 150), alt: 'poster', title: 'Tap to open', onclick() { model = clone(m); sel = null; renderPoster(); sfx.tap(); } }),
+        h('button', { class: 'px-del', type: 'button', 'aria-label': 'Delete', onclick() { if (!confirm('Delete this poster?')) return; const all = store.get(PKEY_POSTERS, []); all.splice(gi, 1); store.set(PKEY_POSTERS, all); drawGallery(); } }, '✕')))
+        : h('p', { class: 'ai-empty' }, 'No posters yet – your saved posters will appear here!'));
+    }
+    const savePoster = () => {
+      const all = store.get(PKEY_POSTERS, []);
+      all.unshift(clone(model)); store.set(PKEY_POSTERS, all.slice(0, 12)); drawGallery();
+    };
+    const download = () => {
+      sel = null; renderPoster();
+      const a = h('a', { href: posterPNG(model, 900), download: `pixelkid-poster-${(settings.name || 'design').toLowerCase().replace(/[^a-z0-9]+/g, '-')}.png` });
+      document.body.append(a); a.click(); a.remove(); sfx.good(); say('Downloading your poster! Ask a grown-up to help you print it.');
+    };
+
+    renderPoster(); drawGallery();
+    return h('div', { class: 'game poster-game' },
+      r.brief && h('div', { class: 'panel-inner px-brief' }, h('h3', null, r.briefTitle || '📋 Design brief'), h('ol', null, r.brief.map(b => h('li', { html: fmt(b, false) })))),
+      h('div', { class: 'pe-wrap' }, h('div', { class: 'pe-stage' }, posterEl), h('div', null, tools, checksEl)),
+      h('div', { class: 'btn-row' },
+        h('button', { class: 'btn', type: 'button', onclick() { savePoster(); sfx.good(); say('Saved to your gallery!'); } }, '💾 Save to gallery'),
+        h('button', { class: 'btn ghost', type: 'button', onclick: download }, '⬇️ Download poster'),
+        finishBtn),
+      h('div', { class: 'panel-inner px-gallery-wrap' }, h('h3', null, '🖼️ My Posters'), gallery));
   };
 
   // Places words in a grid (left→right and top→bottom; diagonals optional) and fills the gaps.

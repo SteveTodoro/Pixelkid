@@ -82,9 +82,9 @@ a { color: var(--brand-dark); }
 
 /* ---------- hotbar (stage path) ---------- */
 .path { position: relative; z-index: 1; display: flex; gap: 6px; justify-content: center; max-width: 1000px; margin: 14px auto 0; padding: 4px 16px 6px; overflow-x: auto; scrollbar-width: none; }
-.step { flex: none; width: 74px; display: flex; flex-direction: column; align-items: center; gap: 4px; border: 0; background: none; padding: 0; cursor: pointer; }
+.step { flex: 0 1 74px; min-width: 50px; display: flex; flex-direction: column; align-items: center; gap: 4px; border: 0; background: none; padding: 0; cursor: pointer; }
 .step:disabled { cursor: default; }
-.step-ico { position: relative; display: grid; place-items: center; width: 56px; height: 56px; background: var(--slot); border: 3px solid #000; box-shadow: var(--bevel-in); font-size: 1.6rem; }
+.step-ico { position: relative; display: grid; place-items: center; width: min(56px, 100%); aspect-ratio: 1; height: auto; background: var(--slot); border: 3px solid #000; box-shadow: var(--bevel-in); font-size: 1.6rem; }
 .step:disabled .step-ico { filter: grayscale(1) brightness(.75); }
 .step.now .step-ico { outline: 4px solid #fff; outline-offset: -1px; background: #a9a9a9; transform: scale(1.12); }
 .step.done .step-ico::after {
@@ -479,6 +479,46 @@ a { color: var(--brand-dark); }
 .px-thumb { position: relative; }
 .px-thumb img { display: block; width: 72px; height: 72px; image-rendering: pixelated; cursor: pointer; border: 3px solid #000; background: repeating-conic-gradient(#eee 0 25%, #fff 0 50%) 0 0 / 12px 12px; }
 .px-del { position: absolute; top: -8px; right: -8px; width: 24px; height: 24px; padding: 0; cursor: pointer; background: var(--bad); color: #fff; border: 2px solid #000; font-weight: 900; font-size: .75rem; }
+
+/* ---------- poster editor ---------- */
+.pe-wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 18px; align-items: start; }
+@media (max-width: 760px) { .pe-wrap { grid-template-columns: 1fr; } }
+.pe-stage { max-width: 440px; width: 100%; margin: 0 auto; }
+.poster {
+  position: relative; aspect-ratio: 3 / 4; overflow: hidden; container-type: inline-size;
+  border: 4px solid #000; box-shadow: 8px 8px 0 rgba(0, 0, 0, .3); touch-action: none; user-select: none; -webkit-user-select: none;
+}
+.pe { position: absolute; transform: translate(-50%, -50%); cursor: grab; line-height: 1.15; white-space: pre; text-align: center; touch-action: none; }
+.pe-text { font-weight: 700; }
+.pe-sticker { line-height: 1; }
+.pe-circle { border-radius: 50%; }
+.pe-star { clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
+.pe.sel { outline: 3px dashed #8e5cff; outline-offset: 4px; z-index: 50; }
+.pe-warn { position: absolute; top: -.6em; right: -.9em; font-size: max(14px, .35em); }
+.pe-tools { display: grid; gap: 8px; margin-bottom: 12px; }
+.pe-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.pe-row b { font-family: var(--pixel); }
+.pe-tray { display: flex; flex-wrap: wrap; gap: 4px; padding: 8px; background: var(--paper); border: 3px solid #000; }
+.pe-tray .pe-sticker { width: 46px; height: 46px; font-size: 1.6rem; cursor: pointer; background: #fff; border: 2px solid #000; position: static; transform: none; }
+.pe-swatches { display: flex; flex-wrap: wrap; gap: 4px; }
+.pe-swatches .px-swatch { width: 32px; height: 32px; }
+.pe-input { flex: 1; min-width: 160px; padding: 8px 10px; font: inherit; font-size: 1.1rem; border: 3px solid #000; }
+.pe-hint { color: #444; margin: 4px 0; }
+.pe-warn-text { margin: 0; padding: 6px 10px; background: #ffe9a8; border: 2px solid #000; font-weight: 600; }
+.pe-checks h3 { color: var(--brand-dark); font-size: 1.15rem; }
+.pe-checks ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 4px; }
+.pe-checks li { display: flex; align-items: center; gap: 8px; font-size: 1rem; }
+.pe-checks li.ok span:not(.pe-box) { text-decoration: line-through; opacity: .7; }
+.pe-checks small { color: #777; }
+.pe-box { font-size: 1.3rem; background: none; border: 0; padding: 0; cursor: pointer; line-height: 1; }
+.pe-thumb img { width: 72px; height: 96px; }
+/* mini posters used as picture answers */
+.opt-pic { padding: 8px; }
+.mini-poster {
+  aspect-ratio: 3 / 4; width: 100%; max-width: 200px; margin: 0 auto; container-type: inline-size; position: relative; overflow: hidden;
+  border: 3px solid #000; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4cqw; padding: 6cqw; line-height: 1.1;
+}
+.mini-poster .mp-label { position: absolute; top: 3px; left: 3px; background: #000; color: #fff; font-family: var(--pixel); font-size: 12px; padding: 0 6px; }
 
 /* ---------- effects ---------- */
 .confetti { position: fixed; inset: 0; pointer-events: none; z-index: 500; }
