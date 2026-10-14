@@ -64,12 +64,14 @@
     $('toasts').append(t); setTimeout(() => t.classList.add('out'), 2800); setTimeout(() => t.remove(), 3300);
   }
 
-  const listFor = c => c === 'skin' ? A.SKINS : c === 'hairColor' ? A.HAIR_COLOURS : A.ITEMS.filter(i => i.cat === c);
+  const listFor = c => c === 'skin' ? A.SKINS : c === 'hairColor' ? A.HAIR_COLOURS : c === 'scene' ? A.SCENES : A.ITEMS.filter(i => i.cat === c);
   const lookWith = (c, id) => Object.assign({}, saved.look, { [c]: id });
   const priceOf = it => it.price || 0;
 
   function drawPreview() {
     $('preview').src = A.dataURL(look, { scale: 12, pet: true });
+    $('preview').parentElement.style.background = A.sceneBox(look.scene);
+    A.applyScene(look.scene); // previewing a scene changes the whole page
     $('bal').textContent = A.wallet().balance;
     $('who').textContent = name ? `${name}'s hero` : 'Your hero';
   }
@@ -97,6 +99,7 @@
       b.type = 'button'; b.className = `wd-item ${cls}` + (selected === it ? ' sel' : '');
       const img = document.createElement('img');
       img.src = A.dataURL(lookWith(cat, it.id), { scale: 4, pet: cat === 'pet' }); img.alt = '';
+      if (cat === 'scene') { img.style.background = A.sceneBox(it.id); img.classList.add('wd-scene'); }
       const n = document.createElement('span'); n.className = 'wd-iname'; n.textContent = it.name;
       const s = document.createElement('span'); s.className = 'wd-badge'; s.textContent = label;
       b.append(img, n, s);

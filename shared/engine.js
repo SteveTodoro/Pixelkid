@@ -348,7 +348,7 @@
         h('div', { class: 'big-q' }, h('div', { class: 'big-q-label' }, '❓ THE BIG QUESTION'), h('p', { html: fmt(s.question) }))),
       s.intro && h('p', { class: 'lead', html: fmt(s.intro) }),
       h('div', { class: 'me-row' },
-        AV && h('a', { class: 'me-link', href: WARDROBE, title: 'Change my outfit' }, h('img', { class: 'me-avatar', src: AV.dataURL(AV.load().look, { scale: 5, pet: true }), alt: 'Your avatar' })),
+        AV && h('a', { class: 'me-link', href: WARDROBE, title: 'Change my outfit', style: `background:${AV.sceneBox(AV.load().look.scene)}` }, h('img', { class: 'me-avatar', src: AV.dataURL(AV.load().look, { scale: 5, pet: true }), alt: 'Your avatar' })),
         h('div', { class: 'me-fields' },
           h('label', { class: 'name-row' }, h('span', null, s.nameLabel || 'Player name:'), name),
           AV && h('a', { class: 'btn gold', href: WARDROBE }, `👕 Wardrobe · 💎 ${AV.wallet().balance}`))),
@@ -1698,9 +1698,12 @@
     const flagX = (cols - 4) * T;
     const solid = (tx, ty) => ty >= 0 && ty < ROWS && tx >= 0 && tx < cols && tile[ty][tx] > 0;
     // ----- tiles & sprites -----
+    // the level uses the player's chosen background scene (sky, ground colours, decorations)
+    const scene = AV ? AV.sceneDef() : { sky: ['#5fb8f5', '#c4e8ff'], ground: ['#5bbf3a', '#3d8a26', '#8a5a32', '#6b4425'], game: 'clouds' };
+    const [g1, g2, g3, g4] = scene.ground;
     const tileSpr = {
-      1: spriteCanvas(['gggggggg', 'GgGgGgGg', 'dddDdddd', 'dDdddddD', 'ddddDddd', 'dddddddd', 'DddDdddd', 'dddddDdd'], { g: '#5bbf3a', G: '#3d8a26', d: '#8a5a32', D: '#6b4425' }, 4),
-      0.5: spriteCanvas(['dddDdddd', 'dDdddddD', 'ddddDddd', 'dddddddd', 'DddDdddd', 'dddddDdd', 'dDdddddd', 'ddddddDd'], { d: '#8a5a32', D: '#6b4425' }, 4),
+      1: spriteCanvas(['gggggggg', 'GgGgGgGg', 'dddDdddd', 'dDdddddD', 'ddddDddd', 'dddddddd', 'DddDdddd', 'dddddDdd'], { g: g1, G: g2, d: g3, D: g4 }, 4),
+      0.5: spriteCanvas(['dddDdddd', 'dDdddddD', 'ddddDddd', 'dddddddd', 'DddDdddd', 'dddddDdd', 'dDdddddd', 'ddddddDd'], { d: g3, D: g4 }, 4),
       2: spriteCanvas(['wwwwwwww', 'WWWWWWWW', 'w..w..w.', 'wwwwwwww', 'WWWWWWWW', '........', '........', '........'], { w: '#c08a52', W: '#6b4423' }, 4),
       3: spriteCanvas(['iiiiiiii', 'iIIiiiii', 'iiiIIiii', 'iiiiiIIi', 'iiiiiiii', 'iIiiiiii', 'iiiiiiii', 'iiiiiiii'], { i: '#bfefff', I: '#ffffff' }, 4),
     };
@@ -1708,6 +1711,17 @@
     const run = hero ? [hero, hero] : [spriteCanvas(SPR.robot, ROBOT_PAL, 2), spriteCanvas(SPR.robotRun, ROBOT_PAL, 2)];
     const flagSpr = [spriteCanvas(SPR.flag, { k: '#1b1b1b', g: '#8b8b8b' }, 4), spriteCanvas(SPR.flag, { k: '#1b1b1b', g: '#7cfc3a' }, 4)];
     const clouds = Array.from({ length: 8 }, (_, i) => ({ x: i * 260 + Math.random() * 120, y: 30 + Math.random() * 90 }));
+    const dots = Array.from({ length: 60 }, () => ({ x: Math.random() * 1600, y: Math.random() * 300, r: Math.random() }));
+    const SWEETS = ['#e53935', '#2ee6d6', '#8e5cff', '#ffd43b', '#ff7eb6'];
+    function drawSceneDeco(t) {
+      const wrap = (x, span) => ((x % span) + span) % span - 60;
+      if (scene.game === 'stars') dots.forEach(d => { ctx.fillStyle = Math.sin(t * 2 + d.r * 9) > 0.5 ? '#ffffff' : '#9fa8d9'; ctx.fillRect(wrap(d.x - cam * 0.15, W + 120), d.y, d.r > 0.8 ? 3 : 2, d.r > 0.8 ? 3 : 2); });
+      else if (scene.game === 'snow') dots.forEach(d => { ctx.fillStyle = '#ffffff'; ctx.fillRect(wrap(d.x - cam * 0.2 + Math.sin(t + d.r * 6) * 10, W + 120), (d.y + t * (20 + d.r * 30)) % 330, 3, 3); });
+      else if (scene.game === 'bubbles') dots.slice(0, 25).forEach(d => { ctx.strokeStyle = 'rgba(255,255,255,.6)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(wrap(d.x - cam * 0.2, W + 120), 330 - ((d.y + t * (25 + d.r * 25)) % 330), 3 + d.r * 6, 0, 7); ctx.stroke(); });
+      else if (scene.game === 'sweets') dots.slice(0, 20).forEach((d, i) => { const x = wrap(d.x - cam * 0.25, W + 120), y = d.y * 0.8; ctx.fillStyle = SWEETS[i % SWEETS.length]; ctx.fillRect(x, y, 14, 10); ctx.fillRect(x - 5, y + 2, 5, 6); ctx.fillRect(x + 14, y + 2, 5, 6); });
+      else if (scene.game === 'leaves') clouds.forEach(c => { const x0 = wrap(c.x - cam * 0.4, W + 300); ctx.fillStyle = '#1f6b2a'; ctx.fillRect(x0, 0, 6, 60 + c.y); ctx.fillRect(x0 - 6, 30 + c.y / 2, 18, 8); });
+      else { ctx.fillStyle = 'rgba(255,255,255,.85)'; clouds.forEach(c => { const x0 = ((c.x - cam * 0.3) % (W + 300) + W + 300) % (W + 300) - 150; ctx.fillRect(x0, c.y, 90, 14); ctx.fillRect(x0 + 14, c.y - 12, 56, 12); }); }
+    }
     // ----- player -----
     const p = { x: 2 * T, y: 9 * T - 32, vx: 0, vy: 0, w: 22, h: 30, ground: false, onIce: false, face: 1, safeX: 2 * T, bump: 0 };
     let ghost = false; // test hook: ignore answer bubbles
@@ -1766,10 +1780,9 @@
       }
       cam = Math.max(0, Math.min(cols * T - W, p.x - W / 3));
       // ----- draw -----
-      const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#5fb8f5'); g.addColorStop(1, '#c4e8ff');
+      const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, scene.sky[0]); g.addColorStop(1, scene.sky[1]);
       ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-      ctx.fillStyle = 'rgba(255,255,255,.85)';
-      clouds.forEach(c => { const x0 = ((c.x - cam * 0.3) % (W + 300) + W + 300) % (W + 300) - 150; ctx.fillRect(x0, c.y, 90, 14); ctx.fillRect(x0 + 14, c.y - 12, 56, 12); });
+      drawSceneDeco(time);
       const c0 = Math.floor(cam / T), c1 = Math.min(cols - 1, c0 + Math.ceil(W / T) + 1);
       for (let ty = 0; ty < ROWS; ty++) for (let tx = c0; tx <= c1; tx++) {
         const v = tile[ty][tx]; if (!v) continue;

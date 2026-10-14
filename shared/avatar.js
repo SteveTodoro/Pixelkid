@@ -106,7 +106,63 @@
     { id: 'pet-robot', cat: 'pet', name: 'Mini Bolt', price: 50, rows: ['...yy...', '.kkkkkk.', '.kcllck.', '.kllllk.', '.kkkkkk.', '.gggggg.', '.g.gg.g.', '.k.kk.k.'], pal: { y: '#ffcc33', k: '#1b1b1b', c: '#2ee6d6', l: '#d9dde3', g: '#8e9aa8' } },
     { id: 'pet-dragon', cat: 'pet', name: 'Baby dragon', price: 100, rows: ['.p.gg.p.', '.pggggp.', 'pgkggkgp', '.gggggg.', '.gyyyyg.', '..gyyg..', '.gg..gg.', '.g....g.'], pal: { g: '#2e9e3e', p: '#8e5cff', k: '#1b1b1b', y: '#ffd43b' } },
   ];
+  // ---------- background scenes (change the sky, decorations and ground everywhere) ----------
+  const svgURI = (w, hh, inner) => `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${hh}' viewBox='0 0 ${w} ${hh}' shape-rendering='crispEdges'>${inner}</svg>`)}")`;
+  const rng = seed => () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const scatter = (n, w, hh, seed, f) => { const r = rng(seed); let s = ''; for (let i = 0; i < n; i++) s += f(Math.floor(r() * w), Math.floor(r() * hh), r()); return s; };
+  const cloudSVG = fill => svgURI(400, 120, `<g fill='${fill}' opacity='.85'><rect x='40' y='20' width='60' height='10'/><rect x='30' y='30' width='90' height='10'/><rect x='20' y='40' width='110' height='10'/><rect x='250' y='60' width='40' height='10'/><rect x='240' y='70' width='70' height='10'/><rect x='230' y='80' width='100' height='10'/></g>`);
+  const starsSVG = (seed, n = 30) => svgURI(300, 300, scatter(n, 300, 300, seed, (x, y, r) => r > 0.85
+    ? `<rect x='${x - 2}' y='${y}' width='5' height='1' fill='#fff'/><rect x='${x}' y='${y - 2}' width='1' height='5' fill='#fff'/>`
+    : `<rect x='${x}' y='${y}' width='${r > 0.5 ? 3 : 2}' height='${r > 0.5 ? 3 : 2}' fill='${r > 0.7 ? '#ffe9a8' : '#ffffff'}'/>`));
+  const SCENES = [
+    { id: 'scene-sunny', name: 'Sunny day', price: 0, sky: ['#5fb8f5', '#c4e8ff'], deco: cloudSVG('#ffffff'), decoSize: '900px 270px', repeat: 'repeat-x', ground: ['#5bbf3a', '#3d8a26', '#8a5a32', '#6b4425'], game: 'clouds' },
+    { id: 'scene-sunset', name: 'Sunset', price: 20, sky: ['#ff8a5c', '#ffd88a'], deco: cloudSVG('#ffd1e0'), decoSize: '900px 270px', repeat: 'repeat-x',
+      deco2: svgURI(200, 200, `<circle cx='100' cy='100' r='70' fill='#ffe66b'/><circle cx='100' cy='100' r='56' fill='#fff3a8'/>`), deco2Pos: 'right 8% top 160px', deco2Size: '200px', ground: ['#5bbf3a', '#3d8a26', '#8a5a32', '#6b4425'], game: 'clouds' },
+    { id: 'scene-night', name: 'Night sky', price: 30, sky: ['#0b1446', '#2a3a7a'], deco: starsSVG(7), decoSize: '300px 300px', repeat: 'repeat',
+      deco2: svgURI(160, 160, `<circle cx='80' cy='80' r='54' fill='#fff6c2'/><circle cx='60' cy='65' r='9' fill='#e8dc9a'/><circle cx='98' cy='98' r='12' fill='#e8dc9a'/><circle cx='95' cy='55' r='6' fill='#e8dc9a'/>`), deco2Pos: 'right 8% top 130px', deco2Size: '150px', ground: ['#2f7a22', '#1f5416', '#5a3a20', '#432a16'], game: 'stars' },
+    { id: 'scene-snow', name: 'Snowy', price: 30, sky: ['#7fa9d6', '#d9ecfa'], deco: svgURI(240, 240, scatter(26, 240, 240, 11, (x, y, r) => `<rect x='${x}' y='${y}' width='${r > 0.6 ? 4 : 3}' height='${r > 0.6 ? 4 : 3}' fill='#ffffff'/>`)), decoSize: '240px 240px', repeat: 'repeat',
+      ground: ['#ffffff', '#cfe3f2', '#8a5a32', '#6b4425'], game: 'snow' },
+    { id: 'scene-sea', name: 'Underwater', price: 50, sky: ['#0a5ea8', '#46b8e8'], deco: svgURI(260, 260, scatter(14, 260, 260, 23, (x, y, r) => `<circle cx='${x}' cy='${y}' r='${Math.round(3 + r * 7)}' fill='none' stroke='#ffffff' stroke-opacity='.6' stroke-width='2'/>`)), decoSize: '260px 260px', repeat: 'repeat',
+      deco2: svgURI(160, 90, `<g><rect x='20' y='30' width='40' height='20' fill='#ff8c1a'/><rect x='60' y='34' width='10' height='12' fill='#ff8c1a'/><rect x='10' y='26' width='12' height='28' fill='#ff8c1a'/><rect x='48' y='34' width='5' height='5' fill='#1b1b1b'/><rect x='95' y='55' width='30' height='14' fill='#ffd43b'/><rect x='125' y='58' width='8' height='8' fill='#ffd43b'/><rect x='88' y='52' width='9' height='20' fill='#ffd43b'/><rect x='116' y='58' width='4' height='4' fill='#1b1b1b'/></g>`), deco2Pos: 'left 6% top 200px', deco2Size: '220px', ground: ['#f2d48a', '#d9b866', '#c9a35a', '#a9843f'], game: 'bubbles' },
+    { id: 'scene-jungle', name: 'Jungle', price: 50, sky: ['#3f8f55', '#a9e0a0'], deco: svgURI(240, 200, `<g fill='#1f6b2a'>${[[20, 120], [110, 170], [190, 80]].map(([x, len]) => { let g = ''; for (let y = 0; y < len; y += 10) g += `<rect x='${x + ((y / 10) % 2 ? 2 : 0)}' y='${y}' width='6' height='10'/>`; for (let y = 20; y < len; y += 30) g += (y / 30) % 2 < 1 ? `<rect x='${x - 14}' y='${y}' width='14' height='8' fill='#3f9e2c'/><rect x='${x - 10}' y='${y + 8}' width='8' height='4' fill='#3f9e2c'/>` : `<rect x='${x + 8}' y='${y}' width='14' height='8' fill='#3f9e2c'/><rect x='${x + 12}' y='${y + 8}' width='8' height='4' fill='#3f9e2c'/>`; return g; }).join('')}</g>`), decoSize: '300px 240px', repeat: 'repeat-x',
+      ground: ['#3f9e2c', '#28701b', '#5e3b1d', '#452a14'], game: 'leaves' },
+    { id: 'scene-space', name: 'Space galaxy', price: 70, sky: ['#0b0624', '#4a1a6b'], deco: starsSVG(31, 40), decoSize: '300px 300px', repeat: 'repeat',
+      deco2: svgURI(220, 160, `<ellipse cx='110' cy='82' rx='100' ry='22' fill='none' stroke='#ffd43b' stroke-width='8'/><circle cx='110' cy='80' r='50' fill='#ff7eb6'/><rect x='70' y='58' width='80' height='10' fill='#ff9cc7'/><rect x='66' y='86' width='88' height='8' fill='#e05a9a'/><path d='M14 90 A100 22 0 0 0 206 90' fill='none' stroke='#ffd43b' stroke-width='8'/><circle cx='196' cy='24' r='12' fill='#9ad7ff'/>`), deco2Pos: 'right 6% top 130px', deco2Size: '240px', ground: ['#c4c4d4', '#9a9aae', '#6e6e84', '#55556a'], game: 'stars' },
+    { id: 'scene-choc', name: 'Chocolate factory', price: 70, sky: ['#ffc2dc', '#ffe6f0'],
+      deco: svgURI(240, 240, scatter(10, 220, 220, 5, (x, y, r) => r < 0.33
+        ? `<rect x='${x + 6}' y='${y + 12}' width='3' height='16' fill='#ffffff'/><circle cx='${x + 7}' cy='${y + 8}' r='9' fill='${r < 0.16 ? '#e53935' : '#2ee6d6'}'/><circle cx='${x + 7}' cy='${y + 8}' r='4' fill='#ffffff'/>`
+        : r < 0.66 ? `<rect x='${x}' y='${y + 4}' width='18' height='12' fill='#8e5cff'/><path d='M${x} ${y + 10} l-7 -6 v12 z M${x + 18} ${y + 10} l7 -6 v12 z' fill='#8e5cff'/>`
+          : `<rect x='${x}' y='${y}' width='22' height='14' fill='#5a2d0c'/><rect x='${x + 2}' y='${y + 2}' width='8' height='4' fill='#7a3f17'/><rect x='${x + 12}' y='${y + 2}' width='8' height='4' fill='#7a3f17'/><rect x='${x + 2}' y='${y + 8}' width='8' height='4' fill='#7a3f17'/><rect x='${x + 12}' y='${y + 8}' width='8' height='4' fill='#7a3f17'/>`)),
+      decoSize: '380px 380px', repeat: 'repeat', stripes: true,
+      deco2: svgURI(240, 400, `<rect x='0' y='40' width='150' height='34' fill='#8e9aa8'/><rect x='0' y='40' width='150' height='8' fill='#c9d1da'/><rect x='130' y='30' width='40' height='54' fill='#6f7a87'/><rect x='134' y='84' width='32' height='316' fill='#5a2d0c'/><rect x='142' y='84' width='8' height='316' fill='#7a3f17'/><rect x='156' y='120' width='4' height='280' fill='#3d1d08'/><rect x='110' y='370' width='80' height='30' fill='#5a2d0c'/><rect x='100' y='360' width='14' height='12' fill='#7a3f17'/><rect x='186' y='358' width='14' height='12' fill='#7a3f17'/><rect x='20' y='96' width='70' height='40' fill='#5a2d0c'/><rect x='24' y='100' width='14' height='14' fill='#7a3f17'/><rect x='42' y='100' width='14' height='14' fill='#7a3f17'/><rect x='60' y='100' width='14' height='14' fill='#7a3f17'/><rect x='24' y='118' width='14' height='14' fill='#7a3f17'/><rect x='42' y='118' width='14' height='14' fill='#7a3f17'/><rect x='60' y='118' width='14' height='14' fill='#7a3f17'/><rect x='72' y='96' width='22' height='40' fill='#e53935'/>`), deco2Pos: 'left 2% bottom 40px', deco2Size: '240px 400px',
+      ground: ['#7a3f17', '#5a2d0c', '#3d1d08', '#2e1405'], game: 'sweets' },
+    { id: 'scene-rainbow', name: 'Rainbow land', price: 0, unlock: 'level5', sky: ['#a8dcff', '#fff0fb'], deco: cloudSVG('#ffffff'), decoSize: '900px 270px', repeat: 'repeat-x',
+      deco2: svgURI(300, 160, ['#e53935', '#ff8c1a', '#ffd43b', '#2e9e3e', '#1e6fd9', '#8e5cff'].map((c, i) => `<path d='M${20 + i * 12} 160 A${130 - i * 12} ${130 - i * 12} 0 0 1 ${280 - i * 12} 160' fill='none' stroke='${c}' stroke-width='12'/>`).join('')), deco2Pos: 'left 4% top 150px', deco2Size: '340px',
+      ground: ['#ff9ccf', '#e86fae', '#b0698f', '#8c4f72'], game: 'sweets' },
+  ];
+  // Scene → CSS variables used by lesson.css (page background, ground strip, avatar backdrops)
+  function sceneVars(sc) {
+    return {
+      '--sky1': sc.sky[0], '--sky2': sc.sky[1],
+      '--deco': sc.deco || 'none', '--deco-size': sc.decoSize || 'auto', '--deco-repeat': sc.repeat || 'repeat',
+      '--deco2': sc.deco2 || 'none', '--deco2-pos': sc.deco2Pos || 'right top', '--deco2-size': sc.deco2Size || 'auto',
+      '--stripes': sc.stripes ? 'repeating-linear-gradient(135deg, rgba(255,255,255,.35) 0 22px, transparent 22px 44px)' : 'none',
+      '--g1': sc.ground[0], '--g2': sc.ground[1], '--g3': sc.ground[2], '--g4': sc.ground[3],
+    };
+  }
+  function applyScene(id) {
+    const sc = SCENES.find(s => s.id === id) || SCENES[0];
+    Object.entries(sceneVars(sc)).forEach(([k, v]) => document.documentElement.style.setProperty(k, v));
+    return sc;
+  }
+  // a CSS background for a small box (avatar backdrop / scene tile)
+  function sceneBox(id) {
+    const sc = SCENES.find(s => s.id === id) || SCENES[0];
+    return `${sc.deco2 ? sc.deco2 + ' right 4px top 4px / 45% no-repeat, ' : ''}${sc.deco ? sc.deco + ' 0 0 / 160px ' + sc.repeat + ', ' : ''}linear-gradient(transparent 76%, ${sc.ground[0]} 76%, ${sc.ground[0]} 82%, ${sc.ground[2]} 82%), ${sc.stripes ? 'repeating-linear-gradient(135deg, rgba(255,255,255,.35) 0 10px, transparent 10px 20px), ' : ''}linear-gradient(${sc.sky[0]}, ${sc.sky[1]})`;
+  }
+
   const UNLOCK_TEXT = {
+    level5: 'Reach level 5 in any lesson to unlock',
     boss: 'Beat any boss to unlock',
     artist: 'Finish Pixel Art Studio to unlock',
     designer: 'Finish Design a Poster to unlock',
@@ -115,10 +171,10 @@
   };
   const CATS = [
     ['skin', '🙂 Skin'], ['hair', '💇 Hair'], ['hairColor', '🎨 Hair colour'], ['top', '👕 Tops'], ['legs', '👖 Bottoms'],
-    ['shoes', '👟 Shoes'], ['hat', '🎩 Hats'], ['extra', '✨ Extras'], ['pet', '🐾 Pets'],
+    ['shoes', '👟 Shoes'], ['hat', '🎩 Hats'], ['extra', '✨ Extras'], ['pet', '🐾 Pets'], ['scene', '🌄 Scenes'],
   ];
-  const DEFAULT_LOOK = { skin: 'skin1', hairColor: 'hc-brown', hair: 'hair-short', top: 'tee-grey', legs: 'jeans', shoes: 'trainers', hat: 'hat-none', extra: 'extra-none', pet: 'pet-none' };
-  const byId = id => ITEMS.find(i => i.id === id) || SKINS.find(i => i.id === id) || HAIR_COLOURS.find(i => i.id === id);
+  const DEFAULT_LOOK = { skin: 'skin1', hairColor: 'hc-brown', hair: 'hair-short', top: 'tee-grey', legs: 'jeans', shoes: 'trainers', hat: 'hat-none', extra: 'extra-none', pet: 'pet-none', scene: 'scene-sunny' };
+  const byId = id => ITEMS.find(i => i.id === id) || SKINS.find(i => i.id === id) || HAIR_COLOURS.find(i => i.id === id) || SCENES.find(i => i.id === id);
 
   // ---------- saved state + wallet ----------
   const AKEY = 'y3:avatar', WKEY = 'y3:wallet';
@@ -159,8 +215,9 @@
   }
   function wear(id) {
     const it = byId(id); if (!it) return;
-    const cat = SKINS.includes(it) ? 'skin' : HAIR_COLOURS.includes(it) ? 'hairColor' : it.cat;
+    const cat = SKINS.includes(it) ? 'skin' : HAIR_COLOURS.includes(it) ? 'hairColor' : SCENES.includes(it) ? 'scene' : it.cat;
     const a = load(); a.look[cat] = id; save({ look: a.look });
+    if (cat === 'scene') applyScene(id);
   }
 
   // ---------- drawing ----------
@@ -186,5 +243,8 @@
   }
   const dataURL = (look, opts) => draw(look, opts).toDataURL();
 
-  window.Avatar = { ITEMS, SKINS, HAIR_COLOURS, CATS, UNLOCK_TEXT, DEFAULT_LOOK, byId, load, save, wallet, earn, achievements, owns, buy, wear, draw, dataURL, isFree };
+  const sceneDef = () => SCENES.find(s => s.id === load().look.scene) || SCENES[0];
+  window.Avatar = { ITEMS, SKINS, HAIR_COLOURS, SCENES, CATS, UNLOCK_TEXT, DEFAULT_LOOK, byId, load, save, wallet, earn, achievements, owns, buy, wear, draw, dataURL, isFree, applyScene, sceneBox, sceneDef };
+  // every page that loads this file shows the player's chosen scene
+  applyScene(load().look.scene);
 })();

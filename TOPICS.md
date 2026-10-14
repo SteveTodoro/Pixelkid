@@ -45,6 +45,7 @@ Practical, modern skills for growing up with AI and the internet. Always grown-u
 - Every 💎 earned in any lesson also goes into a wallet (`y3:wallet`). The **Wardrobe & Shop** (`avatar.html`) spends it on pixel clothes, hair, hats, extras and pets (catalogue in `shared/avatar.js`).
 - Some items are secret and unlock with achievements (`unlock: 'boss' | 'artist' | 'designer' | 'perfect' | 'video'`).
 - The avatar appears on the library page and lesson start screens, is the hero in the Platformer and Block Builder, and is shown on certificates.
+- **Scenes** (🌄 tab): Sunny (free), Sunset, Night sky, Snowy, Underwater, Jungle, Space galaxy, Chocolate factory, and Rainbow land (secret – reach level 5). The chosen scene restyles the page sky/decorations/ground on every page (via CSS variables set by `Avatar.applyScene`), the avatar backdrops, the Block Builder sky and the Platformer level.
 - Every lesson page must load `../shared/avatar.js` (after `pixel.js`, before the lesson script).
 
 ## Making a new lesson
