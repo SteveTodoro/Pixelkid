@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Magnet Magic!</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <script src="../shared/pixel.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// ---------- blocky pictures for this lesson ----------
+const POLE = { N: '#e53935', S: '#1e6fd9' };
+const svg = (vb, inner) => `<svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" role="img">${inner}</svg>`;
+const TXT = 'font-family="Pixelify Sans, monospace" font-weight="700"';
+function bar(x, y, l, r, w = 120, ht = 44) {
+  const hw = w / 2;
+  return `<g ${TXT} font-size="${ht * 0.6}" fill="#fff" text-anchor="middle">
+    <rect x="${x}" y="${y}" width="${hw}" height="${ht}" fill="${POLE[l]}" stroke="#000" stroke-width="3"/>
+    <rect x="${x + hw}" y="${y}" width="${hw}" height="${ht}" fill="${POLE[r]}" stroke="#000" stroke-width="3"/>
+    <rect x="${x + 3}" y="${y + 3}" width="${w - 6}" height="5" fill="#fff" opacity=".35"/>
+    <text x="${x + hw / 2}" y="${y + ht * 0.72}" stroke="#000" stroke-width="1">${l}</text>
+    <text x="${x + hw * 1.5}" y="${y + ht * 0.72}" stroke="#000" stroke-width="1">${r}</text></g>`;
+}
+function arrow(x1, y, x2, color = '#1b1b1b') {
+  const d = x2 > x1 ? 1 : -1;
+  return `<rect x="${Math.min(x1, x2 - d * 14)}" y="${y - 4}" width="${Math.abs(x2 - d * 14 - x1)}" height="8" fill="${color}"/>
+    <polygon points="${x2},${y} ${x2 - d * 18},${y - 12} ${x2 - d * 18},${y + 12}" fill="${color}"/>`;
+}
+const caption = (x, y, t) => `<text x="${x}" y="${y}" ${TXT} font-size="22" fill="#0b6e64" text-anchor="middle">${t}</text>`;
+
+const ONE_BAR = svg('0 0 300 170', bar(30, 40, 'N', 'S', 240, 64) + caption(90, 140, 'North pole') + caption(210, 140, 'South pole'));
+const ATTRACT = svg('0 0 300 170', caption(150, 26, 'PULL TOGETHER!') + bar(25, 50, 'S', 'N') + bar(145, 50, 'S', 'N') + arrow(55, 130, 135) + arrow(245, 130, 165));
+const REPEL = svg('0 0 300 170', caption(150, 26, 'PUSH APART!') + bar(5, 50, 'S', 'N') + bar(175, 50, 'N', 'S') + arrow(110, 130, 30) + arrow(190, 130, 270));
+const POLE_BOARD = svg('0 0 400 380',
+  bar(10, 25, 'S', 'N', 110) + bar(120, 25, 'S', 'N', 110) +
+  bar(10, 115, 'S', 'N', 110) + bar(160, 115, 'N', 'S', 110) +
+  bar(10, 205, 'N', 'S', 110) + bar(160, 205, 'S', 'N', 110) +
+  bar(10, 295, 'N', 'S', 110) + bar(120, 295, 'N', 'S', 110));
+
+const LAB_TABLE = `<table>
+  <caption>🧪 Professor Bolt's results</caption>
+  <tr><th>Magnet</th><th>Size</th><th>Paperclips held</th></tr>
+  <tr><td>A · bar magnet</td><td>big</td><td>📎 6</td></tr>
+  <tr><td>B · horseshoe</td><td>medium</td><td>📎 11</td></tr>
+  <tr><td>C · disc magnet</td><td>small</td><td>📎 14</td></tr>
+  <tr><td>D · fridge magnet</td><td>big</td><td>📎 2</td></tr>
+</table>`;
+
+// ---------- the lesson ----------
+window.LESSON = {
+  id: 'science-magnets',
+  subject: 'science',
+  title: 'Magnet Magic!',
+  emoji: '🧲',
+  home: '../index.html',
+  mascot: {
+    name: 'Professor Bolt',
+    sprite: Pixel.sprites.robot,
+    praise: ['Magnetic work!', 'Brilliant, scientist!', 'Critical hit!', 'Zap! Super answer!', 'Epic thinking!', 'Bolt-tastic!', 'Nailed it!'],
+    oops: ['Oops! Try again, scientist.', 'Not quite – have another go!', 'Hmm, think again!', 'So close! One more try.'],
+  },
+  glossary: {
+    magnet: { emoji: '🧲', def: 'An object that can pull some metals towards it without touching them.' },
+    force: { emoji: '💪', def: 'A push or a pull.' },
+    attract: { emoji: '🤝', def: 'To pull something towards you.' },
+    'non-contact force': { emoji: '✨', def: 'A force that works without touching, like a magnet pulling a paperclip from a distance.' },
+    magnetic: { emoji: '📎', def: 'Something that a magnet attracts (pulls towards it).' },
+    iron: { emoji: '🔩', def: 'A strong grey metal. Magnets attract iron.' },
+    steel: { emoji: '🍴', def: 'A strong metal made mostly from iron. Magnets attract steel too.' },
+    nickel: { emoji: '🪙', def: 'A silvery metal that magnets attract.' },
+    materials: { emoji: '🧱', def: 'What things are made of, like wood, plastic, glass or metal.' },
+    'magnetic field': { emoji: '🌀', def: 'The invisible area around a magnet where it can push or pull.' },
+    poles: { emoji: '↔️', def: 'The two ends of a magnet, called North and South. The pull is strongest at the poles.' },
+    repel: { emoji: '🙅', def: 'To push something away.' },
+    'fair test': { emoji: '⚖️', def: 'A test where you only change ONE thing and keep everything else the same.' },
+    compass: { emoji: '🧭', def: 'A tool with a tiny magnet needle that always points North.' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'Magnet Magic!', short: 'Start', minutes: 1,
+      pic: Pixel.sprites.magnet,
+      hello: "Beep boop! I'm Professor Bolt. Complete every quest, collect 💎 gems, level up – then beat the boss!",
+      question: 'Why does a fridge magnet stick to the fridge, but not to the wooden table?',
+      intro: 'Read, watch, play and battle your way through **9 quests**. Tap the yellow words to learn what they mean – each new word is worth a 💎!',
+      nameLabel: 'Player name:',
+    },
+
+    {
+      type: 'read', title: 'What is a magnet?', short: 'Read 1', minutes: 3,
+      cards: [
+        {
+          title: 'Meet the magnet!', pic: Pixel.sprites.magnet,
+          text: [
+            'A [[magnet]] is an object that has an invisible pulling power. A push or a pull is called a [[force]].',
+            'You cannot see the force, but you can see what it does – things zoom towards the magnet!',
+          ],
+          check: { q: "Can you see a magnet's force?", options: ['Yes, it glows red', 'No, it is invisible'], answer: 1, explain: 'The force is invisible – we only see what it does.' },
+        },
+        {
+          title: 'No touching needed!', pic: '🧲 ✨ 📎',
+          text: [
+            'Most forces need touching. When you kick a ball, your foot touches it. That is a contact force.',
+            'A magnet can [[attract]] a paperclip **without touching it**. A force that works without touching is called a [[non-contact force]].',
+          ],
+          check: { q: 'A magnet pulling a paperclip from a distance is a…', options: ['contact force', 'non-contact force'], answer: 1, hint: 'Does the magnet need to touch the paperclip?' },
+        },
+        {
+          title: 'Magnetic materials', pic: '🔩 📎 🍴',
+          text: [
+            'Things a magnet attracts are called [[magnetic]]. Magnetic things are always made of metal.',
+            'The magnetic metals are [[iron]], [[nickel]] and cobalt. [[Steel|steel]] is magnetic too, because it is made mostly from iron. Paperclips, nails and food tins are made of steel.',
+          ],
+          check: { q: 'Why is steel magnetic?', options: ['It is shiny', 'It has iron in it', 'It is heavy'], answer: 1 },
+        },
+        {
+          title: 'A tricky fact!', pic: '🥤 💍 🎺',
+          text: [
+            '**Not all metals are magnetic!** Drinks cans and kitchen foil are made of aluminium. Gold, copper and brass are not magnetic either.',
+            'Other [[materials]] like wood, plastic, glass, rubber and paper are never magnetic.',
+          ],
+          check: { q: 'Which metal is NOT magnetic?', options: ['iron', 'steel', 'aluminium'], answer: 2, explain: 'Aluminium is a metal, but magnets do not attract it.' },
+        },
+        {
+          title: 'The magnetic field', pic: '🌀🧲🌀',
+          text: [
+            'Around every magnet is an invisible area called its [[magnetic field]]. Anything magnetic inside the field gets pulled.',
+            'A strong magnet has a big field, so it can pull things from further away.',
+          ],
+          check: { q: 'A strong magnet can pull things from…', options: ['further away', 'only when they touch'], answer: 0 },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'Fun with Magnets!', short: 'Video 1', minutes: 7,
+      video: { id: 's236Q1nuWXg', title: 'Fun with Magnets!', channel: 'SciShow Kids', duration: '4:46' },
+      say: 'Movie time! Watch the video, then come back and answer my questions.',
+      clues: [
+        'What is the invisible area around a magnet called?',
+        'Which spoon does the magnet attract?',
+        'Can a paperclip pick up another paperclip?',
+        'Why do magnets stick to a fridge?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'What is the invisible area all around a magnet called?', options: ['the magnetic field', 'the magnet bubble', 'the force zone'], answer: 0, hint: 'It was also in our reading pages!' },
+        { type: 'mcq', q: 'Jessi tested three spoons. Which one did the magnet attract?', options: ['🪵 the wooden spoon', '🥤 the plastic spoon', '🍴 the metal spoon'], answer: 2, hint: 'Magnets attract some metals…' },
+        { type: 'tf', q: 'In the video, the magnet moved a paperclip through a piece of paper.', answer: true, explain: 'The magnetic field pulls right through the paper!' },
+        { type: 'tf', q: 'A paperclip stuck to a magnet can pick up another paperclip on its own.', answer: false, hint: "It's the magnet that is special – not the paperclip.", explain: 'The paperclip is attracted to the magnet, but it is not a magnet itself.' },
+        { type: 'mcq', q: 'Why does a magnet stick to a fridge door?', options: ['There is iron inside the door', 'The door is sticky', 'The door is cold'], answer: 0 },
+        { type: 'mcq', q: 'How can you tell that a magnet is strong?', options: ['It is a bright colour', 'It pulls things from further away', 'It is very big'], answer: 1, hint: 'Think about how close you have to get before it starts to pull.' },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Magnet Detective', short: 'Game 1', minutes: 4,
+      rounds: [
+        {
+          game: 'sort', title: 'Three chests',
+          intro: 'Sort each item into the right chest. Careful – some metals are **not** magnetic!',
+          say: 'Detective time! Is it a magnetic metal, a non-magnetic metal, or not metal at all?',
+          buckets: [
+            { id: 'mm', label: 'Magnetic metal', emoji: '🧲' },
+            { id: 'nm', label: 'Non-magnetic metal', emoji: '🥈' },
+            { id: 'no', label: 'Not metal', emoji: '🪵' },
+          ],
+          items: [
+            { label: 'paperclip', emoji: '📎', bucket: 'mm', hint: 'Paperclips are made of steel. Steel has iron in it!' },
+            { label: 'iron bolt', emoji: '🔩', bucket: 'mm', hint: 'Iron is a magnetic metal.' },
+            { label: 'steel food tin', emoji: '🥫', bucket: 'mm', hint: 'Steel has iron in it, so it is magnetic.' },
+            { label: 'steel scissors', emoji: '✂️', bucket: 'mm', hint: 'Steel has iron in it, so it is magnetic.' },
+            { label: 'steel fork', emoji: '🍴', bucket: 'mm', hint: 'Steel has iron in it, so it is magnetic.' },
+            { label: 'safety pin', emoji: '🧷', bucket: 'mm', hint: 'Safety pins are made of steel.' },
+            { label: 'drinks can', emoji: '🥤', bucket: 'nm', hint: 'Drinks cans are aluminium – a metal, but not magnetic!' },
+            { label: 'kitchen foil', emoji: '✨', bucket: 'nm', hint: 'Foil is aluminium – a metal, but not magnetic.' },
+            { label: 'gold ring', emoji: '💍', bucket: 'nm', hint: 'Gold is a metal, but magnets do not attract it.' },
+            { label: 'brass trumpet', emoji: '🎺', bucket: 'nm', hint: 'Brass is a metal, but it is not magnetic.' },
+            { label: 'bronze medal', emoji: '🥉', bucket: 'nm', hint: 'Bronze is a metal, but it is not magnetic.' },
+            { label: 'wooden block', emoji: '🪵', bucket: 'no', hint: 'Is wood a metal?' },
+            { label: 'plastic ruler', emoji: '📏', bucket: 'no', hint: 'Is plastic a metal?' },
+            { label: 'glass jar', emoji: '🫙', bucket: 'no', hint: 'Is glass a metal?' },
+            { label: 'rubber duck', emoji: '🦆', bucket: 'no', hint: 'Is rubber a metal?' },
+            { label: 'pencil', emoji: '✏️', bucket: 'no', hint: 'Pencils are wood and graphite – not metal.' },
+          ],
+        },
+        {
+          game: 'truefalse', title: 'Myth Busters',
+          intro: 'True or false? Bust the myths!',
+          say: 'Some of these are true and some are fibs. Can you spot which?',
+          statements: [
+            { text: 'All metals are magnetic.', answer: false, why: 'Aluminium, gold, copper and brass are metals, but magnets do not attract them.' },
+            { text: 'Nickel is a magnetic metal.', answer: true, why: 'Iron, nickel and cobalt are the magnetic metals.' },
+            { text: 'A magnet must touch something to pull it.', answer: false, why: 'Magnetism is a non-contact force – it works across a gap.' },
+            { text: 'Steel is magnetic because it is made mostly from iron.', answer: true, why: "That's right – the iron makes it magnetic." },
+            { text: 'A gold ring will stick to a magnet.', answer: false, why: 'Gold is a metal, but it is not magnetic.' },
+            { text: 'Wood can be magnetic if it is very thick.', answer: false, why: 'Wood is never magnetic, however thick it is.' },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'read', title: 'Poles apart', short: 'Read 2', minutes: 3,
+      say: "Magnets have a secret – two different ends! Let's find out more.",
+      cards: [
+        {
+          title: 'North and South', pic: ONE_BAR,
+          text: [
+            'Every magnet has two ends called [[poles]]: a **North-seeking pole (N)** and a **South-seeking pole (S)**.',
+            'The pull of a magnet is strongest at its poles.',
+          ],
+          check: { q: "Where is a magnet's pull strongest?", options: ['in the middle', 'at the poles'], answer: 1 },
+        },
+        {
+          title: 'Opposites attract', pic: ATTRACT,
+          text: [
+            'Put the North pole of one magnet near the South pole of another. They pull together and – CLICK! – they stick.',
+            '**Opposite poles attract.**',
+          ],
+          check: { q: 'Two magnets snap together. One end is North. The other end must be…', options: ['North', 'South'], answer: 1, hint: 'Opposites attract!' },
+        },
+        {
+          title: 'Same poles repel', pic: REPEL,
+          text: [
+            'Now put North next to North. The magnets push each other away! We say they [[repel]]. South and South repel too.',
+            '**Like poles repel.** It feels like an invisible cushion!',
+          ],
+          check: { q: 'South + South will…', options: ['🤝 pull together', '🙅 push apart'], answer: 1 },
+        },
+        {
+          title: 'Strong or weak?', pic: '🧲📎📎📎',
+          text: [
+            'Is a big magnet always stronger? **No!** A small magnet can be stronger than a big one. You have to test it.',
+            'Scientists count how many paperclips each magnet can hold. To make it a [[fair test]], they only change the magnet and keep everything else the same.',
+          ],
+          check: { q: 'Is a bigger magnet always stronger?', options: ['Yes, always', 'No – you have to test it'], answer: 1 },
+        },
+        {
+          title: 'Magnets at work', pic: '🧭♻️🌍',
+          text: [
+            'A [[compass]] has a tiny magnet needle that always points North. That is because the Earth is like a giant magnet!',
+            'At recycling centres, giant magnets lift steel tins out of the rubbish so they can be melted and made into new things.',
+          ],
+          check: { q: 'Which tool uses a magnet to help you find your way?', options: ['🧭 a compass', '📏 a ruler', '🔦 a torch'], answer: 0 },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'Magnets for Kids', short: 'Video 2', minutes: 7,
+      video: { id: '7HHs98PBgk0', title: 'Magnets for Kids | What is a magnet, and how does it work?', channel: 'Learn Bright', duration: '5:36' },
+      say: 'Second video! This one has some brand new facts. Watch carefully!',
+      clues: [
+        'What are the two ends of a magnet called?',
+        'What happens when two South poles meet?',
+        'How many types of magnet are there?',
+        'An amazing fact about the Earth!',
+      ],
+      questions: [
+        { type: 'mcq', q: 'What are the two ends of a magnet called?', options: ['North pole and South pole', 'top and bottom', 'left and right'], answer: 0 },
+        { type: 'gap', q: 'When two South poles are put together, they ___ each other.', options: ['repel', 'attract'], answer: 0, explain: 'Like poles push apart.' },
+        { type: 'mcq', q: 'How many types of magnet did the video talk about?', options: ['one', 'two', 'three'], answer: 2, hint: 'Temporary, permanent and…', explain: 'Temporary magnets, permanent magnets and electromagnets.' },
+        { type: 'tf', q: "The Earth's core is made of iron and nickel, so the Earth has its own magnetic field.", answer: true },
+        { type: 'mcq', q: 'Which of these did the video say uses magnets?', options: ['🧭 compasses', '🍌 bananas', '✏️ pencils'], answer: 0, hint: 'It helps explorers find North.' },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Pole Power', short: 'Game 2', minutes: 5,
+      rounds: [
+        {
+          game: 'label', title: 'Attract or repel?',
+          intro: 'Look at the poles that are **facing each other**. Will each pair attract or repel?',
+          say: 'Only look at the two ends in the middle. Same or different?',
+          pic: POLE_BOARD,
+          hint: 'Look at the two middle ends. Different poles attract. The same poles repel!',
+          spots: [
+            { x: 84, y: 12.4, answer: '🤝 attract' },
+            { x: 84, y: 36, answer: '🙅 repel' },
+            { x: 84, y: 59.7, answer: '🙅 repel' },
+            { x: 84, y: 83.4, answer: '🤝 attract' },
+          ],
+        },
+        {
+          game: 'questions', title: 'Lab Challenge',
+          intro: 'Professor Bolt tested four magnets to see how many paperclips each could hold. Read the table carefully!',
+          say: 'Time to think like a real scientist! Use the table to answer.',
+          html: LAB_TABLE,
+          questions: [
+            { type: 'mcq', q: 'Which magnet was the strongest?', options: ['A', 'B', 'C', 'D'], answer: 2, hint: 'Find the magnet that held the MOST paperclips.' },
+            { type: 'mcq', q: 'How many more paperclips did magnet B hold than magnet A?', options: ['3', '5', '6'], answer: 1, hint: 'Count on from 6 to 11.', explain: '11 − 6 = 5' },
+            { type: 'tf', q: 'The biggest magnets were the strongest.', answer: false, hint: 'Look at magnet D. It is big – how many did it hold?', explain: 'Magnet D is big but only held 2. Size does not tell you strength!' },
+            { type: 'mcq', q: 'To make this a fair test, what must stay the same?', options: ['the type of paperclips', 'the magnet being tested', 'the number of paperclips held'], answer: 0, hint: 'We change the magnet – and keep everything else the same.' },
+            { type: 'order', q: 'Put the steps of the investigation in order.', items: ['🤔 Predict which magnet is strongest.', '📎 Test each magnet with the same paperclips.', '📝 Record the results in a table.', '🏆 Compare the results and decide.'], hint: 'Scientists always predict before they test!' },
+          ],
+        },
+        {
+          game: 'match', title: 'Word match',
+          intro: 'Match each magnet word to what it means.',
+          say: 'Tap a word, then tap what it means!',
+          hint: 'Not a match. Tap the yellow words in the reading pages if you need help!',
+          pairs: [
+            { a: '🤝 attract', b: 'pull together' },
+            { a: '🙅 repel', b: 'push apart' },
+            { a: '↔️ poles', b: 'the two ends of a magnet' },
+            { a: '🌀 magnetic field', b: 'the invisible area around a magnet' },
+            { a: '⚖️ fair test', b: 'change only one thing' },
+            { a: '🧭 compass', b: 'has a needle that points North' },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'break', title: 'Brain Break', short: 'Break', minutes: 2,
+      say: "Stand up, scientist! Let's be magnets!",
+      wiggle: {
+        title: '🕺 Magnet Moves!',
+        seconds: 60,
+        moves: [
+          '🧲 Be a magnet! Stretch your arms out wide.',
+          '🤝 Opposites attract! Clap your hands together 10 times.',
+          '🙅 Like poles repel! Jump your feet apart, then together.',
+          '📎 Be a paperclip! Zoom on the spot as fast as you can.',
+          '🧭 Be a compass! Spin around slowly and point North.',
+          '😌 Shake it out and take a big deep breath.',
+        ],
+      },
+      tryit: {
+        title: '🔍 Try it at home: Magnet Hunt',
+        intro: 'Ask a grown-up for a fridge magnet.',
+        steps: [
+          '**Predict** first: will it stick? Tap the first box.',
+          'Gently hold the magnet on each thing.',
+          'Did it stick? Tap the second box.',
+        ],
+        table: {
+          cols: ['I think…', 'It did…'],
+          items: ['🥄 a spoon', '🚪 a door handle', '🧊 the fridge door', '📕 a book', '🚗 a toy car', '🔥 a radiator'],
+        },
+        tip: 'Tap once for ✅ (sticks) and twice for ❌ (does not stick).',
+      },
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: Magnetron', short: 'Boss', kind: 'Boss battle', minutes: 5,
+      say: 'Uh-oh… MAGNETRON has appeared! Every right answer is a hit. Defeat him, {name}!',
+      boss: { name: 'Magnetron', sprite: Pixel.sprites.magnetron },
+      bonus: {
+        title: '⭐ Bonus quest (for a grown-up to help with)',
+        text: 'Want more? Oak National Academy has a free Year 3 video lesson about magnetic and non-magnetic materials, with Ms Panchal.',
+        url: 'https://www.thenational.academy/pupils/programmes/science-primary-year-3/units/simple-forces-including-magnets/lessons/magnetic-and-non-magnetic-materials/overview',
+        button: 'Open the Oak lesson ▶',
+      },
+      questions: [
+        { type: 'mcq', q: 'What do we call a push or a pull?', options: ['a force', 'a pole', 'a field'], answer: 0 },
+        { type: 'mcq', q: 'Which group has ONLY magnetic things in it?', options: ['iron nail, steel fork, paperclip', 'iron nail, gold ring, paperclip', 'steel fork, plastic ruler, nail'], answer: 0, hint: 'Check every item in the group. Gold and plastic are not magnetic.' },
+        { type: 'gap', q: 'The magnetic metals are iron, cobalt and ___.', options: ['nickel', 'gold', 'aluminium'], answer: 0 },
+        { type: 'tf', q: 'A drinks can is made of metal, so it must be magnetic.', answer: false, hint: 'Remember the tricky fact – not all metals are magnetic!', explain: 'Drinks cans are aluminium, which is not magnetic.' },
+        { type: 'mcq', q: "Mia holds the North pole of her magnet next to the North pole of Sam's magnet. What happens?", options: ['They push apart', 'They snap together', 'Nothing happens'], answer: 0, hint: 'Like poles…' },
+        { type: 'mcq', q: 'Two magnets push each other away. One of the facing ends is a South pole. What is the other one?', options: ['North', 'South'], answer: 1, hint: 'Pushing apart means the poles are the SAME.' },
+        { type: 'tf', q: 'Magnetism is a non-contact force.', answer: true, explain: 'Magnets can pull without touching.' },
+        { type: 'mcq', q: 'Why can a fridge magnet hold up your drawing?', options: ["Its pull works through paper", 'The paper becomes magnetic', 'The drawing is sticky'], answer: 0 },
+        { type: 'mcq', q: 'At the recycling centre, the giant magnet picks up…', options: ['🥫 steel tins', '🥤 aluminium drinks cans', '🍾 glass bottles'], answer: 0 },
+        { type: 'mcq', q: 'Magnet X holds 9 paperclips. Magnet Y holds 4. Which is stronger, and by how many?', options: ['X, by 5', 'Y, by 5', 'X, by 4'], answer: 0, hint: 'Which number is bigger? Then find the difference.', explain: '9 − 4 = 5, so X is stronger by 5.' },
+        { type: 'mcq', q: 'Why does a compass needle point North?', options: ['The Earth is like a giant magnet', 'The wind blows it', 'It is heavier at one end'], answer: 0 },
+        { type: 'order', q: 'Put the recycling magnet steps in order.', items: ['🗑️ Rubbish moves along a belt.', '🧲 A giant magnet swings over it.', '🥫 Steel tins jump up onto the magnet.', '🔥 The tins are melted to make new things.'], hint: 'What happens first?' },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>

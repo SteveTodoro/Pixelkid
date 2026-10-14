@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Learning Adventures</title>
+  <link rel="stylesheet" href="shared/lesson.css">
+  <style>
+    .lib-head { position: relative; z-index: 1; text-align: center; padding: 30px 16px 6px; }
+    .lib-head h1 { font-size: 3rem; color: #fff; margin: 0; text-shadow: 4px 4px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000; }
+    .lib-head p { font-family: var(--pixel); font-size: 1.3rem; font-weight: 700; color: #fff; text-shadow: 2px 2px 0 #000; margin: 6px 0 0; }
+    .total { display: inline-block; margin-top: 14px; padding: 6px 18px; background: #000; border: 3px solid #3a3a3a; color: #6ff5e8; font-family: var(--pixel); font-weight: 700; font-size: 1.3rem; text-shadow: 2px 2px 0 #0b4a44; }
+    .tabs { position: relative; z-index: 1; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 22px 16px 6px; }
+    .tab { cursor: pointer; padding: 12px 20px; font-family: var(--pixel); font-weight: 700; font-size: 1.25rem; color: #fff; text-shadow: 2px 2px 0 rgba(0,0,0,.5);
+      background: #6f6f6f; border: 3px solid #000; box-shadow: var(--bevel), 0 4px 0 #000; }
+    .tab[aria-selected="true"] { background: var(--brand); outline: 4px solid #fff; outline-offset: -1px; }
+    .tab.science[aria-selected="true"] { background: #19b3a3; }
+    .tab.maths[aria-selected="true"] { background: #e09a00; }
+    .tab.english[aria-selected="true"] { background: #d9433b; }
+    .shelf { position: relative; z-index: 1; max-width: 1040px; margin: 0 auto; padding: 16px 16px 90px; display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); }
+    .lesson-card {
+      position: relative; display: flex; flex-direction: column; gap: 4px; padding: 16px; min-height: 190px;
+      background: var(--stone); border: 4px solid #000; box-shadow: var(--bevel), 0 6px 0 rgba(0,0,0,.25); color: var(--ink); text-decoration: none;
+    }
+    a.lesson-card:hover { transform: translateY(-4px); outline: 4px solid #fff; outline-offset: -2px; }
+    .lesson-card .le { width: 64px; height: 64px; display: grid; place-items: center; font-size: 2.4rem; background: var(--slot); border: 3px solid #000; box-shadow: var(--bevel-in); }
+    .lesson-card h2 { font-size: 1.25rem; margin: 8px 0 0; }
+    .lesson-card .unit { color: #444; font-weight: 600; font-size: .85rem; }
+    .lesson-card .badge { margin-top: auto; align-self: flex-start; padding: 4px 10px; font-family: var(--pixel); font-weight: 700; font-size: .9rem; color: #fff; background: var(--good); border: 2px solid #000; text-shadow: 1px 1px 0 #000; }
+    .lesson-card.soon { filter: grayscale(.8); opacity: .8; }
+    .lesson-card.soon .badge { background: #555; }
+    .lesson-card.done .badge { background: var(--gold); }
+  </style>
+</head>
+<body class="science">
+  <header class="lib-head">
+    <h1>LEARNING QUEST</h1>
+    <p id="hello">Choose your world, then pick a level!</p>
+    <div class="total" id="total">⭐ 0 stars collected</div>
+  </header>
+  <nav class="tabs" role="tablist" id="tabs"></nav>
+  <main class="shelf" id="shelf"></main>
+
+<script>
+// Add a lesson by giving it a `file`. Lessons without one show as "Coming soon".
+const LIBRARY = {
+  science: {
+    label: '🔬 Science Lab',
+    lessons: [
+      { id: 'science-magnets', title: 'Magnet Magic!', emoji: '🧲', unit: 'Forces & Magnets', file: 'science/magnets.html' },
+      { title: 'Pushes, Pulls & Friction', emoji: '🛷', unit: 'Forces & Magnets' },
+      { title: 'Plant Detectives', emoji: '🌱', unit: 'Plants' },
+      { title: 'What Do Plants Need?', emoji: '🌻', unit: 'Plants' },
+      { title: 'Flower Power Life Cycle', emoji: '🌸', unit: 'Plants' },
+      { title: 'Fuel Your Body', emoji: '🥦', unit: 'Animals incl. Humans' },
+      { title: 'Bones & Muscles', emoji: '🦴', unit: 'Animals incl. Humans' },
+      { title: 'Rock Stars', emoji: '🪨', unit: 'Rocks' },
+      { title: 'Fossil Hunters', emoji: '🦖', unit: 'Rocks' },
+      { title: 'Super Soil', emoji: '🪱', unit: 'Rocks' },
+      { title: 'Light & Mirrors', emoji: '💡', unit: 'Light' },
+      { title: 'Shadow Shapes', emoji: '👤', unit: 'Light' },
+    ],
+  },
+  maths: {
+    label: '🔢 Maths Mine',
+    lessons: [
+      { title: 'Place Value Party', emoji: '🎉', unit: 'Numbers to 1,000' },
+      { title: 'Counting in 4s, 8s, 50s & 100s', emoji: '🐸', unit: 'Number' },
+      { title: '3-Digit Add & Subtract', emoji: '➕', unit: 'Addition & Subtraction' },
+      { title: 'Times Tables Tower (3, 4, 8)', emoji: '🏰', unit: 'Multiplication & Division' },
+      { title: 'Fraction Pizza Shop', emoji: '🍕', unit: 'Fractions' },
+      { title: 'Money Market', emoji: '💷', unit: 'Measurement' },
+      { title: 'Tick Tock Time', emoji: '⏰', unit: 'Time' },
+      { title: 'Measure It!', emoji: '📏', unit: 'Measurement' },
+      { title: 'Perimeter Fences', emoji: '🐑', unit: 'Measurement' },
+      { title: 'Shape Explorers', emoji: '🔺', unit: 'Geometry' },
+      { title: 'Bar Chart Bonanza', emoji: '📊', unit: 'Statistics' },
+    ],
+  },
+  english: {
+    label: '📚 Word Kingdom',
+    lessons: [
+      { title: 'Prefix Power', emoji: '🦸', unit: 'Spelling & Vocabulary' },
+      { title: 'Suffix Squad', emoji: '🧩', unit: 'Spelling & Vocabulary' },
+      { title: 'Homophone Hunters', emoji: '👂', unit: 'Spelling' },
+      { title: 'A or An?', emoji: '🍎', unit: 'Grammar' },
+      { title: 'Conjunction Junction', emoji: '🚂', unit: 'Grammar' },
+      { title: 'Speech Marks Squad', emoji: '💬', unit: 'Punctuation' },
+      { title: 'Theseus & the Minotaur', emoji: '🐂', unit: 'Myths & Legends' },
+      { title: 'Fairy Tale Twist', emoji: '🧚', unit: 'Fiction' },
+      { title: 'Poetry Playground', emoji: '🎵', unit: 'Poetry' },
+      { title: 'Non-fiction Detectives', emoji: '🔎', unit: 'Non-fiction' },
+      { title: 'Inference Investigators', emoji: '🕵️', unit: 'Reading Skills' },
+    ],
+  },
+};
+
+const get = (k, d) => { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } };
+const records = get('y3:records', {});
+const settings = get('y3:settings', {});
+let current = 'science';
+try { current = localStorage.getItem('y3:tab') || 'science'; } catch (e) { /* ignore */ }
+if (!LIBRARY[current]) current = 'science';
+
+const total = Object.values(records).reduce((n, r) => n + (r.stars || 0), 0);
+document.getElementById('total').textContent = `💎 ${total} gem${total === 1 ? '' : 's'} collected`;
+if (settings.name) document.getElementById('hello').textContent = `Welcome back, ${settings.name}! Pick a level.`;
+
+const tabs = document.getElementById('tabs'), shelf = document.getElementById('shelf');
+function render() {
+  document.body.className = current;
+  tabs.replaceChildren(...Object.entries(LIBRARY).map(([key, s]) => {
+    const b = document.createElement('button');
+    b.className = 'tab ' + key; b.type = 'button'; b.setAttribute('role', 'tab');
+    b.setAttribute('aria-selected', String(key === current)); b.textContent = s.label;
+    b.onclick = () => { current = key; try { localStorage.setItem('y3:tab', key); } catch (e) { /* ignore */ } render(); };
+    return b;
+  }));
+  shelf.replaceChildren(...LIBRARY[current].lessons.map(l => {
+    const rec = l.id && records[l.id];
+    const card = document.createElement(l.file ? 'a' : 'div');
+    card.className = 'lesson-card' + (l.file ? '' : ' soon') + (rec && rec.done ? ' done' : '');
+    if (l.file) card.href = l.file;
+    const badge = !l.file ? '🔒 Coming soon'
+      : rec && rec.done ? `🏆 ${rec.stars || 0} 💎 · Boss ${rec.best}/${rec.total}`
+        : rec && rec.stars ? `▶ Continue · ${rec.stars} 💎` : '▶ PLAY';
+    card.innerHTML = `<div class="le"></div><h2></h2><div class="unit"></div><span class="badge"></span>`;
+    card.querySelector('.le').textContent = l.emoji;
+    card.querySelector('h2').textContent = l.title;
+    card.querySelector('.unit').textContent = l.unit;
+    card.querySelector('.badge').textContent = badge;
+    return card;
+  }));
+}
+render();
+</script>
+</body>
+</html>
