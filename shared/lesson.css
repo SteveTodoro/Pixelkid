@@ -595,6 +595,8 @@ a { color: var(--brand-dark); }
 .wd-item.pricey .wd-badge { background: #ddd; color: #777; }
 .wd-item.locked { filter: grayscale(.6); }
 .wd-item.locked .wd-badge { background: #333; color: #fff; }
+.wd-item.special { background: linear-gradient(#fff6c8, #ffe27a); box-shadow: inset -3px -3px 0 #d9a400, inset 3px 3px 0 #fffbe6; }
+.wd-ribbon { font-family: var(--pixel); font-weight: 700; font-size: .75rem; padding: 0 6px; background: #000; color: var(--gold); }
 .me-avatar { height: 100px; image-rendering: pixelated; }
 .me-row { display: flex; align-items: center; gap: 16px; margin: 18px 0; }
 .me-row .name-row { margin: 0 0 10px; }

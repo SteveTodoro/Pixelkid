@@ -42,7 +42,7 @@
 (function () {
   const A = window.Avatar;
   const $ = id => document.getElementById(id);
-  let saved = A.load(), look = Object.assign({}, saved.look), cat = 'hair', selected = null;
+  let saved = A.load(), look = Object.assign({}, saved.look), cat = 'costume', selected = null;
   let name = '';
   try { name = (JSON.parse(localStorage.getItem('y3:settings') || '{}').name) || ''; } catch (e) { /* ignore */ }
 
@@ -64,9 +64,10 @@
     $('toasts').append(t); setTimeout(() => t.classList.add('out'), 2800); setTimeout(() => t.remove(), 3300);
   }
 
-  const listFor = c => c === 'skin' ? A.SKINS : c === 'hairColor' ? A.HAIR_COLOURS : c === 'scene' ? A.SCENES : A.ITEMS.filter(i => i.cat === c);
-  const lookWith = (c, id) => Object.assign({}, saved.look, { [c]: id });
-  const priceOf = it => it.price || 0;
+  const listFor = c => c === 'skin' ? A.SKINS : c === 'hairColor' ? A.HAIR_COLOURS : c === 'scene' ? A.SCENES : c === 'costume' ? A.COSTUMES : A.ITEMS.filter(i => i.cat === c);
+  const lookWith = (c, id) => Object.assign({}, saved.look, c === 'costume' ? A.byId(id).parts : { [c]: id });
+  const priceOf = it => A.priceOf(it, saved);
+  const isWearing = it => it.parts ? Object.entries(it.parts).every(([c, id]) => saved.look[c] === id) : saved.look[cat] === it.id;
 
   function drawPreview() {
     $('preview').src = A.dataURL(look, { scale: 12, pet: true });
@@ -85,8 +86,7 @@
     });
   }
   function status(it) {
-    const wearing = saved.look[cat] === it.id;
-    if (wearing) return ['✔ Wearing', 'wearing'];
+    if (isWearing(it)) return ['✔ Wearing', 'wearing'];
     if (A.owns(it, saved)) return ['Owned', 'owned'];
     if (it.unlock) return ['🔒 Secret', 'locked'];
     return ['💎 ' + priceOf(it), A.wallet().balance >= priceOf(it) ? 'buy' : 'pricey'];
@@ -96,13 +96,14 @@
     listFor(cat).forEach(it => {
       const [label, cls] = status(it);
       const b = document.createElement('button');
-      b.type = 'button'; b.className = `wd-item ${cls}` + (selected === it ? ' sel' : '');
+      b.type = 'button'; b.className = `wd-item ${cls}` + (it.special ? ' special' : '') + (selected === it ? ' sel' : '');
       const img = document.createElement('img');
       img.src = A.dataURL(lookWith(cat, it.id), { scale: 4, pet: cat === 'pet' }); img.alt = '';
       if (cat === 'scene') { img.style.background = A.sceneBox(it.id); img.classList.add('wd-scene'); }
       const n = document.createElement('span'); n.className = 'wd-iname'; n.textContent = it.name;
       const s = document.createElement('span'); s.className = 'wd-badge'; s.textContent = label;
       b.append(img, n, s);
+      if (it.special) { const r = document.createElement('span'); r.className = 'wd-ribbon'; r.textContent = '★ SPECIAL'; b.prepend(r); }
       b.onclick = () => { selected = it; look = lookWith(cat, it.id); sfx.tap(); render(); };
       grid.append(b);
     });
@@ -113,7 +114,7 @@
     const msg = text => { const p = document.createElement('p'); p.className = 'wd-msg'; p.textContent = text; box.append(p); };
     if (!selected) { msg('👆 Tap something to try it on!'); return; }
     const it = selected;
-    if (saved.look[cat] === it.id) { msg(`✔ You're wearing the ${it.name}.`); return; }
+    if (isWearing(it)) { msg(`✔ You're wearing the ${it.name}.`); return; }
     if (A.owns(it, saved)) {
       btn('👕 Wear it!', 'green', () => { A.wear(it.id); saved = A.load(); sfx.buy(); toast('LOOKING GOOD!', `You put on: ${it.name}`, '😎'); render(); });
     } else if (it.unlock) {

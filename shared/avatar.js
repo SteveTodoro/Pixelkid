@@ -40,6 +40,7 @@
     { id: 'skin3', name: 'Tone 3', s: '#d9a066', S: '#b9834c' },
     { id: 'skin4', name: 'Tone 4', s: '#a86b3c', S: '#8a552c' },
     { id: 'skin5', name: 'Tone 5', s: '#6b4226', S: '#52311b' },
+    { id: 'skin-undyne', name: 'Fish blue', price: 60, special: true, s: '#5fa8e8', S: '#3f86c6' },
   ];
   const HAIR_COLOURS = [
     { id: 'hc-brown', name: 'Brown', h: '#6b4423', H: '#8a5a32' },
@@ -60,6 +61,8 @@
     { id: 'hair-long', cat: 'hair', name: 'Long', price: 15, rows: ['............', '...hhhhhh...', '..hhhhhhhh..', '.hhHhhhhhhh.', '.hh......hh.', '.h........h.', '.h........h.', '.h........h.', '.hh......hh.'] },
     { id: 'hair-curly', cat: 'hair', name: 'Big & Curly', price: 20, rows: ['...hhhhhh...', '.hhhHhhhhhh.', '.hhhhhhhHhh.', '.hHhhhhhhhh.', '.hh......hh.', '.h........h.'] },
     { id: 'hair-mohawk', cat: 'hair', name: 'Mohawk', price: 20, rows: ['.....hh.....', '.....hh.....', '....hHhh....', '....hhhh....'] },
+    { id: 'hair-bob', cat: 'hair', name: 'Bob cut', price: 20, rows: ['............', '...hhhhhh...', '..hhhhhhhh..', '..hhhhhhhh..', '.hhhhhhhhhh.', '.hh......hh.', '.hh......hh.', '.hh......hh.'] },
+    { id: 'undyne-ponytail', cat: 'hair', name: 'Undyne ponytail', price: 60, special: true, rows: ['........hhh.', '...hhhhhhhhh', '..hhhhhhhh.h', '..hHhhhhhh.h', '..hh....hh.h', '..h......h..'], pal: { h: '#e53935', H: '#ff6b5e' } },
     { id: 'hair-none', cat: 'hair', name: 'No hair', price: 0, rows: [] },
     // ----- tops -----
     { id: 'tee-grey', cat: 'top', name: 'Grey tee', price: 0, y: 9, rows: ['.tttttttttt.', '.tttttttttt.', '...tttttt...', '...tttttt...', '...tttttt...'], pal: { t: '#9a9a9a' } },
@@ -70,17 +73,32 @@
     { id: 'labcoat', cat: 'top', name: 'Lab coat', price: 30, y: 9, rows: ['.ttttTTtttt.', '.ttttTTtttt.', '.ttttTTtttt.', '.ttttTTtttt.', '...ttTTtt...', '...t....t...'], pal: { t: '#ffffff', T: '#8fd3ff' } },
     { id: 'hero-suit', cat: 'top', name: 'Hero suit', price: 40, y: 9, rows: ['.tttttttttt.', '.tttTTTTttt.', '.ttttTTtttt.', '.tttttttttt.', '...yyyyyy...'], pal: { t: '#d9433b', T: '#ffd43b', y: '#ffd43b' } },
     { id: 'space-top', cat: 'top', name: 'Space suit', price: 40, y: 9, rows: ['.tttttttttt.', '.tttOOOOttt.', '.tttObcOttt.', '.tttttttttt.', '...tttttt...'], pal: { t: '#f2f2f2', O: '#ff8c1a', b: '#2ee6d6', c: '#e53935' } },
+    // special costumes: pricey tributes, shown with a gold ★ SPECIAL ribbon in the shop
+    { id: 'ff-hoodie', cat: 'top', name: 'Foltyn Family hoodie', price: 150, special: true, y: 8, rows: ['..TttttttT..', '.tttttttttt.', '.ttKKKtKKKt.', '.ttKtttKttt.', '.ttKKttKKtt.', '...KtttKt...'], pal: { t: '#fafafa', T: '#c9ced6', K: '#1b1b1b' } },
+    { id: 'ninja-gi', cat: 'top', name: 'Ninja suit', price: 80, special: true, y: 9, rows: ['.ggggkkgggg.', '.gggggkgggg.', '.gggggggggg.', '.gggggggggg.', '...RRRRRR...'], pal: { g: '#2d3139', k: '#15171b', R: '#e53935' } },
+    { id: 'chef-jacket', cat: 'top', name: 'Chef jacket', price: 70, special: true, y: 8, rows: ['...rrrrrr...', '.tttttttttt.', '.tttbttbttt.', '.tttttttttt.', '.tttbttbttt.', '...tttttt...'], pal: { t: '#ffffff', b: '#1b1b1b', r: '#e53935' } },
+    { id: 'sans-hoodie', cat: 'top', name: 'Sans hoodie', price: 100, special: true, y: 9, rows: ['.ffffffffff.', '.jjjwwwwjjj.', '.jjjwwwwjjj.', '.jjjwwwwjjj.', '...jjjjjj...'], pal: { f: '#e6ecf2', j: '#3b8fe0', w: '#ffffff' } },
+    { id: 'frisk-jumper', cat: 'top', name: 'Frisk stripy jumper', price: 80, special: true, y: 9, rows: ['.bbbbbbbbbb.', '.pppppppppp.', '.bbbbbbbbbb.', '.pppppppppp.', '...bbbbbb...'], pal: { b: '#4a7fd8', p: '#c459d1' } },
+    { id: 'papyrus-armour', cat: 'top', name: 'Papyrus battle body', price: 100, special: true, y: 9, rows: ['yyyttttttyyy', '.tttttttttt.', '.ttTttttTtt.', '.tttttttttt.', '.rr.bbbb.rr.'], pal: { y: '#ffcc33', t: '#ffffff', T: '#d6dbe1', r: '#e53935', b: '#2f5fd0' } },
+    { id: 'undyne-top', cat: 'top', name: 'Undyne tank top', price: 50, special: true, y: 9, rows: ['..kkkkkkkk..', '..kkkkkkkk..', '..kkkkkkkk..', '..kkkkkkkk..', '...kkkkkk...'], pal: { k: '#1b1b1b' } },
     // ----- bottoms -----
     { id: 'jeans', cat: 'legs', name: 'Jeans', price: 0, y: 14, rows: ['...llllll...', '...ll..ll...', '...ll..ll...', '...ll..ll...'], pal: { l: '#2f5d9e' } },
     { id: 'shorts', cat: 'legs', name: 'Shorts', price: 10, y: 14, rows: ['...llllll...', '...ll..ll...'], pal: { l: '#8a5a32' } },
     { id: 'trousers-black', cat: 'legs', name: 'Black trousers', price: 10, y: 14, rows: ['...llllll...', '...ll..ll...', '...ll..ll...', '...ll..ll...'], pal: { l: '#2b2b2b' } },
     { id: 'leggings-rainbow', cat: 'legs', name: 'Rainbow legs', price: 25, y: 14, rows: ['...aaaaaa...', '...bb..bb...', '...cc..cc...', '...dd..dd...'], pal: { a: '#e53935', b: '#ffb800', c: '#2e9e3e', d: '#1e6fd9' } },
     { id: 'space-legs', cat: 'legs', name: 'Space trousers', price: 30, y: 14, rows: ['...llllll...', '...ll..ll...', '...LL..LL...', '...ll..ll...'], pal: { l: '#f2f2f2', L: '#ff8c1a' } },
+    { id: 'ninja-trousers', cat: 'legs', name: 'Ninja trousers', price: 40, special: true, y: 14, rows: ['...llllll...', '...ll..ll...', '...ll..ll...', '...LL..LL...'], pal: { l: '#2d3139', L: '#15171b' } },
+    { id: 'chef-trousers', cat: 'legs', name: 'Chef check trousers', price: 40, special: true, y: 14, rows: ['...lLlLlL...', '...Ll..Ll...', '...lL..lL...', '...Ll..Ll...'], pal: { l: '#ffffff', L: '#1b1b1b' } },
+    { id: 'sans-shorts', cat: 'legs', name: 'Sans shorts', price: 40, special: true, y: 14, rows: ['...kkkkkk...', '...wk..kw...'], pal: { k: '#1b1b1b', w: '#ffffff' } },
+    { id: 'papyrus-shorts', cat: 'legs', name: 'Papyrus shorts', price: 40, special: true, y: 14, rows: ['...bbbbbb...', '...bb..bb...'], pal: { b: '#2f5fd0' } },
     // ----- shoes -----
     { id: 'trainers', cat: 'shoes', name: 'Trainers', price: 0, y: 18, rows: ['...oo..oo...', '..oOo..oOo..'], pal: { o: '#ffffff', O: '#1e6fd9' } },
     { id: 'trainers-red', cat: 'shoes', name: 'Red kicks', price: 10, y: 18, rows: ['...oo..oo...', '..oOo..oOo..'], pal: { o: '#e53935', O: '#ffffff' } },
     { id: 'boots', cat: 'shoes', name: 'Boots', price: 15, y: 17, rows: ['...oo..oo...', '...oo..oo...', '..ooo..ooo..'], pal: { o: '#4a2f1a' } },
     { id: 'gold-kicks', cat: 'shoes', name: 'Gold kicks', price: 40, y: 18, rows: ['...oo..oo...', '..oOo..oOo..'], pal: { o: '#ffd43b', O: '#ffffff' } },
+    { id: 'ninja-tabi', cat: 'shoes', name: 'Ninja tabi', price: 30, special: true, y: 18, rows: ['...kk..kk...', '..kkk..kkk..'], pal: { k: '#15171b' } },
+    { id: 'sans-slippers', cat: 'shoes', name: 'Pink slippers', price: 40, special: true, y: 18, rows: ['...pp..pp...', '..ppp..ppp..'], pal: { p: '#ff9cc7' } },
+    { id: 'papyrus-boots', cat: 'shoes', name: 'Red boots', price: 40, special: true, y: 17, rows: ['...rr..rr...', '...rr..rr...', '..rrr..rrr..'], pal: { r: '#e53935' } },
     // ----- hats -----
     { id: 'hat-none', cat: 'hat', name: 'No hat', price: 0, rows: [] },
     { id: 'cap', cat: 'hat', name: 'Cap', price: 15, rows: ['............', '..cccccccc..', '..cccccccc..', '.CCCCCCCCCC.'], pal: { c: '#e53935', C: '#a31515' } },
@@ -90,6 +108,11 @@
     { id: 'crown', cat: 'hat', name: 'Crown', price: 60, rows: ['..y..yy..y..', '..yryyyyry..'], pal: { y: '#ffd43b', r: '#e53935' } },
     { id: 'knight', cat: 'hat', name: 'Knight helmet', price: 0, unlock: 'boss', rows: ['.....rr.....', '..mmmmmmmm..', '.mmmmmmmmmm.', '.mmmmmmmmmm.', '.mmmmmmmmmm.', '.mkkkkkkkkm.', '.mmmmmmmmmm.', '.mmm.mm.mmm.', '..mmmmmmmm..'], pal: { m: '#b8c2cc', k: '#1b1b1b', r: '#e53935' } },
     { id: 'beret', cat: 'hat', name: 'Artist beret', price: 0, unlock: 'artist', rows: ['......c.....', '...cccccc...', '.cccccccccc.'], pal: { c: '#e53935' } },
+    // hideHair: covers the whole head, so the hair layer is skipped
+    { id: 'ninja-mask', cat: 'hat', name: 'Ninja mask', price: 80, special: true, hideHair: true, y: 1, rows: ['...kkkkkk...', '..kkkkkkkk..', '..RRRRRRRRRR', '..kkkkkkkk.R', '..k......k..', '..kkkkkkkk..', '..kkkkkkkk..', '...kkkkkk...'], pal: { k: '#22252b', R: '#e53935' } },
+    { id: 'chef-hat', cat: 'hat', name: 'Chef hat', price: 60, special: true, rows: ['.cccccccccc.', '.ccCccccCcc.', '..cccccccc..', '..CCCCCCCC..'], pal: { c: '#ffffff', C: '#d6dbe1' } },
+    { id: 'sans-skull', cat: 'hat', name: 'Sans skull', price: 120, special: true, hideHair: true, y: 2, rows: ['..wwwwwwww..', '.wwwwwwwwww.', '.wkkkwwkkkw.', '.wkWkwwkWkw.', '.wkkkwwkkkw.', '.wwwwkkwwww.', '..wkkkkkkw..'], pal: { w: '#f4f4f0', k: '#1b1b1b', W: '#ffffff' } },
+    { id: 'papyrus-skull', cat: 'hat', name: 'Papyrus skull', price: 120, special: true, hideHair: true, y: 1, rows: ['...wwwwww...', '..wwwwwwww..', '..wwwwwwww..', '..wkkwwkkw..', '..wkkwwkkw..', '..wwwwkwww..', '..wkkkkkkw..', '...wkwkwk...'], pal: { w: '#f4f4f0', k: '#1b1b1b' } },
     // ----- extras -----
     { id: 'extra-none', cat: 'extra', name: 'Nothing', price: 0, rows: [] },
     { id: 'shades', cat: 'extra', name: 'Cool shades', price: 20, y: 5, rows: ['..kwkkkkwk..'], pal: { k: '#1b1b1b', w: '#ffffff' } },
@@ -99,12 +122,15 @@
     { id: 'cape-gold', cat: 'extra', name: 'Champion cape', price: 0, unlock: 'perfect', behind: true, y: 9, rows: ['.cccccccccc.', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', '.cccccccccc.'], pal: { c: '#ffb800' } },
     { id: 'wings', cat: 'extra', name: 'Wings', price: 80, behind: true, y: 8, rows: ['w..........w', 'ww........ww', 'wWw......wWw', 'wWw......wWw', 'ww........ww', 'w..........w'], pal: { w: '#ffffff', W: '#bfefff' } },
     { id: 'designer-scarf', cat: 'extra', name: 'Designer scarf', price: 0, unlock: 'designer', y: 8, rows: ['..cccccccc..', '..cCcCcCcc..', '.......cc...', '.......Cc...'], pal: { c: '#8e5cff', C: '#ffd43b' } },
+    { id: 'papyrus-scarf', cat: 'extra', name: 'Papyrus scarf', price: 70, special: true, y: 8, rows: ['..cccccccc..', '..cccccccc..', '.......cc...', '.......cc...', '........cc..'], pal: { c: '#e53935' } },
+    { id: 'undyne-patch', cat: 'extra', name: 'Eye patch & grin', price: 50, special: true, y: 4, rows: ['..kkkk......', '..kkk..y....', '............', '....wwww....'], pal: { k: '#1b1b1b', y: '#ffd43b', w: '#ffffff' } },
     // ----- pets -----
     { id: 'pet-none', cat: 'pet', name: 'No pet', price: 0, rows: [] },
     { id: 'pet-cat', cat: 'pet', name: 'Pixel cat', price: 40, rows: ['.o....o.', '.oo..oo.', '.oooooo.', '.ogoogo.', '.oooooo.', '..oppo..', '.oooooo.', '.o.oo.o.'], pal: { o: '#ff8c1a', g: '#2e9e3e', p: '#ff7eb6' } },
     { id: 'pet-dog', cat: 'pet', name: 'Pixel dog', price: 40, rows: ['bb....bb', 'bbbbbbbb', '.bkbbkb.', '.bbbbbb.', '.bbkkbb.', '..bbbb..', '.bbbbbb.', '.b.bb.b.'], pal: { b: '#a86b3c', k: '#1b1b1b' } },
     { id: 'pet-robot', cat: 'pet', name: 'Mini Bolt', price: 50, rows: ['...yy...', '.kkkkkk.', '.kcllck.', '.kllllk.', '.kkkkkk.', '.gggggg.', '.g.gg.g.', '.k.kk.k.'], pal: { y: '#ffcc33', k: '#1b1b1b', c: '#2ee6d6', l: '#d9dde3', g: '#8e9aa8' } },
     { id: 'pet-dragon', cat: 'pet', name: 'Baby dragon', price: 100, rows: ['.p.gg.p.', '.pggggp.', 'pgkggkgp', '.gggggg.', '.gyyyyg.', '..gyyg..', '.gg..gg.', '.g....g.'], pal: { g: '#2e9e3e', p: '#8e5cff', k: '#1b1b1b', y: '#ffd43b' } },
+    { id: 'pet-annoying-dog', cat: 'pet', name: 'Annoying Dog', price: 100, special: true, rows: ['ww....ww', 'wwwwwwww', '.wkwwkw.', '.wwwwww.', '.wwkkww.', '..wwww..', '.wwwwww.', '.w.ww.w.'], pal: { w: '#ffffff', k: '#1b1b1b' } },
   ];
   // ---------- background scenes (change the sky, decorations and ground everywhere) ----------
   const svgURI = (w, hh, inner) => `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${hh}' viewBox='0 0 ${w} ${hh}' shape-rendering='crispEdges'>${inner}</svg>`)}")`;
@@ -161,6 +187,17 @@
     return `${sc.deco2 ? sc.deco2 + ' right 4px top 4px / 45% no-repeat, ' : ''}${sc.deco ? sc.deco + ' 0 0 / 160px ' + sc.repeat + ', ' : ''}linear-gradient(transparent 76%, ${sc.ground[0]} 76%, ${sc.ground[0]} 82%, ${sc.ground[2]} 82%), ${sc.stripes ? 'repeating-linear-gradient(135deg, rgba(255,255,255,.35) 0 10px, transparent 10px 20px), ' : ''}linear-gradient(${sc.sky[0]}, ${sc.sky[1]})`;
   }
 
+  // Costumes: whole outfits bought and worn in one go. Price = the parts you don't own yet.
+  const COSTUMES = [
+    { id: 'set-ff', name: 'Foltyn Family', special: true, parts: { top: 'ff-hoodie', hat: 'hat-none' } },
+    { id: 'set-ninja', name: 'Ninja', special: true, parts: { hat: 'ninja-mask', top: 'ninja-gi', legs: 'ninja-trousers', shoes: 'ninja-tabi', extra: 'extra-none' } },
+    { id: 'set-chef', name: 'Chef', special: true, parts: { hat: 'chef-hat', top: 'chef-jacket', legs: 'chef-trousers', extra: 'extra-none' } },
+    { id: 'set-sans', name: 'Sans', special: true, parts: { hat: 'sans-skull', top: 'sans-hoodie', legs: 'sans-shorts', shoes: 'sans-slippers', extra: 'extra-none' } },
+    { id: 'set-papyrus', name: 'Papyrus', special: true, parts: { hat: 'papyrus-skull', top: 'papyrus-armour', legs: 'papyrus-shorts', shoes: 'papyrus-boots', extra: 'papyrus-scarf' } },
+    { id: 'set-undyne', name: 'Undyne', special: true, parts: { skin: 'skin-undyne', hair: 'undyne-ponytail', hat: 'hat-none', top: 'undyne-top', legs: 'jeans', shoes: 'boots', extra: 'undyne-patch' } },
+    { id: 'set-frisk', name: 'Frisk', special: true, parts: { hair: 'hair-bob', hairColor: 'hc-brown', hat: 'hat-none', top: 'frisk-jumper', legs: 'jeans', shoes: 'boots', extra: 'extra-none' } },
+  ];
+
   const UNLOCK_TEXT = {
     level5: 'Reach level 5 in any lesson to unlock',
     boss: 'Beat any boss to unlock',
@@ -170,11 +207,11 @@
     video: 'Finish any video quest to unlock',
   };
   const CATS = [
-    ['skin', '🙂 Skin'], ['hair', '💇 Hair'], ['hairColor', '🎨 Hair colour'], ['top', '👕 Tops'], ['legs', '👖 Bottoms'],
+    ['costume', '🎭 Costumes'], ['skin', '🙂 Skin'], ['hair', '💇 Hair'], ['hairColor', '🎨 Hair colour'], ['top', '👕 Tops'], ['legs', '👖 Bottoms'],
     ['shoes', '👟 Shoes'], ['hat', '🎩 Hats'], ['extra', '✨ Extras'], ['pet', '🐾 Pets'], ['scene', '🌄 Scenes'],
   ];
   const DEFAULT_LOOK = { skin: 'skin1', hairColor: 'hc-brown', hair: 'hair-short', top: 'tee-grey', legs: 'jeans', shoes: 'trainers', hat: 'hat-none', extra: 'extra-none', pet: 'pet-none', scene: 'scene-sunny' };
-  const byId = id => ITEMS.find(i => i.id === id) || SKINS.find(i => i.id === id) || HAIR_COLOURS.find(i => i.id === id) || SCENES.find(i => i.id === id);
+  const byId = id => ITEMS.find(i => i.id === id) || SKINS.find(i => i.id === id) || HAIR_COLOURS.find(i => i.id === id) || SCENES.find(i => i.id === id) || COSTUMES.find(i => i.id === id);
 
   // ---------- saved state + wallet ----------
   const AKEY = 'y3:avatar', WKEY = 'y3:wallet';
@@ -205,16 +242,23 @@
     return all;
   }
   function isFree(it) { return !it.price && !it.unlock; }
-  function owns(it, a = load()) { return isFree(it) || a.owned.includes(it.id) || (it.unlock && achievements()[it.unlock]); }
+  const partsOf = it => Object.values(it.parts).map(byId);
+  function owns(it, a = load()) {
+    if (it.parts) return partsOf(it).every(p => owns(p, a));
+    return isFree(it) || a.owned.includes(it.id) || (it.unlock && achievements()[it.unlock]);
+  }
+  function priceOf(it, a = load()) { return it.parts ? partsOf(it).filter(p => !owns(p, a)).reduce((n, p) => n + (p.price || 0), 0) : it.price || 0; }
   function buy(id) {
     const it = byId(id), a = load(), w = wallet();
-    if (!it || owns(it, a) || it.unlock || w.balance < (it.price || 0)) return false;
-    store.set(WKEY, { earned: w.earned, spent: w.spent + it.price });
-    a.owned.push(id); save({ owned: a.owned });
+    if (!it || owns(it, a) || it.unlock || w.balance < priceOf(it, a)) return false;
+    store.set(WKEY, { earned: w.earned, spent: w.spent + priceOf(it, a) });
+    (it.parts ? partsOf(it).filter(p => !owns(p, a)) : [it]).forEach(p => a.owned.push(p.id));
+    save({ owned: a.owned });
     return true;
   }
   function wear(id) {
     const it = byId(id); if (!it) return;
+    if (it.parts) { const a = load(); Object.assign(a.look, it.parts); save({ look: a.look }); return; }
     const cat = SKINS.includes(it) ? 'skin' : HAIR_COLOURS.includes(it) ? 'hairColor' : SCENES.includes(it) ? 'scene' : it.cat;
     const a = load(); a.look[cat] = id; save({ look: a.look });
     if (cat === 'scene') applyScene(id);
@@ -236,7 +280,8 @@
     const extra = part('extra');
     if (extra && extra.behind) layer(extra);
     paint(ctx, BASE, { s: skin.s, S: skin.S, W: '#ffffff', K: '#1b1b1b', M: '#a0522d' }, 0, opts.bob || 0, s);
-    ['legs', 'shoes', 'top', 'hair', 'hat'].forEach(cat => layer(part(cat)));
+    const hideHair = part('hat') && part('hat').hideHair;
+    ['legs', 'shoes', 'top', 'hair', 'hat'].forEach(cat => { if (!(cat === 'hair' && hideHair)) layer(part(cat)); });
     if (extra && !extra.behind) layer(extra);
     if (withPet) { const p = part('pet'); paint(ctx, p.rows, p.pal, W + 2, H - p.rows.length, s); }
     return c;
@@ -244,7 +289,7 @@
   const dataURL = (look, opts) => draw(look, opts).toDataURL();
 
   const sceneDef = () => SCENES.find(s => s.id === load().look.scene) || SCENES[0];
-  window.Avatar = { ITEMS, SKINS, HAIR_COLOURS, SCENES, CATS, UNLOCK_TEXT, DEFAULT_LOOK, byId, load, save, wallet, earn, achievements, owns, buy, wear, draw, dataURL, isFree, applyScene, sceneBox, sceneDef };
+  window.Avatar = { ITEMS, SKINS, HAIR_COLOURS, SCENES, COSTUMES, CATS, UNLOCK_TEXT, DEFAULT_LOOK, byId, load, save, wallet, earn, achievements, owns, priceOf, buy, wear, draw, dataURL, isFree, applyScene, sceneBox, sceneDef };
   // every page that loads this file shows the player's chosen scene
   applyScene(load().look.scene);
 })();
