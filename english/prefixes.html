@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prefix Power</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <script src="../shared/pixel.js"></script>
+  <script src="../shared/avatar.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// ---------- blocky pictures for this lesson ----------
+// a power-up block with "un" on it, snapping onto the front of a word block
+const POWER_UP = Pixel.svg([
+  'kkkkkkk.kkkkkkkkkkk',
+  'kyyyyyk.kwwwwwwwwwk',
+  'kyKyKyk.kwwwwwwwwwk',
+  'kyKyKykkkwkkwwkwkwk',
+  'kyKKKyyykwkwkwkwkwk',
+  'kyyyyyk.kwkkwwkkwwk',
+  'kyyyyyk.kwwwwwwwwwk',
+  'kkkkkkk.kkkkkkkkkkk',
+], { k: '#1b1b1b', y: '#ffd43b', K: '#85201b', w: '#ffffff' });
+
+// ---------- the lesson ----------
+window.LESSON = {
+  id: 'english-prefixes',
+  subject: 'english',
+  title: 'Prefix Power',
+  emoji: '🦸',
+  home: '../index.html',
+  finishAch: 'speller',
+  mascot: {
+    name: 'Quill the Wizard',
+    sprite: Pixel.sprites.wizard,
+    praise: ['Spell-tastic!', 'Magic!', 'Word wizardry!', 'Critical hit!', 'Abraca-DABRA!', 'Nailed it!', 'Brilliant!'],
+    oops: ['Oops! Have another go.', 'Not quite – read it again!', 'Hmm, think again!', 'So close! One more try.'],
+  },
+  glossary: {
+    prefix: { emoji: '🧩', def: 'A few letters you add to the FRONT of a word to change what it means. Like un in unhappy.' },
+    'root word': { emoji: '🌱', def: 'The word you start with, before you add anything. The root word of unkind is kind.' },
+    opposite: { emoji: '🔄', def: 'Completely different in the other direction. Hot is the opposite of cold.' },
+    meaning: { emoji: '💭', def: 'What a word tells you, or is about.' },
+    submarine: { emoji: '🚢', def: 'A boat that can travel under the sea.' },
+    autograph: { emoji: '✍️', def: 'Your own name, written by you – like a famous footballer signing a shirt.' },
+    misbehave: { emoji: '😈', def: 'To behave badly or the wrong way.' },
+    spelling: { emoji: '🔤', def: 'The letters of a word, in the right order.' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'Prefix Power', short: 'Start', minutes: 1,
+      pic: POWER_UP,
+      hello: "Greetings, word warrior! I'm Quill, wizard of the WORD KINGDOM. Today you'll learn to power up words – and pass my Spell Test!",
+      question: 'How can just two or three letters turn HAPPY into its opposite?',
+      intro: 'Read, watch, hunt for words, brew a **spelling potion** – then beat Grumblegob the spelling goblin! Finish to unlock a secret golden quill 🪄.',
+      nameLabel: 'Player name:',
+    },
+
+    {
+      type: 'read', title: 'Prefix power-ups', short: 'Read 1', minutes: 5,
+      say: 'Read each page carefully – the checks test if you really understood. Tap the yellow words for a 💎.',
+      cards: [
+        {
+          title: 'What is a prefix?', pic: POWER_UP,
+          text: [
+            'A [[prefix]] is a little power-up you stick on the FRONT of a word. It changes the [[meaning]].',
+            'The word you start with is called the [[root word]]. Power-up + root word = new word!',
+          ],
+          check: { q: 'Which word has had something added to its front?', options: ['🔁 replay', '🎮 player', '🎲 playing'], answer: 0, hint: 'Look at the START of each word. Which one begins with extra letters before play?' },
+        },
+        {
+          title: 'un- means "not"', pic: '🔒➡️🔓',
+          text: [
+            'Add un to a word to make it mean not, or the [[opposite]].',
+            'If your shoelaces are not tied, they are untied. A messy room is untidy. Unlock a door and it is open!',
+          ],
+          check: { q: 'Ben was not fair when he took all the sweets. What was he?', options: ['unfair', 'refair', 'misfair'], answer: 0 },
+        },
+        {
+          title: 'dis- also means "not"', pic: '👍➡️👎',
+          text: [
+            'dis is another "not" power-up. If you do not like cabbage, you dislike it.',
+            'When a magician makes a rabbit go away, it disappears – it does the opposite of appear.',
+          ],
+          check: { q: 'You and your friend think different things about a film. You…', options: ['disagree', 'reagree', 'misagree'], answer: 0, hint: 'You do NOT agree. Which power-up means not?' },
+        },
+        {
+          title: 'mis- means "wrongly"', pic: '❌✏️',
+          text: [
+            'mis tells you something was done wrong. If you read a word wrongly, you misread it.',
+            'A puppy chewing your homework is behaving badly – it is misbehaving!',
+          ],
+          check: { q: 'Jo put her keys in the fridge by mistake and now cannot find them. She has…', options: ['misplaced them', 'replaced them', 'displaced them'], answer: 0, hint: 'She put them in the WRONG place.' },
+        },
+        {
+          title: 're- means "again"', pic: '🔁🧱',
+          text: [
+            're means do it again. Build it again? Rebuild it! Play the level again? Replay it!',
+            'When your water bottle is empty, you refill it.',
+          ],
+          check: { q: 'A storm knocks down your sandcastle, so you make a new one in the same spot. You…', options: ['rebuild it', 'unbuild it', 'misbuild it'], answer: 0 },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'McDuff the Prefix Man', short: 'Video 1', minutes: 5,
+      video: { id: 'CgWj4e2AdLI', title: 'Prefix for Kids | What Are Prefixes? | Prefixes Un-, Re-, Dis-, Mis-, Im-, Pre-, In-', channel: 'Tutoring Hour', duration: '3:07' },
+      say: 'McDuff the Prefix Man has a puzzle full of prefixes. Watch, then answer my questions!',
+      clues: [
+        'What happens to "do" when you add un?',
+        'What does mis mean, says McDuff?',
+        'What word does "appear" turn into?',
+        'Which prefix means "before"?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'McDuff adds un to the word "do". What new word does he make?', options: ['undo', 'redo', 'misdo'], answer: 0 },
+        { type: 'mcq', q: 'McDuff says the prefix re means…', options: ['again', 'not', 'under'], answer: 0 },
+        { type: 'mcq', q: 'McDuff adds mis to the word "take". What does he get?', options: ['mistake', 'retake', 'untake'], answer: 0 },
+        { type: 'mcq', q: 'Which word did McDuff make with dis?', options: ['disappear', 'unappear', 'reappear'], answer: 0 },
+        { type: 'mcq', q: 'McDuff’s favourite prefix means "before". Which one is it?', options: ['pre', 'sub', 'mis'], answer: 0, explain: 'Like preheat – heat the oven BEFORE you cook.' },
+        { type: 'tf', q: 'In the video, visible becomes invisible when you add in.', answer: true },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Prefix Lab', short: 'Game 1', minutes: 7,
+      rounds: [
+        {
+          game: 'sort', title: 'Power-up chests',
+          intro: 'What does the prefix do to each word? Sort them into the right chest.',
+          say: 'Think: does it mean NOT, WRONGLY or AGAIN?',
+          buckets: [
+            { id: 'not', label: 'means NOT', emoji: '🚫' },
+            { id: 'wrong', label: 'done WRONGLY', emoji: '❌' },
+            { id: 'again', label: 'done AGAIN', emoji: '🔁' },
+          ],
+          items: [
+            { label: 'unkind', bucket: 'not' }, { label: 'dislike', bucket: 'not' }, { label: 'unlock', bucket: 'not' }, { label: 'disobey', bucket: 'not' },
+            { label: 'misspell', bucket: 'wrong' }, { label: 'misread', bucket: 'wrong' }, { label: 'misbehave', bucket: 'wrong' },
+            { label: 'rewrite', bucket: 'again' }, { label: 'refill', bucket: 'again' }, { label: 'replay', bucket: 'again' },
+          ],
+        },
+        {
+          game: 'match', title: 'Meaning match',
+          intro: 'Match each power-word to what it means.',
+          say: 'Tap a word, then tap what it means!',
+          pairs: [
+            { a: '🔓 unlock', b: 'open with a key' },
+            { a: '🎨 repaint', b: 'paint it again' },
+            { a: '🙅 disobey', b: 'not do as you are told' },
+            { a: '🔢 miscount', b: 'count wrongly' },
+            { a: '😠 unkind', b: 'not nice to others' },
+          ],
+        },
+        {
+          game: 'wordsearch', title: 'Prefix word hunt', size: 9,
+          intro: 'Find the hidden prefix words!',
+          say: 'Drag across each word you spot.',
+          words: ['UNTIDY', 'UNDO', 'DISLIKE', 'MISREAD', 'REPLAY', 'REFILL', 'UNFAIR'],
+        },
+      ],
+    },
+
+    {
+      type: 'read', title: 'More power-ups & the Golden Rule', short: 'Read 2', minutes: 5,
+      say: 'Three more power-ups – and one rule that makes spelling them easy!',
+      cards: [
+        {
+          title: 'sub- means "under"', pic: '🌊🚢',
+          text: [
+            'sub means under or below. A [[submarine]] travels under the sea. A subway is a path that goes under a road.',
+          ],
+          check: { q: 'Which of these would you expect to find BELOW the ground?', options: ['a subway', 'a superstar', 'a rerun'], answer: 0 },
+        },
+        {
+          title: 'super- means "above" or "more"', pic: '🦸⬆️',
+          text: [
+            'super means above, or bigger and better than normal. A superhero has powers far above a normal person.',
+            'A supermarket is like a shop – but much bigger.',
+          ],
+          check: { q: 'A super-sized milkshake is…', options: ['bigger than a normal one', 'smaller than a normal one', 'the same as a normal one'], answer: 0 },
+        },
+        {
+          title: 'auto- means "self"', pic: '✍️⭐',
+          text: [
+            'auto means self or by itself. When a famous person signs their own name for you, that is their [[autograph]].',
+            'A plane on autopilot flies itself while the pilot has a sandwich!',
+          ],
+          check: { q: 'An automatic door…', options: ['opens by itself', 'never opens', 'needs two people to push it'], answer: 0 },
+        },
+        {
+          title: 'The Golden Rule', pic: '🧩➕🌱',
+          text: [
+            'Here is the best spelling news ever: adding a prefix NEVER changes the root word. Just stick it on the front.',
+            'So mis + spell = misspell, with two s letters. And dis + satisfied = dissatisfied, with two s letters too!',
+          ],
+          check: { q: 'Using the Golden Rule, what is un + necessary?', options: ['unnecessary', 'unecessary', 'unessary'], answer: 0, hint: 'Keep ALL of un, then ALL of necessary.' },
+        },
+        {
+          title: 'Myth-buster: is every "un" a prefix?', pic: '🕵️❓',
+          text: [
+            'Nope! Look at uncle. Take away the un and you get "cle" – not a word. So the un in uncle is not a prefix.',
+            'Detective test: cover the power-up. If a real word is left, it was a prefix.',
+          ],
+          check: { q: 'Use the detective test. In which word is re a real prefix?', options: ['reload', 'read', 'red'], answer: 0, hint: 'Cover the re. Which one leaves a real word behind?' },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'Prefixes with Clarence', short: 'Video 2', minutes: 7,
+      video: { id: 'QbT1PlZS0io', title: 'Prefixes for Kids | Grammar for Elementary Students', channel: 'Homeschool Pop', duration: '5:41' },
+      say: 'This video zooms in on re, mis and sub. Watch out for Clarence, who will not stop drawing!',
+      clues: [
+        'Where do you attach a prefix?',
+        'What does mis mean?',
+        'What does sub mean?',
+        'What does "marine" mean?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'Where does the video say you attach a prefix?', options: ['at the beginning of a word', 'at the end of a word', 'in the middle of a word'], answer: 0 },
+        { type: 'mcq', q: 'Clarence keeps drawing over and over. The video says he is…', options: ['redrawing', 'misdrawing', 'undrawing'], answer: 0 },
+        { type: 'mcq', q: 'What does misuse mean?', options: ['to use wrongly', 'to use again', 'to use under the sea'], answer: 0 },
+        { type: 'mcq', q: 'The video says sub means…', options: ['under', 'again', 'not'], answer: 0 },
+        { type: 'mcq', q: 'Why are subtitles called subtitles?', options: ['They are at the bottom of the screen, under the title', 'They are about submarines', 'They are written again'], answer: 0 },
+        { type: 'tf', q: '"Marine" means to do with the sea, so submarine means "under the sea".', answer: true },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Prefix Quest', short: 'Game 2', minutes: 7,
+      rounds: [
+        {
+          game: 'crossword', title: 'Power-up Crossword',
+          intro: 'Solve the crossword! Tap a clue, then type the answer.',
+          say: 'Crossword time! Stuck? Press 💡 Hint for a free letter.',
+          entries: [
+            { answer: 'UNKIND', clue: 'Not kind (un + ?)' },
+            { answer: 'REFILL', clue: 'Fill it again' },
+            { answer: 'SUBWAY', clue: 'A path that goes under a road' },
+            { answer: 'DISLIKE', clue: 'To not like something' },
+            { answer: 'MISREAD', clue: 'To read something wrongly' },
+            { answer: 'PREFIX', clue: 'Letters added to the front of a word' },
+            { answer: 'SUPERHERO', clue: 'A hero with powers above normal' },
+          ],
+        },
+        {
+          game: 'platformer', title: 'Real Word Run',
+          intro: 'Run and jump! Collect only the **real** words – dodge the made-up ones.',
+          say: '◀ ▶ to run, ⬆ to jump. Collect the REAL words!',
+          prompt: 'Collect the REAL words – dodge the fakes!',
+          items: [
+            { label: 'unhappy', ok: true },
+            { label: 'replay', ok: true },
+            { label: 'disobey', ok: true },
+            { label: 'misspell', ok: true },
+            { label: 'subway', ok: true },
+            { label: 'rehappy', ok: false, why: 'You cannot be happy "again" like that – the real word is unhappy.' },
+            { label: 'mistidy', ok: false, why: 'Not a real word. Not tidy = untidy.' },
+            { label: 'unplay', ok: false, why: 'Not a real word. Play again = replay.' },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'game', title: 'The Spell Test: Potion of Prefix Power', short: 'Spell test', icon: '🪄', kind: 'Spelling test', minutes: 10,
+      rounds: [
+        {
+          game: 'spelltest', mode: 'peek', title: 'Look · Cover · Write · Check', scene: 'potion', prize: 'the Training Potion',
+          intro: 'Warm-up! Look at the word, cover it, write it, then check. Every word you spell drops an ingredient into the cauldron.',
+          say: 'LOOK at the word and say it in your head. Spot the tricky bit before it gets covered!',
+          words: [
+            { word: 'misspell', clue: 'to spell wrongly', hint: 'mis + spell – keep BOTH s letters!' },
+            { word: 'disappear', clue: 'to vanish', hint: 'dis + appear. Only one s, but two p letters.' },
+            { word: 'rebuild', clue: 'to build again', hint: 're + build. Build has a sneaky u after the b.' },
+            { word: 'unlock', clue: 'to open with a key', hint: 'un + lock. Lock ends in ck.' },
+            { word: 'dislike', clue: 'to not like', hint: 'dis + like. Do not forget the e at the end!' },
+          ],
+        },
+        {
+          game: 'spelltest', mode: 'listen', title: 'The Real Spell Test', scene: 'potion', prize: 'the Potion of Prefix Power',
+          intro: 'The real test! Press 🔊 to hear each word in a sentence, then spell it. Remember the Golden Rule: stick the prefix on, and do NOT change the root word.',
+          say: 'Listen carefully… then type the word!',
+          words: [
+            { word: 'unkind', sentence: 'It is ___ to laugh at someone who falls over.', clue: 'not kind', hint: 'un + kind' },
+            { word: 'untidy', sentence: 'My bedroom is so ___ that I lost my shoe.', clue: 'messy', hint: 'un + tidy. Tidy ends in y.' },
+            { word: 'disagree', sentence: 'We ___ about which game to play.', clue: 'think differently', hint: 'dis + agree. Agree has a double e.' },
+            { word: 'misbehave', sentence: 'The puppy will ___ if you leave it alone with your socks.', clue: 'behave badly', hint: 'mis + behave. Behave ends in e.' },
+            { word: 'replay', sentence: 'I want to ___ that level to get more gems.', clue: 'play again', hint: 're + play' },
+            { word: 'submarine', sentence: 'The ___ dived deep under the waves.', clue: 'an underwater boat', hint: 'sub + marine. Marine ends in ine.' },
+            { word: 'superhero', sentence: 'My favourite ___ can fly faster than a rocket.', clue: 'a hero with powers', hint: 'super + hero' },
+            { word: 'autograph', sentence: 'The footballer signed his ___ on my shirt.', clue: 'your own signed name', hint: 'auto + graph. The f sound is spelt ph!' },
+          ],
+        },
+        {
+          game: 'invaders', title: 'Letter Blaster',
+          intro: 'Bonus arcade round! Read the clue at the top, then **shoot the letters in order** to spell the word. Press 🔊 to hear it.',
+          say: 'Shoot the letters IN ORDER!',
+          waves: [
+            { spell: 'undo', clue: 'Take it back', decoys: 'ae' },
+            { spell: 'refill', clue: 'Fill it again', decoys: 'ao' },
+            { spell: 'subway', clue: 'Path under a road', decoys: 'ei' },
+          ],
+          done: 'LETTER BLASTER CLEAR! Your spelling is super-powered!',
+        },
+      ],
+    },
+
+    {
+      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
+      say: 'Power-up time! Move your body like a prefix!',
+      wiggle: {
+        title: '🦸 Prefix Power Moves!',
+        seconds: 60,
+        moves: [
+          '🔁 RE-jump! Jump, then jump AGAIN, and again!',
+          '🔓 UN-lock! Pretend to turn a giant key and swing the door open.',
+          '🫥 DIS-appear! Crouch down as small as you can, then pop up.',
+          '🦸 SUPER-hero! Arms up – fly around the room.',
+          '🚢 SUB-marine! Dive low and swim along under the sea.',
+          '✍️ AUTO-graph! Write your name in the air with your elbow.',
+        ],
+      },
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: Grumblegob', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      say: 'Oh no! GRUMBLEGOB the spelling goblin has stolen the prefixes from the Word Kingdom! Every right answer is a hit. Get them back, {name}!',
+      boss: { name: 'Grumblegob', sprite: Pixel.sprites.goblin },
+      bonus: {
+        title: '⭐ Bonus quest (for a grown-up to help with)',
+        text: 'Want more? Oak National Academy has a full Year 3 lesson on spelling words with dis, non, mis and un.',
+        url: 'https://www.thenational.academy/pupils/programmes/english-primary-year-3/units/prefixes-homonyms-and-homophones/lessons/practise-and-apply-spelling-words-with-the-prefixes-dis-non-mis-and-un/video',
+        button: 'Open the bonus lesson ▶',
+      },
+      questions: [
+        { type: 'mcq', q: 'Where does a prefix go?', options: ['at the front of a word', 'at the end of a word', 'in the middle of a word'], answer: 0 },
+        { type: 'gap', q: 'The lift was broken, so we had to ___ the stairs again. (climb again)', options: ['reclimb', 'unclimb', 'misclimb'], answer: 0 },
+        { type: 'mcq', q: 'Grumblegob says "unhappy" means "happy again". What do you say?', options: ['Wrong! un means not – so unhappy means not happy', 'Right! un means again', 'It means very happy'], answer: 0 },
+        { type: 'mcq', q: 'Which word means "to count wrongly"?', options: ['miscount', 'recount', 'discount'], answer: 0 },
+        { type: 'mcq', q: 'Grumblegob spelt "misspell" with one s. Which is right?', options: ['misspell', 'mispell', 'missppell'], answer: 0, hint: 'Golden Rule: mis + spell – keep every letter.' },
+        { type: 'tf', q: 'The "un" in uncle is a prefix.', answer: false, explain: 'Cover the un and you get "cle" – not a word!' },
+        { type: 'mcq', q: 'A train that runs in tunnels under a city is…', options: ['a subway train', 'a superway train', 'a reway train'], answer: 0 },
+        { type: 'gap', q: 'The magician waved her wand and the rabbit began to ___.', options: ['disappear', 'misappear', 'unappear'], answer: 0 },
+        { type: 'mcq', q: 'Which word is spelt correctly?', options: ['autograph', 'autograf', 'ortograph'], answer: 0 },
+        { type: 'mcq', q: 'A car that drives itself with no driver could be called…', options: ['an automatic car', 'a submatic car', 'a dismatic car'], answer: 0, hint: 'Which power-up means "self"?' },
+        { type: 'order', q: 'Build the word "unlock": put the steps in order.', items: ['🌱 start with the root word: lock', '🧩 pick the power-up: un', '🔗 stick it on the FRONT', '🔓 unlock!'], hint: 'You need a root word before you can power it up.' },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>

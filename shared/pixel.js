@@ -67,6 +67,43 @@
       '..kkkkkkkk..',
     ], { k: K, w: '#ffffff', r: '#b71c1c' }),
 
+    // Quill the Word Wizard (Word Kingdom mascot): pointy hat, big beard, magic quill
+    wizard: svg([
+      '.....kk.......',
+      '....kppk......',
+      '....kpppk.....',
+      '...kpypppk....',
+      '...kppppppk...',
+      '..kkkkkkkkkk..',
+      '...kssssssk...',
+      '...kskssksk..y',
+      '...kssssssk.yk',
+      '...kwwwwwwk.k.',
+      '..kpwwwwwwpkk.',
+      '.kppwwwwwwppk.',
+      '.kpppwwwwpppk.',
+      '.kpppppppppk..',
+      '..kpppppppk...',
+      '..kkk...kkk...',
+    ], { k: K, p: '#6a3cc9', y: '#ffd43b', s: '#f2c9a0', w: '#f4f4f4' }),
+
+    // Grumblegob the spelling goblin (Word Kingdom boss)
+    goblin: svg([
+      'k..........k',
+      'gk..kkkk..kg',
+      'ggkkggggkkgg',
+      '.kggggggggk.',
+      '.kgykggykgk.',
+      '.kggggggggk.',
+      '.kgkwkwkwgk.',
+      '..kgkkkkgk..',
+      '.kbbbbbbbbk.',
+      'kgbbbbbbbbgk',
+      'k.kbbbbbbk.k',
+      '..kgk..kgk..',
+      '..kkk..kkk..',
+    ], { k: K, g: '#6bbf3a', y: '#ffd43b', w: '#ffffff', b: '#8a5a32' }),
+
   };
 
   window.Pixel = { svg, sprites };

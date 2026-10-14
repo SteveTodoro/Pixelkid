@@ -122,6 +122,7 @@
     { id: 'cape-red', cat: 'extra', name: 'Hero cape', price: 50, behind: true, y: 9, rows: ['.cccccccccc.', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', '.cccccccccc.'], pal: { c: '#d9433b' } },
     { id: 'cape-gold', cat: 'extra', name: 'Champion cape', price: 0, unlock: 'perfect', behind: true, y: 9, rows: ['.cccccccccc.', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', '.cccccccccc.'], pal: { c: '#ffb800' } },
     { id: 'wings', cat: 'extra', name: 'Wings', price: 80, behind: true, y: 8, rows: ['w..........w', 'ww........ww', 'wWw......wWw', 'wWw......wWw', 'ww........ww', 'w..........w'], pal: { w: '#ffffff', W: '#bfefff' } },
+    { id: 'golden-quill', cat: 'extra', name: 'Golden quill', price: 0, unlock: 'speller', y: 6, rows: ['...........y', '..........yy', '..........yy', '.........yy.', '.........k..', '........k...'], pal: { y: '#ffd43b', k: '#1b1b1b' } },
     { id: 'designer-scarf', cat: 'extra', name: 'Designer scarf', price: 0, unlock: 'designer', y: 8, rows: ['..cccccccc..', '..cCcCcCcc..', '.......cc...', '.......Cc...'], pal: { c: '#8e5cff', C: '#ffd43b' } },
     { id: 'papyrus-scarf', cat: 'extra', name: 'Papyrus scarf', price: 70, special: true, y: 8, rows: ['..cccccccc..', '..cccccccc..', '.......cc...', '.......cc...', '........cc..'], pal: { c: '#e53935' } },
     { id: 'undyne-patch', cat: 'extra', name: 'Eye patch & grin', price: 50, special: true, y: 4, rows: ['..kkkk......', '..kkk..y....', '............', '....wwww....'], pal: { k: '#1b1b1b', y: '#ffd43b', w: '#ffffff' } },
@@ -130,6 +131,7 @@
     { id: 'pet-cat', cat: 'pet', name: 'Pixel cat', price: 40, rows: ['.o....o.', '.oo..oo.', '.oooooo.', '.ogoogo.', '.oooooo.', '..oppo..', '.oooooo.', '.o.oo.o.'], pal: { o: '#ff8c1a', g: '#2e9e3e', p: '#ff7eb6' } },
     { id: 'pet-dog', cat: 'pet', name: 'Pixel dog', price: 40, rows: ['bb....bb', 'bbbbbbbb', '.bkbbkb.', '.bbbbbb.', '.bbkkbb.', '..bbbb..', '.bbbbbb.', '.b.bb.b.'], pal: { b: '#a86b3c', k: '#1b1b1b' } },
     { id: 'pet-robot', cat: 'pet', name: 'Mini Bolt', price: 50, rows: ['...yy...', '.kkkkkk.', '.kcllck.', '.kllllk.', '.kkkkkk.', '.gggggg.', '.g.gg.g.', '.k.kk.k.'], pal: { y: '#ffcc33', k: '#1b1b1b', c: '#2ee6d6', l: '#d9dde3', g: '#8e9aa8' } },
+    { id: 'pet-owl', cat: 'pet', name: 'Spelling owl', price: 60, rows: ['b......b', 'bbbbbbbb', 'bwkbbkwb', 'bwwbbwwb', '.bbyybb.', '.bBBBBb.', '.bBBBBb.', '..y..y..'], pal: { b: '#8a5a32', w: '#ffffff', k: '#1b1b1b', y: '#ff8c1a', B: '#e9cfa6' } },
     { id: 'pet-dragon', cat: 'pet', name: 'Baby dragon', price: 100, rows: ['.p.gg.p.', '.pggggp.', 'pgkggkgp', '.gggggg.', '.gyyyyg.', '..gyyg..', '.gg..gg.', '.g....g.'], pal: { g: '#2e9e3e', p: '#8e5cff', k: '#1b1b1b', y: '#ffd43b' } },
     { id: 'pet-annoying-dog', cat: 'pet', name: 'Annoying Dog', price: 100, special: true, rows: ['ww....ww', 'wwwwwwww', '.wkwwkw.', '.wwwwww.', '.wwkkww.', '..wwww..', '.wwwwww.', '.w.ww.w.'], pal: { w: '#ffffff', k: '#1b1b1b' } },
     { id: 'pet-tardigrade', cat: 'pet', name: 'Water bear', price: 100, special: true, rows: ['.kkkkkk.', 'kppppppk', 'kpkppkpk', 'kppooppk', 'kpPppPpk', 'kppppppk', '.kkkkkk.', 'k.k..k.k'], pal: { k: '#4a3426', p: '#e9cfa6', P: '#c9a477', o: '#e57373' } },
@@ -206,6 +208,7 @@
     artist: 'Finish Pixel Art Studio to unlock',
     designer: 'Finish Design a Poster to unlock',
     wonder: 'Finish any Wonders of the World lesson to unlock',
+    speller: 'Finish any Word Kingdom lesson to unlock',
     perfect: 'Get a perfect boss score to unlock',
     video: 'Finish any video quest to unlock',
   };

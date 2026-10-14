@@ -23,13 +23,15 @@ Each lesson is about 30–40 minutes: Start → Recap of last lesson → Read �
 - Statistics: bar charts, pictograms, tables
 
 ## 📚 English
-- Prefixes (un‑, dis‑, mis‑, re‑, sub‑, super‑, auto‑) and suffixes (‑ly, ‑ous, ‑ation)
+- Prefixes (un‑, dis‑, mis‑, re‑, sub‑, super‑, auto‑) ✅ *(Prefix Power)* and suffixes (‑ful, ‑less, ‑ly, ‑ous, ‑ation) ✅ *(Suffix Squad)*
 - Homophones (there/their/they're, hear/here …) and *a* vs *an*
 - Conjunctions (when, if, because, although) & adverbs of time
 - Prepositions; present perfect tense
 - Punctuating speech with inverted commas
 - Reading genres: fairy tales, myths & legends (e.g. Theseus), poetry, non‑fiction (headings, glossaries)
 - Reading skills: predicting, inferring feelings, finding the main idea, dictionary skills
+
+**Word Kingdom style:** mascot Quill the Wizard (`Pixel.sprites.wizard`), boss Grumblegob the spelling goblin (`Pixel.sprites.goblin`), `finishAch: 'speller'` (unlocks the golden quill). Keep grammar explanations to one or two short sentences per card. **Every English lesson has a dedicated 🪄 Spell Test stage** (a `game` stage with `icon: '🪄', kind: 'Spelling test'`) placed before the brain break, with three rounds: a warm-up (`spelltest` `peek` or `fix`), the real test (`spelltest` `listen`, 8–10 words from the lesson or age-suitable verbs/adjectives), and a Letter Blaster (`invaders` spelling waves). Vary the `scene` between lessons.
 
 ## 🚀 Future Skills (curated – beyond the school curriculum)
 Practical, modern skills for growing up with AI and the internet. Always grown-up guided; no child accounts on 13+ tools.
@@ -67,7 +69,8 @@ Inspired by "amazing facts" videos (e.g. Zack D Films). Each lesson is one wonde
 
 **Stage types:** `welcome`, `review` ("Last time…" recap: `from`, `facts`, `questions` — put one in every lesson after the first), `read`, `video` (YouTube `id` + questions), `game`, `break` (wiggle moves and/or a `tryit` activity, plus 🕹️ Brain Games – boss tic-tac-toe, steady hand, maze, hangman (uses the lesson's glossary words as a theme) – added automatically; `games: ['maze']` picks some, `games: false` turns them off), `quiz` (add `boss` for a boss battle).
 **Game types available:** `sort`, `match`, `label`, `order`, `truefalse`, `questions` (read a table/picture, then answer), `wordsearch` (`words`, `size`), `crossword` (`entries` of `{answer, clue}`; the layout is built automatically), `trainai` (teach the robot with labelled examples, then judge its guesses), `pixelcopy` (copy a target sprite on a pixel grid; `mirror: true` for symmetry), `pixelstudio` (free drawing with a design `brief`; saves to the device's gallery and downloads PNGs), `poster` (drag-and-drop poster editor with a `start` layout, `brief` and `checklist` — items with `auto: bigTitle | contrast | clutter | picture | inside` tick themselves)
-**Arcade games:** `invaders` (`waves` of `{prompt, items:[{label, ok, why}]}` – shoot the right answers), `platformer` (`prompt`, `items`, optional `ice: true` for slippery low-friction patches – collect right answers, reach the flag), `blocks` (Block Builder: a `map` of terrain letters g/d/s/w with R = robot and F = flag, plus `blocks` with counts; blocks with `sinks: true` splash into water – build a path so the robot reaches the flag). Put one arcade round in every lesson. — a game stage can have several `rounds`.
+**Spelling:** `spelltest` (`words` of `{word, sentence: 'The ___ …', clue, hint, wrong}`; `mode`: `listen` = hear the word in a sentence (British text-to-speech) | `peek` = look, cover, write, check | `fix` = correct the misspelt `wrong` word; `scene`: `potion` (ingredients fill a cauldron) | `egg` (cracks a dragon egg until it hatches); `prize` names it). First-try spellings earn a gem, two misses reveal the word to copy, and the report card offers a practice re-run of tricky words.
+**Arcade games:** `invaders` (`waves` of `{prompt, items:[{label, ok, why}]}` – shoot the right answers; or spelling waves `{spell, clue, decoys}` – shoot the letters in order), `platformer` (`prompt`, `items`, optional `ice: true` for slippery low-friction patches – collect right answers, reach the flag), `blocks` (Block Builder: a `map` of terrain letters g/d/s/w with R = robot and F = flag, plus `blocks` with counts; blocks with `sinks: true` splash into water – build a path so the robot reaches the flag). Put one arcade round in every lesson. — a game stage can have several `rounds`.
 **Quiz types:** `mcq`, `tf`, `gap`, `order`. Set `optionsHtml: true` to use pictures (HTML) as the answer buttons.
 **Pixel sprites:** `Pixel.sprites.robot / magnet / magnetron`, or draw your own with `Pixel.svg(rows, palette)`.
 **Video tip:** check a video exists and read its transcript before writing questions about it.

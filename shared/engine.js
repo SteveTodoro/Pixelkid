@@ -3,6 +3,7 @@
  * Stage types: welcome, review, read, video, game, break, quiz (optionally a boss battle).
  * Brain breaks also get mini games (boss tic-tac-toe, steady hand, maze, hangman) unless the stage sets games: false.
  * Game types: sort, match, label, order, truefalse, questions, wordsearch, crossword, trainai, pixelcopy, pixelstudio, poster,
+ *   spelltest (spelling test: listen / look-cover-write-check / fix the mistake),
  *   and arcade games: invaders, platformer, blocks.
  * Questions can set optionsHtml: true to show pictures (HTML) as the answer buttons.
  * Question types (quiz, video, questions game): mcq, tf, gap, order.
@@ -193,6 +194,7 @@
     artist: { icon: '🎨', name: 'Pixel Artist' },
     designer: { icon: '🖼️', name: 'Graphic Designer' },
     wonder: { icon: '🌍', name: 'Wonder Hunter' },
+    speller: { icon: '🪄', name: 'Spell Master' },
   }, L.achievements);
   function achieve(id) {
     const a = ACH[id];
@@ -1493,6 +1495,251 @@
       h('div', { class: 'panel-inner px-gallery-wrap' }, h('h3', null, '🖼️ My Posters'), gallery));
   };
 
+  // ===== Spell test: hear (or look at) a word, then spell it on the pixel keyboard =====
+  // r.words: [{ word, sentence ('… ___ …', read aloud with the word filled in), clue, hint, wrong (mode 'fix'), emoji }]
+  // r.mode: 'listen' (default: hear the word and a sentence) | 'peek' (look, cover, write, check) | 'fix' (correct a misspelt word)
+  // r.scene: 'potion' (default: each word adds an ingredient to a cauldron) | 'egg' (each word cracks a dragon egg)
+  // r.prize: the name of the finished potion / dragon. First-try spellings earn a gem; two misses show the word to copy.
+  const SP_LIQUID = ['#7cfc3a', '#2ee6d6', '#b44dff', '#ff7eb6', '#ffb800', '#4fc3ff'];
+  function cauldronSVG(p, n) {
+    const fill = Math.round(p * 6), col = SP_LIQUID[n % SP_LIQUID.length];
+    const rows = [
+      '.kkkkkkkkkkkkkk.', 'kiiiiiiiiiiiiiik', '.kDDDDDDDDDDDDk.', '.kDDDDDDDDDDDDk.', 'kkDDDDDDDDDDDDkk',
+      'k.kDDDDDDDDDDk.k', '..kDDDDDDDDDDk..', '...kDDDDDDDDk...', '....kkkkkkkk....', '...kk......kk...', '..y.o.yo.y.o.y..', '.oyoyoyoyoyoyoy.',
+    ].map((r, y) => (y >= 2 && y <= 7 && 8 - y <= fill ? r.replace(/D/g, 'L') : r));
+    if (fill === 6) rows[1] = rows[1].replace(/i/g, (m, x) => (x % 3 ? 'L' : 'w'));
+    return Pixel.svg(rows, { k: '#1b1b1b', i: '#5a5f6b', D: '#2b2f3a', L: col, w: '#ffffff', y: '#ffd43b', o: '#ff8c1a' });
+  }
+  const EGG = ['....kkkk....', '...kwwwwk...', '..kwwwwwwk..', '.kwwsswwwwk.', '.kwwsswwwwk.', 'kwwwwwwwsswk', 'kwwwwwwwsswk',
+    'kwsswwwwwwwk', 'kwsswwwwwwwk', 'kwwwwwsswwwk', 'kwwwwwsswwwk', '.kwwwwwwwwk.', '..kwwwwwwk..', '...kkkkkk...'];
+  const CRACKS = [[5, 1], [6, 2], [5, 3], [6, 4], [7, 5], [6, 6], [5, 7], [4, 8], [5, 9], [6, 10], [7, 11], [3, 6], [2, 5], [8, 8], [9, 9], [7, 3], [4, 11], [6, 12]];
+  function eggSVG(p) {
+    const rows = EGG.map(r => [...r]);
+    CRACKS.slice(0, Math.round(p * CRACKS.length)).forEach(([x, y]) => { if (rows[y][x] !== '.') rows[y][x] = 'k'; });
+    return Pixel.svg(rows.map(r => r.join('')), { k: '#1b1b1b', w: '#fff6dc', s: '#8fd16a' });
+  }
+  const BABY_DRAGON = Pixel.svg(['..g......g..', '..gg....gg..', '..gggggggg..', '.ggwkggwkgg.', '.gggggggggg.', '.gggrrrrggg.', '..gggggggg..',
+    'oggYYYYYYggo', 'ooYYYYYYYYoo', '..gYYYYYYg..', '..gg....gg..', '..kk....kk..'], { g: '#4caf2a', w: '#ffffff', k: '#1b1b1b', r: '#e53935', Y: '#ffd43b', o: '#ff8c1a' });
+  const POTION = Pixel.svg(['....kkkk....', '....kbbk....', '.....kk.....', '....kwLk....', '...kwLLLk...', '..kLLLLLLk..', '.kLwLLLLLLk.', '.kLLLLLLLLk.', '.kLLLLLLwLk.', '..kLLLLLLk..', '...kkkkkk...'],
+    { k: '#1b1b1b', b: '#8a5a32', w: '#ffffff', L: '#b44dff' });
+
+  const canSpeak = 'speechSynthesis' in window && typeof window.SpeechSynthesisUtterance === 'function';
+  // read words aloud in a British voice (the 🔊 button always speaks; automatic reading respects mute)
+  function speak(text, { rate = 0.85, force = false } = {}) {
+    if (!canSpeak || (settings.muted && !force)) return false;
+    try {
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text), vs = speechSynthesis.getVoices();
+      const v = vs.find(x => /en[-_]GB/i.test(x.lang)) || vs.find(x => /^en/i.test(x.lang));
+      if (v) u.voice = v;
+      u.lang = v ? v.lang : 'en-GB'; u.rate = rate;
+      speechSynthesis.speak(u);
+      return true;
+    } catch (e) { return false; }
+  }
+
+  GAMES.spelltest = function (r, key, done) {
+    const mode = r.mode || 'listen', scene = r.scene || 'potion';
+    const prize = r.prize || (scene === 'egg' ? 'your baby dragon' : 'the magic potion');
+    const DEF_EMOJI = ['🍄', '🦎', '🌟', '🪶', '🐸', '💎', '🌙', '🍯', '🕷️', '🌈', '🔥', '❄️'];
+    const words = r.words.map((w, i) => Object.assign({ emoji: DEF_EMOJI[i % DEF_EMOJI.length] }, typeof w === 'string' ? { word: w } : w));
+    const results = {}; // word -> 'first' | 'second' | 'copied'
+    let finishedOnce = false, count = 0;
+
+    const sceneBox = h('div', { class: 'sp-scene-pic' });
+    const sceneCap = h('div', { class: 'sp-scene-cap' });
+    const ingredients = h('div', { class: 'sp-ingredients' });
+    const board = h('div', { class: 'sp-board' });
+    const root = h('div', { class: 'game spelltest sp-' + scene },
+      h('div', { class: 'sp-wrap' },
+        h('div', { class: 'panel-inner sp-scene' }, sceneBox, sceneCap, ingredients),
+        board));
+
+    function drawScene(added) {
+      const p = count / words.length, full = count === words.length;
+      sceneBox.classList.toggle('wobble', scene === 'egg' && !full && count > 0);
+      if (scene === 'egg') sceneBox.innerHTML = full ? BABY_DRAGON : eggSVG(p);
+      else sceneBox.innerHTML = full ? POTION : cauldronSVG(p, count);
+      sceneBox.classList.toggle('bubbling', scene === 'potion' && count > 0 && !full);
+      sceneCap.textContent = full ? (scene === 'egg' ? `🐲 ${prize} has hatched!` : `🧪 ${prize} is ready!`)
+        : scene === 'egg' ? `🥚 ${count}/${words.length} words · each one cracks the egg` : `🧪 ${count}/${words.length} ingredients in ${prize}`;
+      if (added) {
+        const chip = h('span', { class: 'sp-ing pop' }, added.emoji);
+        ingredients.append(chip);
+        sceneBox.classList.remove('flash'); void sceneBox.offsetWidth; sceneBox.classList.add('flash');
+      }
+    }
+
+    // ----- one word -----
+    function runList(list, practice, onDone) {
+      let wi = 0;
+      const next = () => { if (wi < list.length) ask(list[wi++], practice, next); else onDone(); };
+      next();
+    }
+
+    function ask(w, practice, goNext) {
+      let moved = false;
+      const next = () => { if (!moved) { moved = true; goNext(); } };
+      const target = w.word.toLowerCase().replace(/[^a-z]/g, ''), n = target.length;
+      const listen = mode === 'listen' && canSpeak;
+      const peekMode = mode === 'peek' || (mode === 'listen' && !canSpeak);
+      let letters = Array(n).fill(''), locked = Array(n).fill(false), tries = 0, revealed = false, peeked = false, over = false, covered = !peekMode;
+      const full = () => (w.sentence ? w.sentence.replace(/_{2,}/, w.word) : '');
+      const sayWord = (force, rate) => speak([w.word, full(), w.word].filter(Boolean).join('. '), { force, rate });
+
+      const tiles = Array.from({ length: n }, () => h('div', { class: 'sp-tile' }));
+      const tileRow = h('div', { class: 'sp-tiles', style: `--n:${n}` }, tiles);
+      const status = h('div', { class: 'sp-status' });
+      const checkBtn = h('button', { class: 'btn green', type: 'button', onclick: check, disabled: true }, '✔ Check');
+      const card = h('div', { class: 'sp-card' });
+      const tools = h('div', { class: 'btn-row sp-tools' });
+
+      function paint() {
+        tiles.forEach((t, i) => {
+          t.textContent = letters[i];
+          t.classList.toggle('lock', locked[i]);
+          t.classList.toggle('cur', !over && covered && i === letters.findIndex(c => !c));
+        });
+        checkBtn.disabled = over || !covered || letters.some(c => !c);
+      }
+      function type(ch) {
+        if (over || !covered) return;
+        const i = letters.findIndex(c => !c);
+        if (i < 0) return;
+        letters[i] = ch; sfx.tap(); paint();
+      }
+      function back() {
+        if (over) return;
+        for (let i = n - 1; i >= 0; i--) if (letters[i] && !locked[i]) { letters[i] = ''; break; }
+        paint();
+      }
+      function check() {
+        if (over || letters.some(c => !c)) return;
+        const guess = letters.join('');
+        tries++;
+        if (guess === target) return win();
+        sfx.bad(); shake(tileRow);
+        letters.forEach((c, i) => { if (c === target[i]) locked[i] = true; else tiles[i].classList.add('bad'); });
+        if (tries >= 2 && !revealed) {
+          revealed = true; locked = Array(n).fill(false);
+          put(card, h('div', { class: 'sp-reveal' }, h('small', null, 'It is spelt:'), h('b', null, target)));
+          card.classList.remove('covered');
+          say(`Tricky one! Look carefully: ${[...target].join(' - ')}. Now copy it into the boxes.`);
+          speak([...target].join(', '), { rate: 0.7 });
+        } else if (!revealed) {
+          say(w.hint ? '💡 ' + w.hint : 'Nearly! The green letters are right – fix the others.');
+        } else say('Copy the word from the card, letter by letter.');
+        paint();
+        setTimeout(() => {
+          tiles.forEach(t => t.classList.remove('bad'));
+          letters = letters.map((c, i) => (locked[i] ? c : '')); paint();
+        }, 900);
+      }
+      function win() {
+        over = true; sfx.good();
+        tiles.forEach((t, i) => setTimeout(() => t.classList.add('good'), i * 60));
+        card.classList.remove('covered');
+        if (peekMode && !revealed) put(card, h('div', { class: 'sp-reveal' }, h('small', null, '✔ CHECK – it matches!'), h('b', null, target)));
+        const res = revealed ? 'copied' : tries === 1 && !peeked ? 'first' : 'second';
+        if (!practice) {
+          results[target] = res;
+          if (res === 'first') award(`${key}:${target}`, tileRow);
+          count++; drawScene(w);
+        }
+        say(res === 'first' ? `${target.toUpperCase()}! ${praise()}` : res === 'second' ? 'Got it on the second go – nice fixing!' : 'Good copying! This one goes on your practice list.');
+        put(tools, h('button', { class: 'btn big green ready', type: 'button', onclick: next }, 'Next word ▶'));
+        paint();
+      }
+
+      // the prompt: hear it, look-cover-write-check, or fix the mistake
+      const prompt = h('div', { class: 'sp-prompt' });
+      if (mode === 'fix') {
+        const [a, b] = (w.sentence || '___').split(/_{2,}/);
+        put(prompt, h('div', { class: 'sp-label' }, '🔍 Spot the spelling mistake – then write the word correctly'),
+          h('p', { class: 'sp-sentence' }, a, h('span', { class: 'sp-wrongword' }, w.wrong || '?'), b || ''));
+        tools.append(h('button', { class: 'btn', type: 'button', onclick() { sayWord(true); } }, '🔊 Hear it'));
+        say(w.say || 'Uh-oh, a spelling goblin got here! Write the red word correctly.');
+      } else if (listen) {
+        put(prompt, h('div', { class: 'sp-label' }, '🎧 Listen, then spell the word'),
+          w.sentence && h('p', { class: 'sp-sentence' }, w.sentence.split(/_{2,}/).reduce((acc, part, i) => i ? [...acc, h('span', { class: 'sp-gap' }, '_____'), part] : [part], [])),
+          w.clue && h('p', { class: 'sp-clue' }, '💡 Means: ' + w.clue));
+        tools.append(
+          h('button', { class: 'btn gold', type: 'button', onclick() { sayWord(true); } }, '🔊 Hear it'),
+          h('button', { class: 'btn', type: 'button', onclick() { speak(w.word, { force: true, rate: 0.55 }); } }, '🐢 Slowly'));
+        say('Listen carefully… then type the word!');
+        setTimeout(() => { if (root.isConnected) sayWord(false); }, 350);
+      } else {
+        // Look → Cover → Write → Check
+        let t = Math.max(3, Math.round(2 + n * 0.35));
+        const timer = h('span', { class: 'sp-timer' }, t);
+        put(card, h('div', { class: 'sp-look' }, h('small', null, '👀 LOOK and say it'), h('b', null, target)), timer);
+        put(prompt, h('div', { class: 'sp-label' }, '👀 Look · 🧱 Cover · ✍️ Write · ✔ Check'), w.clue && h('p', { class: 'sp-clue' }, '💡 Means: ' + w.clue));
+        say('Look at the word. Say it in your head. Spot the tricky bit!');
+        speak(w.word);
+        const cover = () => {
+          covered = true; card.classList.add('covered'); sfx.zap();
+          put(card, h('div', { class: 'sp-blocks', 'aria-label': 'Word covered' }, Array.from({ length: 12 }, () => h('i'))));
+          say('COVERED! Now write it from memory.');
+          put(tools, h('button', { class: 'btn ghost', type: 'button', onclick() {
+            if (over) return;
+            peeked = true; card.classList.remove('covered');
+            put(card, h('div', { class: 'sp-look' }, h('small', null, '👀 Peek (no gem this time)'), h('b', null, target)));
+            setTimeout(() => { if (!over && root.isConnected) cover(); }, 1800);
+          } }, '👀 Peek again'));
+          paint();
+        };
+        const tick = setInterval(() => {
+          if (!root.isConnected) return clearInterval(tick);
+          t--; timer.textContent = t;
+          if (t <= 0) { clearInterval(tick); cover(); }
+        }, 1000);
+        tools.append(h('button', { class: 'btn', type: 'button', onclick() { clearInterval(tick); cover(); } }, "🧱 I'm ready – cover it!"));
+      }
+
+      const keyRows = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm'].map((row, ri) => h('div', { class: 'cw-row' },
+        [...row].map(ch => h('button', { class: 'cw-key sp-key', type: 'button', onclick: () => type(ch) }, ch)),
+        ri === 2 && h('button', { class: 'cw-key wide', type: 'button', onclick: back, 'aria-label': 'Delete' }, '⌫')));
+      put(board,
+        h('div', { class: 'sp-count' }, practice ? '🔁 PRACTICE' : `WORD ${Object.keys(results).length + 1} OF ${words.length}`),
+        prompt, card, tileRow, status,
+        h('div', { class: 'cw-keys' }, keyRows),
+        h('div', { class: 'btn-row' }, checkBtn), tools);
+      paint();
+
+      const onKey = e => {
+        if (!tileRow.isConnected) { document.removeEventListener('keydown', onKey); return; }
+        if (e.ctrlKey || e.metaKey || e.altKey) return;
+        if (/^[a-z]$/i.test(e.key)) { e.preventDefault(); type(e.key.toLowerCase()); }
+        else if (e.key === 'Backspace') { e.preventDefault(); back(); }
+        else if (e.key === 'Enter') { e.preventDefault(); if (over) next(); else check(); }
+      };
+      document.addEventListener('keydown', onKey);
+      root._test = { type: s => [...s].forEach(type), check, back, cover: () => { covered = true; paint(); }, get over() { return over; }, next };
+    }
+
+    function report() {
+      const mark = { first: '✅', second: '🟡', copied: '🔁' };
+      const tricky = words.filter(w => results[w.word.toLowerCase()] !== 'first');
+      const firsts = words.length - tricky.length;
+      if (!finishedOnce) { finishedOnce = true; confetti(120); done(); }
+      say(firsts === words.length ? `PERFECT SPELLING! Every word right first time, {name}!` : `${prize} is complete! Practise the tricky ones to make them stick.`);
+      if (canSpeak) speechSynthesis.cancel();
+      put(board,
+        h('div', { class: 'results' },
+          h('h2', null, scene === 'egg' ? '🐲 IT HATCHED!' : '🧪 POTION BREWED!'),
+          h('p', { class: 'lead' }, `${firsts} of ${words.length} spelt right first time.`),
+          h('ul', { class: 'sp-report' }, words.map(w => h('li', { class: 'r-' + results[w.word.toLowerCase()] },
+            h('span', null, mark[results[w.word.toLowerCase()]] || '•'), h('b', null, w.word)))),
+          h('p', { class: 'sp-key-note' }, '✅ first try · 🟡 second try · 🔁 copied – practise!'),
+          tricky.length > 0 && h('div', { class: 'btn-row' },
+            h('button', { class: 'btn gold', type: 'button', onclick() { runList(shuffle(tricky), true, report); } }, `🔁 Practise my ${tricky.length} tricky word${tricky.length > 1 ? 's' : ''}`))));
+    }
+
+    drawScene();
+    runList(r.shuffle === false ? words : shuffle(words), false, report);
+    return root;
+  };
+
   // ---------- arcade helpers (canvas games) ----------
   function spriteCanvas(rows, pal, scale = 1) {
     const w = Math.max(...rows.map(r => r.length)), hh = rows.length;
@@ -1560,6 +1807,7 @@
 
   // ===== Answer Invaders: shoot the aliens carrying the right answers =====
   // r.waves: [{ prompt, items: [{ label, ok, why }] }]
+  // Spelling waves: { spell: 'unlock', clue: 'open with a key', decoys: 'ae' } – shoot the letters in order to spell the word.
   GAMES.invaders = function (r, key, done) {
     const W = 640, H = 440;
     const { cv, ctx } = arcadeCanvas(W, H);
@@ -1570,12 +1818,15 @@
     let wi = -1, aliens = [], ox = 0, oy = 0, dir = 1, shot = null, cool = 0, banner = null, finished = false, time = 0;
     const ship = { x: W / 2, target: null, fireOnArrive: false, move: 0 };
     const parts = [];
-    let autopilot = false;
+    let autopilot = false, spellAt = 0, misses = 0;
 
     function startWave() {
       wi++;
       if (wi >= r.waves.length) { finished = true; banner = { text: 'ALL WAVES CLEAR!', t: 99 }; done(); return; }
       const wave = r.waves[wi];
+      spellAt = 0; misses = 0;
+      if (wave.spell) wave.items = [...wave.spell.toLowerCase()].map(c => ({ label: c, ok: true }))
+        .concat([...(wave.decoys || '')].filter(c => !wave.spell.toLowerCase().includes(c)).map(c => ({ label: c, ok: false, why: `There is no "${c}" in this word!` })));
       const items = shuffle(wave.items);
       const perRow = Math.min(4, Math.ceil(items.length / 2));
       aliens = items.map((it, i) => ({
@@ -1585,8 +1836,12 @@
       }));
       ox = 0; oy = 0; dir = 1;
       banner = { text: `WAVE ${wi + 1}`, t: 1.4 };
-      say(wave.prompt);
+      if (wave.spell) { say(`Spell the word: ${wave.clue || wave.spell}. Shoot the letters in order!`); speak(wave.spell); }
+      else say(wave.prompt);
     }
+    // in a spelling wave only the NEXT letter counts
+    const isRight = a => { const w = r.waves[wi]; return a.it.ok && (!w || !w.spell || a.it.label === w.spell.toLowerCase()[spellAt]); };
+    const promptText = w => w.spell ? `${w.clue ? w.clue + ': ' : 'SPELL: '}${[...w.spell.toLowerCase()].map((c, k) => (k < spellAt ? c : '_')).join(' ')}` : w.prompt;
     const alienPos = a => [W / 2 + a.bx + ox, a.by + oy];
     function fire() {
       if (shot || cool > 0 || finished) return;
@@ -1594,24 +1849,33 @@
     }
     function hit(a) {
       const [x, y] = alienPos(a);
-      if (a.it.ok) {
-        a.alive = false; sfx.good();
+      const w = r.waves[wi];
+      if (isRight(a)) {
+        a.alive = false; sfx.good(); misses = 0;
+        if (w.spell) spellAt++;
         for (let k = 0; k < 18; k++) parts.push({ x, y, vx: (Math.random() - 0.5) * 360, vy: (Math.random() - 0.5) * 360, life: 0.7, c: colors[a.color] });
-        award(`${key}:${wi}:${a.it.label}`, cv); say(a.it.yes || praise());
+        if (!w.spell) { award(`${key}:${wi}:${a.it.label}`, cv); say(a.it.yes || praise()); }
+        else if (spellAt === w.spell.length) { award(`${key}:${wi}:spell`, cv); say(`${w.spell.toUpperCase()}! ${praise()}`); }
+        else say(`Yes! Now find the next letter…`);
         if (!aliens.some(o => o.alive && o.it.ok)) {
           aliens.forEach(o => { if (o.alive) o.leaving = 0.001; });
           banner = { text: 'WAVE CLEAR!', t: 1.6 }; sfx.win();
           setTimeout(startWave, 1700);
         }
       } else {
-        a.flash = 0.6; sfx.bad(); say(a.it.why ? '💡 ' + a.it.why : 'Not that one – read the mission again!');
+        a.flash = 0.6; sfx.bad();
+        if (w.spell) {
+          misses++;
+          const need = w.spell.toLowerCase()[spellAt];
+          say(misses >= 2 ? `💡 Look for the letter "${need}"!` : a.it.ok ? 'That letter is in the word – but not yet! Spell it in order.' : '💡 ' + a.it.why);
+        } else say(a.it.why ? '💡 ' + a.it.why : 'Not that one – read the mission again!');
       }
     }
     const step = dt => {
       time += dt; cool = Math.max(0, cool - dt);
       // autopilot (used by the automated tests)
       if (autopilot && !finished) {
-        const tgt = aliens.filter(a => a.alive && a.it.ok && !a.leaving).sort((a, b) => b.by - a.by)[0];
+        const tgt = aliens.filter(a => a.alive && isRight(a) && !a.leaving).sort((a, b) => b.by - a.by)[0];
         if (tgt) { ship.target = alienPos(tgt)[0]; ship.fireOnArrive = true; }
       }
       // formation drift
@@ -1672,7 +1936,7 @@
       if (ship.target != null) { ctx.fillStyle = 'rgba(124,252,58,.35)'; ctx.fillRect(ship.target - 1, H - 70, 2, 14); }
       const wave = r.waves[Math.min(wi, r.waves.length - 1)];
       ctx.fillStyle = 'rgba(0,0,0,.6)'; ctx.fillRect(0, 0, W, 40);
-      if (wave) pxText(ctx, wave.prompt, W / 2, 21, 20, '#ffd43b');
+      if (wave) pxText(ctx, promptText(wave), W / 2, 21, 20, '#ffd43b');
       const left = aliens.filter(a => a.alive && a.it.ok).length;
       pxText(ctx, `🎯 ${left} left`, W - 12, H - 30, 14, '#fff', 'right');
       pxText(ctx, `WAVE ${Math.min(wi + 1, r.waves.length)}/${r.waves.length}`, 12, H - 30, 14, '#fff', 'left');
@@ -1691,6 +1955,7 @@
         holdButton('◀', 'arc-left', () => { ship.move = -1; }, () => { if (ship.move < 0) ship.move = 0; }),
         holdButton('🔥 FIRE', 'arc-fire', fire),
         holdButton('▶', 'arc-right', () => { ship.move = 1; }, () => { if (ship.move > 0) ship.move = 0; })),
+      r.waves.some(w => w.spell) && h('div', { class: 'btn-row' }, h('button', { class: 'btn gold', type: 'button', onclick() { const w = r.waves[wi]; if (w && w.spell) speak(w.spell, { force: true }); } }, '🔊 Hear the word')),
       h('p', { class: 'arc-tip' }, '👆 Tap above an alien to fly there and fire – or use ◀ 🔥 ▶. Only shoot the RIGHT answers!'));
     keys(root, {
       ArrowLeft: [() => { ship.move = -1; }, () => { if (ship.move < 0) ship.move = 0; }],
