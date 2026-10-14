@@ -1,6 +1,6 @@
 # Year 3 Lesson Library — Topic Ideas (UK National Curriculum)
 
-Each lesson is about 30 minutes: Start → Read → Video quest → Game → Read → Video quest → Game → Brain Break → Boss Battle quiz.
+Each lesson is about 30–40 minutes: Start → Recap of last lesson → Read → Video quest → Game → Read → Video quest → Game → Brain Break → Boss Battle quiz.
 
 ## 🔬 Science
 | Unit | Lesson ideas |
@@ -9,7 +9,7 @@ Each lesson is about 30 minutes: Start → Read → Video quest → Game → Rea
 | Animals incl. Humans | Food groups & healthy eating · Skeletons & muscles · Animals with and without backbones |
 | Rocks | Types of rock · How fossils form · What soil is made of |
 | Light | We need light to see · Reflective surfaces · Keeping eyes safe from the Sun · How shadows form and change |
-| Forces & Magnets | Pushes & pulls · Friction on different surfaces · Magnetic vs non‑magnetic materials ✅ *(Magnet Magic!)* · Poles attract & repel ✅ |
+| Forces & Magnets | Magnetic vs non‑magnetic materials, poles attract & repel ✅ *(Magnet Magic!)* · Pushes, pulls & friction on different surfaces ✅ *(Pushes, Pulls & Friction)* |
 
 ## 🔢 Maths
 - Place value to 1,000; counting in 4s, 8s, 50s and 100s
@@ -36,8 +36,8 @@ Each lesson is about 30 minutes: Start → Read → Video quest → Game → Rea
 2. Change the `window.LESSON = { … }` data: `id`, `subject` (`science` / `maths` / `english` sets the colours), title, mascot, glossary, and the stages.
 3. Add it to the `LIBRARY` list in `index.html` by setting its `file`.
 
-**Stage types:** `welcome`, `read`, `video` (YouTube `id` + questions), `game`, `break`, `quiz` (add `boss` for a boss battle).
-**Game types available:** `sort`, `match`, `label`, `order`, `truefalse`, `questions` (read a table/picture, then answer) — a game stage can have several `rounds`.
+**Stage types:** `welcome`, `review` ("Last time…" recap: `from`, `facts`, `questions` — put one in every lesson after the first), `read`, `video` (YouTube `id` + questions), `game`, `break`, `quiz` (add `boss` for a boss battle).
+**Game types available:** `sort`, `match`, `label`, `order`, `truefalse`, `questions` (read a table/picture, then answer), `wordsearch` (`words`, `size`), `crossword` (`entries` of `{answer, clue}`; the layout is built automatically) — a game stage can have several `rounds`.
 **Quiz types:** `mcq`, `tf`, `gap`, `order`.
 **Pixel sprites:** `Pixel.sprites.robot / magnet / magnetron`, or draw your own with `Pixel.svg(rows, palette)`.
 **Video tip:** check a video exists and read its transcript before writing questions about it.

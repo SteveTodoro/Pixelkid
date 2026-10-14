@@ -361,6 +361,72 @@ a { color: var(--brand-dark); }
 .cert-foot .line { border-top: 3px solid #000; padding-top: 4px; color: var(--muted); font-size: .85rem; min-width: 160px; }
 .cert-actions { display: flex; gap: 12px; justify-content: center; margin-top: 12px; }
 
+/* ---------- recap ---------- */
+.recap h3 { color: var(--brand-dark); font-size: 1.4rem; }
+.recap ul { margin: 8px 0; padding-left: 1.3em; font-size: 1.15rem; }
+.recap li { margin-bottom: 6px; }
+.recap-link { font-family: var(--pixel); font-weight: 700; }
+
+/* ---------- word hunt ---------- */
+.ws-wrap { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+@media (max-width: 760px) { .ws-wrap { grid-template-columns: 1fr; } }
+.ws-board { min-width: 0; }
+.ws-grid {
+  display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 2px; width: 100%; max-width: 540px; margin: 0 auto;
+  background: #000; border: 4px solid #000; touch-action: none; user-select: none; -webkit-user-select: none;
+}
+.ws-cell {
+  aspect-ratio: 1; display: grid; place-items: center; cursor: pointer;
+  background: #f4f4f4; font-family: var(--pixel); font-weight: 700; font-size: clamp(.95rem, 3.6vw, 1.45rem);
+}
+.ws-cell.sel { box-shadow: inset 0 0 0 3px var(--gold); background: #fff3a8; }
+.ws-cell.found { color: #000; }
+.ws-list h3 { color: var(--brand-dark); font-size: 1.3rem; }
+.ws-list ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.ws-list li { font-family: var(--pixel); font-weight: 700; font-size: 1.25rem; padding: 4px 8px; background: #fff; border: 2px solid #000; }
+.ws-list li.done { text-decoration: line-through; background: var(--good-soft); opacity: .75; }
+.ws-list li.done::after { content: " ✔"; }
+.ws-tip { font-size: .95rem; color: #444; margin: 10px 0 0; }
+
+/* ---------- crossword ---------- */
+.cw-wrap { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+@media (max-width: 760px) { .cw-wrap { grid-template-columns: 1fr; } }
+.cw-board { container-type: inline-size; min-width: 0; }
+.cw-grid {
+  --cs: min(46px, calc(100cqw / var(--w) - 2px));
+  display: grid; grid-template-columns: repeat(var(--w), var(--cs)); grid-auto-rows: var(--cs);
+  gap: 2px; justify-content: center; align-content: start;
+}
+.cw-cell {
+  position: relative; display: grid; place-items: center; cursor: pointer;
+  background: #fff; border: 2px solid #000; font-family: var(--pixel); font-weight: 700; font-size: clamp(.9rem, 3.4vw, 1.4rem);
+}
+.cw-cell.blank { background: transparent; border: 0; cursor: default; }
+.cw-num { position: absolute; top: 0; left: 2px; font-family: var(--read); font-size: .55rem; font-weight: 700; line-height: 1.2; }
+.cw-cell.active { background: #fff3a8; }
+.cw-cell.cursor { background: #ffd84a; box-shadow: inset 0 0 0 3px var(--brand-dark); }
+.cw-cell.solved { background: var(--good-soft); }
+.cw-cell.given .cw-val { color: var(--brand-dark); }
+.cw-cell.wrong { background: var(--bad-soft); }
+.cw-clues h3 { color: var(--brand-dark); font-size: 1.2rem; margin-top: 4px; }
+.cw-clues ol { list-style: none; padding: 0; margin: 0 0 10px; display: grid; gap: 4px; }
+.cw-clue { width: 100%; text-align: left; cursor: pointer; padding: 6px 8px; background: transparent; border: 2px solid transparent; font: inherit; font-size: 1rem; color: var(--ink); }
+.cw-clue:hover { background: #fffbe0; }
+.cw-clue.active { background: #fff3a8; border-color: #000; }
+.cw-clue.done { text-decoration: line-through; opacity: .6; }
+.cw-banner { margin: 16px 0 10px; padding: 10px 14px; background: #000; color: #fff; border: 3px solid #000; box-shadow: inset 0 0 0 3px #444; font-size: 1.1rem; }
+.cw-banner b { color: var(--gold); font-family: var(--pixel); }
+.cw-keys { max-width: 640px; margin: 0 auto; }
+.cw-row { display: flex; gap: 5px; justify-content: center; margin-bottom: 5px; }
+.cw-key {
+  flex: 0 1 54px; min-width: 0; height: 54px; cursor: pointer; padding: 0;
+  background: #e2e2e2; color: #000; border: 3px solid #000; box-shadow: inset -3px -3px 0 #9a9a9a, inset 3px 3px 0 #fff;
+  font-family: var(--pixel); font-weight: 700; font-size: 1.3rem;
+}
+.cw-key:active { box-shadow: inset 3px 3px 0 #9a9a9a; background: #fff3a8; }
+.cw-key.wide { flex-basis: 84px; background: #ffb3ad; }
+@media (max-width: 520px) { .cw-key { height: 44px; font-size: 1rem; } .cw-row { gap: 3px; } }
+
 /* ---------- effects ---------- */
 .confetti { position: fixed; inset: 0; pointer-events: none; z-index: 500; }
 .fly-star { position: fixed; z-index: 600; pointer-events: none; font-size: 2rem; margin: -1rem 0 0 -1rem; transition: transform .7s cubic-bezier(.5, -0.3, .7, 1), opacity .7s; }

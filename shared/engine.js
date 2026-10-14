@@ -1,7 +1,7 @@
 /* Year 3 Lesson Engine
  * Renders an interactive lesson from the data in window.LESSON.
- * Stage types: welcome, read, video, game, break, quiz (optionally a boss battle).
- * Game types: sort, match, label, order, truefalse, questions.
+ * Stage types: welcome, review, read, video, game, break, quiz (optionally a boss battle).
+ * Game types: sort, match, label, order, truefalse, questions, wordsearch, crossword.
  * Question types (quiz, video, questions game): mcq, tf, gap, order.
  */
 (function () {
@@ -247,9 +247,9 @@
   });
 
   // ---------- navigation ----------
-  const ICON = { welcome: '🏁', read: '📖', video: '🎬', game: '🎮', break: '🤸', quiz: '⚔️' };
-  const KIND = { welcome: 'Start', read: 'Reading quest', video: 'Video quest', game: 'Game', break: 'Brain break', quiz: 'Quiz' };
-  const RENDER = { welcome: renderWelcome, read: renderRead, video: renderVideo, game: renderGame, break: renderBreak, quiz: renderQuiz };
+  const ICON = { welcome: '🏁', review: '⏪', read: '📖', video: '🎬', game: '🎮', break: '🤸', quiz: '⚔️' };
+  const KIND = { welcome: 'Start', review: 'Recap', read: 'Reading quest', video: 'Video quest', game: 'Game', break: 'Brain break', quiz: 'Quiz' };
+  const RENDER = { welcome: renderWelcome, review: renderReview, read: renderRead, video: renderVideo, game: renderGame, break: renderBreak, quiz: renderQuiz };
   let cleanup = null, enteringBackwards = false, stageCard = null;
 
   function renderPath() {
@@ -345,6 +345,35 @@
           st.minutes && h('span', { class: 'map-min' }, st.minutes + ' min'))))),
       h('div', { class: 'navrow' }, restart, start),
     ]);
+  }
+
+  // ---------- stage: review ("last time…" recap of the previous lesson) ----------
+  function renderReview(s, i) {
+    const area = h('div');
+    const nav = navRow(() => go(i - 1, true));
+    const from = s.from || {};
+    const start = () => {
+      sfx.good();
+      say('Notes hidden! How much can you remember?');
+      runQuestions(area, s.questions, {
+        key: `s${i}rv`,
+        done(score) {
+          sfx.win(); confetti(80); complete(i);
+          say(score === s.questions.length ? 'Your memory is EPIC! Now for something new…' : 'Great recap! Now for something new…');
+          put(area, h('div', { class: 'results' }, h('div', { class: 'trophy' }, '🧠'), h('h2', null, 'RECAP COMPLETE!'),
+            h('p', { class: 'lead' }, `You remembered ${score} of ${s.questions.length} first time.`)));
+          nav.set(nextLabel(i), () => go(i + 1));
+        },
+      });
+    };
+    put(area,
+      h('div', { class: 'panel-inner recap' },
+        h('h3', null, `⏪ Last time: ${from.emoji || ''} ${from.title || 'our last lesson'}`),
+        h('ul', null, (s.facts || []).map(f => h('li', { html: fmt(f, false) }))),
+        from.url && h('a', { class: 'recap-link', href: from.url }, '↺ Replay that lesson')),
+      h('div', { class: 'btn-row' }, h('button', { class: 'btn big green ready', type: 'button', onclick: start }, '🧠 Test my memory!')));
+    nav.set(nextLabel(i), () => go(i + 1), !!state.complete[i]);
+    return shell(s, [mascot(s.say || 'Welcome back! First, a quick recap of last time. Read the notes, then test your memory!'), area, nav.el]);
   }
 
   // ---------- stage: read ----------
@@ -741,7 +770,307 @@
         r.html && h('div', { class: 'data-box', html: r.html }),
         area);
     },
+
+    // Word hunt: find the hidden words. Drag across a word, or tap its first letter then its last letter.
+    wordsearch(r, key, done) {
+      const words = r.words.map(w => (typeof w === 'string' ? { word: w } : w))
+        .map(w => Object.assign({}, w, { word: w.word.toUpperCase().replace(/[^A-Z]/g, '') }));
+      const size = Math.max(r.size || 10, ...words.map(w => w.word.length));
+      const { grid, placed } = buildWordsearch(words, size, r.diagonal);
+      let found = 0, start = null, anchor = null, sel = [];
+      const cellEls = [];
+      const gridEl = h('div', { class: 'ws-grid', style: `--n:${size}`, 'aria-label': 'Word hunt grid' });
+      grid.forEach((row, y) => row.forEach((ch, x) => {
+        const c = h('div', { class: 'ws-cell' }, ch);
+        c._x = x; c._y = y;
+        cellEls.push(c); gridEl.append(c);
+      }));
+      const cellAt = (x, y) => cellEls[y * size + x];
+      const listItems = placed.map(p => h('li', null, p.emoji && h('span', null, p.emoji + ' '), p.clue ? h('span', { html: fmt(p.clue, false) }) : p.word));
+      const colors = ['#ffe66b', '#b9f29a', '#a8dcff', '#ffc2e2', '#d6c4ff', '#ffcf99', '#9ff2e6', '#ff9f9f'];
+
+      const lineCells = (a, b) => {
+        const dx = Math.sign(b._x - a._x), dy = Math.sign(b._y - a._y);
+        const len = Math.max(Math.abs(b._x - a._x), Math.abs(b._y - a._y));
+        const straight = a._x === b._x || a._y === b._y || Math.abs(b._x - a._x) === Math.abs(b._y - a._y);
+        if (!straight) return [a];
+        return Array.from({ length: len + 1 }, (_, k) => cellAt(a._x + dx * k, a._y + dy * k));
+      };
+      const paint = cells => { sel.forEach(c => c.classList.remove('sel')); sel = cells; sel.forEach(c => c.classList.add('sel')); };
+      function check(cells) {
+        const str = cells.map(c => c.textContent).join('');
+        const hit = placed.findIndex(p => !p.found && (p.word === str || p.word === [...str].reverse().join('')) && p.cells.length === cells.length);
+        paint([]);
+        if (cells.length < 2) return;
+        if (hit < 0) { sfx.bad(); say(r.hint || 'Not a hidden word – keep hunting!'); return; }
+        const p = placed[hit]; p.found = true;
+        const col = colors[found % colors.length];
+        cells.forEach(c => { c.classList.add('found'); c.style.background = col; });
+        listItems[hit].classList.add('done');
+        sfx.good(); award(`${key}:${p.word}`, cells[cells.length - 1]); say(`You found ${p.word}! ${praise()}`);
+        if (++found === placed.length) done();
+      }
+      const cellFromPoint = (x, y) => { const t = document.elementFromPoint(x, y); return t && t.classList.contains('ws-cell') && gridEl.contains(t) ? t : null; };
+      gridEl.addEventListener('pointerdown', e => {
+        const c = cellFromPoint(e.clientX, e.clientY);
+        if (!c) return;
+        e.preventDefault();
+        try { gridEl.setPointerCapture(e.pointerId); } catch (_) { /* ignore */ }
+        start = c; paint(anchor ? lineCells(anchor, c) : [c]);
+      });
+      gridEl.addEventListener('pointermove', e => {
+        if (!start) return;
+        const c = cellFromPoint(e.clientX, e.clientY);
+        if (c && c !== start) { anchor = null; paint(lineCells(start, c)); }
+      });
+      const finish = e => {
+        if (!start) return;
+        const end = (e.type === 'pointerup' && cellFromPoint(e.clientX, e.clientY)) || sel[sel.length - 1] || start;
+        if (end === start) {
+          // a tap: first tap marks the start, second tap finishes the line
+          if (anchor && anchor !== end) { check(lineCells(anchor, end)); anchor = null; }
+          else if (anchor === end) { anchor = null; paint([]); }
+          else { anchor = end; paint([end]); sfx.tap(); say('Now tap the LAST letter of the word!'); }
+        } else check(lineCells(start, end));
+        start = null;
+      };
+      gridEl.addEventListener('pointerup', finish);
+      gridEl.addEventListener('pointercancel', finish);
+      return h('div', { class: 'game wordsearch' },
+        h('div', { class: 'ws-wrap' },
+          h('div', { class: 'ws-board' }, gridEl),
+          h('div', { class: 'panel-inner ws-list' },
+            h('h3', null, `🔎 Find ${placed.length} words`),
+            h('ul', null, listItems),
+            h('p', { class: 'ws-tip' }, 'Drag across a word – or tap its first letter, then its last letter.'))));
+    },
+
+    // Crossword: tap a clue (or a square), then type with the letter keys.
+    crossword(r, key, done) {
+      const cw = buildCrossword(r.entries);
+      let cur = null, pos = 0, solvedCount = 0;
+      const cells = {}; // "x,y" -> { el, letter, val, locked, words: [] }
+      const gridEl = h('div', { class: 'cw-grid', style: `--w:${cw.w};--h:${cw.h}` });
+      for (let y = 0; y < cw.h; y++) for (let x = 0; x < cw.w; x++) {
+        const k = x + ',' + y, letter = cw.grid[k];
+        if (!letter) { gridEl.append(h('div', { class: 'cw-cell blank' })); continue; }
+        const num = cw.numbers[k];
+        const val = h('span', { class: 'cw-val' });
+        const el = h('div', { class: 'cw-cell' }, num && h('span', { class: 'cw-num' }, num), val);
+        cells[k] = { el, val, letter, locked: false, words: [] };
+        el.addEventListener('click', () => {
+          const ws = cells[k].words;
+          const w = ws.length > 1 && cur && ws.includes(cur) ? ws.find(o => o !== cur) : (ws.find(o => !o.solved) || ws[0]);
+          select(w, w.cells.indexOf(k));
+        });
+        gridEl.append(el);
+      }
+      cw.words.forEach(w => w.cells.forEach(k => cells[k].words.push(w)));
+      const clueBtn = w => {
+        w.btn = h('button', { class: 'cw-clue', type: 'button', onclick: () => select(w) },
+          h('b', null, w.num + '. '), h('span', { html: fmt(w.clue, false) }), ` (${w.answer.length})`);
+        return h('li', null, w.btn);
+      };
+      const across = cw.words.filter(w => w.dir === 'across').sort((a, b) => a.num - b.num);
+      const down = cw.words.filter(w => w.dir === 'down').sort((a, b) => a.num - b.num);
+      const banner = h('div', { class: 'cw-banner' }, '👆 Tap a clue or a square to start');
+      const hintBtn = h('button', { class: 'btn gold', type: 'button', onclick: hint }, '💡 Hint');
+
+      function select(w, at) {
+        if (!w) return;
+        cur = w;
+        Object.values(cells).forEach(c => c.el.classList.remove('active', 'cursor'));
+        cw.words.forEach(o => o.btn.classList.toggle('active', o === w));
+        w.cells.forEach(k => cells[k].el.classList.add('active'));
+        pos = at != null && at >= 0 ? at : 0;
+        moveCursor(0);
+        put(banner, h('b', null, `${w.num} ${w.dir === 'across' ? 'Across ➡' : 'Down ⬇'}: `), h('span', { html: fmt(w.clue, false) }), ` (${w.answer.length} letters)`);
+        sfx.tap();
+      }
+      function moveCursor(step) {
+        if (!cur) return;
+        pos = Math.min(Math.max(pos + step, 0), cur.cells.length - 1);
+        Object.values(cells).forEach(c => c.el.classList.remove('cursor'));
+        cells[cur.cells[pos]].el.classList.add('cursor');
+      }
+      // Works whether the child types the whole word (solved squares are stepped over when the letter matches)
+      // or only the missing letters (they skip ahead to the next empty square).
+      function type(ch) {
+        if (!cur || cur.solved) return;
+        let c = cells[cur.cells[pos]];
+        if (c.locked && c.letter !== ch) {
+          while (pos < cur.cells.length - 1 && cells[cur.cells[pos]].locked) pos++;
+          c = cells[cur.cells[pos]];
+        }
+        if (!c.locked) c.val.textContent = ch;
+        sfx.tap();
+        if (cur.cells.every(k => cells[k].val.textContent)) checkWord(cur);
+        else moveCursor(1);
+      }
+      function back() {
+        if (!cur) return;
+        const c = cells[cur.cells[pos]];
+        if (!c.locked && c.val.textContent) { c.val.textContent = ''; return; }
+        moveCursor(-1);
+        const p = cells[cur.cells[pos]];
+        if (!p.locked) p.val.textContent = '';
+      }
+      function checkWord(w) {
+        const guess = w.cells.map(k => cells[k].val.textContent).join('');
+        if (guess === w.answer) {
+          w.solved = true; solvedCount++; w.btn.classList.add('done');
+          w.cells.forEach(k => { cells[k].locked = true; cells[k].el.classList.add('solved'); });
+          sfx.good(); award(`${key}:${w.answer}`, cells[w.cells[w.cells.length - 1]].el); say(`${w.answer} – ${praise()}`);
+          if (solvedCount === cw.words.length) { put(banner, '🎉 Crossword complete!'); done(); return; }
+          // a crossing word might now be complete too
+          const full = cw.words.find(o => !o.solved && o.cells.every(k => cells[k].val.textContent));
+          if (full) { checkWord(full); return; }
+          select(cw.words.find(o => !o.solved));
+        } else {
+          w.cells.forEach(k => { shake(cells[k].el); if (!cells[k].locked) cells[k].el.classList.add('wrong'); });
+          sfx.bad(); say(r.hint || 'Not quite – read the clue again, or press 💡 Hint!');
+          setTimeout(() => w.cells.forEach(k => { cells[k].el.classList.remove('wrong'); if (!cells[k].locked) cells[k].val.textContent = ''; }), 700);
+          pos = 0; moveCursor(0);
+        }
+      }
+      function hint() {
+        const w = cur && !cur.solved ? cur : cw.words.find(o => !o.solved);
+        if (!w) return;
+        if (w !== cur) select(w);
+        const k = w.cells.find(c => !cells[c].locked && cells[c].val.textContent !== cells[c].letter);
+        if (!k) return;
+        const c = cells[k];
+        c.val.textContent = c.letter; c.locked = true; c.el.classList.add('given');
+        sfx.tap(); say('Here is a letter to help you!');
+        if (w.cells.every(o => cells[o].val.textContent)) checkWord(w); else moveCursor(0);
+      }
+      const keys = h('div', { class: 'cw-keys' }, ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'].map((row, ri) => h('div', { class: 'cw-row' },
+        [...row].map(ch => h('button', { class: 'cw-key', type: 'button', onclick: () => type(ch) }, ch)),
+        ri === 2 && h('button', { class: 'cw-key wide', type: 'button', onclick: back, 'aria-label': 'Delete' }, '⌫'))));
+      const root = h('div', { class: 'game crossword' },
+        h('div', { class: 'cw-wrap' },
+          h('div', { class: 'cw-board' }, gridEl),
+          h('div', { class: 'panel-inner cw-clues' },
+            across.length > 0 && [h('h3', null, '➡ Across'), h('ol', null, across.map(clueBtn))],
+            down.length > 0 && [h('h3', null, '⬇ Down'), h('ol', null, down.map(clueBtn))])),
+        banner, keys, h('div', { class: 'btn-row' }, hintBtn));
+      const onKey = e => {
+        if (!root.isConnected) { document.removeEventListener('keydown', onKey); return; }
+        if (e.ctrlKey || e.metaKey || e.altKey || document.activeElement && document.activeElement.tagName === 'INPUT') return;
+        if (/^[a-z]$/i.test(e.key)) { e.preventDefault(); type(e.key.toUpperCase()); }
+        else if (e.key === 'Backspace') { e.preventDefault(); back(); }
+        else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') moveCursor(1);
+        else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') moveCursor(-1);
+      };
+      document.addEventListener('keydown', onKey);
+      setTimeout(() => select(across[0] || down[0]), 0);
+      return root;
+    },
   };
+
+  // Places words in a grid (left→right and top→bottom; diagonals optional) and fills the gaps.
+  function buildWordsearch(words, size, diagonal) {
+    const dirs = diagonal ? [[1, 0], [0, 1], [1, 1]] : [[1, 0], [0, 1]];
+    for (let attempt = 0; attempt < 300; attempt++) {
+      const grid = Array.from({ length: size }, () => Array(size).fill(''));
+      const placed = [];
+      const ok = words.slice().sort((a, b) => b.word.length - a.word.length).every(w => {
+        for (let t = 0; t < 300; t++) {
+          const [dx, dy] = pick(dirs);
+          const x0 = Math.floor(Math.random() * (size - dx * (w.word.length - 1)));
+          const y0 = Math.floor(Math.random() * (size - dy * (w.word.length - 1)));
+          const cs = [...w.word].map((_, k) => [x0 + dx * k, y0 + dy * k]);
+          if (cs.every(([x, y], k) => !grid[y][x] || grid[y][x] === w.word[k])) {
+            cs.forEach(([x, y], k) => { grid[y][x] = w.word[k]; });
+            placed.push(Object.assign({}, w, { cells: cs }));
+            return true;
+          }
+        }
+        return false;
+      });
+      if (!ok) continue;
+      const ABC = 'ABCDEFGHIJKLMNOPRSTUVWY';
+      grid.forEach(row => row.forEach((c, x) => { if (!c) row[x] = ABC[Math.floor(Math.random() * ABC.length)]; }));
+      // keep the word list in the same order the lesson gave it
+      placed.sort((a, b) => words.indexOf(words.find(w => w.word === a.word)) - words.indexOf(words.find(w => w.word === b.word)));
+      return { grid, placed };
+    }
+    throw new Error('Word hunt: could not fit the words – make the grid bigger.');
+  }
+
+  // Builds a small interlocking crossword from {answer, clue} entries (tries many layouts, keeps the most compact).
+  function buildCrossword(entries) {
+    const words = entries.map(e => Object.assign({}, e, { answer: e.answer.toUpperCase().replace(/[^A-Z]/g, '') }));
+    const K = (x, y) => x + ',' + y;
+    let best = null;
+    for (let attempt = 0; attempt < 400; attempt++) {
+      const order = attempt === 0 ? words.slice().sort((a, b) => b.answer.length - a.answer.length) : shuffle(words);
+      const grid = {}, dirsAt = {}, placed = [];
+      const place = (w, x, y, dir) => {
+        const dx = dir === 'across' ? 1 : 0, dy = 1 - dx, cs = [];
+        for (let k = 0; k < w.answer.length; k++) {
+          const key = K(x + dx * k, y + dy * k);
+          grid[key] = w.answer[k]; (dirsAt[key] = dirsAt[key] || []).push(dir); cs.push(key);
+        }
+        placed.push(Object.assign({}, w, { x, y, dir, cells: cs }));
+      };
+      const fits = (word, x, y, dir) => {
+        const dx = dir === 'across' ? 1 : 0, dy = 1 - dx;
+        if (grid[K(x - dx, y - dy)] || grid[K(x + dx * word.length, y + dy * word.length)]) return 0;
+        let cross = 0;
+        for (let k = 0; k < word.length; k++) {
+          const cx = x + dx * k, cy = y + dy * k, c = grid[K(cx, cy)];
+          if (c) {
+            if (c !== word[k] || (dirsAt[K(cx, cy)] || []).includes(dir)) return 0;
+            cross++;
+          } else if (grid[K(cx + dy, cy + dx)] || grid[K(cx - dy, cy - dx)]) return 0;
+        }
+        return cross;
+      };
+      place(order[0], 0, 0, 'across');
+      const left = order.slice(1);
+      let progress = true;
+      while (left.length && progress) {
+        progress = false;
+        for (let i = 0; i < left.length; i++) {
+          const w = left[i], options = [];
+          for (const key of Object.keys(grid)) {
+            const [cx, cy] = key.split(',').map(Number);
+            if (dirsAt[key].length > 1) continue;
+            const dir = dirsAt[key][0] === 'across' ? 'down' : 'across';
+            for (let k = 0; k < w.answer.length; k++) {
+              if (w.answer[k] !== grid[key]) continue;
+              const x = dir === 'across' ? cx - k : cx, y = dir === 'down' ? cy - k : cy;
+              const c = fits(w.answer, x, y, dir);
+              if (c) options.push({ x, y, dir, c });
+            }
+          }
+          if (options.length) {
+            const o = pick(options);
+            place(w, o.x, o.y, o.dir); left.splice(i, 1); i--; progress = true;
+          }
+        }
+      }
+      const xs = Object.keys(grid).map(k => +k.split(',')[0]), ys = Object.keys(grid).map(k => +k.split(',')[1]);
+      const w = Math.max(...xs) - Math.min(...xs) + 1, hgt = Math.max(...ys) - Math.min(...ys) + 1;
+      const score = placed.length * 1000 - w * hgt - Math.abs(w - hgt) * 3;
+      if (!best || score > best.score) best = { score, placed, grid, minX: Math.min(...xs), minY: Math.min(...ys), w, h: hgt };
+      if (attempt > 60 && best.placed.length === words.length) break;
+    }
+    // shift to start at 0,0 and number the starting squares
+    const shift = key => { const [x, y] = key.split(',').map(Number); return K(x - best.minX, y - best.minY); };
+    const grid = {};
+    Object.entries(best.grid).forEach(([k, v]) => { grid[shift(k)] = v; });
+    const ws = best.placed.map(p => Object.assign({}, p, { cells: p.cells.map(shift), x: p.x - best.minX, y: p.y - best.minY }));
+    const numbers = {};
+    let n = 0;
+    ws.slice().sort((a, b) => a.y - b.y || a.x - b.x).forEach(p => {
+      const k = K(p.x, p.y);
+      if (!numbers[k]) numbers[k] = ++n;
+      p.num = numbers[k];
+    });
+    return { grid, words: ws, numbers, w: best.w, h: best.h };
+  }
 
   // ---------- stage: game (one or more rounds) ----------
   function renderGame(s, i) {
