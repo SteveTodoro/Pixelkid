@@ -1,7 +1,7 @@
 /* Year 3 Lesson Engine
  * Renders an interactive lesson from the data in window.LESSON.
  * Stage types: welcome, review, read, video, game, break, quiz (optionally a boss battle).
- * Game types: sort, match, label, order, truefalse, questions, wordsearch, crossword, trainai.
+ * Game types: sort, match, label, order, truefalse, questions, wordsearch, crossword, trainai, pixelcopy, pixelstudio.
  * Question types (quiz, video, questions game): mcq, tf, gap, order.
  */
 (function () {
@@ -184,6 +184,7 @@
     boss: { icon: '⚔️', name: 'Boss Defeated!' },
     perfect: { icon: '🏆', name: 'Perfect Score!' },
     level5: { icon: '🚀', name: 'Reached Level 5' },
+    artist: { icon: '🎨', name: 'Pixel Artist' },
   }, L.achievements);
   function achieve(id) {
     const a = ACH[id];
@@ -1061,6 +1062,178 @@
 
     teach();
     return box;
+  };
+
+  // ---------- pixel art editor (shared by the pixelcopy + pixelstudio games) ----------
+  const DEFAULT_PALETTE = [
+    ['#1b1b1b', 'black'], ['#ffffff', 'white'], ['#c6c6c6', 'light grey'], ['#6f6f6f', 'dark grey'],
+    ['#e53935', 'red'], ['#ff8c1a', 'orange'], ['#ffd43b', 'yellow'], ['#7cfc3a', 'lime'],
+    ['#2e9e3e', 'green'], ['#2ee6d6', 'aqua'], ['#1e6fd9', 'blue'], ['#1f2a6b', 'navy'],
+    ['#8e5cff', 'purple'], ['#ff7eb6', 'pink'], ['#8a5a32', 'brown'], ['#f2c79b', 'peach'],
+  ];
+  function pixelEditor({ w, h: rows, palette = DEFAULT_PALETTE, mirror = false, mirrorToggle = true, onStroke }) {
+    let cells = Array(w * rows).fill(null), color = palette[0][0], tool = 'pencil', mirrorOn = mirror;
+    const undo = [];
+    const cellEls = [];
+    const grid = h('div', { class: 'px-grid', style: `--w:${w};--h:${rows}`, 'aria-label': 'Drawing grid' });
+    for (let i = 0; i < w * rows; i++) { const c = h('div', { class: 'px-cell' }); cellEls.push(c); grid.append(c); }
+    const mirrorLine = h('div', { class: 'px-mirror-line', hidden: !mirrorOn });
+    const draw = () => cells.forEach((c, i) => { cellEls[i].style.background = c || ''; cellEls[i].classList.toggle('empty', !c); });
+    const setCell = (x, y, c) => {
+      if (x < 0 || y < 0 || x >= w || y >= rows) return;
+      cells[y * w + x] = c;
+      if (mirrorOn) cells[y * w + (w - 1 - x)] = c;
+    };
+    const fill = (x, y, c) => {
+      const target = cells[y * w + x];
+      if (target === c) return;
+      const stack = [[x, y]];
+      while (stack.length) {
+        const [cx, cy] = stack.pop();
+        if (cx < 0 || cy < 0 || cx >= w || cy >= rows || cells[cy * w + cx] !== target) continue;
+        cells[cy * w + cx] = c;
+        stack.push([cx + 1, cy], [cx - 1, cy], [cx, cy + 1], [cx, cy - 1]);
+      }
+    };
+    const at = (px, py) => {
+      const r = grid.getBoundingClientRect();
+      return [Math.floor((px - r.left) / r.width * w), Math.floor((py - r.top) / r.height * rows)];
+    };
+    let last = null, painting = false;
+    const paintTo = ([x, y]) => {
+      const c = tool === 'eraser' ? null : color;
+      // fill in any squares skipped by a quick finger swipe
+      const [x0, y0] = last || [x, y];
+      const steps = Math.max(Math.abs(x - x0), Math.abs(y - y0), 1);
+      for (let k = 0; k <= steps; k++) setCell(Math.round(x0 + (x - x0) * k / steps), Math.round(y0 + (y - y0) * k / steps), c);
+      last = [x, y]; draw();
+    };
+    grid.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      const p = at(e.clientX, e.clientY);
+      if (p[0] < 0 || p[1] < 0 || p[0] >= w || p[1] >= rows) return;
+      undo.push(cells.slice()); if (undo.length > 50) undo.shift();
+      if (tool === 'fill') { fill(p[0], p[1], color); draw(); sfx.tap(); if (onStroke) onStroke(); return; }
+      try { grid.setPointerCapture(e.pointerId); } catch (_) { /* ignore */ }
+      painting = true; last = null; paintTo(p); sfx.tap();
+    });
+    grid.addEventListener('pointermove', e => { if (painting) paintTo(at(e.clientX, e.clientY)); });
+    const end = () => { if (!painting) return; painting = false; last = null; if (onStroke) onStroke(); };
+    grid.addEventListener('pointerup', end);
+    grid.addEventListener('pointercancel', end);
+
+    const swatches = palette.map(([c, name]) => h('button', {
+      class: 'px-swatch', type: 'button', title: name, 'aria-label': name, style: `background:${c}`,
+      onclick(e) { color = c; if (tool === 'eraser') setTool('pencil'); swatches.forEach(s => s.classList.remove('on')); e.currentTarget.classList.add('on'); sfx.tap(); },
+    }));
+    swatches[0].classList.add('on');
+    const toolBtns = {};
+    const setTool = t => { tool = t; Object.entries(toolBtns).forEach(([k, b]) => b.classList.toggle('on', k === t)); };
+    const mkTool = (id, label) => (toolBtns[id] = h('button', { class: 'px-tool', type: 'button', onclick() { setTool(id); sfx.tap(); } }, label));
+    const mirrorBtn = mirrorToggle && h('button', {
+      class: 'px-tool' + (mirrorOn ? ' on' : ''), type: 'button',
+      onclick(e) { mirrorOn = !mirrorOn; e.currentTarget.classList.toggle('on', mirrorOn); mirrorLine.hidden = !mirrorOn; sfx.tap(); say(mirrorOn ? 'Mirror ON – whatever you draw on one side appears on the other!' : 'Mirror off.'); },
+    }, '🪞 Mirror');
+    const tools = h('div', { class: 'px-tools' },
+      mkTool('pencil', '✏️ Pencil'), mkTool('fill', '🪣 Fill'), mkTool('eraser', '🧽 Eraser'), mirrorBtn,
+      h('button', { class: 'px-tool', type: 'button', onclick() { if (undo.length) { cells = undo.pop(); draw(); sfx.tap(); if (onStroke) onStroke(); } } }, '↶ Undo'),
+      h('button', { class: 'px-tool', type: 'button', onclick() { if (!cells.some(Boolean) || confirm('Clear the whole picture?')) { undo.push(cells.slice()); cells.fill(null); draw(); if (onStroke) onStroke(); } } }, '🗑️ Clear'));
+    setTool('pencil');
+    draw();
+    return {
+      el: h('div', { class: 'px-editor' }, tools, h('div', { class: 'px-palette' }, swatches), h('div', { class: 'px-board' }, grid, mirrorLine)),
+      get cells() { return cells; },
+      load(c) { undo.push(cells.slice()); cells = c.slice(); draw(); },
+      flash(indexes) { indexes.forEach(i => cellEls[i].classList.add('px-wrong')); setTimeout(() => indexes.forEach(i => cellEls[i].classList.remove('px-wrong')), 1600); },
+    };
+  }
+  // Pixel art → PNG data URL (transparent background)
+  function pixelPNG(cells, w, rows, scale = 24) {
+    const c = document.createElement('canvas');
+    c.width = w * scale; c.height = rows * scale;
+    const ctx = c.getContext('2d');
+    cells.forEach((col, i) => { if (col) { ctx.fillStyle = col; ctx.fillRect((i % w) * scale, Math.floor(i / w) * scale, scale, scale); } });
+    return c.toDataURL('image/png');
+  }
+  const GKEY = 'y3:gallery';
+
+  // Copy the picture: paint the grid until it matches the target sprite.
+  GAMES.pixelcopy = function (r, key, done) {
+    const rowsT = r.target, w = Math.max(...rowsT.map(x => x.length)), rows = rowsT.length;
+    const want = [];
+    rowsT.forEach(row => { for (let x = 0; x < w; x++) want.push(r.colors[row[x]] || null); });
+    const used = [...new Set(want.filter(Boolean))];
+    const names = r.names || {};
+    const palette = used.map(c => [c, names[c] || 'colour']);
+    const meter = h('div', { class: 'px-meter' });
+    let finished = false;
+    const wrongIdx = () => want.map((c, i) => (ed.cells[i] || null) === c ? -1 : i).filter(i => i >= 0);
+    const check = () => {
+      const wrong = wrongIdx();
+      const ok = want.length - wrong.length;
+      put(meter, h('div', { class: 'px-meter-bar' }, h('div', { style: `width:${ok / want.length * 100}%` })), `${ok} of ${want.length} squares match`);
+      if (!wrong.length && !finished) { finished = true; sfx.good(); award(key + ':done', meter); confetti(60); say(r.done || 'PERFECT COPY! You are a real pixel artist!'); done(); }
+    };
+    const ed = pixelEditor({ w, h: rows, palette, mirror: !!r.mirror, mirrorToggle: true, onStroke: check });
+    const hintBtn = h('button', { class: 'btn gold', type: 'button', onclick() { const wr = wrongIdx(); ed.flash(wr); sfx.tap(); say(wr.length ? `${wr.length} squares need fixing – they are flashing red!` : 'Everything matches!'); } }, '🔍 Show mistakes');
+    check();
+    return h('div', { class: 'game pixelcopy' },
+      h('div', { class: 'px-wrap' },
+        h('div', { class: 'panel-inner px-target' }, h('h3', null, '🎯 Copy this'), pic(Pixel.svg(rowsT, r.colors), 'px-target-pic'),
+          r.tips && h('ul', { class: 'px-tips' }, r.tips.map(t => h('li', { html: fmt(t, false) })))),
+        h('div', null, ed.el, meter, h('div', { class: 'btn-row' }, hintBtn))));
+  };
+
+  // Free studio: draw anything; save to the gallery, download as a picture.
+  GAMES.pixelstudio = function (r, key, done) {
+    const w = r.size || 16, rows = r.size || 16, min = r.minPixels || 30;
+    let finished = false;
+    const status = h('div', { class: 'px-meter' });
+    const count = () => ed.cells.filter(Boolean).length;
+    const update = () => {
+      const n = count();
+      finishBtn.disabled = n < min && !finished;
+      put(status, n < min ? `🎨 ${n} squares painted – paint at least ${min} to finish` : `🎨 ${n} squares painted – looking great!`);
+    };
+    const ed = pixelEditor({ w, h: rows, palette: r.palette, mirror: false, onStroke: update });
+    const gallery = h('div', { class: 'px-gallery' });
+    const loadGallery = () => store.get(GKEY, []);
+    function drawGallery() {
+      const items = loadGallery();
+      put(gallery, items.length ? items.map((g, gi) => h('div', { class: 'px-thumb' },
+        h('img', { src: pixelPNG(g.cells, g.w, g.h, 4), alt: g.title || 'pixel art', title: 'Tap to open', onclick() { ed.load(g.cells); update(); sfx.tap(); } }),
+        h('button', { class: 'px-del', type: 'button', 'aria-label': 'Delete', onclick() { if (!confirm('Delete this picture from your gallery?')) return; const all = loadGallery(); all.splice(gi, 1); store.set(GKEY, all); drawGallery(); } }, '✕')))
+        : h('p', { class: 'ai-empty' }, 'No pictures yet – your saved art will appear here!'));
+    }
+    const saveArt = () => {
+      if (!count()) { say('Paint something first!'); return false; }
+      const all = loadGallery();
+      all.unshift({ w, h: rows, cells: ed.cells.slice(), date: Date.now(), title: r.title || 'My art' });
+      store.set(GKEY, all.slice(0, 24)); drawGallery();
+      return true;
+    };
+    const download = () => {
+      if (!count()) { say('Paint something first!'); return; }
+      const a = h('a', { href: pixelPNG(ed.cells, w, rows, 24), download: `pixelkid-${(settings.name || 'art').toLowerCase().replace(/[^a-z0-9]+/g, '-')}.png` });
+      document.body.append(a); a.click(); a.remove(); sfx.good(); say('Downloading your picture! Ask a grown-up to help you print or share it.');
+    };
+    const finishBtn = h('button', {
+      class: 'btn big green', type: 'button',
+      onclick() {
+        if (finished) return;
+        finished = true; saveArt(); sfx.win(); confetti(120); award(key + ':done', finishBtn); achieve('artist');
+        say(r.done || 'WOW! Your masterpiece is saved in your gallery!'); finishBtn.textContent = '✔ Saved!'; done();
+      },
+    }, "✔ I'm finished!");
+    drawGallery(); update();
+    return h('div', { class: 'game pixelstudio' },
+      r.brief && h('div', { class: 'panel-inner px-brief' }, h('h3', null, r.briefTitle || '📋 Design brief'), h('ol', null, r.brief.map(b => h('li', { html: fmt(b, false) })))),
+      ed.el, status,
+      h('div', { class: 'btn-row' },
+        h('button', { class: 'btn', type: 'button', onclick() { if (saveArt()) { sfx.good(); say('Saved to your gallery!'); } } }, '💾 Save to gallery'),
+        h('button', { class: 'btn ghost', type: 'button', onclick: download }, '⬇️ Download picture'),
+        finishBtn),
+      h('div', { class: 'panel-inner px-gallery-wrap' }, h('h3', null, '🖼️ My Gallery'), gallery));
   };
 
   // Places words in a grid (left→right and top→bottom; diagonals optional) and fills the gaps.

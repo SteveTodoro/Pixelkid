@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pixel Art Studio</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <script src="../shared/pixel.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// ---------- pictures to copy ----------
+const K = '#1b1b1b', W = '#ffffff';
+const HEART = {
+  colors: { k: K, r: '#e53935', w: W },
+  names: { [K]: 'black', '#e53935': 'red', [W]: 'white' },
+  target: [
+    '.kk...kk.',
+    'krrk.krrk',
+    'krwrkrrrk',
+    'krrrrrrrk',
+    '.krrrrrk.',
+    '..krrrk..',
+    '...krk...',
+    '....k....',
+  ],
+};
+const GHOST = {
+  colors: { k: K, w: W, g: '#c6c6c6' },
+  names: { [K]: 'black', [W]: 'white', '#c6c6c6': 'grey (shadow)' },
+  target: [
+    '..kkkk..',
+    '.kwwwwk.',
+    'kwwwwwwk',
+    'kwkwwkwk',
+    'kwwwwwgk',
+    'kwwwwwgk',
+    'kwwwwggk',
+    'kwkwkwgk',
+  ],
+};
+const ALIEN = {
+  colors: { g: '#7cfc3a', p: '#ff7eb6', k: K, w: W },
+  names: { '#7cfc3a': 'green', '#ff7eb6': 'pink', [K]: 'black', [W]: 'white' },
+  target: [
+    '...p...p...',
+    '....g.g....',
+    '..ggggggg..',
+    '.ggkwgwkgg.',
+    'ggggggggggg',
+    'gg.ggggg.gg',
+    'g..g...g..g',
+    '..gg...gg..',
+  ],
+};
+
+// the boss: The Smudger, who wants to blur every picture
+const SMUDGER = Pixel.svg([
+  '...kkkkkk...',
+  '..kssssssk..',
+  '.kssssssssk.',
+  'ksswksswkssk',
+  'kssssssssssk',
+  'ksskkkkkkssk',
+  'kssssssssssk',
+  'kdsssdssdssk',
+  '.kd.kd.kdkk.',
+  '..d..d..d...',
+], { k: K, s: '#9b8bb4', d: '#6d5d86', w: W });
+
+// ---------- the lesson ----------
+window.LESSON = {
+  id: 'future-pixel-art',
+  subject: 'future',
+  title: 'Pixel Art Studio',
+  emoji: '🎨',
+  home: '../index.html',
+  mascot: {
+    name: 'Professor Bolt',
+    sprite: Pixel.sprites.robot,
+    praise: ['Pixel perfect!', 'Brilliant, artist!', 'Critical hit!', 'What a designer!', 'Epic thinking!', 'Bolt-tastic!', 'Nailed it!'],
+    oops: ['Oops! Try again.', 'Not quite – have another go!', 'Hmm, think again!', 'So close! One more try.'],
+  },
+  glossary: {
+    pixel: { emoji: '🟥', def: 'One tiny coloured square. Every picture on a screen is made of pixels. Short for "picture element".' },
+    'pixel art': { emoji: '👾', def: 'Pictures made on purpose from big, chunky pixels – one square at a time.' },
+    grid: { emoji: '▦', def: 'Rows and columns of squares, like squared paper. Pixel artists draw on a grid.' },
+    palette: { emoji: '🎨', def: 'The set of colours an artist chooses for a picture.' },
+    outline: { emoji: '⬛', def: 'A dark line around the edge of a shape, so it stands out.' },
+    shading: { emoji: '🌗', def: 'Using a darker colour where there is shadow, so things look round and solid.' },
+    highlight: { emoji: '✨', def: 'A light spot where light shines on something. It makes things look shiny.' },
+    symmetrical: { emoji: '🪞', def: 'The same on both sides, like a mirror image.' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'Pixel Art Studio', short: 'Start', minutes: 1,
+      pic: Pixel.svg(ALIEN.target, ALIEN.colors),
+      hello: "Beep boop! Welcome to the Pixel Art Studio! Today YOU become a game artist.",
+      question: 'How do game artists make characters out of tiny squares?',
+      intro: 'Learn what pixels are, copy some pixel art, learn real design tricks – then **design your own game hero** and save it to your gallery!',
+      nameLabel: 'Artist name:',
+    },
+
+    {
+      type: 'review', title: 'Last time…', short: 'Recap', minutes: 3,
+      from: { title: 'How Does AI Work?', emoji: '🤖', url: 'ai.html' },
+      facts: [
+        'AI stands for **artificial intelligence** – computer programs that learn from examples.',
+        'The examples are called **data**. AI finds **patterns** in the data. Teaching it is called **training**.',
+        'AI can be **confidently wrong** – always check with a grown-up or a trusted book.',
+        'Never tell an AI your **personal information**, like your address or passwords.',
+      ],
+      questions: [
+        { type: 'mcq', q: 'The examples an AI learns from are called…', options: ['data', 'dots', 'dates'], answer: 0 },
+        { type: 'tf', q: 'If an AI sounds very sure, it must be right.', answer: false, explain: 'Remember Bolt and the lemon? AI can be confidently wrong!' },
+        { type: 'mcq', q: 'Which is OK to tell an AI?', options: ['🦖 my favourite dinosaur', '🏠 my address', '🔑 my password'], answer: 0 },
+        { type: 'mcq', q: 'Bolt was only taught apples and bananas. He saw a lemon and said "banana!". How could we fix him?', options: ['Train him with more, different examples', 'Shout at him', 'Turn the lemon blue'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'read', title: 'What is a pixel?', short: 'Read 1', minutes: 4,
+      cards: [
+        {
+          title: 'Zoom in!', pic: Pixel.svg(HEART.target, HEART.colors),
+          text: [
+            'Every picture on a screen is made of tiny coloured squares called [[pixel|pixels]].',
+            'Pixel is short for **picture element**. Each pixel can only be **one colour** at a time.',
+          ],
+          check: { q: 'What is a pixel?', options: ['a tiny coloured square', 'a type of robot', 'a computer mouse'], answer: 0 },
+        },
+        {
+          title: 'Millions of them!', pic: '📱🔍',
+          text: [
+            'A tablet screen has **millions** of pixels. They are so tiny and packed so close together that you cannot see them one by one.',
+            'That is why photos on a screen look smooth – until you zoom right in!',
+          ],
+          check: { q: "Why can't you see the pixels on a tablet?", options: ['They are tiny and there are millions of them', 'They are invisible ink', 'They switch off when you look'], answer: 0 },
+        },
+        {
+          title: 'Blocky old games', pic: '👾🕹️',
+          text: [
+            'Long ago, computers and game consoles could only show a **few** pixels, so games looked blocky.',
+            'Clever artists made amazing characters out of just a few squares. This style is called [[pixel art]].',
+          ],
+          check: { q: 'Why did old games look blocky?', options: ['They could only use a few pixels', 'Players liked squares', 'The TVs were broken'], answer: 0 },
+        },
+        {
+          title: 'Pixel art today', pic: '🎮✨',
+          text: [
+            'Lots of games are still made with pixel art today, because it looks cool and is easy to understand. This whole lesson is pixel art!',
+            'Pixel artists draw on a [[grid]] – rows and columns of squares, like squared paper.',
+          ],
+          check: { q: 'Pixel artists draw on a…', options: ['grid', 'balloon', 'sandwich'], answer: 0 },
+        },
+        {
+          title: 'Choosing colours', pic: '🎨',
+          text: [
+            'Before they start, artists choose a [[palette]] – the set of colours for their picture.',
+            'Pro tip: artists often use only a **few** colours, so everything looks neat and matching.',
+          ],
+          check: { q: 'A palette is…', options: ['the set of colours you choose', 'a type of brush', 'a robot'], answer: 0 },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'Coding with QMO: Pixel', short: 'Video 1', minutes: 4,
+      video: { id: 'R65_SYq24Rg', title: 'Coding With QMO – Episode 8 | PIXEL', channel: 'Cozmo & Friends', duration: '2:51' },
+      say: 'A short cartoon about pixels! Watch, then answer my questions.',
+      clues: [
+        'What is pixel short for?',
+        'What does a pixel look like?',
+        "Why did the portrait look blocky?",
+        'How many pixels do computers use?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'Pixel is short for…', options: ['picture element', 'pick some yellow', 'pizza slice'], answer: 0 },
+        { type: 'mcq', q: 'In the video, a pixel is a…', options: ['small square of colour', 'tiny robot', 'kind of sweet'], answer: 0 },
+        { type: 'tf', q: 'One pixel on its own makes a big, detailed picture.', answer: false, explain: 'One pixel is just one square. LOTS of pixels together make a picture.' },
+        { type: 'mcq', q: 'Why did the pixel portrait look blocky?', options: ['There were only a few pixels to use', 'The paint was wet', 'The computer was sleepy'], answer: 0 },
+        { type: 'mcq', q: 'Real computer pictures use…', options: ['thousands of pixels', 'just one pixel', 'no pixels at all'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Copy the Pixels', short: 'Game 1', minutes: 6,
+      rounds: [
+        Object.assign({
+          game: 'pixelcopy', title: 'Pixel heart',
+          intro: 'Copy the heart! Pick a colour, then tap or drag on the grid.',
+          say: 'Pro trick: draw the black outline first, then use 🪣 Fill to colour the inside in one tap!',
+          tips: ['Draw the **black outline** first.', 'Then pick red and use **🪣 Fill** inside the heart.', 'Add one **white** pixel to make it shiny.', 'Made a mistake? Use **↶ Undo** or the **🧽 Eraser**.'],
+          done: 'PERFECT HEART! You used an outline and a highlight, just like a pro!',
+        }, HEART),
+        Object.assign({
+          game: 'pixelcopy', title: 'Spooky ghost',
+          intro: 'Copy the ghost. See the **grey** pixels? That is **shading** – the shadow side of the ghost.',
+          say: 'Shading makes things look round. The grey goes on the shadow side!',
+          tips: ['Outline first, then fill with white.', 'Add the **grey shading** on the right side.', 'Use **🔍 Show mistakes** if you get stuck.'],
+          done: 'BOO-tiful! That shading makes your ghost look round!',
+        }, GHOST),
+      ],
+    },
+
+    {
+      type: 'read', title: 'Design like a pro', short: 'Read 2', minutes: 4,
+      say: 'Time to learn the tricks real game artists use!',
+      cards: [
+        {
+          title: 'Big shapes first', pic: '⬛➡️🟥',
+          text: [
+            'Pixel artists usually start with an [[outline]] – a dark line around the edges of the shape.',
+            'Then they fill in the big areas of colour. Details come last.',
+          ],
+          check: { q: 'What do pixel artists often draw first?', options: ['the outline', 'the tiny details', 'the background clouds'], answer: 0 },
+        },
+        {
+          title: 'Light and shadow', pic: Pixel.svg(GHOST.target, GHOST.colors),
+          text: [
+            '[[Shading|shading]] means using a **darker** colour on the side in shadow. It makes things look round and solid.',
+            'A [[highlight]] is a **light** pixel where the light shines. It makes things look shiny!',
+          ],
+          check: { q: 'To make an apple look shiny, you add…', options: ['a white highlight pixel', 'more black', 'nothing at all'], answer: 0 },
+        },
+        {
+          title: 'Mirror, mirror', pic: Pixel.svg(ALIEN.target, ALIEN.colors),
+          text: [
+            'Lots of characters are [[symmetrical]] – the same on both sides, like this alien.',
+            'Designers draw one half, then **mirror** it to make the other half. It saves loads of time!',
+          ],
+          check: { q: 'A symmetrical picture is…', options: ['the same on both sides', 'all one colour', 'upside down'], answer: 0 },
+        },
+        {
+          title: 'Fewer colours, better art', pic: '🟩🟦🟨',
+          text: [
+            'Using too many colours can make a picture messy. Pros pick a small [[palette]] – often just 4 to 6 colours.',
+            'A light and a dark version of the same colour is great for shading.',
+          ],
+          check: { q: 'Using fewer colours makes pixel art look…', options: ['neat and matching', 'messy', 'invisible'], answer: 0 },
+        },
+        {
+          title: 'Try, check, improve', pic: '↶✏️✅',
+          text: [
+            'Real designers try an idea, step back to look at it, then fix what is not quite right.',
+            'Making mistakes is part of being an artist – that is what **Undo** is for!',
+          ],
+          check: { q: "Your drawing doesn't look right. What do designers do?", options: ['Undo and try again', 'Give up forever'], answer: 0 },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'Draw an Ice Cream Cone', short: 'Video 2', minutes: 10,
+      video: { id: 'a1k19QIojQ8', title: 'How To Draw An Ice Cream Cone Pixel Art', channel: 'Art for Kids Hub', duration: '8:41' },
+      say: 'Watch how real artists make pixel art step by step. Look for the tricks you just learned!',
+      clues: [
+        'Which colour do they start with?',
+        'Which design trick means they repeat the same steps on both sides?',
+        'How do they make the ice cream look shiny?',
+        'What do they sprinkle on top?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'What did they draw in pixel art?', options: ['🍦 an ice cream cone', '🐱 a cat', '🚀 a rocket'], answer: 0 },
+        { type: 'mcq', q: 'Which colour did they start drawing with?', options: ['black', 'pink', 'yellow'], answer: 0, hint: 'They drew the outline first…' },
+        { type: 'tf', q: 'The ice cream cone was symmetrical, so they repeated the same steps on both sides.', answer: true },
+        { type: 'mcq', q: 'How did they make the ice cream look shiny?', options: ['They left some pixels white as a highlight', 'They used glitter', 'They coloured it all black'], answer: 0 },
+        { type: 'mcq', q: 'What did they add on top of the pink ice cream?', options: ['sprinkles', 'a cherry', 'chocolate sauce'], answer: 0 },
+        { type: 'mcq', q: 'What can you do if a drawing video goes too fast?', options: ['Pause the video', 'Give up', 'Close your eyes'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Symmetry Challenge', short: 'Game 2', minutes: 5,
+      rounds: [
+        Object.assign({
+          game: 'pixelcopy', title: 'Mirror alien', mirror: true,
+          intro: 'The **🪞 Mirror** tool is ON. Paint the **left half** of the alien – the right half paints itself!',
+          say: 'Mirror magic! Draw on one side of the purple line and watch the other side copy you.',
+          tips: ['Only paint the **left half** – the mirror does the rest.', 'Start with the big green body, then add the eyes.', 'Antennae tips are **pink**!'],
+          done: 'SYMMETRY MASTER! You drew half and got a whole alien!',
+        }, ALIEN),
+        {
+          game: 'wordsearch', title: 'Word Hunt',
+          intro: 'Find all the **art words** hidden in the grid. They go across ➡ or down ⬇.',
+          say: 'Hunt for the hidden words! Drag across a word – or tap the first letter, then the last.',
+          size: 10,
+          words: ['PIXEL', 'GRID', 'PALETTE', 'OUTLINE', 'SHADING', 'MIRROR', 'SCREEN', 'DESIGN'],
+        },
+      ],
+    },
+
+    {
+      type: 'break', title: 'Brain Break', short: 'Break', minutes: 2,
+      say: 'Rest your eyes and stretch your drawing hand!',
+      wiggle: {
+        title: '🕺 Pixel Moves!',
+        seconds: 60,
+        moves: [
+          '🟥 Be a pixel! Make yourself into a small square shape.',
+          '🤖 Blocky robot! Move only in straight lines and sharp corners.',
+          '🪞 Mirror me! Copy your grown-up like a mirror.',
+          '✋ Shake out your drawing hand. Wiggle all your fingers!',
+          '👀 Eye break! Look at something far away for 10 seconds.',
+          '😌 Take a big, slow breath.',
+        ],
+      },
+      tryit: {
+        title: '🔍 Try it at home: Pixel art without a screen',
+        intro: 'Pixel art works with all sorts of things! Pick one with a grown-up:',
+        steps: [
+          '**Squared paper** – colour in one square at a time.',
+          '**Hama / fuse beads** – make a pixel sprite, and a grown-up irons it.',
+          '**LEGO bricks** – build a flat pixel picture with 1×1 pieces.',
+          '**Sticky notes** – make a giant pixel picture on a window or wall!',
+        ],
+        tip: 'Copy your favourite design from today – or invent a brand-new one.',
+      },
+    },
+
+    {
+      type: 'game', title: 'Pixel Studio', short: 'Studio', icon: '🎨', minutes: 8,
+      rounds: [
+        {
+          game: 'pixelstudio', title: 'My game hero', size: 16, minPixels: 30,
+          intro: 'Your turn to be the designer! Use everything you learned today.',
+          say: 'The studio is yours! Remember: outline, fill, shading, highlight. Save your best work to the gallery!',
+          briefTitle: '📋 Design brief: invent a game hero',
+          brief: [
+            'Draw a **character** for your own game – a hero, a pet or a monster.',
+            'Give it a dark **outline**.',
+            'Choose a small **palette** – about 4 to 6 colours.',
+            'Add a **highlight** or some **shading**.',
+            'Bonus: turn on **🪞 Mirror** to make it symmetrical!',
+          ],
+          done: 'MASTERPIECE! Your hero is saved in your gallery. Download it to print or share!',
+        },
+      ],
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: The Smudger', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      say: 'Oh no! THE SMUDGER wants to blur every picture in the world! Fight back with your art knowledge, {name}!',
+      boss: { name: 'The Smudger', sprite: SMUDGER },
+      bonus: {
+        title: '⭐ Bonus quest (for a grown-up to help with)',
+        text: 'Want more? Art for Kids Hub has lots more pixel art draw-alongs, like this cheeseburger. Draw along in the Pixel Studio or on squared paper!',
+        url: 'https://www.youtube.com/watch?v=sjbi7ufjxJE',
+        button: 'Watch the bonus video ▶',
+      },
+      questions: [
+        { type: 'mcq', q: 'Pixel is short for…', options: ['picture element', 'pixie elephant', 'pick a pencil'], answer: 0 },
+        { type: 'tf', q: 'One pixel can be two colours at the same time.', answer: false, explain: 'Each pixel is just one colour.' },
+        { type: 'mcq', q: 'A palette is…', options: ['the set of colours you choose', 'a kind of brush', 'a robot'], answer: 0 },
+        { type: 'mcq', q: 'Old video games looked blocky because…', options: ['they could only use a few pixels', 'players liked squares', 'the TVs were broken'], answer: 0 },
+        { type: 'mcq', q: 'Pixel artists usually draw on a…', options: ['grid', 'balloon', 'pancake'], answer: 0 },
+        { type: 'mcq', q: 'What do pixel artists often draw first?', options: ['the outline', 'the sprinkles', 'the sky'], answer: 0 },
+        { type: 'mcq', q: 'To make something look shiny, add…', options: ['a light highlight', 'more black', 'a big X'], answer: 0 },
+        { type: 'mcq', q: 'Where does the darker shading colour go?', options: ['on the side in shadow', 'everywhere', 'only on the eyes'], answer: 0 },
+        { type: 'tf', q: 'A symmetrical picture is the same on both sides.', answer: true },
+        { type: 'mcq', q: 'The 🪞 Mirror tool helps you…', options: ['draw both halves at once', 'make it rain', 'delete everything'], answer: 0 },
+        { type: 'mcq', q: 'You make a mistake in your pixel art. What is the best thing to do?', options: ['Undo it and try again', 'Throw the tablet', 'Stop drawing forever'], answer: 0 },
+        { type: 'order', q: 'Put the pixel art steps in order.', items: ['💡 Plan your idea.', '⬛ Draw the outline.', '🎨 Fill in the big colours.', '✨ Add shading and highlights.'], hint: 'Big shapes first, details last!' },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>
