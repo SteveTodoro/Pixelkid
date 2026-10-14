@@ -34,6 +34,7 @@ body.science { --brand: #19b3a3; --brand-dark: #0b6e64; --brand-soft: #c6f6ef; }
 body.maths   { --brand: #e09a00; --brand-dark: #8a5d00; --brand-soft: #ffe9b3; }
 body.english { --brand: #d9433b; --brand-dark: #85201b; --brand-soft: #ffd0cc; }
 body.future  { --brand: #7c4dff; --brand-dark: #3d1f99; --brand-soft: #e3d9ff; }
+body.wonders { --brand: #1e88e5; --brand-dark: #0d47a1; --brand-soft: #d6e9ff; }
 
 * { box-sizing: border-box; }
 html { font-size: 18px; }

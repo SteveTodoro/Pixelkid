@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tardigrades: The Unkillable Water Bear?</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <script src="../shared/pixel.js"></script>
+  <script src="../shared/avatar.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// ---------- blocky pictures for this lesson ----------
+const TP = { k: '#4a3426', p: '#e9cfa6', P: '#c9a477', o: '#e57373', w: '#ffffff' };
+
+// a chubby water bear, side on: wrinkly body, little face on the right, eight stumpy legs
+const TARDIGRADE = Pixel.svg([
+  '....kkkkkkk.....',
+  '..kkpppppppkk...',
+  '.kpppPpppPpppk..',
+  'kppPppppPpppppk.',
+  'kpppppPpppppkpk.',
+  'kpPppppppPppppok',
+  '.kpppppPpppppkk.',
+  '..kpkkpkkpkkpk..',
+  '..kpk.kpk.kpk.k.',
+  '..k.k.k.k.k.k...',
+], TP);
+
+// curled up into a dry "tun"
+const TUN = Pixel.svg([
+  '...kkkkkk...',
+  '.kkPPpPPPkk.',
+  'kPPpPPPpPPPk',
+  'kPpPPPPPPpPk',
+  'kPPPpPPPPPPk',
+  '.kkPPPpPPkk.',
+  '...kkkkkk...',
+], TP);
+
+// the boss: Professor Frost, a grumpy snowman scientist with a freeze ray
+const PROF_FROST = Pixel.svg([
+  '...kkkkkk...',
+  '...kKKKKk...',
+  '...kKKKKk...',
+  '.kkkkkkkkkk.',
+  '..kwwwwwwk..',
+  '.kwkbwwbkwk.',
+  '.kwwwoowwwk.',
+  '.kwwkkkkwwk.',
+  '..kwwwwwwk..',
+  '.kccccccccck',
+  'kwwwwwwwwwwk',
+  'kwwwwwwwwwwk',
+  '.kkkkkkkkkk.',
+], { k: '#1b1b1b', K: '#2a3f8a', w: '#eaf6ff', b: '#2e7bd6', o: '#ff8c1a', c: '#e53935' });
+
+// ---------- the lesson ----------
+window.LESSON = {
+  id: 'wonders-tardigrades',
+  subject: 'wonders',
+  title: 'Tardigrades: The Unkillable Water Bear?',
+  emoji: '🐻',
+  home: '../index.html',
+  finishAch: 'wonder',
+  mascot: {
+    name: 'Professor Bolt',
+    sprite: Pixel.sprites.robot,
+    praise: ['Wonderful!', 'Amazing answer!', 'Critical hit!', 'Mind = blown!', 'Epic thinking!', 'Bolt-tastic!', 'Nailed it!'],
+    oops: ['Oops! Have another go.', 'Not quite – read it again!', 'Hmm, think again!', 'So close! One more try.'],
+  },
+  glossary: {
+    tardigrade: { emoji: '🐻', def: 'A tiny animal with eight legs, also called a water bear. It is one of the toughest animals on Earth.' },
+    microscope: { emoji: '🔬', def: 'A tool that makes tiny things look much bigger, so you can see them.' },
+    moss: { emoji: '🌿', def: 'A soft, green, spongy plant that grows on walls, rocks and trees.' },
+    species: { emoji: '🧬', def: 'One kind of living thing. Lions and tigers are different species.' },
+    tun: { emoji: '🌀', def: 'The dried-up ball a tardigrade curls into to survive when there is no water.' },
+    dehydrated: { emoji: '🏜️', def: 'Dried out, with almost no water left inside.' },
+    extreme: { emoji: '🌋', def: 'Very, very hot, cold, dry or harsh – far past normal.' },
+    radiation: { emoji: '☢️', def: 'Invisible rays, like the ones from the Sun in space, that can harm living things.' },
+    survive: { emoji: '💪', def: 'To stay alive, even when things are hard or dangerous.' },
+    myth: { emoji: '🧚', def: 'A story or idea that lots of people believe, but that is not quite true.' },
+  },
+  achievements: {
+    wonder: { icon: '🌍', name: 'Wonder Hunter' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'Tardigrades: The Unkillable Water Bear?', short: 'Start', minutes: 1,
+      pic: TARDIGRADE,
+      hello: "Beep boop! Welcome to the brand-new WONDERS OF THE WORLD! Today: an animal so tough it went to SPACE… and came back alive.",
+      question: 'Could any animal survive being frozen, boiled and blasted into space?',
+      intro: 'Read, watch, play **Fact or Fiction**, hunt for clues – then stop Professor Frost from freezing the world! Finish the lesson to unlock a secret explorer hat 🌍.',
+      nameLabel: 'Player name:',
+    },
+
+    {
+      type: 'read', title: 'Meet the water bear', short: 'Read 1', minutes: 5,
+      say: 'Read each page carefully – the checks test if you really understood it! Tap the yellow words for a 💎.',
+      cards: [
+        {
+          title: 'Tiny but tough', pic: TARDIGRADE,
+          text: [
+            'Meet the [[tardigrade]]! Lots of scientists think it is the toughest animal on the whole planet.',
+            'But you would walk straight past one. Even a big tardigrade is only about 1 millimetre long – smaller than a grain of rice. To see one properly, you need a [[microscope]].',
+          ],
+          check: { q: 'Which of these is BIGGER than a tardigrade?', options: ['🐜 an ant', '🦠 a germ', '⚫ a full stop on this page'], answer: 0, hint: 'A tardigrade is only about 1 millimetre long. Ants are bigger than a grain of rice.' },
+        },
+        {
+          title: 'Water bear or moss piglet?', pic: '🐻💧 🐷🌿',
+          text: [
+            'Tardigrades have chubby, wrinkly bodies and eight stumpy legs with tiny claws. Some people say they look like gummy bears!',
+            'Their nicknames are "water bears" and "moss piglets". The name tardigrade means "slow stepper", because they plod along very slowly.',
+          ],
+          check: { q: 'Why do you think people call a tardigrade a "water bear"?', options: ['Its chubby body and stumpy legs look a bit like a bear', 'It is a real bear that can swim', 'It growls when it is hungry'], answer: 0 },
+        },
+        {
+          title: 'They live everywhere!', pic: '🌿🏔️🌊🧊',
+          text: [
+            'Tardigrades live almost everywhere on Earth: in [[moss]] on walls and trees, in soil, in ponds and the sea, on high mountains and even in icy Antarctica.',
+            'To stay awake and busy, they need a thin layer of water around their bodies. Damp moss is like a tiny wet sponge – the perfect home.',
+          ],
+          check: { q: 'Where would be the BEST place to hunt for tardigrades in a garden?', options: ['in a clump of damp moss', 'on a dry plastic chair', 'inside a sealed glass jar'], answer: 0, hint: 'They like somewhere that stays a little bit wet.' },
+        },
+        {
+          title: 'Discovered long ago', pic: '🔬📜',
+          text: [
+            'Tardigrades were first spotted in 1773 by a German scientist peering through an early microscope. He called them "little water bears".',
+            'Since then, scientists have found about 1,300 different [[species]] of tardigrade – that means 1,300 different kinds!',
+          ],
+          check: { q: 'Why did nobody find tardigrades until people had microscopes?', options: ['They are too small to spot without one', 'They only arrived on Earth in 1773', 'They hide underground all the time'], answer: 0 },
+        },
+        {
+          title: "What's for dinner?", pic: '🌱🥤',
+          text: [
+            'A tardigrade has a mouth like a tiny tube with two sharp spikes inside.',
+            'It pokes a hole in a plant cell and slurps out the juice inside. Some kinds even hunt animals that are tinier than they are!',
+          ],
+          check: { q: 'A tardigrade eating a plant cell is most like…', options: ['you drinking juice through a straw', 'a dog chewing a bone', 'a bird cracking a seed'], answer: 0 },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'The Strongest Creature Ever', short: 'Video 1', minutes: 8,
+      video: { id: 'dWzONiyXxFo', title: 'What Are Tardigrades? | The Strongest Creature Ever | The Dr Binocs Show', channel: 'Peekaboo Kidz', duration: '5:40' },
+      say: 'Dr Binocs is going to zoom right in! Watch, then answer my questions.',
+      clues: [
+        'What does Dr Binocs say tardigrades look like?',
+        'How long can they live without water?',
+        'What shape do they curl into?',
+        'Where did tardigrades go in 2007?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'What does Dr Binocs say tardigrades look like?', options: ['🧸 cute, chubby gummy bears', '🐛 hairy caterpillars', '🐟 tiny fish'], answer: 0 },
+        { type: 'mcq', q: 'How long can tardigrades survive without water?', options: ['for years, even decades', 'for one hour', 'for one day'], answer: 0 },
+        { type: 'mcq', q: 'To survive without water, a tardigrade curls up its body like a…', options: ['ball', 'flag', 'snake'], answer: 0, explain: 'This curled-up ball is called the tun state.' },
+        { type: 'tf', q: 'Tardigrades can stay alive after being frozen.', answer: true },
+        { type: 'mcq', q: 'In 2007, where were dried-up tardigrades sent for 10 days?', options: ['🚀 into space', '🌋 inside a volcano', '🏝️ to a desert island'], answer: 0 },
+        { type: 'mcq', q: 'When they got back to Earth, how many of the space tardigrades came back to life?', options: ['more than two-thirds of them', 'none of them', 'just one'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Fact or Fiction?', short: 'Game 1', minutes: 6,
+      rounds: [
+        {
+          game: 'truefalse', title: 'Fact or Fiction?',
+          intro: 'Some of these sound made-up but are TRUE. Some sound true but are made-up! Think carefully about what you read.',
+          say: 'Is it a real wonder – or a fib? You decide!',
+          statements: [
+            { text: 'Tardigrades have survived a trip to outer space.', answer: true, why: 'In 2007 they spent 10 days in space – and most woke up afterwards!' },
+            { text: 'A tardigrade is about as big as a hamster.', answer: false, why: 'A tardigrade is only about 1 millimetre long – you need a microscope.' },
+            { text: 'A dried-up tardigrade can come back to life when it gets wet.', answer: true, why: 'Add water to a tun and it uncurls and walks off.' },
+            { text: 'Tardigrades are a kind of insect.', answer: false, why: 'Insects have 6 legs. Tardigrades have 8, and they are their own group of animals.' },
+            { text: 'Tardigrades only live in one country.', answer: false, why: 'They live all over the world – even in Antarctica and up mountains.' },
+            { text: 'Some tardigrades hunt animals even tinier than themselves.', answer: true, why: 'Most slurp plant juice, but some are hunters!' },
+            { text: 'Tardigrades were discovered last year.', answer: false, why: 'They were first spotted in 1773 – about 250 years ago!' },
+            { text: 'There is more than one kind of tardigrade.', answer: true, why: 'There are about 1,300 species!' },
+          ],
+        },
+        {
+          game: 'match', title: 'Word match',
+          intro: 'Match each wonder word to what it means.',
+          say: 'Tap a word, then tap what it means!',
+          hint: 'Not a match. Tap the yellow words in the reading pages if you need help!',
+          pairs: [
+            { a: '🔬 microscope', b: 'makes tiny things look bigger' },
+            { a: '🧬 species', b: 'one kind of living thing' },
+            { a: '🌿 moss', b: 'a soft, spongy green plant' },
+            { a: '💪 survive', b: 'stay alive when things are hard' },
+            { a: '🐻 tardigrade', b: 'a tiny animal called a water bear' },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'read', title: 'The super survivor', short: 'Read 2', minutes: 5,
+      say: 'Now find out HOW the water bear survives the impossible…',
+      cards: [
+        {
+          title: 'The tun trick', pic: TUN,
+          text: [
+            'When its home dries out, a tardigrade pulls in its head and legs and curls up into a dry little ball called a [[tun]].',
+            'Inside the tun, its body almost stops working. It can stay like this for years – some scientists say for up to 30 years!',
+          ],
+          check: { q: 'A puddle with tardigrades in it dries up in the hot sun. What do the tardigrades do?', options: ['Curl up and wait for water to come back', 'Run off to find a new puddle', 'Grow wings and fly away'], answer: 0 },
+        },
+        {
+          title: 'Just add water', pic: '🌀➕💧➡️🐻',
+          text: [
+            'Drip water onto a tun, and within a few hours the tardigrade uncurls and starts walking again, as if nothing happened.',
+            'While it is [[dehydrated]], special sugars and proteins inside its body protect it, a bit like bubble wrap protects a present.',
+          ],
+          check: { q: 'Amy finds a dry tun stuck in some old moss. How could she wake it up?', options: ['Give it a few drops of water', 'Put it in the freezer', 'Shake it really hard'], answer: 0 },
+        },
+        {
+          title: 'Hot, cold and squashed', pic: '🥶🔥🌊',
+          text: [
+            'Tardigrades can [[survive]] some of the most [[extreme]] places on Earth: freezing Antarctica, baking hot deserts and the deep sea, where the water presses down super hard.',
+            'In experiments, curled-up tardigrades have survived being frozen colder than anywhere on Earth – and heated past boiling for a short time.',
+          ],
+          check: { q: 'Why can a tardigrade survive places that would harm a person?', options: ['It can switch into its curled-up survival mode', 'It wears a tiny warm coat', 'It is made of metal'], answer: 0 },
+        },
+        {
+          title: 'Tardigrades in space!', pic: '🚀🐻🌍',
+          text: [
+            'In 2007, scientists sent dried-up tardigrades into space for 10 days. There was no air, and lots of [[radiation]] – invisible rays from the Sun that harm most living things.',
+            'Back on Earth, the scientists added water… and most of the tardigrades woke up!',
+          ],
+          check: { q: 'Why might space scientists want to study tardigrades?', options: ['To learn how living things could survive in space', 'To use them as rocket fuel', 'To teach them how to fly'], answer: 0 },
+        },
+        {
+          title: 'Myth-buster!', pic: '❌🛡️',
+          text: [
+            'You might hear that tardigrades are unkillable. That is a [[myth]] – an idea lots of people believe that is not quite true.',
+            'When they are awake and walking about, tardigrades are actually quite delicate. A long hot spell, or a squish, can kill them. Their super-survival only works inside the tun.',
+          ],
+          check: { q: 'Your friend says, "Nothing can EVER hurt a tardigrade!" What could you tell them?', options: ['Not quite – an awake tardigrade can be hurt quite easily', 'True – they are made of steel', 'Tardigrades are not real animals'], answer: 0 },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'The Indestructible Tardigrade', short: 'Video 2', minutes: 6,
+      video: { id: 'cnc2gyZZpII', title: 'The Indestructible Tardigrade | Wild Kratts', channel: 'Wild Kratts', duration: '3:47' },
+      say: 'The Kratt brothers go tardigrade hunting in the most extreme places on Earth!',
+      clues: [
+        'Where do they find the first tardigrade?',
+        'What happens when they give it water?',
+        'Which icy place do they visit?',
+        'What makes the deep sea so extreme?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'Where did the Kratt brothers find the first tardigrade?', options: ['🏜️ in the desert', '🏊 in a swimming pool', '🌳 high up in a tree'], answer: 0 },
+        { type: 'mcq', q: 'The desert tardigrade was curled up and dried out. What happened when they gave it water?', options: ['It came back to life', 'It floated away', 'It turned into a camel'], answer: 0 },
+        { type: 'mcq', q: 'How long does the video say tardigrades can survive without water?', options: ['30 years', '30 minutes', '3 days'], answer: 0 },
+        { type: 'mcq', q: 'Which freezing place did they visit next?', options: ['🐧 Antarctica', '🌑 the Moon', '🧊 a kitchen freezer'], answer: 0 },
+        { type: 'mcq', q: 'In the deep sea, what is extreme as well as the cold?', options: ['the pressure – the water presses down really hard', 'the wind', 'the loud music'], answer: 0 },
+        { type: 'tf', q: 'At the end, the Kratts want to make a tardigrade power suit.', answer: true },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Survival Lab', short: 'Game 2', minutes: 8,
+      rounds: [
+        {
+          game: 'order', title: 'Drought survival story',
+          intro: 'Put the story of a tardigrade surviving a drought in the right order.',
+          say: 'What happens first? What happens last? Think it through!',
+          items: [
+            '💧 A tardigrade is walking happily through wet moss.',
+            '☀️ Weeks of hot sun dry the moss out.',
+            '🌀 It pulls in its legs and curls into a tun.',
+            '⏳ It waits… for months, or even years.',
+            '🌧️ At last, rain soaks the moss again.',
+            '🐾 It uncurls and plods off to find dinner!',
+          ],
+        },
+        {
+          game: 'crossword', title: 'Water Bear Crossword',
+          intro: 'Solve the crossword! Tap a clue, then type the answer with the letter keys.',
+          say: 'Crossword time! Stuck? Press 💡 Hint for a free letter.',
+          entries: [
+            { answer: 'TARDIGRADE', clue: 'The real name of a water bear' },
+            { answer: 'MOSS', clue: 'A soft, damp plant where tardigrades love to live' },
+            { answer: 'TUN', clue: 'The dry ball a tardigrade curls into' },
+            { answer: 'SPACE', clue: 'Where tardigrades went on a 10-day trip in 2007' },
+            { answer: 'WATER', clue: 'Add this to wake a tardigrade up' },
+            { answer: 'EIGHT', clue: 'How many legs a tardigrade has' },
+            { answer: 'MYTH', clue: 'An idea lots of people believe that is not quite true' },
+          ],
+        },
+        {
+          game: 'invaders', title: 'Wonder Invaders',
+          intro: 'Read each mission at the top of the screen – then shoot ONLY the right aliens!',
+          say: 'Tap above an alien to fly there and fire!',
+          waves: [
+            {
+              prompt: 'Shoot the TRUE tardigrade facts!',
+              items: [
+                { label: '🚀 went to space', ok: true }, { label: '🦵 has 8 legs', ok: true },
+                { label: '🌀 curls into a tun', ok: true }, { label: '🧊 survives freezing', ok: true },
+                { label: '🐹 hamster-sized', ok: false, why: 'Tardigrades are only about 1 mm long!' },
+                { label: '🦋 has wings', ok: false, why: 'Tardigrades have no wings – they plod about on 8 legs.' },
+                { label: '🍔 eats burgers', ok: false, why: 'They slurp juice from plant cells, or hunt tiny animals.' },
+                { label: '🦗 is an insect', ok: false, why: 'Insects have 6 legs. Tardigrades have 8.' },
+              ],
+            },
+            {
+              prompt: 'Shoot the places tardigrades LIVE!',
+              items: [
+                { label: '🌿 moss', ok: true }, { label: '🌊 the sea', ok: true },
+                { label: '🏔️ mountains', ok: true }, { label: '🐧 Antarctica', ok: true },
+                { label: '☀️ the Sun', ok: false, why: 'Nothing can live on the Sun – it is far too hot!' },
+                { label: '🪐 Jupiter', ok: false, why: 'Tardigrades live all over EARTH – not other planets.' },
+                { label: '🔥 a campfire', ok: false, why: 'Fire would burn them up.' },
+              ],
+            },
+          ],
+          done: 'ALL WAVES CLEAR! You know your water bears!',
+        },
+      ],
+    },
+
+    {
+      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
+      say: 'Time to move like a water bear!',
+      wiggle: {
+        title: '🐻 Water Bear Moves!',
+        seconds: 60,
+        moves: [
+          '🐾 Slow stepper! Crawl on hands and knees, really slowly.',
+          '🌀 Dry out! Curl up into a tight tun and hug your knees.',
+          '💧 Splash! Uncurl and stretch out as big as you can.',
+          '🥶 Freeze! Stand as still as an ice statue.',
+          '🔥 Hot sand! Hop from foot to foot.',
+          '🚀 Blast off! Jump as high as you can – you are going to space!',
+        ],
+      },
+      tryit: {
+        title: '🔍 Try it at home: Moss Hunt',
+        intro: 'You need a grown-up, a clump of moss, a saucer of water and (if you have one) a magnifying glass or toy microscope.',
+        steps: [
+          'Find some dry moss on a wall or path. Tap the first box: will anything tiny live in it?',
+          'Soak the moss in the saucer of water for a few hours.',
+          'Squeeze a few drops onto a dark plate and look very closely. Tap the second box: did you spot anything moving?',
+          'Wash your hands afterwards!',
+        ],
+        table: {
+          cols: ['I think…', 'I saw…'],
+          items: ['🌿 something alive in the moss', '🐻 a tardigrade (you need a microscope!)', '🐛 another tiny creature'],
+        },
+        tip: 'Tap once for ✅ and twice for ❌. Tardigrades are VERY hard to see without a microscope – so finding anything tiny counts!',
+      },
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: Professor Frost', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      say: 'Oh no! PROFESSOR FROST wants to freeze every living thing on Earth! Every right answer is a hit. Stop him, {name}!',
+      boss: { name: 'Professor Frost', sprite: PROF_FROST },
+      bonus: {
+        title: '⭐ Bonus quest (for a grown-up to help with)',
+        text: 'Want more? Watch TED-Ed\'s "Meet the tardigrade, the toughest animal on Earth" (4 min) to find out how scientists study them.',
+        url: 'https://www.youtube.com/watch?v=IxndOd3kmSs',
+        button: 'Watch the bonus video ▶',
+      },
+      questions: [
+        { type: 'mcq', q: 'Which of these is closest in size to a tardigrade?', options: ['a grain of sand', 'a football', 'a pet cat'], answer: 0 },
+        { type: 'gap', q: 'To stay awake and active, a tardigrade needs a thin layer of ___ around its body.', options: ['water', 'sand', 'fire'], answer: 0 },
+        { type: 'mcq', q: 'A pond dries up in summer. What happens to the tardigrades living in it?', options: ['They curl into tuns and wait', 'They all vanish forever', 'They dig a tunnel to Australia'], answer: 0 },
+        { type: 'mcq', q: 'Professor Frost freezes a pond solid! In spring the ice melts. What will the tardigrades probably do?', options: ['Wake up and walk again', 'Stay frozen forever', 'Turn into frogs'], answer: 0, hint: 'Tardigrades can survive being frozen.' },
+        { type: 'tf', q: 'Tardigrades are a kind of insect.', answer: false, explain: 'Insects have 6 legs. Tardigrades have 8!' },
+        { type: 'mcq', q: 'Which tool would you need to watch a tardigrade walking?', options: ['🔬 a microscope', '🔭 a telescope', '📏 a ruler'], answer: 0 },
+        { type: 'mcq', q: 'Why did scientists send tardigrades into space?', options: ['To find out if living things can survive out there', 'To clean the rocket', 'To give them a holiday'], answer: 0 },
+        { type: 'mcq', q: 'Which word means "an idea lots of people believe that is not quite true"?', options: ['myth', 'tun', 'species'], answer: 0 },
+        { type: 'mcq', q: 'An awake, walking tardigrade gets squished. What happens?', options: ['It gets hurt – awake tardigrades are delicate', 'Nothing – it can never be hurt'], answer: 0, hint: 'The super-survival only works in the tun.' },
+        { type: 'mcq', q: 'Tardigrades were first discovered in 1773. About how long ago was that?', options: ['about 250 years ago', 'about 25 years ago', 'about 2,500 years ago'], answer: 0, hint: 'From 1773 to today is a little over 250 years.' },
+        { type: 'order', q: 'Put the survival story in order.', items: ['☀️ its home dries out', '🌀 it curls into a tun', '🌧️ water comes back', '🐾 it uncurls and walks'], hint: 'What has to happen before it can curl up?' },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>

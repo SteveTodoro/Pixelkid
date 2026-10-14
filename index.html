@@ -22,6 +22,7 @@
     .tab.maths[aria-selected="true"] { background: #e09a00; }
     .tab.english[aria-selected="true"] { background: #d9433b; }
     .tab.future[aria-selected="true"] { background: #7c4dff; }
+    .tab.wonders[aria-selected="true"] { background: #1e88e5; }
     .shelf { position: relative; z-index: 1; max-width: 1040px; margin: 0 auto; padding: 16px 16px 90px; display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); }
     .lesson-card {
       position: relative; display: flex; flex-direction: column; gap: 4px; padding: 16px; min-height: 190px;
@@ -118,6 +119,26 @@ const LIBRARY = {
       { title: 'Video Editing: Tell a Story', emoji: '🎬', unit: 'Creative Tech' },
       { title: 'Money Smarts', emoji: '🪙', unit: 'Life Skills' },
       { title: 'Be the Boss of Screen Time', emoji: '⏰', unit: 'Life Skills' },
+    ],
+  },
+  wonders: {
+    label: '🌍 Wonders of the World',
+    lessons: [
+      { id: 'wonders-tardigrades', title: 'Tardigrades: The Unkillable Water Bear?', emoji: '🐻', unit: 'Amazing Animals', file: 'wonders/tardigrades.html' },
+      { title: 'The Immortal Jellyfish', emoji: '🪼', unit: 'Amazing Animals' },
+      { title: 'Octopus: 3 Hearts & Blue Blood', emoji: '🐙', unit: 'Amazing Animals' },
+      { title: 'Animal Superpowers', emoji: '🦸', unit: 'Amazing Animals' },
+      { title: 'Pyramids of Giza', emoji: '🔺', unit: 'Ancient Wonders' },
+      { title: 'The Great Wall of China', emoji: '🧱', unit: 'Ancient Wonders' },
+      { title: 'Pompeii: The City Frozen in Time', emoji: '🏺', unit: 'Ancient Wonders' },
+      { title: 'The Terracotta Army', emoji: '🗿', unit: 'Ancient Wonders' },
+      { title: 'Oops! Accidental Inventions', emoji: '🍭', unit: 'Incredible Inventions' },
+      { title: 'The Wright Brothers Take Off', emoji: '✈️', unit: 'Incredible Inventions' },
+      { title: 'The Eiffel Tower Grows in Summer', emoji: '🗼', unit: 'Incredible Inventions' },
+      { title: 'Volcanoes: Earth Blows Its Top', emoji: '🌋', unit: 'Wild Planet' },
+      { title: 'The Deepest Ocean', emoji: '🌊', unit: 'Wild Planet' },
+      { title: 'The Northern Lights', emoji: '🌌', unit: 'Wild Planet' },
+      { title: "Your Body's Secret Superpowers", emoji: '🧠', unit: 'Your Amazing Body' },
     ],
   },
 };

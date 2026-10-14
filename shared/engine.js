@@ -192,6 +192,7 @@
     level5: { icon: '🚀', name: 'Reached Level 5' },
     artist: { icon: '🎨', name: 'Pixel Artist' },
     designer: { icon: '🖼️', name: 'Graphic Designer' },
+    wonder: { icon: '🌍', name: 'Wonder Hunter' },
   }, L.achievements);
   function achieve(id) {
     const a = ACH[id];
@@ -2554,6 +2555,7 @@
       const prev = (store.get(RKEY, {})[L.id] || {}).best || 0;
       saveRecord({ best: Math.max(prev, score), total, done: true });
       if (s.boss) achieve('boss');
+      if (L.finishAch) achieve(L.finishAch); // e.g. every Wonders lesson unlocks the explorer hat
       if (score === total) achieve('perfect');
       const msg = pct === 1 ? 'PERFECT SCORE! You are a legend! 🌟'
         : pct >= 0.75 ? 'Brilliant work! 🎉'

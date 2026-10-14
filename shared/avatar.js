@@ -108,6 +108,7 @@
     { id: 'crown', cat: 'hat', name: 'Crown', price: 60, rows: ['..y..yy..y..', '..yryyyyry..'], pal: { y: '#ffd43b', r: '#e53935' } },
     { id: 'knight', cat: 'hat', name: 'Knight helmet', price: 0, unlock: 'boss', rows: ['.....rr.....', '..mmmmmmmm..', '.mmmmmmmmmm.', '.mmmmmmmmmm.', '.mmmmmmmmmm.', '.mkkkkkkkkm.', '.mmmmmmmmmm.', '.mmm.mm.mmm.', '..mmmmmmmm..'], pal: { m: '#b8c2cc', k: '#1b1b1b', r: '#e53935' } },
     { id: 'beret', cat: 'hat', name: 'Artist beret', price: 0, unlock: 'artist', rows: ['......c.....', '...cccccc...', '.cccccccccc.'], pal: { c: '#e53935' } },
+    { id: 'explorer-hat', cat: 'hat', name: 'Explorer hat', price: 0, unlock: 'wonder', rows: ['...cccccc...', '..cccccccc..', '..CCCCCCCC..', 'cccccccccccc'], pal: { c: '#d8b77a', C: '#7a5230' } },
     // hideHair: covers the whole head, so the hair layer is skipped
     { id: 'ninja-mask', cat: 'hat', name: 'Ninja mask', price: 80, special: true, hideHair: true, y: 1, rows: ['...kkkkkk...', '..kkkkkkkk..', '..RRRRRRRRRR', '..kkkkkkkk.R', '..k......k..', '..kkkkkkkk..', '..kkkkkkkk..', '...kkkkkk...'], pal: { k: '#22252b', R: '#e53935' } },
     { id: 'chef-hat', cat: 'hat', name: 'Chef hat', price: 60, special: true, rows: ['.cccccccccc.', '.ccCccccCcc.', '..cccccccc..', '..CCCCCCCC..'], pal: { c: '#ffffff', C: '#d6dbe1' } },
@@ -131,6 +132,7 @@
     { id: 'pet-robot', cat: 'pet', name: 'Mini Bolt', price: 50, rows: ['...yy...', '.kkkkkk.', '.kcllck.', '.kllllk.', '.kkkkkk.', '.gggggg.', '.g.gg.g.', '.k.kk.k.'], pal: { y: '#ffcc33', k: '#1b1b1b', c: '#2ee6d6', l: '#d9dde3', g: '#8e9aa8' } },
     { id: 'pet-dragon', cat: 'pet', name: 'Baby dragon', price: 100, rows: ['.p.gg.p.', '.pggggp.', 'pgkggkgp', '.gggggg.', '.gyyyyg.', '..gyyg..', '.gg..gg.', '.g....g.'], pal: { g: '#2e9e3e', p: '#8e5cff', k: '#1b1b1b', y: '#ffd43b' } },
     { id: 'pet-annoying-dog', cat: 'pet', name: 'Annoying Dog', price: 100, special: true, rows: ['ww....ww', 'wwwwwwww', '.wkwwkw.', '.wwwwww.', '.wwkkww.', '..wwww..', '.wwwwww.', '.w.ww.w.'], pal: { w: '#ffffff', k: '#1b1b1b' } },
+    { id: 'pet-tardigrade', cat: 'pet', name: 'Water bear', price: 100, special: true, rows: ['.kkkkkk.', 'kppppppk', 'kpkppkpk', 'kppooppk', 'kpPppPpk', 'kppppppk', '.kkkkkk.', 'k.k..k.k'], pal: { k: '#4a3426', p: '#e9cfa6', P: '#c9a477', o: '#e57373' } },
   ];
   // ---------- background scenes (change the sky, decorations and ground everywhere) ----------
   const svgURI = (w, hh, inner) => `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${hh}' viewBox='0 0 ${w} ${hh}' shape-rendering='crispEdges'>${inner}</svg>`)}")`;
@@ -203,6 +205,7 @@
     boss: 'Beat any boss to unlock',
     artist: 'Finish Pixel Art Studio to unlock',
     designer: 'Finish Design a Poster to unlock',
+    wonder: 'Finish any Wonders of the World lesson to unlock',
     perfect: 'Get a perfect boss score to unlock',
     video: 'Finish any video quest to unlock',
   };

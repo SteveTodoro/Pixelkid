@@ -41,6 +41,18 @@ Practical, modern skills for growing up with AI and the internet. Always grown-u
 | Creative Tech | Pixel Art Studio ✅ · Design a Poster ✅ (graphic design) · Video Editing: Tell a Story |
 | Life Skills | Money Smarts · Be the Boss of Screen Time |
 
+## 🌍 Wonders of the World (strange-but-true facts – reading comprehension first)
+Inspired by "amazing facts" videos (e.g. Zack D Films). Each lesson is one wonder told as a story, with lots of inference questions. Lessons go in `wonders/`, with `subject: 'wonders'` (ocean-blue theme) and `finishAch: 'wonder'`. Finishing any Wonders lesson unlocks the 🌍 explorer hat.
+| Unit | Lesson ideas |
+|------|--------------|
+| Amazing Animals | Tardigrades: The Unkillable Water Bear? ✅ · The Immortal Jellyfish · Octopus: 3 Hearts & Blue Blood · Animal Superpowers |
+| Ancient Wonders | Pyramids of Giza · The Great Wall of China · Pompeii: The City Frozen in Time · The Terracotta Army |
+| Incredible Inventions | Oops! Accidental Inventions (ice lollies, crisps, penicillin) · The Wright Brothers Take Off · The Eiffel Tower Grows in Summer |
+| Wild Planet | Volcanoes · The Deepest Ocean · The Northern Lights |
+| Your Amazing Body | Your Body's Secret Superpowers |
+
+**Wonders style:** a "Fact or Fiction?" `truefalse` round, plus a "Myth-buster!" card in every lesson. Use kid-safe videos only (Peekaboo Kidz, Wild Kratts, SciShow Kids, Nat Geo Kids, TED-Ed as a bonus). Check every Zack D Films Short first, because some are gory or scary.
+
 ## 👕 Avatar & Wardrobe
 - Every 💎 earned in any lesson also goes into a wallet (`y3:wallet`). The **Wardrobe & Shop** (`avatar.html`) spends it on pixel clothes, hair, hats, extras and pets (catalogue in `shared/avatar.js`).
 - Some items are secret and unlock with achievements (`unlock: 'boss' | 'artist' | 'designer' | 'perfect' | 'video'`).
