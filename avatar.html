@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wardrobe & Shop</title>
+  <link rel="stylesheet" href="shared/lesson.css">
+  <script src="shared/avatar.js"></script>
+</head>
+<body class="future">
+  <header class="topbar">
+    <div class="hud-row">
+      <a class="icon-btn" href="index.html" aria-label="Back to the library">🏠</a>
+      <div class="lesson-title">👕 Wardrobe & Shop</div>
+      <div class="starbox" title="Gems to spend">💎 <span id="bal">0</span></div>
+    </div>
+  </header>
+  <main class="stage">
+    <section class="card stage-card">
+      <div class="stage-head">
+        <span class="chip">🛍️ Shop</span>
+        <h1>Dress your hero!</h1>
+      </div>
+      <div class="wd-wrap">
+        <div class="panel-inner wd-left">
+          <div class="wd-stage"><img id="preview" alt="Your avatar"></div>
+          <div class="wd-name" id="who"></div>
+          <div id="action" class="wd-action"></div>
+          <p class="wd-earn">Earn more 💎 gems by playing lessons – every right answer counts!</p>
+        </div>
+        <div class="wd-right">
+          <div class="wd-tabs" id="tabs"></div>
+          <div class="wd-grid" id="grid"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div class="toasts" id="toasts"></div>
+  <canvas class="confetti" id="confetti"></canvas>
+
+<script>
+(function () {
+  const A = window.Avatar;
+  const $ = id => document.getElementById(id);
+  let saved = A.load(), look = Object.assign({}, saved.look), cat = 'hair', selected = null;
+  let name = '';
+  try { name = (JSON.parse(localStorage.getItem('y3:settings') || '{}').name) || ''; } catch (e) { /* ignore */ }
+
+  // ---- little sound + confetti helpers ----
+  let actx = null;
+  const tone = (f, at, d, vol = 0.06) => { try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); const t = actx.currentTime + at, o = actx.createOscillator(), g = actx.createGain(); o.type = 'square'; o.frequency.value = f; g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + d); o.connect(g).connect(actx.destination); o.start(t); o.stop(t + d + 0.02); } catch (e) { /* no audio */ } };
+  const sfx = { tap: () => tone(880, 0, 0.05, 0.03), buy: () => [523, 659, 784, 1047, 1319].forEach((f, i) => tone(f, i * 0.08, 0.12)), no: () => { tone(220, 0, 0.15); tone(165, 0.12, 0.2); } };
+  function confetti() {
+    const cv = $('confetti'), ctx = cv.getContext('2d'); cv.width = innerWidth; cv.height = innerHeight;
+    const cols = ['#7cfc3a', '#2ee6d6', '#ffb800', '#e53935', '#ffffff', '#8e5cff'];
+    let ps = Array.from({ length: 120 }, () => ({ x: innerWidth / 2 + (Math.random() - 0.5) * 300, y: innerHeight * 0.4, vx: (Math.random() - 0.5) * 16, vy: -Math.random() * 15 - 5, s: 6 + Math.floor(Math.random() * 3) * 3, c: cols[Math.floor(Math.random() * cols.length)] }));
+    const tick = () => { ctx.clearRect(0, 0, cv.width, cv.height); ps = ps.filter(p => p.y < cv.height + 20); ps.forEach(p => { p.vy += 0.35; p.x += p.vx; p.y += p.vy; ctx.fillStyle = '#000'; ctx.fillRect(p.x - 1, p.y - 1, p.s + 2, p.s + 2); ctx.fillStyle = p.c; ctx.fillRect(p.x, p.y, p.s, p.s); }); if (ps.length) requestAnimationFrame(tick); };
+    tick();
+  }
+  function toast(title, sub, icon) {
+    const t = document.createElement('div'); t.className = 'toast';
+    t.innerHTML = `<div class="toast-icon">${icon}</div><div><div class="toast-title"></div><div class="toast-sub"></div></div>`;
+    t.querySelector('.toast-title').textContent = title; t.querySelector('.toast-sub').textContent = sub;
+    $('toasts').append(t); setTimeout(() => t.classList.add('out'), 2800); setTimeout(() => t.remove(), 3300);
+  }
+
+  const listFor = c => c === 'skin' ? A.SKINS : c === 'hairColor' ? A.HAIR_COLOURS : A.ITEMS.filter(i => i.cat === c);
+  const lookWith = (c, id) => Object.assign({}, saved.look, { [c]: id });
+  const priceOf = it => it.price || 0;
+
+  function drawPreview() {
+    $('preview').src = A.dataURL(look, { scale: 12, pet: true });
+    $('bal').textContent = A.wallet().balance;
+    $('who').textContent = name ? `${name}'s hero` : 'Your hero';
+  }
+  function drawTabs() {
+    const tabs = $('tabs'); tabs.replaceChildren();
+    A.CATS.forEach(([id, label]) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'wd-tab' + (id === cat ? ' on' : ''); b.textContent = label;
+      b.onclick = () => { cat = id; selected = null; look = Object.assign({}, saved.look); sfx.tap(); render(); };
+      tabs.append(b);
+    });
+  }
+  function status(it) {
+    const wearing = saved.look[cat] === it.id;
+    if (wearing) return ['✔ Wearing', 'wearing'];
+    if (A.owns(it, saved)) return ['Owned', 'owned'];
+    if (it.unlock) return ['🔒 Secret', 'locked'];
+    return ['💎 ' + priceOf(it), A.wallet().balance >= priceOf(it) ? 'buy' : 'pricey'];
+  }
+  function drawGrid() {
+    const grid = $('grid'); grid.replaceChildren();
+    listFor(cat).forEach(it => {
+      const [label, cls] = status(it);
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = `wd-item ${cls}` + (selected === it ? ' sel' : '');
+      const img = document.createElement('img');
+      img.src = A.dataURL(lookWith(cat, it.id), { scale: 4, pet: cat === 'pet' }); img.alt = '';
+      const n = document.createElement('span'); n.className = 'wd-iname'; n.textContent = it.name;
+      const s = document.createElement('span'); s.className = 'wd-badge'; s.textContent = label;
+      b.append(img, n, s);
+      b.onclick = () => { selected = it; look = lookWith(cat, it.id); sfx.tap(); render(); };
+      grid.append(b);
+    });
+  }
+  function drawAction() {
+    const box = $('action'); box.replaceChildren();
+    const btn = (text, cls, fn) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'btn big ' + cls; b.textContent = text; b.onclick = fn; box.append(b); return b; };
+    const msg = text => { const p = document.createElement('p'); p.className = 'wd-msg'; p.textContent = text; box.append(p); };
+    if (!selected) { msg('👆 Tap something to try it on!'); return; }
+    const it = selected;
+    if (saved.look[cat] === it.id) { msg(`✔ You're wearing the ${it.name}.`); return; }
+    if (A.owns(it, saved)) {
+      btn('👕 Wear it!', 'green', () => { A.wear(it.id); saved = A.load(); sfx.buy(); toast('LOOKING GOOD!', `You put on: ${it.name}`, '😎'); render(); });
+    } else if (it.unlock) {
+      msg('🔒 ' + (A.UNLOCK_TEXT[it.unlock] || 'Keep playing to unlock!'));
+    } else if (A.wallet().balance >= priceOf(it)) {
+      btn(`🛒 Buy for 💎 ${priceOf(it)}`, 'gold', () => {
+        if (!A.buy(it.id)) return;
+        A.wear(it.id); saved = A.load(); sfx.buy(); confetti(); toast('NEW GEAR UNLOCKED!', it.name, '🛍️'); render();
+      });
+    } else {
+      msg(`You need 💎 ${priceOf(it) - A.wallet().balance} more gems. Play a lesson to earn them!`);
+    }
+    btn('↺ Back to my outfit', 'ghost', () => { selected = null; look = Object.assign({}, saved.look); sfx.tap(); render(); });
+  }
+  function render() { drawPreview(); drawTabs(); drawGrid(); drawAction(); }
+  render();
+})();
+</script>
+</body>
+</html>

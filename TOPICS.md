@@ -41,6 +41,12 @@ Practical, modern skills for growing up with AI and the internet. Always grown-u
 | Creative Tech | Pixel Art Studio ✅ · Design a Poster ✅ (graphic design) · Video Editing: Tell a Story |
 | Life Skills | Money Smarts · Be the Boss of Screen Time |
 
+## 👕 Avatar & Wardrobe
+- Every 💎 earned in any lesson also goes into a wallet (`y3:wallet`). The **Wardrobe & Shop** (`avatar.html`) spends it on pixel clothes, hair, hats, extras and pets (catalogue in `shared/avatar.js`).
+- Some items are secret and unlock with achievements (`unlock: 'boss' | 'artist' | 'designer' | 'perfect' | 'video'`).
+- The avatar appears on the library page and lesson start screens, is the hero in the Platformer and Block Builder, and is shown on certificates.
+- Every lesson page must load `../shared/avatar.js` (after `pixel.js`, before the lesson script).
+
 ## Making a new lesson
 1. Copy `science/magnets.html` into the right subject folder (e.g. `maths/fractions.html`).
 2. Change the `window.LESSON = { … }` data: `id`, `subject` (`science` / `maths` / `english` / `future` sets the colours), title, mascot, glossary, and the stages.

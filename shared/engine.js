@@ -118,6 +118,9 @@
   }
 
   // ---------- mascot ----------
+  const WARDROBE = (L.home || '../index.html').replace(/index\.html$/, 'avatar.html');
+  const AV = window.Avatar || null;
+  if (AV) AV.wallet(); // set up the gem wallet before any new gems are added
   const M = Object.assign({
     name: 'Buddy', emoji: '🤖',
     praise: ['Brilliant!', 'Super job!', 'You got it!', 'Amazing!', 'Wow, well done!', 'Fantastic!'],
@@ -213,6 +216,10 @@
     if (state.awarded[key]) return false;
     const before = levelOf(state.stars);
     state.awarded[key] = true; state.stars++;
+    if (AV) {
+      const total = AV.earn(1); // add to the wallet first, so a brand-new wallet never counts this gem twice
+      if (total % 25 === 0) setTimeout(() => { sfx.achieve(); toast('NEW GEAR TIME!', `💎 ${AV.wallet().balance} gems to spend in the Wardrobe`, '🛍️'); }, 1500);
+    }
     save(); saveRecord({});
     flyStar(fromEl); sfx.star();
     setTimeout(() => updateStars(true), 650);
@@ -340,7 +347,11 @@
         pic(s.pic || L.emoji, 'hero-pic'),
         h('div', { class: 'big-q' }, h('div', { class: 'big-q-label' }, '❓ THE BIG QUESTION'), h('p', { html: fmt(s.question) }))),
       s.intro && h('p', { class: 'lead', html: fmt(s.intro) }),
-      h('label', { class: 'name-row' }, h('span', null, s.nameLabel || 'Player name:'), name),
+      h('div', { class: 'me-row' },
+        AV && h('a', { class: 'me-link', href: WARDROBE, title: 'Change my outfit' }, h('img', { class: 'me-avatar', src: AV.dataURL(AV.load().look, { scale: 5, pet: true }), alt: 'Your avatar' })),
+        h('div', { class: 'me-fields' },
+          h('label', { class: 'name-row' }, h('span', null, s.nameLabel || 'Player name:'), name),
+          AV && h('a', { class: 'btn gold', href: WARDROBE }, `👕 Wardrobe · 💎 ${AV.wallet().balance}`))),
       h('div', { class: 'panel-inner map-box' },
         h('h3', null, '🗺️ Quest map'),
         h('ol', { class: 'map' }, L.stages.map((st, j) => j === 0 ? null : h('li', null,
@@ -1693,11 +1704,13 @@
       2: spriteCanvas(['wwwwwwww', 'WWWWWWWW', 'w..w..w.', 'wwwwwwww', 'WWWWWWWW', '........', '........', '........'], { w: '#c08a52', W: '#6b4423' }, 4),
       3: spriteCanvas(['iiiiiiii', 'iIIiiiii', 'iiiIIiii', 'iiiiiIIi', 'iiiiiiii', 'iIiiiiii', 'iiiiiiii', 'iiiiiiii'], { i: '#bfefff', I: '#ffffff' }, 4),
     };
-    const run = [spriteCanvas(SPR.robot, ROBOT_PAL, 2), spriteCanvas(SPR.robotRun, ROBOT_PAL, 2)];
+    const hero = AV ? AV.draw(AV.load().look, { scale: 2 }) : null; // the player's own avatar is the hero
+    const run = hero ? [hero, hero] : [spriteCanvas(SPR.robot, ROBOT_PAL, 2), spriteCanvas(SPR.robotRun, ROBOT_PAL, 2)];
     const flagSpr = [spriteCanvas(SPR.flag, { k: '#1b1b1b', g: '#8b8b8b' }, 4), spriteCanvas(SPR.flag, { k: '#1b1b1b', g: '#7cfc3a' }, 4)];
     const clouds = Array.from({ length: 8 }, (_, i) => ({ x: i * 260 + Math.random() * 120, y: 30 + Math.random() * 90 }));
     // ----- player -----
     const p = { x: 2 * T, y: 9 * T - 32, vx: 0, vy: 0, w: 22, h: 30, ground: false, onIce: false, face: 1, safeX: 2 * T, bump: 0 };
+    let ghost = false; // test hook: ignore answer bubbles
     let left = false, right = false, jumpQ = false, cam = 0, got = 0, finished = false, time = 0, msg = null;
     const need = items.filter(i => i.ok).length;
     const collect = pl => {
@@ -1743,7 +1756,7 @@
         }
         if (p.y > H + 40) { p.x = Math.max(T, p.safeX - T); p.y = 9 * T - 32; p.vx = 0; p.vy = 0; sfx.bad(); say('Whoops! Jump over the gaps – press ⬆ just before the edge.'); }
         // collect / bump into answers
-        placed.forEach(pl => { if (!pl.done && Math.abs(p.x + p.w / 2 - pl.x) < 28 && Math.abs(p.y + p.h / 2 - pl.y) < 30) collect(pl); });
+        if (!ghost) placed.forEach(pl => { if (!pl.done && Math.abs(p.x + p.w / 2 - pl.x) < 28 && Math.abs(p.y + p.h / 2 - pl.y) < 30) collect(pl); });
         // flag
         if (p.x + p.w > flagX + 8 && p.x < flagX + 40) {
           if (got === need) { finished = true; sfx.win(); confetti(80); done(); }
@@ -1778,7 +1791,8 @@
       if (p.bump > 0 && Math.floor(time * 20) % 2) ctx.globalAlpha = 0.4;
       ctx.translate(p.x - cam + p.w / 2, p.y);
       ctx.scale(p.face, 1);
-      ctx.drawImage(spr, -spr.width / 2, p.h - spr.height);
+      const bobY = hero && p.ground && Math.abs(p.vx) > 20 ? (Math.floor(time * 10) % 2) * -2 : 0;
+      ctx.drawImage(spr, -spr.width / 2, p.h - spr.height + bobY);
       ctx.restore();
       if (p.onIce && Math.abs(p.vx) > 40) pxText(ctx, 'WHEEE! ICE = LESS FRICTION', p.x - cam + 10, p.y - 18, 12, '#bfefff');
       ctx.fillStyle = 'rgba(0,0,0,.6)'; ctx.fillRect(0, 0, W, 36);
@@ -1809,6 +1823,7 @@
       collectAll() { placed.filter(o => o.it.ok).forEach(collect); },
       toFlag() { p.x = flagX - 4; p.y = 9 * T - 32; p.vy = 0; },
       iceX: () => { for (let tx = 0; tx < cols; tx++) if (tile[10][tx] === 3) return tx * T; return null; },
+      ghost(on) { ghost = on; },
       teleport(x0) { p.x = x0; p.y = 9 * T - 32; p.vx = 0; p.vy = 0; },
     };
     root._stop = stopLoop;
@@ -1847,7 +1862,7 @@
     const solidAt = (x, y) => y >= rows || (terr[y] && 'gds'.includes(terr[y][x])) || !!placedB[x + ',' + y];
     const gridEl = h('div', { class: 'bb-grid', style: `--c:${cols};--r:${rows}` });
     const cells = [];
-    const robot = h('div', { class: 'bb-robot' }, h('img', { src: spriteCanvas(SPR.robot, ROBOT_PAL, 4).toDataURL(), alt: 'robot' }));
+    const robot = h('div', { class: 'bb-robot' }, h('img', { src: AV ? AV.dataURL(AV.load().look, { scale: 4 }) : spriteCanvas(SPR.robot, ROBOT_PAL, 4).toDataURL(), alt: 'you' }));
     const flagEl = h('div', { class: 'bb-flag' }, '🚩');
     const invEl = h('div', { class: 'bb-inv' });
     const statusEl = h('div', { class: 'bb-status' });
@@ -2181,6 +2196,7 @@
         h('div', { class: 'btn-row' },
           h('button', { class: 'btn gold big', type: 'button', onclick() { sfx.good(); showCert(score, total); } }, '📜 Get my certificate'),
           h('button', { class: 'btn ghost', type: 'button', onclick: begin }, s.boss ? '↺ Rematch' : '↺ Try again'),
+          AV && h('a', { class: 'btn', href: WARDROBE }, `👕 Spend gems (💎 ${AV.wallet().balance})`),
           h('a', { class: 'btn ghost', href: L.home || '../index.html' }, '🏠 Library')),
         s.bonus && h('div', { class: 'panel-inner bonus' },
           h('h3', null, s.bonus.title || '⭐ Bonus quest'),
@@ -2200,6 +2216,7 @@
     certOverlay.replaceChildren(h('div', { class: 'cert', role: 'dialog', 'aria-label': 'Certificate' },
       h('div', { class: 'cert-inner' },
         h('div', { class: 'cert-top' }, '★ QUEST COMPLETE ★'),
+        AV && h('img', { class: 'cert-avatar', src: AV.dataURL(AV.load().look, { scale: 6, pet: true }), alt: '' }),
         h('p', null, 'This certificate is proudly awarded to'),
         h('div', { class: 'cert-name' }, settings.name || 'A Super Learner'),
         h('p', null, 'for completing the lesson'),
