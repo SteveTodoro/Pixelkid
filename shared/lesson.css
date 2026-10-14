@@ -493,7 +493,8 @@ a { color: var(--brand-dark); }
 .px-wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 18px; align-items: start; }
 @media (max-width: 760px) { .px-wrap { grid-template-columns: 1fr; } }
 .px-target h3, .px-brief h3, .px-gallery-wrap h3 { color: var(--brand-dark); font-size: 1.2rem; }
-.px-target-pic { max-width: 220px; margin: 0 auto; padding: 8px; background: repeating-conic-gradient(#eee 0 25%, #fff 0 50%) 0 0 / 16px 16px; border: 3px solid #000; }
+/* empty squares use a pale blue check, so they never look like painted white */
+.px-target-pic { max-width: 220px; margin: 0 auto; padding: 8px; background: #cddcec; border: 3px solid #000; }
 .px-target-pic svg { display: block; width: 100%; height: auto; }
 .px-tips { margin: 10px 0 0; padding-left: 1.2em; font-size: 1rem; }
 .px-tools { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
@@ -511,7 +512,7 @@ a { color: var(--brand-dark); }
   background: #b5b5b5; border: 4px solid #000; touch-action: none; user-select: none; -webkit-user-select: none; cursor: crosshair;
 }
 .px-cell { aspect-ratio: 1; }
-.px-cell.empty { background: repeating-conic-gradient(#f4f4f4 0 25%, #ffffff 0 50%) 0 0 / 50% 50%; }
+.px-cell.empty { background: repeating-conic-gradient(#dbe6f2 0 25%, #c3d4e8 0 50%) 0 0 / 50% 50%; }
 .px-cell.px-wrong { animation: pxwrong .4s steps(2) 4; }
 @keyframes pxwrong { 50% { box-shadow: inset 0 0 0 4px #e53935; background-color: #ffb3ad; } }
 .px-mirror-line { position: absolute; top: 0; bottom: 0; left: 50%; width: 0; border-left: 3px dashed #8e5cff; pointer-events: none; }

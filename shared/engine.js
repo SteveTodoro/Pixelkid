@@ -1190,7 +1190,8 @@
       if (!wrong.length && !finished) { finished = true; sfx.good(); award(key + ':done', meter); confetti(60); say(r.done || 'PERFECT COPY! You are a real pixel artist!'); done(); }
     };
     const ed = pixelEditor({ w, h: rows, palette, mirror: !!r.mirror, mirrorToggle: true, onStroke: check });
-    const hintBtn = h('button', { class: 'btn gold', type: 'button', onclick() { const wr = wrongIdx(); ed.flash(wr); sfx.tap(); say(wr.length ? `${wr.length} squares need fixing – they are flashing red!` : 'Everything matches!'); } }, '🔍 Show mistakes');
+    const hintBtn = h('button', { class: 'btn gold', type: 'button', onclick() { const wr = wrongIdx(); ed.flash(wr); sfx.tap(); const empties = wr.filter(i => !ed.cells[i] || !want[i]).length;
+      say(!wr.length ? 'Everything matches!' : `${wr.length} square${wr.length > 1 ? 's need' : ' needs'} fixing – look for the flashing red!` + (empties ? ' Blue-checked squares are empty – they are not white!' : '')); } }, '🔍 Show mistakes');
     check();
     return h('div', { class: 'game pixelcopy' },
       h('div', { class: 'px-wrap' },
