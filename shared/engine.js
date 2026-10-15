@@ -2288,6 +2288,9 @@
   // r.tasks: [{ thing: '🔔', label: 'Ring the doorbell!', force: 'push' | 'pull', effect: 'DING DONG!', yes, why }]
   //   or slide tasks: [{ slide: 'ice' | 'wood' | 'carpet' | 'grass' | 'sand', thing: '🥌', label, zone: [x0, x1] }]
   //   – flick the thing so friction stops it inside the zone. Rough surfaces need a big push, smooth ones a gentle one.
+  // Magnet mode: r.hold: '🧲' (you hold it), r.snap: true (pulled things speed up and snap on), r.noTap: true,
+  //   r.words: { pull: 'ATTRACT', pullSub: '(comes to you)', push: 'REPEL', pushSub: '(flies away)' } relabels the arrows,
+  //   and tasks can add holdTag / tag (e.g. 'N', 'S') shown above your magnet and above the thing.
   const SURFACES = {
     ice: { name: 'ICE', a: 70, c: ['#cfefff', '#ffffff'], tip: 'Ice is smooth – hardly any friction, so a GENTLE push goes a long way!' },
     wood: { name: 'WOODEN FLOOR', a: 260, c: ['#c08a52', '#9c6b3c'], tip: 'Wood is quite smooth – not much friction, so give it a medium push.' },
@@ -2303,6 +2306,8 @@
     const ground = sceneD ? sceneD.ground : ['#5bbf3a', '#3d8a26', '#8a5a32', '#6b4425'];
     const hero = AV ? AV.draw(AV.load().look, { scale: 3 }) : spriteCanvas(SPR.robot, ROBOT_PAL, 4);
     const tasks = r.shuffle ? shuffle(r.tasks) : r.tasks;
+    const WORD = Object.assign({ push: 'PUSH', pull: 'PULL', pushSub: '(away from you)', pullSub: '(towards you)' }, r.words);
+    const STOP = r.hold ? HOME - 6 : HOME;
     let ti = -1, task = null, obj = null, phase = 'ready', wrong = 0, helped = false, banner = null, later = null, finished = false, ptr = null, trail = [];
     const surf = () => SURFACES[task.slide] || SURFACES.wood;
     const zone = () => task.zone || [380, 560];
@@ -2329,13 +2334,15 @@
       if (dir === task.force) {
         phase = 'moving'; sfx.good();
         obj.vx = (dir === 'push' ? 1 : -1) * Math.min(900, Math.max(420, speed * 0.7)); obj.a = 650;
+        // magnets: attraction gets stronger as things get closer, so they speed up and SNAP on; repelled things zoom off
+        if (r.snap) { obj.vx = (dir === 'push' ? 1 : -1) * 160; obj.a = -1400; }
         if (!wrong) award(`${key}:${ti}`, cv);
         show(task.effect || (dir === 'push' ? 'PUSH!' : 'PULL!'), '#ffd43b', 1.6);
         say(task.yes || (dir === 'push' ? 'Yes – a PUSH! It moved away from you.' : 'Yes – a PULL! It came towards you.'));
       } else {
         wrong++; sfx.bad();
         obj.vx = (dir === 'push' ? 1 : -1) * 220; obj.a = 1100; obj.back = true;
-        show(dir === 'push' ? (tapped ? 'A PRESS IS A PUSH!' : 'THAT WAS A PUSH') : 'THAT WAS A PULL', '#ff7a7a');
+        show(r.words ? 'NOT ' + WORD[dir] + '!' : dir === 'push' ? (tapped ? 'A PRESS IS A PUSH!' : 'THAT WAS A PUSH') : 'THAT WAS A PULL', '#ff7a7a');
         say(task.why || (task.force === 'push' ? 'Hmm! Does this one move AWAY from you? Try a push ▶' : 'Hmm! Does this one come TOWARDS you? Try a pull ◀'));
       }
     }
@@ -2386,7 +2393,8 @@
       const dx = last[1] - p.x0, dy = last[2] - p.y0;
       if (Math.abs(dx) < 14 && Math.abs(dy) < 14) {
         // a tap: pressing the thing is a push
-        if (Math.abs(p.x0 - obj.x) < 55 && p.y0 > FLOOR - 90 && p.y0 < FLOOR + 10) act('push', 0, true);
+        if (r.noTap) say(`Swipe it! ◀ ${WORD.pull.toLowerCase()}, or ${WORD.push.toLowerCase()} ▶`);
+        else if (Math.abs(p.x0 - obj.x) < 55 && p.y0 > FLOOR - 90 && p.y0 < FLOOR + 10) act('push', 0, true);
         else say('Swipe the thing itself: ▶ away from you, or ◀ towards you.');
         return;
       }
@@ -2410,7 +2418,8 @@
         obj.vx -= s * obj.a * dt;
         if (Math.sign(obj.vx) !== s) obj.vx = 0;
         if (task.slide && obj.x > W - 46) { obj.x = W - 46; obj.vx = 0; obj.bonk = true; sfx.hit(); }
-        if (!task.slide && !obj.back && obj.vx < 0 && obj.x < HOME) { obj.x = HOME; obj.vx = 0; }
+        if (!task.slide && !obj.back && obj.vx < 0 && obj.x < STOP) { obj.x = STOP; obj.vx = 0; if (r.snap) { sfx.tap(); show(task.effect || 'CLICK!', '#ffd43b', 1.2); } }
+        if (!task.slide && obj.x > W + 80) obj.vx = 0;
         if (!obj.vx) stopped();
       } else if (obj && obj.back) {
         obj.x += (obj.home - obj.x) * Math.min(1, dt * 8);
@@ -2437,17 +2446,24 @@
         for (let y = FLOOR - 120; y < FLOOR; y += 12) for (let x = W - 24; x < W; x += 12) { ctx.fillStyle = (x + y) % 24 ? '#b5452f' : '#8c2f22'; ctx.fillRect(x, y, 11, 11); }
         pxText(ctx, 'FLOOR: ' + S.name, W / 2, H - 26, 16, '#fff');
       } else if (task) {
-        pxText(ctx, '◀ PULL', 90, H - 34, 16, '#ffffff');
-        pxText(ctx, '(towards you)', 90, H - 14, 11, '#dddddd');
-        pxText(ctx, 'PUSH ▶', W - 90, H - 34, 16, '#ffffff');
-        pxText(ctx, '(away from you)', W - 90, H - 14, 11, '#dddddd');
+        pxText(ctx, '◀ ' + WORD.pull, 100, H - 34, 16, '#ffffff');
+        pxText(ctx, WORD.pullSub, 100, H - 14, 11, '#dddddd');
+        pxText(ctx, WORD.push + ' ▶', W - 100, H - 34, 16, '#ffffff');
+        pxText(ctx, WORD.pushSub, W - 100, H - 14, 11, '#dddddd');
       }
       ctx.drawImage(hero, 46, FLOOR - hero.height + 2);
+      const EMOJI = n => `${n}px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`;
+      if (r.hold) {
+        ctx.font = EMOJI(40); ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+        ctx.fillText(r.hold, 104, FLOOR - 30);
+        if (task && task.holdTag) pxText(ctx, task.holdTag, 104, FLOOR - 92, 22, '#ffffff');
+      }
       if (task && phase !== 'done') {
-        ctx.font = '60px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif';
+        ctx.font = EMOJI(60);
         ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
         const wob = !task.slide && phase === 'ready' ? Math.sin(time * 4) * 3 : 0;
         ctx.fillText(task.thing, obj.x, FLOOR - 4 + wob);
+        if (task.tag) pxText(ctx, task.tag, obj.x, FLOOR - 92 + wob, 22, '#ffffff');
       }
       if (trail.length > 1) {
         ctx.strokeStyle = 'rgba(255,255,255,.85)'; ctx.lineWidth = 6; ctx.lineCap = 'round';

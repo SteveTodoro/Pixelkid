@@ -155,8 +155,25 @@ window.LESSON = {
     },
 
     {
-      type: 'game', title: 'Magnet Detective', short: 'Game 1', minutes: 7,
+      type: 'game', title: 'Magnet Detective', short: 'Game 1', minutes: 9,
       rounds: [
+        {
+          game: 'forces', title: 'Hands-on: will it stick?', shuffle: true, hold: '🧲', snap: true, noTap: true,
+          words: { pull: 'STICKS', pullSub: '(magnetic)', push: 'NO STICK', pushSub: '(not magnetic)' },
+          intro: 'You are holding a magnet! Will each thing stick to it? Swipe it ◀ to your magnet if it is **magnetic**. Flick it away ▶ if it is **not**.',
+          say: 'Think first: is it iron, steel or nickel? Then swipe!',
+          tip: 'Swipe ◀ to your magnet if it will stick. Flick ▶ away if it won\'t.',
+          tasks: [
+            { thing: '📎', label: 'A steel paperclip', force: 'pull', yes: 'CLICK! Steel is magnetic.' },
+            { thing: '🔩', label: 'An iron bolt', force: 'pull', yes: 'CLICK! Iron is magnetic.' },
+            { thing: '🍴', label: 'A steel fork', force: 'pull', yes: 'CLICK! Steel is magnetic.' },
+            { thing: '🥫', label: 'A steel food tin', force: 'pull', yes: 'CLICK! Steel tins are magnetic – that\'s how recycling magnets find them.' },
+            { thing: '🥤', label: 'A drinks can', force: 'push', yes: 'Right! Drinks cans are aluminium – a metal, but NOT magnetic.', why: 'Careful! Drinks cans are aluminium. It is a metal, but it is not magnetic.' },
+            { thing: '💍', label: 'A gold ring', force: 'push', yes: 'Right! Gold is a metal, but not magnetic.', why: 'Gold is a metal, but it is NOT magnetic!' },
+            { thing: '✏️', label: 'A wooden pencil', force: 'push', yes: 'Right! Wood is never magnetic.', why: 'A pencil is wood – magnets don\'t attract wood.' },
+            { thing: '🧸', label: 'A teddy bear', force: 'push', yes: 'Right! Fluffy stuff is not magnetic.', why: 'A teddy is made of fabric and stuffing – not magnetic.' },
+          ],
+        },
         {
           game: 'sort', title: 'Three chests',
           intro: 'Sort each item into the right chest. Careful – some metals are **not** magnetic!',
@@ -292,7 +309,7 @@ window.LESSON = {
     },
 
     {
-      type: 'game', title: 'Pole Power', short: 'Game 2', minutes: 5,
+      type: 'game', title: 'Pole Power', short: 'Game 2', minutes: 7,
       rounds: [
         {
           game: 'label', title: 'Attract or repel?',
@@ -305,6 +322,21 @@ window.LESSON = {
             { x: 84, y: 36, answer: '🙅 repel' },
             { x: 84, y: 59.7, answer: '🙅 repel' },
             { x: 84, y: 83.4, answer: '🤝 attract' },
+          ],
+        },
+        {
+          game: 'forces', title: 'Hands-on: pole power', shuffle: true, hold: '🧲', snap: true, noTap: true,
+          words: { pull: 'ATTRACT', pullSub: '(snaps to you)', push: 'REPEL', pushSub: '(pushes away)' },
+          intro: 'The arrows show which ends are facing each other. Will they **attract** or **repel**? Swipe ◀ to attract, ▶ to repel.',
+          say: 'Same poles or different poles? Then swipe!',
+          tip: 'Swipe ◀ if they ATTRACT, swipe ▶ if they REPEL.',
+          tasks: [
+            { thing: '🧲', holdTag: 'N ▶', tag: '◀ S', label: 'North meets South…', force: 'pull', yes: 'CLICK! Opposite poles attract.' },
+            { thing: '🧲', holdTag: 'N ▶', tag: '◀ N', label: 'North meets North…', force: 'push', effect: 'WHOOSH!', yes: 'WHOOSH! Like poles repel.', why: 'Both ends are N – the SAME. Same poles push apart!' },
+            { thing: '🧲', holdTag: 'S ▶', tag: '◀ S', label: 'South meets South…', force: 'push', effect: 'WHOOSH!', yes: 'WHOOSH! Like poles repel.', why: 'Both ends are S – the SAME. Same poles push apart!' },
+            { thing: '🧲', holdTag: 'S ▶', tag: '◀ N', label: 'South meets North…', force: 'pull', yes: 'CLICK! Opposite poles attract.', why: 'S and N are DIFFERENT. Opposites attract!' },
+            { thing: '📎', holdTag: 'N ▶', label: 'A paperclip meets your North pole…', force: 'pull', yes: 'CLICK! A paperclip is attracted to EITHER pole.', why: 'A paperclip is steel, and steel is attracted to both poles!' },
+            { thing: '📎', holdTag: 'S ▶', label: 'A paperclip meets your South pole…', force: 'pull', yes: 'CLICK! Either pole attracts steel.', why: 'Steel is attracted to both poles – it only repels another magnet.' },
           ],
         },
         {
