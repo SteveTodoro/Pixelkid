@@ -90,7 +90,9 @@
     win: () => seq([523, 659, 784, 1047, 0, 784, 1047], 0.09),
     levelup: () => seq([392, 523, 659, 784, 1047, 1319], 0.07, 'square', 0.06),
     achieve: () => seq([659, 784, 988, 1319], 0.08, 'triangle', 0.12),
-    hit: () => { seq([150, 90], 0.06, 'sawtooth', 0.08); },
+    hit: () => { seq([150, 90], 0.06, 'sawtooth', 0.08); }, // the player gets hurt
+    // the boss gets hurt: a bright, rising "pow!" so it never sounds like a wrong answer
+    bossHit: () => { tone(110, 0, 0.07, 'triangle', 0.14); seq([659, 988, 1319], 0.045, 'square', 0.06); },
     zap: () => seq([1200, 900, 600, 300], 0.04, 'sawtooth', 0.04),
   };
 
@@ -3020,16 +3022,21 @@
   // Undertale-style dodge round: the avatar is the "soul" in a box and the boss fires its attack emoji in patterns.
   // Arrow keys / WASD or drag anywhere on the box. A hit costs at most one heart per round; a perfect dodge earns gems.
   // end({ hit, dead }) is called when the round is over.
-  function dodgeRound(area, b, round, { loseHeart, end }) {
-    const W = 360, H = 240, DUR = 7.5, speed = 1 + 0.15 * round;
+  // Hits never cost hearts: the player starts with a pot of gems, each hit knocks one out, and surviving banks the rest.
+  function dodgeRound(area, b, round, { end }) {
+    const W = 360, H = 240, DUR = 7.5, speed = 1 + 0.15 * round, POT = 5;
+    let pot = POT;
     const cvs = h('canvas', { class: 'dodge-box', width: W * 2, height: H * 2, 'aria-label': 'Dodge the attacks! Use the arrow keys or drag to move.' });
     const ctx = cvs.getContext('2d'); ctx.scale(2, 2); ctx.imageSmoothingEnabled = false;
     const timer = h('div', { class: 'dodge-timer' }, h('div', { class: 'dodge-timer-fill' }));
     const status = h('div', { class: 'dodge-status' }, '3…');
+    const potEl = h('div', { class: 'dodge-pot' });
+    const paintPot = () => { potEl.textContent = `💎 Gems at stake: ${'💎'.repeat(pot)}${'▫️'.repeat(POT - pot)}  ·  survive to keep them!`; };
+    paintPot();
     put(area, h('div', { class: 'dodge' },
       h('div', { class: 'dodge-title' }, `⚠️ ${b.name} attacks! DODGE!`),
       h('div', { class: 'dodge-help' }, '⬅️⬆️⬇️➡️ arrow keys, or drag your finger on the box'),
-      cvs, timer, status));
+      potEl, cvs, timer, status));
     // sprites: the avatar (or a heart) and the boss's attack, drawn once
     const me = AV ? AV.draw(AV.load().look, { scale: 2 }) : null;
     const pw = me ? me.width : 22, ph = me ? me.height : 22;
@@ -3081,12 +3088,13 @@
     cvs.addEventListener('pointerup', undrag); cvs.addEventListener('pointercancel', undrag);
     const stop = () => { over = true; cancelAnimationFrame(raf); document.removeEventListener('keydown', kd); document.removeEventListener('keyup', ku); };
 
-    function finish(dead) {
+    function finish() {
       stop();
-      if (dead) return end({ hit, dead });
-      if (!hit) { status.textContent = '✨ PERFECT DODGE! +2 💎'; award(`dodge:${round}:a`, status); award(`dodge:${round}:b`, status); sfx.win(); }
-      else status.textContent = 'Phew! Back to the questions!';
-      setTimeout(() => end({ hit, dead }), 1300);
+      for (let k = 0; k < pot; k++) award(`dodge:${round}:${k}`, status);
+      if (!hit) { status.textContent = `✨ PERFECT DODGE! +${pot} 💎`; sfx.win(); }
+      else if (pot) { status.textContent = `You survived! +${pot} 💎`; sfx.good(); }
+      else status.textContent = 'Ouch! No gems this time – back to the questions!';
+      setTimeout(() => end({ hit, dead: false }), 1500);
     }
     function frame(now) {
       if (over) return;
@@ -3108,8 +3116,8 @@
       const safe = t - hitAt < 1.2;
       if (!safe) for (const q of bullets) {
         if (Math.abs(q.x - p.x) < q.r * 0.7 + pw * 0.28 && Math.abs(q.y - p.y) < q.r * 0.7 + ph * 0.3) {
-          hitAt = t; sfx.hit(); shake(cvs);
-          if (!hit) { hit = true; if (loseHeart()) return finish(true); }
+          hitAt = t; sfx.hit(); shake(cvs); hit = true;
+          if (pot) { pot--; paintPot(); replay(potEl, 'shake'); popText(cvs.parentNode, '-1 💎', 'ouch'); }
           break;
         }
       }
@@ -3120,7 +3128,7 @@
         else { ctx.font = '22px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('❤️', p.x, p.y); }
       }
       for (const q of bullets) ctx.drawImage(shot, q.x - q.r * 1.2, q.y - q.r * 1.2, q.r * 2.4, q.r * 2.4);
-      if (t >= DUR) return finish(false);
+      if (t >= DUR) return finish();
       raf = requestAnimationFrame(frame);
     }
     raf = requestAnimationFrame(frame);
@@ -3167,7 +3175,7 @@
         projectile(b.heroAttack || '⚡', avatar, sprite);
         setTimeout(() => {
           fillEl.style.width = hp / total * 100 + '%';
-          replay(sprite, 'hurt'); sfx.hit(); replay(el, 'flash');
+          replay(sprite, 'hurt'); sfx.bossHit(); replay(el, 'flash');
           popText(el, hp ? 'HIT!' : 'K.O.!', 'dmg');
           if (!hp) {
             hpText.textContent = 'DEFEATED!'; el.classList.remove('enraged'); el.classList.add('defeated');
@@ -3201,7 +3209,6 @@
         dodgeDue = false; sinceDodge = 0; rounds++;
         el.classList.add('attacking'); heroTalk.say('Here it comes!', 1500);
         dodgeRound(area, b, rounds, {
-          loseHeart() { lives--; breakHeart(); return !lives; },
           end({ hit, dead }) {
             el.classList.remove('attacking');
             if (!dead) {

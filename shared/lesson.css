@@ -820,3 +820,6 @@ a { color: var(--brand-dark); }
 .clk-hr:active, .clk-key:active { transform: translateY(2px); }
 @keyframes blink { 50% { opacity: .12; } }
 .clk-ghost svg text { display: none; }
+.dodge { position: relative; }
+.dodge-pot { display: inline-block; margin: 0 auto 8px; padding: 4px 12px; font-weight: 700; font-size: 1rem; background: #12210f; color: #fff; border: 3px solid #000; }
+.dodge .pop-text { left: 50%; top: 40%; transform: translateX(-50%); }
