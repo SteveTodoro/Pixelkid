@@ -134,6 +134,7 @@
     { id: 'pet-owl', cat: 'pet', name: 'Spelling owl', price: 60, rows: ['b......b', 'bbbbbbbb', 'bwkbbkwb', 'bwwbbwwb', '.bbyybb.', '.bBBBBb.', '.bBBBBb.', '..y..y..'], pal: { b: '#8a5a32', w: '#ffffff', k: '#1b1b1b', y: '#ff8c1a', B: '#e9cfa6' } },
     { id: 'pet-dragon', cat: 'pet', name: 'Baby dragon', price: 100, rows: ['.p.gg.p.', '.pggggp.', 'pgkggkgp', '.gggggg.', '.gyyyyg.', '..gyyg..', '.gg..gg.', '.g....g.'], pal: { g: '#2e9e3e', p: '#8e5cff', k: '#1b1b1b', y: '#ffd43b' } },
     { id: 'pet-annoying-dog', cat: 'pet', name: 'Annoying Dog', price: 100, special: true, rows: ['ww....ww', 'wwwwwwww', '.wkwwkw.', '.wwwwww.', '.wwkkww.', '..wwww..', '.wwwwww.', '.w.ww.w.'], pal: { w: '#ffffff', k: '#1b1b1b' } },
+    { id: 'pet-jellyfish', cat: 'pet', name: 'Immortal jelly', price: 100, special: true, rows: ['..kkkk..', '.kPPPPk.', 'kPPrrPPk', 'kPrrrrPk', 'kPkPPkPk', 'kkkkkkkk', '.t.tt.t.', 't.t..t.t'], pal: { k: '#5b2a6e', P: '#ffd1ec', r: '#e53935', t: '#f7a8d8' } },
     { id: 'pet-tardigrade', cat: 'pet', name: 'Water bear', price: 100, special: true, rows: ['.kkkkkk.', 'kppppppk', 'kpkppkpk', 'kppooppk', 'kpPppPpk', 'kppppppk', '.kkkkkk.', 'k.k..k.k'], pal: { k: '#4a3426', p: '#e9cfa6', P: '#c9a477', o: '#e57373' } },
   ];
   // ---------- background scenes (change the sky, decorations and ground everywhere) ----------

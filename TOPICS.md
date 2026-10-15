@@ -47,7 +47,7 @@ Practical, modern skills for growing up with AI and the internet. Always grown-u
 Inspired by "amazing facts" videos (e.g. Zack D Films). Each lesson is one wonder told as a story, with lots of inference questions. Lessons go in `wonders/`, with `subject: 'wonders'` (ocean-blue theme) and `finishAch: 'wonder'`. Finishing any Wonders lesson unlocks the 🌍 explorer hat.
 | Unit | Lesson ideas |
 |------|--------------|
-| Amazing Animals | Tardigrades: The Unkillable Water Bear? ✅ · The Immortal Jellyfish · Octopus: 3 Hearts & Blue Blood · Animal Superpowers |
+| Amazing Animals | Tardigrades: The Unkillable Water Bear? ✅ · The Immortal Jellyfish ✅ · Octopus: 3 Hearts & Blue Blood · Animal Superpowers |
 | Ancient Wonders | Pyramids of Giza · The Great Wall of China · Pompeii: The City Frozen in Time · The Terracotta Army |
 | Incredible Inventions | Oops! Accidental Inventions (ice lollies, crisps, penicillin) · The Wright Brothers Take Off · The Eiffel Tower Grows in Summer |
 | Wild Planet | Volcanoes · The Deepest Ocean · The Northern Lights |

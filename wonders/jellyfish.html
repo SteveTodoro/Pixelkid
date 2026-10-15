@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Immortal Jellyfish: Can It Live Forever?</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <script src="../shared/pixel.js"></script>
+  <script src="../shared/avatar.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// ---------- blocky pictures for this lesson ----------
+const JP = { k: '#5b2a6e', p: '#f7a8d8', P: '#ffd1ec', r: '#e53935', e: '#1b1b1b', t: '#f7a8d8', g: '#8e9aa8' };
+
+// a friendly jellyfish: a round bell on top, wiggly tentacles underneath
+const JELLY = Pixel.svg([
+  '....kkkk....',
+  '..kkppppkk..',
+  '.kppPPPPppk.',
+  'kppPPPPPPppk',
+  'kppepppeppk.',
+  'kppppppppppk',
+  '.kkkkkkkkkk.',
+  '..t.t..t.t..',
+  '.t..t..t..t.',
+  '..t.t..t.t..',
+  '.t..t..t..t.',
+], JP);
+
+// the immortal jellyfish: tiny, see-through, with a red middle
+const TURRI = Pixel.svg([
+  '....kkkk....',
+  '..kkPPPPkk..',
+  '.kPPPrrPPPk.',
+  'kPPPrrrrPPPk',
+  'kPPPrrrrPPPk',
+  '.kkkkkkkkkk.',
+  '.t.t.t.t.t..',
+  '..t.t.t.t.t.',
+  '.t.t.t.t.t..',
+], JP);
+
+// a polyp: a little tube with tentacles, stuck to a rock
+const POLYP = Pixel.svg([
+  '.t.t.t.',
+  '..ttt..',
+  '.kpppk.',
+  '.kpPpk.',
+  '..kpk..',
+  '..kpk..',
+  'ggggggg',
+], JP);
+
+// the boss: Captain Plastic, a grumpy pirate made of old carrier bags
+const CAPTAIN_PLASTIC = Pixel.svg([
+  '..kkkkkkkk..',
+  '.khhhshhhhk.',
+  'kkkkkkkkkkkk',
+  '.kwwwwwwwwk.',
+  '.kwkkwwrwwk.',
+  '.kwkkwwwwwk.',
+  '.kwwkkkkwwk.',
+  '..kwwwwwwk..',
+  '.kk.kwwk.kk.',
+  '.kbbbbbbbbk.',
+  '.kwgwwgwwwk.',
+  '.kwwwwwgwwk.',
+  '..kkkkkkkk..',
+], { k: '#1b1b1b', h: '#2b2b2b', s: '#ffffff', w: '#e8eef2', g: '#b8c4cc', r: '#e53935', b: '#2e7bd6' });
+
+// ---------- the lesson ----------
+window.LESSON = {
+  id: 'wonders-jellyfish',
+  subject: 'wonders',
+  title: 'The Immortal Jellyfish: Can It Live Forever?',
+  emoji: '🪼',
+  home: '../index.html',
+  finishAch: 'wonder',
+  mascot: {
+    name: 'Professor Bolt',
+    sprite: Pixel.sprites.robot,
+    praise: ['Wonderful!', 'Amazing answer!', 'Critical hit!', 'Mind = blown!', 'Epic thinking!', 'Bolt-tastic!', 'Jelly good!'],
+    oops: ['Oops! Have another go.', 'Not quite – read it again!', 'Hmm, think again!', 'So close! One more try.'],
+  },
+  glossary: {
+    invertebrate: { emoji: '🪱', def: 'An animal with no backbone. Jellyfish, worms and insects are invertebrates.' },
+    tentacles: { emoji: '🪼', def: 'Long, bendy arms that some animals use to feel and catch food.' },
+    venom: { emoji: '☠️', def: 'A harmful juice that some animals put into others with a sting or a bite.' },
+    current: { emoji: '🌊', def: 'Water in the sea that keeps moving in one direction, like a river in the ocean.' },
+    'life cycle': { emoji: '🔄', def: 'All the stages a living thing goes through, from being born to growing up and having young of its own.' },
+    polyp: { emoji: '🪸', def: 'A tiny tube-shaped baby stage of a jellyfish that stays stuck to a rock.' },
+    immortal: { emoji: '♾️', def: 'Able to live forever and never grow old.' },
+    cells: { emoji: '🧱', def: 'The tiny building blocks that every living thing is made of. You are made of millions and millions of them!' },
+    predator: { emoji: '🐢', def: 'An animal that hunts and eats other animals.' },
+    myth: { emoji: '🧚', def: 'A story or idea that lots of people believe, but that is not quite true.' },
+  },
+  achievements: {
+    wonder: { icon: '🌍', name: 'Wonder Hunter' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'The Immortal Jellyfish: Can It Live Forever?', short: 'Start', minutes: 1,
+      pic: TURRI,
+      hello: "Beep boop! Welcome back to WONDERS OF THE WORLD! Today: a tiny jellyfish that can turn back time…",
+      question: 'Could any animal grow old… and then turn back into a baby?',
+      intro: 'Read, watch, play **Fact or Fiction**, jump through the sea – then stop Captain Plastic from filling the ocean with bags! A new 🪼 jellyfish pet is waiting in the Wardrobe shop.',
+      nameLabel: 'Player name:',
+    },
+
+    {
+      type: 'review', title: 'Last time…', short: 'Recap', minutes: 3,
+      from: { title: 'Tardigrades: The Unkillable Water Bear?', emoji: '🐻', url: 'tardigrades.html' },
+      facts: [
+        'Tardigrades (water bears) are tiny animals with 8 legs – you need a microscope to see one.',
+        'When their home dries out, they curl into a dry ball called a tun and can wait for years.',
+        'Add water and they wake up again! Some even survived a trip to space.',
+        'Myth-buster: they are NOT unkillable – an awake tardigrade is quite delicate.',
+      ],
+      questions: [
+        { type: 'mcq', q: 'The moss a tardigrade lives in dries out. What does it do?', options: ['Curls into a tun and waits', 'Builds a nest', 'Swims to the sea'], answer: 0 },
+        { type: 'mcq', q: 'How many legs does a tardigrade have?', options: ['8', '6', '100'], answer: 0 },
+        { type: 'tf', q: 'Nothing can ever hurt a tardigrade.', answer: false, explain: 'That is a myth! An awake tardigrade can be hurt quite easily.' },
+        { type: 'mcq', q: 'Which tool would help you spot one?', options: ['🔬 a microscope', '🔭 a telescope', '🧲 a magnet'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'read', title: 'Meet the jellyfish', short: 'Read 1', minutes: 5,
+      say: 'Read each page carefully – the checks test if you really understood it! Tap the yellow words for a 💎.',
+      cards: [
+        {
+          title: 'Not jelly, not a fish!', pic: JELLY,
+          text: [
+            'A jellyfish is not made of the jelly you eat at a party – but its body is soft and wobbly, because it is about 95% water.',
+            'And it is not a fish either! Fish have a backbone. A jellyfish has no bones at all, so it is an [[invertebrate]].',
+          ],
+          check: { q: 'Which of these animals is MOST like a jellyfish, because it has no backbone?', options: ['🪱 a worm', '🐟 a goldfish', '🐬 a dolphin'], answer: 0, hint: 'Fish and dolphins both have a backbone inside them.' },
+        },
+        {
+          title: 'No brain? No problem!', pic: '🧠❌ ❤️❌ 🦴❌',
+          text: [
+            'A jellyfish has no brain, no heart, no bones and no blood! Instead, a net of nerves spreads all through its body to sense food and danger.',
+            'Strangest of all, it has just one opening. Food goes in through it… and poop comes out of the very same hole!',
+          ],
+          check: { q: 'How does a jellyfish know that food is nearby?', options: ['Its net of nerves senses it', 'It thinks about it with its big brain', 'Its heart beats faster'], answer: 0, hint: 'Remember – it has no brain and no heart.' },
+        },
+        {
+          title: 'Bell and tentacles', pic: '☂️🪼🌊',
+          text: [
+            'The top of a jellyfish is called the bell. It looks like an umbrella. Underneath hang long, trailing [[tentacles]].',
+            'To swim, a jellyfish squeezes its bell shut, which pushes water out and shoots it forwards. But mostly it just drifts wherever the [[current]] takes it.',
+          ],
+          check: { q: 'Which of these moves in the same way as a swimming jellyfish?', options: ['A balloon zooming off when you let the air out', 'A car driving along on wheels', 'A bird flapping its wings'], answer: 0, hint: 'The jellyfish pushes water OUT, and that pushes it forwards.' },
+        },
+        {
+          title: 'Super-fast stingers', pic: '⚡🦐',
+          text: [
+            'The tentacles are covered in thousands of tiny stinging cells. Each one hides a coiled-up thread, like a mini harpoon.',
+            'When something touches it, the harpoon fires out in a millionth of a second and jabs in [[venom]]. That is how a jellyfish catches shrimp and tiny fish – it cannot chase them!',
+          ],
+          check: { q: 'Why does a jellyfish need stingers to get its dinner?', options: ['It is too slow to chase its food', 'It wants to scare people on the beach', 'It uses them to dig in the sand'], answer: 0 },
+        },
+        {
+          title: 'Beach safety + a myth', pic: '🏖️⚠️',
+          text: [
+            'Never touch a jellyfish on the beach – even one that is not moving can still sting! Tell a grown-up or a lifeguard instead.',
+            'Some people say you should wee on a jellyfish sting. That is a [[myth]] – it can make the sting worse! Grown-ups rinse a sting with sea water or vinegar and ask a lifeguard for help.',
+          ],
+          check: { q: 'Leo finds a jellyfish lying still on the sand. What is the safest thing to do?', options: ['Leave it alone and tell a grown-up', 'Pick it up to put it back in the sea', 'Poke it with his finger to check'], answer: 0, hint: 'Even a jellyfish that is not moving can sting.' },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'Everything About Jellyfish', short: 'Video 1', minutes: 8,
+      video: { id: 'n79XKtxu0xs', title: 'How Does A Jellyfish Sting? | Everything About Jellyfish | Dr Binocs Show', channel: 'Peekaboo Kidz', duration: '6:27' },
+      say: 'Dr Binocs is zooming in on a jellyfish sting! Watch, then answer my questions.',
+      clues: [
+        'How much of a jellyfish is water?',
+        'How fast do the stingers fire?',
+        'Which water should you NOT rinse a sting with?',
+        'How long have jellyfish been around?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'How much of a jellyfish\'s body is water?', options: ['about 95% – nearly all of it', 'about half', 'none at all'], answer: 0 },
+        { type: 'mcq', q: 'Why does Dr Binocs say a jellyfish is NOT really a fish?', options: ['It has no backbone', 'It cannot swim', 'It lives on land'], answer: 0 },
+        { type: 'mcq', q: 'How quickly do the tiny harpoons in a stinging cell shoot out?', options: ['in a millionth of a second', 'in about one minute', 'in one whole day'], answer: 0, explain: 'That makes it one of the fastest movements in nature!' },
+        { type: 'mcq', q: 'Which does Dr Binocs say you should NOT rinse a sting with?', options: ['fresh water from a tap', 'vinegar', 'nothing – rinsing is always fine'], answer: 0, hint: 'He says fresh water can make more stingers fire.' },
+        { type: 'mcq', q: 'Jellyfish have been around for at least 500 million years. That means they are…', options: ['older than the dinosaurs', 'younger than cats', 'only as old as your granny'], answer: 0 },
+        { type: 'mcq', q: 'The lion\'s mane jellyfish has tentacles longer than…', options: ['🐋 a blue whale', '🐜 an ant', '🚗 a toy car'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Fact or Fiction?', short: 'Game 1', minutes: 8,
+      rounds: [
+        {
+          game: 'truefalse', title: 'Fact or Fiction?',
+          intro: 'Some of these sound made-up but are TRUE. Some sound true but are made-up! Think carefully about what you read.',
+          say: 'Is it a real wonder – or a fib? You decide!',
+          statements: [
+            { text: 'Jellyfish were swimming in the sea before the dinosaurs.', answer: true, why: 'They have been around for at least 500 million years!' },
+            { text: 'A jellyfish is a kind of fish.', answer: false, why: 'Fish have backbones. Jellyfish have no bones at all.' },
+            { text: 'Jellyfish do not have a brain.', answer: true, why: 'They have a net of nerves instead.' },
+            { text: 'A jellyfish on the beach is safe to touch if it is not moving.', answer: false, why: 'Even a jellyfish that is not moving can still sting!' },
+            { text: 'Some jellyfish have tentacles longer than a blue whale.', answer: true, why: 'The lion\'s mane jellyfish does!' },
+            { text: 'Jellyfish breathe through gills, just like fish.', answer: false, why: 'Jellyfish have no gills. Oxygen soaks in from the water through their thin bodies.' },
+            { text: 'A box jellyfish has 24 eyes.', answer: true, why: 'It is TRUE! A box jellyfish has 24 eyes – but no brain.' },
+            { text: 'A jellyfish eats and poops through the same hole.', answer: true, why: 'Yuck – but true! It only has one opening.' },
+            { text: 'All jellyfish are as big as a dinner plate.', answer: false, why: 'Some are tiny, like the immortal jellyfish. Others are giants!' },
+          ],
+        },
+        {
+          game: 'sort', title: 'Fish, jellyfish or both?',
+          intro: 'Sort each thing into the right chest. Does a FISH have it, a JELLYFISH, or BOTH?',
+          say: 'Think about what you read. Some things belong to both!',
+          buckets: [
+            { id: 'fish', label: 'Fish', emoji: '🐟' },
+            { id: 'jelly', label: 'Jellyfish', emoji: '🪼' },
+            { id: 'both', label: 'Both', emoji: '🤝' },
+          ],
+          items: [
+            { label: 'backbone', emoji: '🦴', bucket: 'fish', hint: 'Fish have a backbone. Jellyfish have no bones at all.' },
+            { label: 'gills', emoji: '🫧', bucket: 'fish', hint: 'Fish breathe with gills. Jellyfish soak up oxygen through their bodies.' },
+            { label: 'a brain', emoji: '🧠', bucket: 'fish', hint: 'Fish have a brain. Jellyfish don\'t!' },
+            { label: 'fins', emoji: '🐠', bucket: 'fish', hint: 'Fish use fins to swim. A jellyfish squeezes its bell.' },
+            { label: 'stinging tentacles', emoji: '⚡', bucket: 'jelly', hint: 'Only the jellyfish has stinging tentacles.' },
+            { label: 'an umbrella-shaped bell', emoji: '☂️', bucket: 'jelly', hint: 'The bell is the top of a jellyfish.' },
+            { label: 'a net of nerves instead of a brain', emoji: '🕸️', bucket: 'jelly', hint: 'Jellyfish use a net of nerves, because they have no brain.' },
+            { label: 'lives in the sea', emoji: '🌊', bucket: 'both', hint: 'Lots of fish AND jellyfish live in the sea.' },
+            { label: 'eats other animals', emoji: '🦐', bucket: 'both', hint: 'Jellyfish catch shrimp, and lots of fish eat smaller animals too.' },
+            { label: 'can swim', emoji: '🏊', bucket: 'both', hint: 'They both swim – in very different ways!' },
+          ],
+        },
+        {
+          game: 'wordsearch', title: 'Word Hunt',
+          intro: 'Find all the **ocean words** hidden in the grid. They go across ➡ or down ⬇.',
+          say: 'Hunt for the hidden words! Drag across a word – or tap the first letter, then the last.',
+          size: 10,
+          words: ['JELLYFISH', 'TENTACLE', 'STING', 'BELL', 'POLYP', 'OCEAN', 'TURTLE', 'VENOM'],
+        },
+      ],
+    },
+
+    {
+      type: 'read', title: 'The jellyfish that turns back time', short: 'Read 2', minutes: 6,
+      say: 'Now for the BIGGEST wonder of all. Can a jellyfish really live forever?',
+      cards: [
+        {
+          title: 'A jellyfish life cycle', pic: POLYP,
+          text: [
+            'Most jellyfish have the same [[life cycle]]. A tiny swimming baby drifts through the sea, then sticks itself onto a rock. There it grows into a [[polyp]] – a little tube with tentacles, a bit like a tiny flower.',
+            'The polyp makes baby jellyfish that break off and swim away. They grow up, have babies of their own, get old – and die.',
+          ],
+          check: { q: 'Where would you be most likely to find a jellyfish polyp?', options: ['stuck onto a rock under the sea', 'floating in the sky', 'buried in a sandcastle'], answer: 0 },
+        },
+        {
+          title: 'Meet the immortal jellyfish', pic: TURRI,
+          text: [
+            'But one jellyfish has a secret. Its name is Turritopsis (say "tur-ri-TOP-sis"), and people call it the [[immortal]] jellyfish.',
+            'It is smaller than your little fingernail, with a see-through bell and a bright red middle. In the 1980s, a student in Italy kept some in a jar and saw something amazing: instead of dying, they turned back into polyps!',
+          ],
+          check: { q: 'Why did it take a long time for anyone to notice this jellyfish\'s secret?', options: ['It is tiny and someone had to watch it very closely', 'It only lives on the Moon', 'It is invisible'], answer: 0 },
+        },
+        {
+          title: 'Turning back the clock', pic: '🪼➡️🫧➡️🪸',
+          text: [
+            'When this jellyfish is in trouble – starving, hurt, or too hot or cold – it does not grow old. It shrinks, pulls in its tentacles and turns into a small round blob.',
+            'The blob sticks to a rock and becomes a polyp again, which makes brand-new young jellyfish. It is like a butterfly turning back into a caterpillar! And it can do it again and again.',
+          ],
+          check: { q: 'An immortal jellyfish has had no food for weeks. What might it do?', options: ['Turn back into a polyp and start its life again', 'Fly off to find food on land', 'Grow giant tentacles'], answer: 0 },
+        },
+        {
+          title: 'Rebuilding itself', pic: '🧱🔄🧱',
+          text: [
+            'Every living thing is made of tiny building blocks called [[cells]]. In you, a muscle cell stays a muscle cell for its whole life.',
+            'But the immortal jellyfish can change what its cells do, and use them to build a younger body. It is like taking apart a LEGO castle and building a new spaceship from the same bricks!',
+          ],
+          check: { q: 'Which is MOST like what the jellyfish does with its cells?', options: ['Using old bricks to build something new', 'Throwing all the bricks in the bin', 'Buying a box of brand-new bricks'], answer: 0 },
+        },
+        {
+          title: 'Myth-buster!', pic: '❌♾️',
+          text: [
+            'You might hear that the immortal jellyfish can never die. That is a myth!',
+            'It never has to die of old age – but it can still be eaten by a [[predator]] such as a fish or a sea turtle, or get sick. Remember the tardigrade? It is a bit like that: amazing, but not unbeatable.',
+          ],
+          check: { q: 'A hungry sea turtle spots an immortal jellyfish. What could happen?', options: ['The turtle could eat it', 'The jellyfish is safe because it can never die', 'The turtle turns into a polyp'], answer: 0 },
+        },
+        {
+          title: 'Plastic peril', pic: '🐢🪼 🛍️❌',
+          text: [
+            'Sea turtles love to munch on jellyfish. But a plastic bag floating in the sea looks a lot like a jellyfish – and some turtles eat bags by mistake, which makes them very poorly.',
+            'You can help! Use bags again and again, and always put litter in the bin, so less plastic ends up in the sea.',
+          ],
+          check: { q: 'Why might a turtle swallow a plastic bag?', options: ['It looks like a jellyfish floating in the water', 'Turtles like the taste of plastic', 'The bag smells like fish'], answer: 0 },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'The Jellyfish That Never Dies', short: 'Video 2', minutes: 8,
+      video: { id: 'j7PQQ4x2wHY', title: 'Immortal Jellyfish - Turritopsis dohrnii | Mystery of Jellyfish That Never Die', channel: 'Peekaboo Kidz', duration: '6:39' },
+      say: 'Dr Binocs zooms in on the immortal jellyfish. Watch closely – some of it is tricky!',
+      clues: [
+        'What does Dr Binocs wish he could do at the start?',
+        'What does the tiny swimming baby stick itself onto?',
+        'What makes the immortal jellyfish turn back?',
+        'What are the protective caps compared to?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'At the start, what does Dr Binocs wish he could do?', options: ['become a kid again', 'fly to the Moon', 'swim with sharks'], answer: 0 },
+        { type: 'mcq', q: 'Before it becomes a polyp, the tiny swimming baby sticks itself onto…', options: ['coral or rock', 'a boat', 'a fish\'s tail'], answer: 0 },
+        { type: 'mcq', q: 'When does the immortal jellyfish start turning back into a young polyp?', options: ['When it is starving, hurt or in danger', 'Every Tuesday', 'When it is happy and full'], answer: 0 },
+        { type: 'mcq', q: 'When it reverses, the jellyfish shrinks into a round blob called a…', options: ['cyst', 'tun', 'shell'], answer: 0, hint: 'A tun was the tardigrade\'s trick!' },
+        { type: 'mcq', q: 'The video compares the tiny caps that protect the jellyfish\'s DNA to…', options: ['the plastic tips on shoelaces', 'the lids on bottles', 'the helmets on cyclists'], answer: 0 },
+        { type: 'tf', q: 'The video says the immortal jellyfish can still be eaten by predators.', answer: true, explain: 'It is not truly invincible!' },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Jelly Lab', short: 'Game 2', minutes: 8,
+      rounds: [
+        {
+          game: 'order', title: 'Turning back time',
+          intro: 'Put the immortal jellyfish\'s amazing journey in order.',
+          say: 'What happens first? What happens last? Think it through!',
+          items: [
+            '🪼 A grown-up jellyfish drifts through the sea.',
+            '😣 It gets hurt and has no food.',
+            '🫧 It shrinks into a small round blob.',
+            '🪸 The blob sticks to a rock and becomes a polyp.',
+            '👶 The polyp makes brand-new baby jellyfish.',
+            '🔄 They grow up – and the story can start all over again!',
+          ],
+        },
+        {
+          game: 'crossword', title: 'Jellyfish Crossword',
+          intro: 'Solve the crossword! Tap a clue, then type the answer with the letter keys.',
+          say: 'Crossword time! Stuck? Press 💡 Hint for a free letter.',
+          entries: [
+            { answer: 'TENTACLE', clue: 'One of the long, stinging arms of a jellyfish' },
+            { answer: 'POLYP', clue: 'The baby stage of a jellyfish that is stuck to a rock' },
+            { answer: 'IMMORTAL', clue: 'Able to live forever' },
+            { answer: 'BELL', clue: 'The umbrella-shaped top of a jellyfish' },
+            { answer: 'BRAIN', clue: 'A jellyfish does not have one of these to think with' },
+            { answer: 'TURTLE', clue: 'A sea animal that loves to eat jellyfish' },
+            { answer: 'WATER', clue: 'A jellyfish is about 95% this' },
+          ],
+        },
+        {
+          game: 'platformer', title: 'Jelly Jump',
+          intro: 'Run and jump! Collect the things a **jellyfish HAS** – dodge the things it does **NOT** have.',
+          say: '◀ ▶ to run, ⬆ to jump. What does a jellyfish have?',
+          prompt: 'Collect what a jellyfish HAS – dodge what it doesn\'t!',
+          items: [
+            { label: '🪼 tentacles', ok: true },
+            { label: '⚡ stingers', ok: true },
+            { label: '☂️ a bell', ok: true },
+            { label: '💧 lots of water', ok: true },
+            { label: '🕸️ nerve net', ok: true },
+            { label: '🧠 brain', ok: false, why: 'A jellyfish has no brain – just a net of nerves.' },
+            { label: '🦴 bones', ok: false, why: 'Jellyfish have no bones at all. They are invertebrates.' },
+            { label: '❤️ heart', ok: false, why: 'A jellyfish has no heart and no blood!' },
+            { label: '🫧 gills', ok: false, why: 'Fish have gills. Jellyfish soak up oxygen through their bodies.' },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
+      say: 'Time to move like a jellyfish!',
+      wiggle: {
+        title: '🪼 Jelly Moves!',
+        seconds: 60,
+        moves: [
+          '☂️ Pulse! Open your arms wide, then squeeze them in – and again!',
+          '🌊 Drift! Sway from side to side like you are floating on a current.',
+          '⚡ Sting! Wiggle your fingers super fast like tiny tentacles.',
+          '🫧 Turn back time! Curl into a tiny blob on the floor…',
+          '🪸 …now grow slowly up into a polyp, and stretch up tall!',
+          '🐢 Turtle swim! Paddle your arms slowly like a sea turtle.',
+        ],
+      },
+      tryit: {
+        title: '🧪 Try it at home: Wobbly Jelly Test',
+        intro: 'A jellyfish is about 95% water – a bit like the jelly you eat! With a grown-up, make a bowl of jelly from a packet (the hot water is a grown-up job) and let it set in the fridge.',
+        steps: [
+          'Before you test, tap the first box for each guess: what do you THINK will happen?',
+          'Gently shake the bowl. Hold a toy behind it. Then put a spoonful on a warm plate for 10 minutes.',
+          'Tap the second box: what did you SEE?',
+          'Then eat the jelly – but never, ever eat a jellyfish!',
+        ],
+        table: {
+          cols: ['I think…', 'I saw…'],
+          items: ['〰️ it wobbles when shaken', '👀 I can see the toy through it', '💧 it goes runny when warm'],
+        },
+        tip: 'Tap once for ✅ and twice for ❌. Jellyfish are see-through and wobbly because they are mostly water too!',
+      },
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: Captain Plastic', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      say: 'Oh no! CAPTAIN PLASTIC wants to fill the sea with plastic bags, so the turtles get muddled up! Every right answer is a hit. Stop him, {name}!',
+      boss: {
+        name: 'Captain Plastic', sprite: CAPTAIN_PLASTIC, attack: '🛍️',
+        lines: {
+          intro: 'Arr! I be CAPTAIN PLASTIC! I\'ll fill the sea with bags – the turtles will never find a real jellyfish again!',
+          hurt: ['Arr! Me bags!', 'Shiver me shopping bags!', 'Ye be recycling me!', 'Blast! Too clever!'],
+          taunt: ['Har har! Wrong!', 'Bagged ye!', 'Walk the plank!', 'Plastic power!'],
+          angry: 'Now ye\'ve made me all CRINKLY with rage!',
+          dodge: 'All hands! FIRE THE BAGS!',
+          miss: 'Blimey! Not one bag touched ye?!',
+          last: 'No… not the recycling bin…',
+          defeat: 'NOOO! I\'ve been… RECYCLED!',
+          win: 'Har har! The sea be MINE! Come back when ye know yer jellies!',
+        },
+      },
+      bonus: {
+        title: '⭐ Bonus quest (for a grown-up to help with)',
+        text: 'Want more? Watch TED-Ed\'s "Jellyfish predate dinosaurs. How have they survived so long?" (5 min) to find out more jellyfish secrets.',
+        url: 'https://www.youtube.com/watch?v=yQduHyiWe9o',
+        button: 'Watch the bonus video ▶',
+      },
+      questions: [
+        { type: 'mcq', q: 'A jellyfish has no backbone. Which other animal has no backbone either?', options: ['🐌 a snail', '🐈 a cat', '🦈 a shark'], answer: 0, hint: 'Cats and sharks both have a backbone inside them.' },
+        { type: 'gap', q: 'A jellyfish is wobbly and see-through because it is mostly ___.', options: ['water', 'bone', 'sand'], answer: 0 },
+        { type: 'mcq', q: 'How does a jellyfish catch a shrimp?', options: ['Its tentacles sting it', 'It chases it really fast', 'It bites it with sharp teeth'], answer: 0 },
+        { type: 'mcq', q: 'You spot a jellyfish lying still on the sand. What should you do?', options: ['Leave it alone and tell a grown-up', 'Pick it up – it can\'t sting now', 'Take it home as a pet'], answer: 0, hint: 'Even a jellyfish that is not moving can sting.' },
+        { type: 'mcq', q: 'Captain Plastic says, "Jellyfish think with their big brains!" What could you tell him?', options: ['Wrong – they have a net of nerves, not a brain', 'Right – their brain is in their tentacles', 'Right – they have two brains'], answer: 0 },
+        { type: 'mcq', q: 'An immortal jellyfish is hurt by a storm. What might it do?', options: ['Turn back into a polyp and start again', 'Grow a new brain', 'Swim to the beach for help'], answer: 0 },
+        { type: 'mcq', q: 'Which is most like what the immortal jellyfish can do?', options: ['a butterfly turning back into a caterpillar', 'a puppy growing into a dog', 'a seed growing into a tree'], answer: 0, hint: 'The jellyfish goes BACKWARDS to an earlier stage.' },
+        { type: 'tf', q: 'An immortal jellyfish can never die.', answer: false, explain: 'It doesn\'t have to die of old age, but a predator can still eat it!' },
+        { type: 'mcq', q: 'Why is a plastic bag in the sea dangerous for a sea turtle?', options: ['It looks like a jellyfish, so the turtle might eat it', 'It makes the water too cold', 'Turtles get tangled in sand'], answer: 0 },
+        { type: 'mcq', q: 'Which of these helps sea turtles the MOST?', options: ['Using a bag again and putting litter in the bin', 'Buying a new plastic bag every day', 'Throwing rubbish in the sea'], answer: 0 },
+        { type: 'order', q: 'Put a jellyfish\'s life cycle in order.', items: ['🥚 a tiny egg', '🪸 a polyp stuck on a rock', '👶 a baby jellyfish breaks off', '🪼 a grown-up jellyfish'], hint: 'Where does the polyp come in?' },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>
