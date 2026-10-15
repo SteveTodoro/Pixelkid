@@ -199,6 +199,7 @@
     wonder: { icon: '🌍', name: 'Wonder Hunter' },
     speller: { icon: '🪄', name: 'Spell Master' },
     miner: { icon: '⛏️', name: 'Maths Miner' },
+    gardener: { icon: '🌻', name: 'Green Thumb' },
   }, L.achievements);
   function achieve(id) {
     const a = ACH[id];

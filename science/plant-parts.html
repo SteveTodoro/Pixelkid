@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Plant Detectives</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <script src="../shared/pixel.js"></script>
+  <script src="../shared/avatar.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// ---------- blocky pictures for this lesson ----------
+const svg = (vb, inner) => `<svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" role="img">${inner}</svg>`;
+const R = (x, y, w, hh, fill) => `<rect x="${x}" y="${y}" width="${w}" height="${hh}" fill="${fill}"/>`;
+const LINE = (x1, y1, x2, y2) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#000" stroke-width="2" stroke-dasharray="4 3"/>`;
+
+// a flowering plant in a slice of soil, with dotted lines out to the four label spots
+const PLANT_LABEL = svg('0 0 300 230', `
+  ${R(0, 150, 300, 80, '#8a5a32')}${R(0, 150, 300, 6, '#5bbf3a')}
+  ${[[30, 175], [250, 200], [90, 215], [210, 168]].map(([x, y]) => R(x, y, 6, 6, '#6b4425')).join('')}
+  ${R(146, 52, 8, 100, '#2e9e3e')}
+  ${R(116, 86, 30, 12, '#5bbf3a')}${R(122, 80, 18, 6, '#5bbf3a')}${R(122, 98, 18, 6, '#5bbf3a')}
+  ${R(154, 112, 30, 12, '#5bbf3a')}${R(160, 106, 18, 6, '#5bbf3a')}${R(160, 124, 18, 6, '#5bbf3a')}
+  ${R(134, 8, 32, 14, '#ff7eb6')}${R(134, 46, 32, 14, '#ff7eb6')}${R(120, 22, 14, 24, '#ff7eb6')}${R(166, 22, 14, 24, '#ff7eb6')}
+  ${R(134, 22, 32, 24, '#ffcc33')}${R(142, 28, 6, 6, '#c98a00')}${R(152, 34, 6, 6, '#c98a00')}
+  ${R(146, 156, 8, 24, '#e9cfa6')}${R(132, 176, 14, 6, '#e9cfa6')}${R(126, 182, 6, 22, '#e9cfa6')}
+  ${R(154, 176, 16, 6, '#e9cfa6')}${R(168, 182, 6, 26, '#e9cfa6')}${R(146, 180, 6, 32, '#e9cfa6')}
+  ${R(116, 204, 10, 4, '#e9cfa6')}${R(174, 206, 10, 4, '#e9cfa6')}
+  ${LINE(180, 34, 214, 34)}${LINE(116, 92, 86, 92)}${LINE(154, 140, 214, 132)}${LINE(126, 192, 86, 192)}`);
+
+// welcome picture: a magnifying glass over a sprout
+const SPROUT = Pixel.svg([
+  '....kkkk..........',
+  '..kkccccdd........',
+  '.kccccccccd.......',
+  '.kcc.ll.ccd.......',
+  'kcc.llll.ccd......',
+  'kcc..ll..ccd......',
+  'kcc.lglg.ccd......',
+  '.kcc.gg.ccd.......',
+  '.kccccccccdbb.....',
+  '..kkccccddbbbb....',
+  '....kkkk...bbbb...',
+  '............bbbb..',
+  '.............bbb..',
+], { k: '#1b1b1b', c: '#cfefff', d: '#7fb4d9', l: '#5bbf3a', g: '#2e9e3e', b: '#8a5a32' });
+
+// the boss: Weedzilla, a giant grumpy weed with roots for feet
+const WEEDZILLA = Pixel.svg([
+  'g..g....g..g',
+  'gg.gg..gg.gg',
+  '.gggggggggg.',
+  '.gGGGGGGGGg.',
+  'gGwkGGGGwkGg',
+  'gGkkGGGGkkGg',
+  'gGGGGGGGGGGg',
+  'gGkwkwkwkwGg',
+  '.gGkkkkkkGg.',
+  '..gGGGGGGg..',
+  '.g..gGGg..g.',
+  '...bbbbbb...',
+  '..b.b..b.b..',
+], { g: '#1f6b2a', G: '#4caf50', w: '#ffffff', k: '#1b1b1b', b: '#8a5a32' });
+
+// ---------- the lesson ----------
+window.LESSON = {
+  id: 'science-plant-parts',
+  subject: 'science',
+  title: 'Plant Detectives',
+  emoji: '🌱',
+  home: '../index.html',
+  finishAch: 'gardener',
+  mascot: {
+    name: 'Professor Bolt',
+    sprite: Pixel.sprites.robot,
+    praise: ['Blooming brilliant!', 'Super sleuthing!', 'Critical hit!', 'Tree-mendous!', 'Epic thinking!', 'Bolt-tastic!', 'Leaf it to you!'],
+    oops: ['Oops! Try again, detective.', 'Not quite – have another go!', 'Hmm, think again!', 'So close! One more try.'],
+  },
+  glossary: {
+    'flowering plant': { emoji: '🌼', def: 'A plant that grows flowers. Most plants you see are flowering plants – even grass and many trees!' },
+    roots: { emoji: '🥕', def: 'The part of a plant that grows under the ground. Roots hold the plant in place and soak up water.' },
+    anchor: { emoji: '⚓', def: 'Something that holds a thing firmly in place, so it does not get pulled or blown away.' },
+    nutrients: { emoji: '🧪', def: 'Goodness in the soil that helps a plant grow healthy, a bit like vitamins.' },
+    stem: { emoji: '🌿', def: 'The part of a plant that holds it up and carries water from the roots to the leaves.' },
+    trunk: { emoji: '🌳', def: 'The thick, woody stem of a tree.' },
+    leaves: { emoji: '🍃', def: 'The flat, usually green parts of a plant. They make food for the plant using sunlight.' },
+    photosynthesis: { emoji: '☀️', def: 'How a plant makes its own food in its leaves, using sunlight, air and water. Say "foe-toe-SIN-thuh-sis".' },
+    pollen: { emoji: '🐝', def: 'A fine yellow dust made by flowers. Insects carry it from flower to flower so seeds can grow.' },
+    fruit: { emoji: '🍎', def: 'The part of a plant that grows from a flower and has seeds inside.' },
+    seeds: { emoji: '🌰', def: 'Tiny packages that can grow into a brand-new plant.' },
+    bark: { emoji: '🪵', def: 'The tough outside layer of a tree trunk and its branches.' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'Plant Detectives', short: 'Start', minutes: 1,
+      pic: SPROUT,
+      hello: 'Beep boop! Grab your magnifying glass, detective. Today we are investigating PLANTS!',
+      question: 'A plant has no mouth, no hands and no feet. So how does it drink, stand up and eat?',
+      intro: 'Start with a quick recap of **Pushes, Pulls & Friction**, then read, watch, label a plant and run through the garden – and stop Weedzilla! Finish the lesson to unlock the 👒 gardener\'s straw hat.',
+      nameLabel: 'Player name:',
+    },
+
+    {
+      type: 'review', title: 'Last time…', short: 'Recap', minutes: 3,
+      from: { title: 'Pushes, Pulls & Friction', emoji: '🛷', url: 'friction.html' },
+      facts: [
+        'A force is a push or a pull. Forces can start things moving, stop them, or change their direction or shape.',
+        'Friction is a force that slows things down when two surfaces rub together.',
+        'Rough surfaces make lots of friction. Smooth surfaces, like ice, make less.',
+        'A fair test only changes ONE thing.',
+      ],
+      questions: [
+        { type: 'mcq', q: 'You open the fridge door. Is that a push or a pull?', options: ['pull', 'push'], answer: 0, hint: 'Does the door come towards you, or go away from you?' },
+        { type: 'mcq', q: 'Which shoes would be best for running on a slippery, muddy field?', options: ['👟 trainers with bumpy, grippy soles', '🩴 smooth flip-flops', '🧦 just socks'], answer: 0, hint: 'You want MORE friction so you do not slip.' },
+        { type: 'tf', q: 'A ball rolls further on thick grass than on a smooth playground.', answer: false, explain: 'Grass is rougher, so it makes more friction and the ball stops sooner.' },
+        { type: 'mcq', q: 'Ali tests how far a toy car rolls on 3 floors. What must he change?', options: ['only the floor', 'the floor AND the car', 'the floor, the car AND the ramp'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'read', title: 'The parts of a plant', short: 'Read 1', minutes: 5,
+      say: 'Read each page carefully, detective – the checks test if you really understood it! Tap the yellow words for a 💎.',
+      cards: [
+        {
+          title: 'Plants are alive!', pic: '🌻🌳🌵🌾',
+          text: [
+            'Plants are living things, just like you. They grow, they need water, and they can make new plants.',
+            'Most plants you see are [[flowering plants|flowering plant]]. They have four main parts, and each part has its own job: roots, a stem, leaves and flowers.',
+          ],
+          check: { q: 'Sam says a daisy is not alive because it cannot walk. Is he right?', options: ['No – it grows, needs water and makes new plants', 'Yes – only animals are alive', 'Yes – it is too small to be alive'], answer: 0, hint: 'Think about what ALL living things do.' },
+        },
+        {
+          title: 'Roots: the underground team', pic: '🌱⬇️🟫',
+          text: [
+            'The [[roots]] grow down into the soil, where you cannot see them. They [[anchor]] the plant, holding it tight so the wind cannot blow it over.',
+            'Roots also work like lots of tiny straws. They soak up water and [[nutrients]] from the soil for the whole plant.',
+          ],
+          check: { q: 'A storm blows hard all night, but the sunflower is still standing in the morning. Which part helped the most?', options: ['the roots', 'the petals', 'the flower'], answer: 0, hint: 'Which part holds on to the ground?' },
+        },
+        {
+          title: 'The stem: holder and carrier', pic: '🌿⬆️💧',
+          text: [
+            'The [[stem]] holds the plant up, so its leaves and flowers can reach the sunshine.',
+            'Inside the stem are tiny tubes. They carry water up from the roots to the leaves and flowers. A tree has a stem too – a huge, woody one called a [[trunk]].',
+          ],
+          check: { q: 'An oak tree\'s trunk does the same job as…', options: ['a daisy\'s stem', 'a daisy\'s petals', 'a daisy\'s roots'], answer: 0, hint: 'Which part holds a daisy up and carries water?' },
+        },
+        {
+          title: 'Leaves: the food factory', pic: '☀️➡️🍃',
+          text: [
+            'Plants do not eat dinner like you. They make their own food in their [[leaves]], using sunlight, air and water. This is called [[photosynthesis]].',
+            'Most leaves are green, flat and wide. That shape is great for catching lots of light. Leaves also have tiny holes that let air in and out.',
+          ],
+          check: { q: 'A plant has lots of big, wide leaves. Why might that help it?', options: ['They catch more sunlight to make food', 'They make the plant heavier', 'They keep the roots warm'], answer: 0 },
+        },
+        {
+          title: 'Flowers: making new plants', pic: '🌸🐝🌰',
+          text: [
+            'Flowers are where new [[seeds]] are made. Their bright petals and sweet smell are like a big "Welcome!" sign for bees and other insects.',
+            'When a bee visits, yellow dust called [[pollen]] sticks to its hairy body. The bee carries it to the next flower – and that helps seeds start to grow.',
+          ],
+          check: { q: 'Why do so many flowers have colourful petals and a lovely smell?', options: ['To invite insects to visit', 'To scare birds away', 'To keep the rain off the leaves'], answer: 0, hint: 'Who carries the pollen?' },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'Parts of a Plant', short: 'Video 1', minutes: 6,
+      video: { id: 'p3St51F4kE8', title: 'Parts Of A Plant | The Dr. Binocs Show', channel: 'Peekaboo Kidz', duration: '3:14' },
+      say: 'Dr Binocs is zooming in on a plant! It is a short one, so watch carefully – then answer my questions.',
+      clues: [
+        'What does Dr Binocs say plants are very similar to?',
+        'What job does a bud do?',
+        'What does the stem act like?',
+        'What do roots do when the wind blows hard?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'At the start, Dr Binocs says plants are very similar to…', options: ['humans – they have different parts doing different jobs', 'rocks – they never move', 'cars – they need fuel'], answer: 0 },
+        { type: 'mcq', q: 'What does a bud do?', options: ['protects the baby flower or baby leaf', 'soaks up water from the soil', 'holds the plant upright'], answer: 0 },
+        { type: 'mcq', q: 'The green colour in a leaf helps it to…', options: ['soak up sunlight and make food', 'smell nice for bees', 'hold on to the soil'], answer: 0, explain: 'The green stuff is called chlorophyll (say "KLOR-oh-fill").' },
+        { type: 'mcq', q: 'Dr Binocs says the stem acts like a…', options: ['pillar', 'pillow', 'puddle'], answer: 0, hint: 'Something tall and strong that holds things up.' },
+        { type: 'mcq', q: 'When the winds are too strong, the roots…', options: ['keep the plant firm in the soil', 'pull the plant underground', 'grow flowers'], answer: 0 },
+        { type: 'tf', q: 'Dr Binocs says every fruit is sweet and good to eat.', answer: false, explain: 'Not all fruits are sweet or safe to eat – but they are still fruits!' },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Plant Parts Lab', short: 'Game 1', minutes: 8,
+      rounds: [
+        {
+          game: 'label', title: 'Label the plant',
+          intro: 'Every detective needs a good diagram! Drag each label onto the right part of the plant. Watch out – two labels are fakes!',
+          say: 'Follow the dotted lines to see which part each box is pointing at.',
+          pic: PLANT_LABEL,
+          hint: 'Follow the dotted line. Which part does it point to?',
+          spots: [
+            { x: 84, y: 15, answer: '🌸 flower' },
+            { x: 16, y: 40, answer: '🍃 leaf' },
+            { x: 84, y: 57, answer: '🌿 stem' },
+            { x: 16, y: 83.5, answer: '🥕 roots' },
+          ],
+          extra: ['🦴 bones', '🪶 feathers'],
+        },
+        {
+          game: 'sort', title: 'Who does this job?',
+          intro: 'Each part of a plant has its own job. Sort each job into the right chest.',
+          say: 'Think like a detective: which part would do this?',
+          buckets: [
+            { id: 'roots', label: 'Roots', emoji: '🥕' },
+            { id: 'stem', label: 'Stem', emoji: '🌿' },
+            { id: 'leaves', label: 'Leaves', emoji: '🍃' },
+            { id: 'flower', label: 'Flower', emoji: '🌸' },
+          ],
+          items: [
+            { label: 'soaks up water from the soil', emoji: '💧', bucket: 'roots', hint: 'Which part is down in the soil?' },
+            { label: 'stops the plant blowing away', emoji: '⚓', bucket: 'roots', hint: 'Which part anchors the plant in the ground?' },
+            { label: 'grows under the ground', emoji: '🟫', bucket: 'roots', hint: 'Which part can you NOT see?' },
+            { label: 'holds the plant up tall', emoji: '⬆️', bucket: 'stem', hint: 'Which part is like a pillar?' },
+            { label: 'carries water up to the leaves', emoji: '🚰', bucket: 'stem', hint: 'Which part has tiny tubes inside, going up and down?' },
+            { label: 'is called a trunk on a tree', emoji: '🌳', bucket: 'stem', hint: 'A trunk is a giant, woody…' },
+            { label: 'makes food using sunlight', emoji: '☀️', bucket: 'leaves', hint: 'Which part is the food factory?' },
+            { label: 'is usually green, flat and wide', emoji: '🟩', bucket: 'leaves', hint: 'That shape is great for catching light.' },
+            { label: 'has tiny holes to let air in', emoji: '💨', bucket: 'leaves', hint: 'Which part makes food from air, water and light?' },
+            { label: 'invites bees to visit', emoji: '🐝', bucket: 'flower', hint: 'Which part has bright petals and a sweet smell?' },
+            { label: 'is where seeds are made', emoji: '🌰', bucket: 'flower', hint: 'Which part makes new plants?' },
+            { label: 'has colourful petals', emoji: '🎨', bucket: 'flower', hint: 'Petals belong to…' },
+          ],
+        },
+        {
+          game: 'wordsearch', title: 'Word Hunt',
+          intro: 'Find all the **plant words** hidden in the grid. They go across ➡ or down ⬇.',
+          say: 'Hunt for the hidden words! Drag across a word – or tap the first letter, then the last.',
+          size: 10,
+          words: ['ROOTS', 'STEM', 'LEAF', 'FLOWER', 'PETAL', 'SEED', 'POLLEN', 'SOIL'],
+        },
+      ],
+    },
+
+    {
+      type: 'read', title: 'Fruits, trees and weird plants', short: 'Read 2', minutes: 5,
+      say: 'More clues to investigate, detective! Some of these plants are VERY strange…',
+      cards: [
+        {
+          title: 'From flower to fruit', pic: '🌸➡️🍏',
+          text: [
+            'After a bee has visited, the petals of a flower dry up and fall off. Then the middle of the flower starts to swell.',
+            'It grows into a [[fruit]] with seeds tucked safely inside. Scientists call anything with seeds inside a fruit – so a tomato, a cucumber and even a pea pod are all fruits!',
+          ],
+          check: { q: 'You slice open a pepper and find lots of little seeds. So a scientist would say a pepper is…', options: ['a fruit', 'a root', 'a leaf'], answer: 0, hint: 'What do scientists call a part with seeds inside?' },
+        },
+        {
+          title: 'We eat every part!', pic: '🥕🥬🥦🍎',
+          text: [
+            'Lots of our food comes from plants. Carrots and radishes are roots. Celery is a stem. Lettuce and spinach are leaves.',
+            'Broccoli is a bunch of tiny flowers that have not opened yet! Apples are fruits, and peas and beans are seeds.',
+          ],
+          check: { q: 'A parsnip is long and pointy, and grows down under the soil. Which part of the plant do we eat?', options: ['the root', 'the flower', 'the leaf'], answer: 0, hint: 'Which part grows under the ground?' },
+        },
+        {
+          title: 'Trees are plants too', pic: '🌳🪵',
+          text: [
+            'A tree is a giant plant. Its roots spread out wide under the ground, and its trunk can grow taller than a house.',
+            '[[Bark|bark]] covers the trunk. It keeps out bugs and stops the tree from drying out. The tallest tree in the world is a redwood in America – it is about as tall as 25 double-decker buses stacked up!',
+          ],
+          check: { q: 'A deer scrapes a big patch of bark off a young tree. Why is that bad for the tree?', options: ['Bugs can get in and it might dry out', 'The tree cannot grow flowers any more', 'Its roots will fall off'], answer: 0 },
+        },
+        {
+          title: 'Weird and wonderful plants', pic: '🪤🌵🪷',
+          text: [
+            'The Venus flytrap has leaves that SNAP shut to catch flies – then it slowly dissolves them for extra goodness!',
+            'A cactus has a fat stem that stores water for months, and its spines are its leaves. A giant water lily has floating leaves wider than your bed is long.',
+          ],
+          check: { q: 'A cactus lives in a desert where it hardly ever rains. Why is its fat, squishy stem so useful?', options: ['It stores water to use later', 'It keeps the cactus cool like a fan', 'It helps the cactus walk to water'], answer: 0 },
+        },
+        {
+          title: 'Teamwork!', pic: '🥕🤝🌿🤝🍃🤝🌸',
+          text: [
+            'So which part of a plant is the most important? None of them – they are a team!',
+            'Without roots there is no water. Without a stem the leaves flop down into the dark. Without leaves there is no food, and without flowers there are no new seeds.',
+          ],
+          check: { q: 'A hungry rabbit nibbles off ALL the leaves of a bean plant. What problem will the plant have now?', options: ['It cannot make its food', 'It cannot hold on to the soil', 'It cannot carry water up from the roots'], answer: 0, hint: 'Which part was the food factory?' },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'Which Part Is Most Important?', short: 'Video 2', minutes: 7,
+      video: { id: 'v6YhghG7mzQ', title: 'Parts of a Plant and Their Functions for Kids', channel: 'Tutoring Hour', duration: '4:53' },
+      say: 'Uh-oh – the parts of a plant are having an argument! Watch, then answer my questions.',
+      clues: [
+        'What are the plant parts arguing about?',
+        'What is the part of a plant above the ground called?',
+        'What does the leaf call itself?',
+        'Who wins the argument?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'What were the plant parts arguing about?', options: ['which part is the most important', 'who is the tallest', 'who gets the most sunshine'], answer: 0 },
+        { type: 'mcq', q: 'The part of a plant that grows ABOVE the ground is called the…', options: ['shoot', 'root', 'boot'], answer: 0 },
+        { type: 'mcq', q: 'Mr Stem carries water up the plant. What else does he carry?', options: ['the food made by the leaves', 'the bees', 'the soil'], answer: 0 },
+        { type: 'mcq', q: 'The leaf calls itself the…', options: ['food factory', 'water tower', 'fire station'], answer: 0 },
+        { type: 'mcq', q: 'The tiny holes on a leaf are called stomata. What do they help the plant do?', options: ['breathe – let gases in and out', 'see in the dark', 'hold on to the ground'], answer: 0 },
+        { type: 'mcq', q: 'What does Tori decide at the end?', options: ['All the parts are equally important', 'The flower is the best', 'The roots should be in charge'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Garden Quest', short: 'Game 2', minutes: 8,
+      rounds: [
+        {
+          game: 'match', title: 'Which part do we eat?',
+          intro: 'Match each food to the part of the plant it comes from.',
+          say: 'Tap a food, then tap the plant part it is!',
+          hint: 'Think: does it grow underground? Is it full of seeds? Is it a bunch of tiny flowers?',
+          pairs: [
+            { a: '🥕 carrot', b: 'root' },
+            { a: '🌿 celery', b: 'stem' },
+            { a: '🥬 lettuce', b: 'leaf' },
+            { a: '🥦 broccoli', b: 'flower' },
+            { a: '🍎 apple', b: 'fruit' },
+            { a: '🫛 peas', b: 'seed' },
+          ],
+        },
+        {
+          game: 'crossword', title: 'Plant Crossword',
+          intro: 'Solve the crossword! Tap a clue, then type the answer with the letter keys.',
+          say: 'Crossword time! Stuck? Press 💡 Hint for a free letter.',
+          entries: [
+            { answer: 'ROOTS', clue: 'They hold a plant in the ground and soak up water' },
+            { answer: 'STEM', clue: 'It holds a plant up and carries water' },
+            { answer: 'LEAF', clue: 'A plant\'s food factory' },
+            { answer: 'FLOWER', clue: 'The colourful part where seeds are made' },
+            { answer: 'SEED', clue: 'It can grow into a brand-new plant' },
+            { answer: 'BEE', clue: 'A buzzy insect that carries pollen' },
+            { answer: 'TRUNK', clue: 'The woody stem of a tree' },
+            { answer: 'FRUIT', clue: 'It grows from a flower and has seeds inside' },
+          ],
+        },
+        {
+          game: 'platformer', title: 'Garden Run',
+          intro: 'Run and jump through the garden! Collect the **parts of a plant** – dodge the things a plant does NOT have.',
+          say: '◀ ▶ to run, ⬆ to jump. Collect the PLANT PARTS!',
+          prompt: 'Collect PLANT PARTS – dodge what plants don\'t have!',
+          items: [
+            { label: '🥕 roots', ok: true },
+            { label: '🌿 stem', ok: true },
+            { label: '🍃 leaf', ok: true },
+            { label: '🌸 petal', ok: true },
+            { label: '🌰 seed', ok: true },
+            { label: '🦴 bones', ok: false, why: 'Plants have no bones – the stem holds them up.' },
+            { label: '🪶 feathers', ok: false, why: 'Feathers belong to birds, not plants!' },
+            { label: '👄 mouth', ok: false, why: 'Plants have no mouth – roots soak up water instead.' },
+            { label: '🐾 paws', ok: false, why: 'Plants cannot walk – roots keep them in one place.' },
+          ],
+          done: 'LEVEL COMPLETE! Roots, stem, leaves, flowers – you know them all!',
+        },
+      ],
+    },
+
+    {
+      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
+      say: 'Stand up, detective! Time to grow like a plant!',
+      wiggle: {
+        title: '🌱 Grow Like a Plant!',
+        seconds: 60,
+        moves: [
+          '🌰 Be a seed! Curl up in a tiny ball on the floor.',
+          '🌱 Sprout! Slowly, slowly grow up until you are standing tall.',
+          '🥕 Roots! Stamp your feet into the ground so nothing can push you over.',
+          '🍃 Leaves! Stretch your arms out wide to catch the sunshine.',
+          '🌬️ Windy day! Sway from side to side – but keep your feet anchored!',
+          '🪤 Venus flytrap! Clap your hands together – SNAP!',
+        ],
+      },
+      tryit: {
+        title: '🔍 Try it at home: Plant Part Hunt',
+        intro: 'Go on a plant hunt in the garden, a park or your kitchen with a grown-up. Can you find every part?',
+        steps: [
+          'Before you go, tap the first box for each part you THINK you will find.',
+          'Hunt! Look gently – never pick wild flowers, and never eat a plant unless a grown-up says it is safe.',
+          'Tap the second box for each part you really found.',
+        ],
+        table: {
+          cols: ['I think I\'ll find it', 'I found it!'],
+          items: ['🥕 roots (look on a weed a grown-up pulls up)', '🌿 a stem or trunk', '🍃 a leaf', '🌸 a flower', '🍎 a fruit with seeds inside'],
+        },
+        tip: 'Tap once for ✅ and twice for ❌. Bonus: in the kitchen, can you find a root, a stem, a leaf, a flower and a seed that we eat?',
+      },
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: Weedzilla', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      say: 'Oh no! WEEDZILLA is taking over the garden and squashing all the flowers! Every right answer is a hit. Stop it, {name}!',
+      boss: {
+        name: 'Weedzilla', sprite: WEEDZILLA, attack: '🌿',
+        lines: {
+          intro: 'ROOOAR! I am WEEDZILLA! I will cover every garden in weeds – and no detective can stop me!',
+          hurt: ['Ouch! My leaves!', 'Stop pulling me!', 'Argh! Weeded!', 'Not the trowel!'],
+          taunt: ['Ha! Wrong!', 'Weeds win!', 'Grrr-owing stronger!', 'Tangled you!'],
+          angry: 'Now I\'m SPROUTING mad!',
+          dodge: 'Take THAT! Prickly leaf attack!',
+          miss: 'What?! You dodged all my leaves?!',
+          last: 'My roots… are wobbling…',
+          defeat: 'NOOO! I\'ve been pulled up by the ROOTS!',
+          win: 'ROOOAR! The garden is MINE! Come back when you know your plants!',
+        },
+      },
+      bonus: {
+        title: '⭐ Bonus quest (for a grown-up to help with)',
+        text: 'Want more? Watch Learn Bright\'s "Parts of Plants for Kids" (7 min) for a longer look at every plant part.',
+        url: 'https://www.youtube.com/watch?v=A-xScqCN0GA',
+        button: 'Watch the bonus video ▶',
+      },
+      questions: [
+        { type: 'mcq', q: 'Weedzilla is very hard to pull out of the ground. Which part is holding on so tightly?', options: ['its roots', 'its flowers', 'its leaves'], answer: 0 },
+        { type: 'mcq', q: 'Which part of a plant carries water from the roots up to the leaves?', options: ['the stem', 'the petals', 'the seeds'], answer: 0 },
+        { type: 'gap', q: 'Plants make their own food in their ___, using sunlight.', options: ['leaves', 'roots', 'seeds'], answer: 0 },
+        { type: 'mcq', q: 'Weedzilla says, "Plants eat dinner with their roots, like a mouth!" What could you tell it?', options: ['Wrong – plants make their own food in their leaves', 'Right – roots chew up the soil', 'Right – flowers eat flies every day'], answer: 0 },
+        { type: 'mcq', q: 'Which of these is a tree\'s stem?', options: ['the trunk', 'the bark chippings', 'the acorns'], answer: 0 },
+        { type: 'mcq', q: 'Why do bees visit flowers?', options: ['The bright petals and sweet smell invite them', 'They want to eat the roots', 'They are looking for a bed'], answer: 0 },
+        { type: 'tf', q: 'A strawberry is a fruit because it has seeds.', answer: true, explain: 'The seeds are the tiny dots on the outside!' },
+        { type: 'mcq', q: 'Which of these do we eat as a ROOT?', options: ['🥕 carrot', '🥬 lettuce', '🥦 broccoli'], answer: 0 },
+        { type: 'mcq', q: 'A plant is left in a dark cupboard. Which part will find it hardest to do its job?', options: ['the leaves – they need light to make food', 'the roots – they need light to drink', 'the stem – it needs light to stand'], answer: 0 },
+        { type: 'mcq', q: 'Why does a cactus have a fat, squishy stem?', options: ['to store water for dry days', 'to scare away bees', 'so it can roll'], answer: 0 },
+        { type: 'tf', q: 'The roots are the only important part of a plant.', answer: false, explain: 'All the parts work as a team – each one has its own job!' },
+        { type: 'order', q: 'Put these in order, from flower to new plant.', items: ['🐝 a bee visits the flower', '🥀 the petals fall off', '🍏 a fruit grows with seeds inside', '🌱 a seed grows into a new plant'], hint: 'What happens first – the bee, or the fruit?' },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>

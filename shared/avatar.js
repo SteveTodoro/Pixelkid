@@ -110,6 +110,7 @@
     { id: 'beret', cat: 'hat', name: 'Artist beret', price: 0, unlock: 'artist', rows: ['......c.....', '...cccccc...', '.cccccccccc.'], pal: { c: '#e53935' } },
     { id: 'miner-helmet', cat: 'hat', name: 'Miner helmet', price: 0, unlock: 'miner', rows: ['.....yy.....', '....yLLy....', '..cccccccc..', '.cccccccccc.', 'CCCCCCCCCCCC'], pal: { c: '#ffb800', C: '#c98a00', y: '#1b1b1b', L: '#fff59d' } },
     { id: 'explorer-hat', cat: 'hat', name: 'Explorer hat', price: 0, unlock: 'wonder', rows: ['...cccccc...', '..cccccccc..', '..CCCCCCCC..', 'cccccccccccc'], pal: { c: '#d8b77a', C: '#7a5230' } },
+    { id: 'straw-hat', cat: 'hat', name: "Gardener's straw hat", price: 0, unlock: 'gardener', rows: ['...cCcCcc...', '..cCcCcCcc..', '..rrrrrrpy..', 'cCcCcCcCcCcC'], pal: { c: '#f2d16b', C: '#d9b24a', r: '#e53935', p: '#ff7eb6', y: '#ffcc33' } },
     // hideHair: covers the whole head, so the hair layer is skipped
     { id: 'ninja-mask', cat: 'hat', name: 'Ninja mask', price: 80, special: true, hideHair: true, y: 1, rows: ['...kkkkkk...', '..kkkkkkkk..', '..RRRRRRRRRR', '..kkkkkkkk.R', '..k......k..', '..kkkkkkkk..', '..kkkkkkkk..', '...kkkkkk...'], pal: { k: '#22252b', R: '#e53935' } },
     { id: 'chef-hat', cat: 'hat', name: 'Chef hat', price: 60, special: true, rows: ['.cccccccccc.', '.ccCccccCcc.', '..cccccccc..', '..CCCCCCCC..'], pal: { c: '#ffffff', C: '#d6dbe1' } },
@@ -138,6 +139,7 @@
     { id: 'pet-annoying-dog', cat: 'pet', name: 'Annoying Dog', price: 100, special: true, rows: ['ww....ww', 'wwwwwwww', '.wkwwkw.', '.wwwwww.', '.wwkkww.', '..wwww..', '.wwwwww.', '.w.ww.w.'], pal: { w: '#ffffff', k: '#1b1b1b' } },
     { id: 'pet-jellyfish', cat: 'pet', name: 'Immortal jelly', price: 100, special: true, rows: ['..kkkk..', '.kPPPPk.', 'kPPrrPPk', 'kPrrrrPk', 'kPkPPkPk', 'kkkkkkkk', '.t.tt.t.', 't.t..t.t'], pal: { k: '#5b2a6e', P: '#ffd1ec', r: '#e53935', t: '#f7a8d8' } },
     { id: 'pet-clockcroc', cat: 'pet', name: 'Tick-Tock Croc', price: 100, special: true, rows: ['.kk.kk..', 'kggggggk', 'kgwkgggk', 'kggggggg', 'kgwwwwgk', 'kggywygk', '.kgkkgk.', 'kgk..kgk'], pal: { k: '#1b4d1b', g: '#4caf50', w: '#ffffff', y: '#ffd43b' } },
+    { id: 'pet-sunflower', cat: 'pet', name: 'Sunny the sunflower', price: 100, special: true, rows: ['.y.yy.y.', 'yybbbbyy', 'ybkbbkby', 'ybbkkbby', 'yybbbbyy', '.y.gg.y.', '..lgg...', '...ggl..'], pal: { y: '#ffcc33', b: '#8a5a32', k: '#1b1b1b', g: '#2e9e3e', l: '#5bbf3a' } },
     { id: 'pet-tardigrade', cat: 'pet', name: 'Water bear', price: 100, special: true, rows: ['.kkkkkk.', 'kppppppk', 'kpkppkpk', 'kppooppk', 'kpPppPpk', 'kppppppk', '.kkkkkk.', 'k.k..k.k'], pal: { k: '#4a3426', p: '#e9cfa6', P: '#c9a477', o: '#e57373' } },
   ];
   // ---------- background scenes (change the sky, decorations and ground everywhere) ----------
@@ -214,6 +216,7 @@
     wonder: 'Finish any Wonders of the World lesson to unlock',
     speller: 'Finish any Word Kingdom lesson to unlock',
     miner: 'Finish any Maths Mine lesson to unlock',
+    gardener: 'Finish any Plants lesson to unlock',
     perfect: 'Get a perfect boss score to unlock',
     video: 'Finish any video quest to unlock',
   };

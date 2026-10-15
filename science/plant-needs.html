@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>What Do Plants Need?</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <script src="../shared/pixel.js"></script>
+  <script src="../shared/avatar.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// ---------- blocky pictures for this lesson ----------
+// a happy sunflower in a pot
+const SUNFLOWER = Pixel.svg([
+  '...y.yy.y...',
+  '..yyyyyyyy..',
+  '.yybbbbbbyy.',
+  '.yybkbbkbyy.',
+  '.yybbbbbbyy.',
+  '.yybkkkkbyy.',
+  '..yyyyyyyy..',
+  '...y.gg.y...',
+  '.lll.gg.....',
+  '..llggg.lll.',
+  '.....gglll..',
+  '.....gg.....',
+  '..pppppppp..',
+  '..PPPPPPPP..',
+  '...pppppp...',
+  '...pppppp...',
+], { y: '#ffcc33', b: '#8a5a32', k: '#1b1b1b', g: '#2e9e3e', l: '#5bbf3a', p: '#d9733b', P: '#b5552a' });
+
+// a stick of celery standing in blue water, with blue-tipped leaves
+const CELERY = Pixel.svg([
+  '...BlB.lBl..',
+  '..BllBlBllB.',
+  '...lBlllBl..',
+  '....gggg....',
+  '....gGgG....',
+  '....gGgG....',
+  '.kk.gGgG.kk.',
+  '.k..gGgG..k.',
+  '.kwwgGgGwwk.',
+  '.kwwgBgBwwk.',
+  '.kwwwwwwwwk.',
+  '.kkkkkkkkkk.',
+], { l: '#5bbf3a', B: '#3b6fe0', g: '#9bd46a', G: '#c6ec9b', k: '#1b1b1b', w: '#5aa8f0' });
+
+// the boss: King Gloom, a grumpy storm cloud who stole the sunshine
+const KING_GLOOM = Pixel.svg([
+  '...y.yy.y...',
+  '...yryyry...',
+  '..cccccccc..',
+  '.cCCCCCCCCc.',
+  'cCCwkCCwkCCc',
+  'cCCkkCCkkCCc',
+  'cCCCCCCCCCCc',
+  'cCCCkkkkCCCc',
+  '.cCkCCCCkCc.',
+  '..cccccccc..',
+  '..z..z..z...',
+  '.z..z..z....',
+], { y: '#ffd43b', r: '#e53935', c: '#2b2f38', C: '#6b7280', w: '#ffffff', k: '#1b1b1b', z: '#4b5563' });
+
+const BEAN_TABLE = `<table>
+  <caption>🌱 Professor Bolt's bean test (after 2 weeks)</caption>
+  <tr><th>Bean</th><th>Where?</th><th>Water</th><th>Height</th><th>How it looks</th></tr>
+  <tr><td>A</td><td>☀️ sunny window</td><td>a drink every 2 days</td><td>20 cm</td><td>green and strong</td></tr>
+  <tr><td>B</td><td>🌑 dark cupboard</td><td>a drink every 2 days</td><td>24 cm</td><td>pale yellow and floppy</td></tr>
+  <tr><td>C</td><td>☀️ sunny window</td><td>no water at all</td><td>3 cm</td><td>brown and droopy</td></tr>
+  <tr><td>D</td><td>☀️ sunny window</td><td>a drink every hour</td><td>6 cm</td><td>yellow leaves, mushy roots</td></tr>
+</table>`;
+
+// ---------- the lesson ----------
+window.LESSON = {
+  id: 'science-plant-needs',
+  subject: 'science',
+  title: 'What Do Plants Need?',
+  emoji: '🌻',
+  home: '../index.html',
+  finishAch: 'gardener',
+  mascot: {
+    name: 'Professor Bolt',
+    sprite: Pixel.sprites.robot,
+    praise: ['Blooming brilliant!', 'Super scientist!', 'Critical hit!', 'Tree-mendous!', 'Epic thinking!', 'Bolt-tastic!', 'You really grew!'],
+    oops: ['Oops! Try again, scientist.', 'Not quite – have another go!', 'Hmm, think again!', 'So close! One more try.'],
+  },
+  glossary: {
+    energy: { emoji: '⚡', def: 'The power to make things happen. Plants get their energy from sunlight.' },
+    wilt: { emoji: '🥀', def: 'When a plant goes droopy and floppy, usually because it needs water.' },
+    rot: { emoji: '🍂', def: 'To go soft, mushy and bad. Roots can rot if they sit in water for too long.' },
+    'carbon dioxide': { emoji: '💨', def: 'A gas in the air. You breathe it out, and plants take it in to make food.' },
+    oxygen: { emoji: '🫁', def: 'A gas in the air that people and animals need to breathe. Plants give it out.' },
+    nutrients: { emoji: '🧪', def: 'Goodness in the soil that helps a plant grow healthy, a bit like vitamins.' },
+    compost: { emoji: '🪱', def: 'Old fruit peel, leaves and grass that rot down into rich soil full of nutrients.' },
+    compete: { emoji: '🥊', def: 'To try to get something that others want too, like water or light.' },
+    'root hairs': { emoji: '〰️', def: 'Tiny hairs on a plant\'s roots that soak up water from the soil.' },
+    xylem: { emoji: '🥤', def: 'Tiny tubes inside a plant that carry water up from the roots. Say "ZY-lem".' },
+    evaporate: { emoji: '♨️', def: 'When water turns into an invisible gas and floats off into the air.' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'What Do Plants Need?', short: 'Start', minutes: 1,
+      pic: SUNFLOWER,
+      hello: 'Beep boop! Welcome back, scientist! Today we find out what plants need to grow big and strong.',
+      question: 'You need food, water and air to live. Does a plant need the same things – or something different?',
+      intro: 'Recap **Plant Detectives**, read, watch, run a bean experiment, play Plant Doctor and blast some aliens – then stop King Gloom from hiding the Sun! A new 🌻 sunflower pet is waiting in the Wardrobe shop.',
+      nameLabel: 'Player name:',
+    },
+
+    {
+      type: 'review', title: 'Last time…', short: 'Recap', minutes: 3,
+      from: { title: 'Plant Detectives', emoji: '🌱', url: 'plant-parts.html' },
+      facts: [
+        'Flowering plants have four main parts: roots, a stem, leaves and flowers.',
+        'Roots hold the plant in the soil and soak up water. The stem holds it up and carries water.',
+        'Leaves make food using sunlight. Flowers make seeds, with help from insects like bees.',
+        'We eat lots of plant parts: carrots are roots, celery is a stem, broccoli is flowers!',
+      ],
+      questions: [
+        { type: 'mcq', q: 'You pull up a weed and see long, stringy bits covered in soil. Which part is that?', options: ['the roots', 'the stem', 'the petals'], answer: 0 },
+        { type: 'mcq', q: 'Which part of a plant is like a food factory?', options: ['the leaves', 'the roots', 'the flower'], answer: 0 },
+        { type: 'mcq', q: 'Spinach is a plant we eat. Which part is it?', options: ['leaves', 'roots', 'seeds'], answer: 0, hint: 'It is flat, green and wide.' },
+        { type: 'tf', q: 'A tree\'s trunk is really a giant, woody stem.', answer: true },
+      ],
+    },
+
+    {
+      type: 'read', title: 'What plants need', short: 'Read 1', minutes: 5,
+      say: 'Read each page carefully – the checks test if you really understood it! Tap the yellow words for a 💎.',
+      cards: [
+        {
+          title: 'A plant\'s shopping list', pic: '☀️💧💨🟫↔️',
+          text: [
+            'You need food, water and air to stay alive. Plants are living things too, so they have needs as well.',
+            'Most plants need five things: light, water, air, nutrients from the soil, and space to grow. Most also like to be warm, not freezing.',
+          ],
+          check: { q: 'Which of these is NOT on a plant\'s list of needs?', options: ['🍫 chocolate', '☀️ light', '💧 water'], answer: 0 },
+        },
+        {
+          title: 'Light', pic: '☀️➡️🍃',
+          text: [
+            'Remember the leaves\' food factory? It runs on sunlight. Light gives the plant the [[energy]] it needs to make its own food.',
+            'A plant kept in the dark grows pale yellow, tall and floppy, because it stretches up trying to find light. Plants on a windowsill even bend towards the window!',
+          ],
+          check: { q: 'Two pots of cress grow for a week. One is by a window, one is in a cupboard. What will the cupboard cress look like?', options: ['pale yellow and floppy', 'dark green and strong', 'covered in flowers'], answer: 0, hint: 'What happens when a plant cannot find light?' },
+        },
+        {
+          title: 'Water – but not too much!', pic: '💧🌱',
+          text: [
+            'Roots soak up water, and the stem carries it to the leaves. Without enough water, a plant starts to [[wilt]], and its leaves go droopy.',
+            'But too much water is bad too! If the soil is soggy all the time, the roots cannot breathe, and they start to [[rot]]. Plants need just the right amount.',
+          ],
+          check: { q: 'Grandad waters his tomato plant five times a day, and the pot is always full of puddles. What might happen?', options: ['Its roots could rot', 'It will grow twice as fast', 'Its tomatoes will turn blue'], answer: 0, hint: 'Is more water always better?' },
+        },
+        {
+          title: 'Air and soil', pic: '💨🍃 🪱🟫',
+          text: [
+            'Leaves take in a gas from the air called [[carbon dioxide]] – the gas you breathe out! They use it to make food, and give out [[oxygen]], the gas you breathe in.',
+            'Soil is full of [[nutrients]], like vitamins for plants. Gardeners add [[compost]], made from rotted-down fruit peel and leaves, to give plants even more.',
+          ],
+          check: { q: 'Why is it great for people that there are so many plants on Earth?', options: ['They give out oxygen for us to breathe', 'They make the sky blue', 'They stop it from raining'], answer: 0 },
+        },
+        {
+          title: 'Space and warmth', pic: '🌱↔️🌱',
+          text: [
+            'Roots need room to spread out under the ground, and leaves need room to reach the light. If plants are squashed together, they [[compete]] for water, light and nutrients.',
+            'Most plants grow best when it is warm. That is why gardens burst into life in spring and summer, and many plants rest in winter.',
+          ],
+          check: { q: 'Ten sunflower seeds are planted all squashed into one tiny pot. Why will they struggle?', options: ['They must share the water, light and space', 'They will get lonely', 'The pot will get too sunny'], answer: 0 },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'The Needs of Plants', short: 'Video 1', minutes: 6,
+      video: { id: 'SeyYHER6fkw', title: 'What Do Plants Need? The Needs of Plants', channel: 'Learn and Play Online!', duration: '3:49' },
+      say: 'Movie time! This video counts up what plants need. Watch, then answer my questions.',
+      clues: [
+        'How many basic needs does the video talk about?',
+        'What happens if a plant gets too much water?',
+        'What makes fantastic food for plants?',
+        'Why do roots and leaves need space?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'How many basic needs of plants does the video talk about?', options: ['5', '2', '10'], answer: 0, explain: 'Water, light, air, nutrients and space.' },
+        { type: 'mcq', q: 'The video says too much water can make the roots…', options: ['drown and rot', 'grow extra long', 'turn into flowers'], answer: 0 },
+        { type: 'tf', q: 'The video says some plants can grow using artificial light, like lamps, instead of sunlight.', answer: true },
+        { type: 'mcq', q: 'Plants take in the carbon dioxide we breathe out, and turn it into…', options: ['oxygen for us to breathe', 'rain', 'soil'], answer: 0 },
+        { type: 'mcq', q: 'What does the video say makes fantastic food for plants?', options: ['food scraps in compost', 'sweets and crisps', 'salty water'], answer: 0 },
+        { type: 'mcq', q: 'Why do plants need space?', options: ['Their roots and leaves need to spread out', 'So they can go for a walk', 'So bees have somewhere to sleep'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Growing Lab', short: 'Game 1', minutes: 9,
+      rounds: [
+        {
+          game: 'sort', title: 'Plant, person or both?',
+          intro: 'Plants and people have some of the same needs – and some different ones. Sort each need into the right chest.',
+          say: 'Think hard! Some things are needed by BOTH.',
+          buckets: [
+            { id: 'plant', label: 'Plants', emoji: '🌱' },
+            { id: 'person', label: 'People', emoji: '🧒' },
+            { id: 'both', label: 'Both', emoji: '🤝' },
+          ],
+          items: [
+            { label: 'sunlight to make its own food', emoji: '☀️', bucket: 'plant', hint: 'Can YOU make your dinner by standing in the sun?' },
+            { label: 'nutrients soaked up from the soil', emoji: '🟫', bucket: 'plant', hint: 'Who soaks things up from the soil with roots?' },
+            { label: 'carbon dioxide from the air', emoji: '🍃', bucket: 'plant', hint: 'Who takes in the gas that we breathe OUT?' },
+            { label: 'food eaten from a plate', emoji: '🍽️', bucket: 'person', hint: 'Plants make their own food – they never use a plate!' },
+            { label: 'clothes to wear', emoji: '👕', bucket: 'person', hint: 'Have you ever seen a plant wearing a jumper?' },
+            { label: 'a bed to sleep in', emoji: '🛏️', bucket: 'person', hint: 'Have you ever seen a plant in pyjamas?' },
+            { label: 'water', emoji: '💧', bucket: 'both', hint: 'Every living thing needs water!' },
+            { label: 'space to grow', emoji: '↔️', bucket: 'both', hint: 'Plants and children both grow bigger and need room.' },
+            { label: 'warmth – not freezing cold', emoji: '🌡️', bucket: 'both', hint: 'Do plants like freezing weather? Do you?' },
+          ],
+        },
+        {
+          game: 'questions', title: 'The bean test',
+          intro: 'Professor Bolt grew four bean plants for two weeks, in the same kind of pot and soil. Read the table carefully!',
+          say: 'Think like a scientist! The tallest plant is not always the healthiest…',
+          html: BEAN_TABLE,
+          questions: [
+            { type: 'mcq', q: 'Which bean plant was the healthiest?', options: ['A', 'B', 'C', 'D'], answer: 0, hint: 'Look for green and strong.' },
+            { type: 'mcq', q: 'Bean B grew the tallest. Why is it NOT the healthiest?', options: ['It stretched up looking for light and went pale and floppy', 'It had too much water', 'It was too cold in the window'], answer: 0, hint: 'Where was bean B kept?' },
+            { type: 'mcq', q: 'Which bean shows what happens with TOO MUCH water?', options: ['A', 'B', 'C', 'D'], answer: 3, hint: 'Look for mushy roots.' },
+            { type: 'mcq', q: 'How much taller was bean A than bean C?', options: ['17 cm', '23 cm', '3 cm'], answer: 0, hint: 'Take 3 away from 20.', explain: '20 − 3 = 17 cm' },
+            { type: 'mcq', q: 'Which two beans should you compare to find out if plants need LIGHT?', options: ['A and B', 'A and C', 'C and D'], answer: 0, hint: 'Find two beans where ONLY the place is different.' },
+            { type: 'tf', q: 'To keep the test fair, Professor Bolt used the same kind of bean, pot and soil every time.', answer: true, explain: 'He only changed ONE thing at a time.' },
+          ],
+        },
+        {
+          game: 'wordsearch', title: 'Word Hunt',
+          intro: 'Find all the **plant needs words** hidden in the grid. They go across ➡ or down ⬇.',
+          say: 'Hunt for the hidden words! Drag across a word – or tap the first letter, then the last.',
+          size: 10,
+          words: ['LIGHT', 'WATER', 'AIR', 'SOIL', 'SPACE', 'WARMTH', 'ROOTS', 'WILT'],
+        },
+      ],
+    },
+
+    {
+      type: 'read', title: 'How does water get to the top?', short: 'Read 2', minutes: 5,
+      say: 'Plants have no heart to pump water and no mouth to drink. So how does water get all the way up? Let\'s find out!',
+      cards: [
+        {
+          title: 'The water journey', pic: '🟫➡️🥕➡️🌿➡️🍃',
+          text: [
+            'Roots are covered in tiny [[root hairs]]. They soak up water from the damp soil, like a sponge.',
+            'Next, the water travels up through the stem. Finally it reaches the leaves and the flowers, right at the top.',
+          ],
+          check: { q: 'Which way does water travel through a plant?', options: ['soil → roots → stem → leaves', 'leaves → stem → roots → soil', 'flower → roots → leaves → soil'], answer: 0 },
+        },
+        {
+          title: 'Tiny tubes', pic: '🥤🥤🥤',
+          text: [
+            'Inside the stem are lots of thin tubes called [[xylem]] (say "ZY-lem"). They run all the way from the roots to the leaves.',
+            'They are a bit like a bundle of very long, very thin drinking straws. Even the tallest trees have them!',
+          ],
+          check: { q: 'Which of these is MOST like xylem?', options: ['a bundle of drinking straws', 'a bath sponge', 'a plastic bag'], answer: 0, hint: 'Xylem is made of long, thin tubes.' },
+        },
+        {
+          title: 'The water chain', pic: '🍃♨️ ⬆️💧💧💧',
+          text: [
+            'Leaves have tiny holes. Some water [[evaporates|evaporate]] out of them into the air.',
+            'Water drops cling on to each other, like a chain of children holding hands. So when one drop leaves the top, it pulls the next drop up behind it – all the way from the roots!',
+          ],
+          check: { q: 'On a hot, sunny day, water escapes from the leaves faster. What happens to the water in the stem?', options: ['It gets pulled up faster', 'It stops moving', 'It flows back down to the roots'], answer: 0, hint: 'Think about the chain of children holding hands.' },
+        },
+        {
+          title: 'The colour-changing celery', pic: CELERY,
+          text: [
+            'You can SEE the water travel! Stand a stick of celery in a cup of water with lots of food colouring in it, and wait a whole day.',
+            'The coloured water travels up the xylem tubes, and the leaves at the top change colour. It works with white flowers too!',
+          ],
+          check: { q: 'Zara stands a white carnation in red water for a day. What will she see?', options: ['The petals start to turn red', 'The flower turns into a tomato', 'The stem shrinks into the cup'], answer: 0 },
+        },
+        {
+          title: 'The droopy plant rescue', pic: '🥀➡️💧➡️🌷',
+          text: [
+            'A plant\'s stem and leaves are full of water, a bit like a balloon full of air. That keeps them firm and standing up.',
+            'When a plant is thirsty, it goes soft and wilts. Give it a drink, and in a few hours it can stand up straight again!',
+          ],
+          check: { q: 'Why does a droopy plant stand up straight after a drink?', options: ['The water fills it up and makes it firm again', 'The water is a kind of glue', 'The plant gets a fright'], answer: 0, hint: 'Think about a balloon.' },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'The Colour-Changing Celery', short: 'Video 2', minutes: 7,
+      video: { id: 'KIug9Foou3s', title: 'The Color-Changing Celery Experiment!', channel: 'SciShow Kids', duration: '4:13' },
+      say: 'SciShow Kids has an experiment you can try! Watch, then answer my questions.',
+      clues: [
+        'What do you need for the experiment?',
+        'How long do you have to wait?',
+        'Which parts of the celery change colour?',
+        'What are the tubes that carry water called?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'What do you put in the water for this experiment?', options: ['dark food colouring', 'salt', 'washing-up liquid'], answer: 0 },
+        { type: 'mcq', q: 'What is the important "extra ingredient" you need?', options: ['patience – waiting at least a whole day', 'a magnet', 'a torch'], answer: 0 },
+        { type: 'mcq', q: 'Which part of the celery changed colour at the top?', options: ['the leaves', 'the cup', 'nothing at all'], answer: 0 },
+        { type: 'mcq', q: 'Why does the water move up the plant?', options: ['Water leaving the leaves pulls more water up behind it', 'The celery has a tiny heart that pumps it', 'The food colouring pushes it up'], answer: 0 },
+        { type: 'tf', q: 'The food colouring floats off into the air with the water.', answer: false, explain: 'The water left, but the colour stayed behind in the celery.' },
+        { type: 'mcq', q: 'The hollow tubes that carry water inside a plant are called…', options: ['xylem', 'roots', 'petals'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Plant Doctor', short: 'Game 2', minutes: 9,
+      rounds: [
+        {
+          game: 'match', title: 'Plant Doctor',
+          intro: 'These poorly plants need YOUR help, Doctor! Match each problem to the cure.',
+          say: 'Tap a poorly plant, then tap the cure!',
+          hint: 'Which need is missing? Light, water, space, nutrients or warmth?',
+          pairs: [
+            { a: '🥀 Droopy leaves and dry, crumbly soil', b: '💧 Give it a drink' },
+            { a: '🟡 Pale, tall and floppy, in a dark corner', b: '☀️ Move it into the light' },
+            { a: '🍂 Mushy brown roots and puddles in the pot', b: '🚫 Stop watering so much' },
+            { a: '🌱 Tiny and weak, squashed in with lots of others', b: '↔️ Give it more space' },
+            { a: '🥶 Frosty leaves, out in the snow', b: '🌡️ Bring it somewhere warmer' },
+            { a: '😩 Small leaves in very old, tired soil', b: '🪱 Add some compost' },
+          ],
+        },
+        {
+          game: 'crossword', title: 'Plant Needs Crossword',
+          intro: 'Solve the crossword! Tap a clue, then type the answer with the letter keys.',
+          say: 'Crossword time! Stuck? Press 💡 Hint for a free letter.',
+          entries: [
+            { answer: 'LIGHT', clue: 'Leaves need this to make food' },
+            { answer: 'WATER', clue: 'Roots soak this up from the soil' },
+            { answer: 'SOIL', clue: 'Plants get nutrients from this' },
+            { answer: 'SPACE', clue: 'Roots and leaves need room, or ___, to spread out' },
+            { answer: 'XYLEM', clue: 'Tiny tubes that carry water up a stem' },
+            { answer: 'CELERY', clue: 'A crunchy stem you can turn blue!' },
+            { answer: 'WILT', clue: 'What a thirsty plant does' },
+            { answer: 'AIR', clue: 'Leaves take in carbon dioxide from this' },
+          ],
+        },
+        {
+          game: 'invaders', title: 'Plant Needs Blaster',
+          intro: 'King Gloom has sent aliens to the garden! Read each mission at the top – then shoot ONLY the right aliens.',
+          say: 'Tap above an alien to fly there and fire!',
+          waves: [
+            {
+              prompt: 'Shoot what a plant NEEDS!',
+              items: [
+                { label: '☀️ light', ok: true }, { label: '💧 water', ok: true },
+                { label: '💨 air', ok: true }, { label: '🟫 nutrients', ok: true },
+                { label: '🍫 chocolate', ok: false, why: 'Plants make their own food – no chocolate needed!' },
+                { label: '📺 a TV', ok: false, why: 'Plants don\'t watch TV!' },
+                { label: '🥤 fizzy pop', ok: false, why: 'Sugary drinks are bad for plants. Plain water is best.' },
+                { label: '🧸 a teddy', ok: false, why: 'A teddy is lovely, but plants don\'t need one.' },
+              ],
+            },
+            {
+              prompt: 'Shoot the signs of a THIRSTY plant!',
+              items: [
+                { label: '🥀 droopy leaves', ok: true }, { label: '🏜️ dry, crumbly soil', ok: true },
+                { label: '🍂 crispy brown edges', ok: true }, { label: '〰️ floppy stem', ok: true },
+                { label: '💚 firm green leaves', ok: false, why: 'Firm green leaves mean the plant has plenty of water.' },
+                { label: '💦 damp soil', ok: false, why: 'Damp soil means there is water for the roots.' },
+                { label: '🌸 fresh flowers', ok: false, why: 'Fresh flowers are a sign of a happy plant.' },
+              ],
+            },
+            {
+              prompt: 'Shoot the parts water travels THROUGH!',
+              items: [
+                { label: '〰️ root hairs', ok: true }, { label: '🥕 roots', ok: true },
+                { label: '🥤 xylem tubes', ok: true }, { label: '🍃 leaves', ok: true },
+                { label: '🐝 bees', ok: false, why: 'Bees visit flowers, but water does not travel through them!' },
+                { label: '🪨 pebbles', ok: false, why: 'Pebbles are not part of a plant.' },
+                { label: '🪴 the flowerpot', ok: false, why: 'The pot holds the soil, but it is not part of the plant.' },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
+      say: 'Time for some thirsty plant moves!',
+      wiggle: {
+        title: '🌻 Thirsty Plant Moves!',
+        seconds: 60,
+        moves: [
+          '🥀 Wilt! Flop over like a droopy plant that needs a drink.',
+          '🥤 Slurp! Drink up through your roots – grow taller and taller…',
+          '🌻 Stand up straight and strong. Ta-da!',
+          '☀️ Reach for the Sun! Stretch your arms right up high.',
+          '🌑 King Gloom is hiding the Sun! Lean over and search for the light.',
+          '🌬️ Sway in the breeze, then take a big deep breath of oxygen.',
+        ],
+      },
+      tryit: {
+        title: '🧪 Try it at home: Colour-Changing Celery',
+        intro: 'You need a stick of celery with leaves on, a cup of water, lots of food colouring (red or blue is best) and a grown-up to trim the bottom of the celery.',
+        steps: [
+          'Before you start, tap the first box for each guess: what do you THINK will happen?',
+          'Put the celery in the coloured water, and leave it somewhere safe for a whole day.',
+          'Check it the next day! Ask a grown-up to cut across the stalk, so you can see the tubes. Tap the second box: what did you SEE?',
+        ],
+        table: {
+          cols: ['I think…', 'I saw…'],
+          items: ['🍃 the leaves change colour', '🔴 coloured dots across the cut stalk', '📉 the water level goes down', '🌈 the whole stalk turns a new colour'],
+        },
+        tip: 'Tap once for ✅ and twice for ❌. Extra challenge: try a white flower, or split the bottom of a stalk into two cups of different colours!',
+      },
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: King Gloom', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      say: 'Oh no! KING GLOOM has hidden the Sun, and the garden is wilting! Every right answer is a hit. Stop him, {name}!',
+      boss: {
+        name: 'King Gloom', sprite: KING_GLOOM, attack: '🌑',
+        lines: {
+          intro: 'Mwa-ha-ha! I am KING GLOOM! I have hidden the Sun – now every plant will droop!',
+          hurt: ['Ow! A sunbeam!', 'Stop shining at me!', 'My clouds are breaking up!', 'Too bright!'],
+          taunt: ['Ha! Gloomy answer!', 'Darkness wins!', 'Droop, droop, droop!', 'All cloudy!'],
+          angry: 'Now I\'m THUNDERING mad!',
+          dodge: 'Feel the GLOOM! Dark cloud attack!',
+          miss: 'What?! Not one cloud touched you?!',
+          last: 'No… the Sun is peeking through…',
+          defeat: 'NOOO! The Sun is back… I\'m… evaporating!',
+          win: 'Mwa-ha-ha! The garden stays gloomy! Come back when you know what plants need!',
+        },
+      },
+      bonus: {
+        title: '⭐ Bonus quest (for a grown-up to help with)',
+        text: 'Want more? Watch SciShow Kids\' "Grow Your Own Plants!" (5 min) to see what happens to plants grown with no light, no water or no soil – then try it yourself!',
+        url: 'https://www.youtube.com/watch?v=Lly75dEbXE8',
+        button: 'Watch the bonus video ▶',
+      },
+      questions: [
+        { type: 'mcq', q: 'King Gloom has hidden the Sun. Why is that bad for plants?', options: ['Leaves need light to make food', 'Roots need light to drink', 'Flowers need light to smell nice'], answer: 0 },
+        { type: 'mcq', q: 'A plant has droopy leaves and dry, dusty soil. What does it need?', options: ['💧 water', '🌑 a dark cupboard', '🍫 some chocolate'], answer: 0 },
+        { type: 'tf', q: 'The more water you give a plant, the better it grows.', answer: false, explain: 'Too much water can make the roots rot!' },
+        { type: 'mcq', q: 'Leaves take in a gas from the air to make food. Which one?', options: ['carbon dioxide', 'oxygen', 'helium'], answer: 0 },
+        { type: 'mcq', q: 'King Gloom says, "Plants are useless to people!" What could you tell him?', options: ['Wrong – plants give out the oxygen we breathe', 'Right – plants only make shade', 'Right – people never eat plants'], answer: 0 },
+        { type: 'gap', q: 'Gardeners add ___ to the soil to give plants extra nutrients.', options: ['compost', 'sand', 'glitter'], answer: 0 },
+        { type: 'mcq', q: 'Why do seeds need to be planted with space between them?', options: ['So they don\'t have to share water, light and nutrients', 'So the bees can park', 'So they don\'t get bored'], answer: 0 },
+        { type: 'mcq', q: 'A bean grew in a dark cupboard. It is very tall, but pale and floppy. Why is it so tall?', options: ['It stretched up looking for light', 'It had the perfect amount of light', 'It was the healthiest bean'], answer: 0 },
+        { type: 'mcq', q: 'Which tiny tubes carry water up a stem?', options: ['xylem', 'petals', 'root caps'], answer: 0 },
+        { type: 'mcq', q: 'Celery stands in blue water for a day. What happens?', options: ['The leaves start to turn blue', 'The water turns green', 'The celery grows flowers'], answer: 0 },
+        { type: 'mcq', q: 'Why do the drops of water get pulled all the way up a tall tree?', options: ['They cling together like a chain, and water leaving the leaves pulls the rest up', 'The tree has a heart that pumps them', 'The wind blows them up'], answer: 0 },
+        { type: 'order', q: 'Put the water\'s journey in order.', items: ['🟫 water in the soil', '〰️ soaked up by the root hairs', '🌿 up the stem through the xylem', '🍃 into the leaves', '♨️ out through tiny holes into the air'], hint: 'Start at the bottom of the plant!' },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>
