@@ -444,8 +444,71 @@ a { color: var(--brand-dark); }
 @keyframes heartbreak { 0% { transform: scale(1); } 40% { transform: scale(1.6) rotate(-15deg); } 100% { transform: scale(1); } }
 @keyframes rise { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-46px); opacity: 0; } }
 @keyframes bannerin { 0% { transform: scale(2.4); opacity: 0; } 20% { transform: scale(1); opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; } }
+/* the avatar celebrates right answers: a random move, then a power-up glow once the combo hits 3 */
+.hero-sprite.flip { animation: heroflip .65s steps(8); }
+.hero-sprite.spin { animation: herospin .6s steps(8); }
+.hero-sprite.jump { animation: herojump .6s steps(6); }
+.hero-sprite.dance { animation: herodance .7s steps(7); }
+.hero-sprite.power { animation: heropower .8s steps(8); }
+.hero.glow { animation: heroglow .5s steps(3); }
+.hero.powered { box-shadow: inset 0 0 0 3px #ffd54f; animation: powered 1s steps(2) infinite; }
+.hero.powered .hero-sprite { filter: drop-shadow(0 0 6px #ffd54f) drop-shadow(0 0 2px #fff); }
+.spark { position: absolute; z-index: 4; border: 2px solid #000; pointer-events: none; }
+.pop-text.combo { left: 0; right: 0; top: -22px; text-align: center; white-space: nowrap; color: #7ec8ff; }
+.pop-text.combo.mega { color: #ffd54f; font-size: 2rem; }
+.btn.final { animation: nudge .8s steps(3) infinite; }
+/* the boss is stunned after the last hit, waiting for the final blow */
+.boss.stunned .boss-sprite { position: relative; animation: dizzy 1s steps(4) infinite; filter: brightness(1.2); }
+.boss.stunned .boss-sprite::after { content: '💫'; position: absolute; left: 50%; top: -14px; font-size: 1.6rem; animation: orbit 1s steps(6) infinite; }
+@keyframes heroflip { 0% { transform: none; } 20% { transform: translateY(-14px) scale(1.05, .9); } 55% { transform: translateY(-34px) rotate(200deg); } 85% { transform: translateY(-6px) rotate(360deg); } 100% { transform: none; } }
+@keyframes herospin { 0%, 100% { transform: none; } 25% { transform: translateY(-14px) scaleX(0); } 50% { transform: translateY(-20px) scaleX(-1); } 75% { transform: translateY(-14px) scaleX(0); } }
+@keyframes herojump { 0%, 100% { transform: none; } 15% { transform: scale(1.25, .75); } 45% { transform: translateY(-36px) scale(.9, 1.15); } 80% { transform: scale(1.2, .8); } }
+@keyframes herodance { 0%, 100% { transform: none; } 15% { transform: translate(-6px, -8px) rotate(-15deg); } 30% { transform: translate(6px, 0) rotate(15deg); } 45% { transform: translate(-6px, -8px) rotate(-15deg); } 60% { transform: translate(6px, 0) rotate(15deg); } 80% { transform: translateY(-12px); } }
+@keyframes heropower { 0% { transform: none; } 30% { transform: translateY(-22px) scale(1.35); filter: brightness(2) drop-shadow(0 0 10px #ffd54f); } 60% { transform: translateY(-22px) scale(1.35) rotate(360deg); filter: brightness(1.6) drop-shadow(0 0 10px #ffd54f); } 100% { transform: none; } }
+@keyframes heroglow { 50% { background: #23477a; } }
+@keyframes powered { 50% { box-shadow: inset 0 0 0 3px #fff3b0, 0 0 12px #ffd54f; } }
+@keyframes dizzy { 0%, 100% { transform: rotate(-10deg); } 25% { transform: rotate(0) translateY(-4px); } 50% { transform: rotate(10deg); } 75% { transform: rotate(0) translateY(-4px); } }
+@keyframes orbit { 0% { transform: translate(-30px, 0); } 25% { transform: translate(-10px, -8px); } 50% { transform: translate(10px, 0); } 75% { transform: translate(-10px, 6px); } 100% { transform: translate(-30px, 0); } }
+
+/* the finishing-move cut scene */
+.cutscene { position: fixed; inset: 0; z-index: 450; display: grid; place-items: center; overflow: hidden; background: radial-gradient(circle at 50% 60%, #2a1840, #0b0b1e 70%); animation: csin .3s steps(3); }
+.cs-bar { position: absolute; left: 0; right: 0; height: 12vh; background: #000; z-index: 3; animation: csbar .4s steps(4) both; }
+.cs-bar.top { top: 0; transform-origin: top; }
+.cs-bar.bottom { bottom: 0; transform-origin: bottom; }
+.cs-stage { position: relative; width: min(760px, calc(100% - 32px)); height: clamp(240px, 48vh, 380px); }
+.cs-floor { position: absolute; left: 0; right: 0; bottom: 0; height: 28px; background: repeating-linear-gradient(90deg, #3b2a20 0 24px, #4e3829 24px 48px); border-top: 4px solid #000; box-shadow: inset 0 4px 0 #6b4c37; }
+.cs-hero { position: absolute; left: 8%; bottom: 28px; width: clamp(64px, 14vw, 112px); image-rendering: pixelated; }
+.cs-hero.emoji { font-size: clamp(3.4rem, 10vw, 5.4rem); line-height: 1; }
+.cs-hero.cs-charge { animation: cscharge .25s steps(2) infinite; filter: brightness(1.6) drop-shadow(0 0 10px #ffd54f) drop-shadow(0 0 4px #fff); }
+.cs-hero.cs-cheer { animation: cheer .6s steps(3) infinite; filter: drop-shadow(0 0 8px #ffd54f); }
+.cs-boss { position: absolute; right: 8%; bottom: 28px; width: clamp(110px, 26vw, 190px); }
+.cs-boss svg { width: 100%; height: auto; display: block; }
+.cs-boss.emoji { font-size: clamp(5rem, 16vw, 8rem); line-height: 1; text-align: center; }
+.cs-boss.cs-dizzy { animation: dizzy 1s steps(4) infinite; }
+.cs-boss.cs-hit { animation: hurt .3s steps(3); }
+.cs-boss.cs-rumble { animation: csrumble .12s steps(2) infinite; filter: brightness(2.2); }
+.cs-bubble { position: absolute; right: 4%; top: 0; max-width: 60%; margin: 0; }
+.cs-bubble::before { top: auto; bottom: -12px; left: auto; right: 30px; border-bottom-color: transparent; border-top-color: #000; }
+.cs-bubble.ghost { opacity: .85; }
+.cs-prop { position: absolute; z-index: 2; font-size: clamp(5rem, 16vw, 8rem); line-height: 1; pointer-events: none; filter: drop-shadow(4px 4px 0 #000); }
+.cs-prop.twinkle { font-size: 3rem; }
+.projectile.cs-shot { font-size: 3.4rem; }
+.cs-parts { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.cs-text { position: absolute; z-index: 4; left: 16px; right: 16px; top: calc(12vh + 8px); text-align: center; font-family: var(--pixel); font-weight: 700; font-size: clamp(1.6rem, 6vw, 2.6rem); color: #fff; text-shadow: 3px 3px 0 #000, -2px -2px 0 #000; pointer-events: none; }
+.cs-text:empty { display: none; }
+.cs-text.show { animation: bannerpop .35s steps(4); }
+.cs-text.big { font-size: clamp(2.4rem, 11vw, 4.4rem); color: #ffd54f; }
+.cs-text.gold { color: #ffd54f; animation: bannerpop .35s steps(4), nudge .8s steps(3) .35s infinite; }
+.cs-skip { position: absolute; z-index: 5; right: 16px; bottom: max(12px, 3vh); max-width: calc(100% - 32px); }
+@keyframes csin { from { opacity: 0; } }
+@keyframes csbar { from { transform: scaleY(0); } }
+@keyframes cscharge { 0% { transform: translate(-2px, 0) scale(1.08); } 100% { transform: translate(2px, -2px) scale(1.12); } }
+@keyframes csrumble { 0% { transform: translate(-4px, 2px); } 100% { transform: translate(4px, -2px); } }
+@keyframes bannerpop { 0% { transform: scale(2.2); opacity: 0; } 60% { transform: scale(.95); opacity: 1; } 100% { transform: scale(1); } }
 @media (prefers-reduced-motion: reduce) {
-  .boss.enraged, .boss.enraged .boss-sprite, .hero-sprite, .hero-sprite.cheer, .gloat .boss-sprite, .fight-banner, .pop-text { animation: none; }
+  .boss.enraged, .boss.enraged .boss-sprite, .hero-sprite, .hero-sprite.cheer, .gloat .boss-sprite, .fight-banner, .pop-text,
+  .hero.powered, .boss.stunned .boss-sprite, .boss.stunned .boss-sprite::after, .btn.final,
+  .hero-sprite.flip, .hero-sprite.spin, .hero-sprite.jump, .hero-sprite.dance, .hero-sprite.power { animation: none; }
 }
 .results { text-align: center; }
 .trophy { font-size: 6rem; animation: float 2s steps(4) infinite; }

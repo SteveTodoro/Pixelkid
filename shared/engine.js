@@ -94,6 +94,15 @@
     // the boss gets hurt: a bright, rising "pow!" so it never sounds like a wrong answer
     bossHit: () => { tone(110, 0, 0.07, 'triangle', 0.14); seq([659, 988, 1319], 0.045, 'square', 0.06); },
     zap: () => seq([1200, 900, 600, 300], 0.04, 'sawtooth', 0.04),
+    // boss-battle combo: climbs higher the longer the streak
+    combo: n => { const k = Math.min(n, 6); seq([523 * (1 + k / 8), 784 * (1 + k / 8), 1047 * (1 + k / 8)], 0.05, 'square', 0.045); },
+    // the finishing-move cut scene
+    charge: () => seq([262, 330, 392, 523, 659, 784, 1047], 0.06, 'square', 0.05),
+    whoosh: () => seq([1600, 1200, 900, 700, 500], 0.025, 'triangle', 0.08),
+    smash: () => { tone(70, 0, 0.35, 'sawtooth', 0.16); tone(55, 0.03, 0.4, 'square', 0.1); seq([300, 180, 120], 0.05, 'sawtooth', 0.08); },
+    boom: () => { tone(60, 0, 0.6, 'sawtooth', 0.18); tone(45, 0.05, 0.7, 'square', 0.12); seq([400, 260, 170, 110, 80], 0.06, 'sawtooth', 0.07); },
+    launch: () => seq([300, 400, 520, 680, 880, 1150, 1500], 0.05, 'triangle', 0.1),
+    ding: () => { tone(1760, 0, 0.5, 'triangle', 0.12); tone(2637, 0.05, 0.45, 'sine', 0.06); },
   };
 
   // ---------- pixel confetti ----------
@@ -545,7 +554,7 @@
         sfx.good(); say(praise());
         fb.className = 'feedback good'; fb.hidden = false;
         fb.innerHTML = '✔ ' + fmt(q.explain || (first ? 'Correct!' : 'You got there!'), false);
-        if (boss) { boss.hit(); if (boss.dodgeDue()) nextBtn.textContent = '⚠️ Get ready to DODGE! ▶'; }
+        if (boss) { boss.hit(); if (boss.dodgeDue()) nextBtn.textContent = '⚠️ Get ready to DODGE! ▶'; else if (isLast) nextBtn.classList.add('gold', 'final'); }
         nextBtn.hidden = false;
       };
       const onMiss = () => {
@@ -3614,12 +3623,18 @@
     last: 'No… not like this…',
     defeat: 'NOOOOO! I\'ve been beaten!',
     win: 'Mwahaha! I win! Come back when you\'re cleverer!',
+    stunned: 'Ooh… my head is spinning…',
+    beg: ['W-wait! Let\'s talk about this!', 'Uh oh…', 'Mercy! MERCY!', 'Can we be friends now?'],
   };
   const HERO_LINES = {
     hit: ['Take that!', 'Pow!', 'Bullseye!', 'Got you!', 'Hi-yah!', 'Boom!', 'Easy!'],
     hurt: ['Ouch!', 'Oof!', 'Eek!', 'Yikes!', 'I\'ll get the next one!'],
     win: 'Victory! 🏆',
   };
+  // what pops up over the avatar for a streak of right answers in a row
+  const COMBO_WORDS = ['NICE!', 'GREAT!', 'AWESOME!', 'SUPER!', 'AMAZING!', 'UNSTOPPABLE!'];
+  const HERO_MOVES = ['flip', 'spin', 'jump', 'dance'];
+  const wait = ms => new Promise(r => setTimeout(r, ms));
   const calm = () => window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   const replay = (el, cls) => { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); };
   function speech(cls) {
@@ -3654,6 +3669,21 @@
   function banner(parent, text, cls = '') {
     const b = h('div', { class: 'fight-banner ' + cls, 'aria-hidden': 'true' }, text);
     parent.append(b); setTimeout(() => b.remove(), 1500);
+  }
+  // a burst of pixel sparkles from the middle of `from`, drawn inside the positioned `parent`
+  function sparkle(parent, from, n = 10, colors = ['#ffd54f', '#7ec8ff', '#ffffff', '#7cfc3a']) {
+    if (calm() || !from.isConnected) return;
+    const p = parent.getBoundingClientRect(), a = from.getBoundingClientRect();
+    const cx = a.left - p.left + a.width / 2, cy = a.top - p.top + a.height / 2;
+    for (let k = 0; k < n; k++) {
+      const ang = (k / n) * Math.PI * 2 + Math.random() * 0.5, dist = 34 + Math.random() * 40, s = pick([6, 9, 12]);
+      const sp = h('div', { class: 'spark', 'aria-hidden': 'true', style: `left:${cx - s / 2}px;top:${cy - s / 2}px;width:${s}px;height:${s}px;background:${pick(colors)}` });
+      parent.append(sp);
+      sp.animate([
+        { transform: 'translate(0,0) scale(1)', opacity: 1 },
+        { transform: `translate(${Math.cos(ang) * dist}px, ${Math.sin(ang) * dist}px) scale(.4)`, opacity: 0 },
+      ], { duration: 650, easing: 'steps(6)', fill: 'forwards' }).onfinish = () => sp.remove();
+    }
   }
   function heroImg(cls) {
     return AV ? h('img', { class: cls, src: AV.dataURL(AV.load().look, { scale: 4 }), alt: 'You' }) : h('div', { class: cls + ' emoji', 'aria-hidden': 'true' }, '🧒');
@@ -3778,9 +3808,169 @@
     cvs.scrollIntoView({ block: 'center', behavior: calm() ? 'auto' : 'smooth' });
   }
 
+  // ---------- the finishing-move cut scene ----------
+  // Plays full screen after the "Final blow!" button, then calls done(). One of three finishers at random:
+  // a giant hammer squashes the boss flat, an uppercut launches it into the sky, or it explodes into its own pixels.
+  function finisher(b, lines, done) {
+    if (calm()) { done(); return; }
+    let over = false;
+    const STOP = {};
+    const step = async ms => { await wait(ms); if (over) throw STOP; };
+    const hero = heroImg('cs-hero');
+    const boss = pic(b.sprite || b.emoji || '👾', 'cs-boss');
+    const bubble = h('div', { class: 'fight-bubble from-boss cs-bubble' });
+    const caption = h('div', { class: 'cs-text', 'aria-live': 'polite' });
+    const parts = h('canvas', { class: 'cs-parts', 'aria-hidden': 'true' });
+    const skip = h('button', { class: 'btn ghost cs-skip', type: 'button', onclick() { sfx.tap(); finish(); } }, 'Skip ▶');
+    const stage = h('div', { class: 'cs-stage' }, h('div', { class: 'cs-floor' }), hero, boss, bubble);
+    const scene = h('div', { class: 'cutscene', role: 'dialog', 'aria-label': `Final blow! ${b.name} is defeated` },
+      h('div', { class: 'cs-bar top' }), h('div', { class: 'cs-bar bottom' }), stage, parts, caption, skip);
+    const onKey = e => { if (e.key === 'Escape') finish(); };
+    function finish() {
+      if (over) return;
+      over = true; document.removeEventListener('keydown', onKey);
+      scene.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 250, easing: 'steps(4)', fill: 'forwards' }).onfinish = () => scene.remove();
+      done();
+    }
+    document.addEventListener('keydown', onKey);
+    document.body.append(scene);
+
+    // flying bits (pixels, dust) on a canvas over the whole scene
+    let bits = [], raf = 0;
+    parts.width = innerWidth; parts.height = innerHeight;
+    function frame() {
+      const ctx = parts.getContext('2d');
+      ctx.clearRect(0, 0, parts.width, parts.height);
+      bits = bits.filter(p => p.life < p.max && p.y < parts.height + 40);
+      for (const p of bits) {
+        p.vy += p.g; p.vx *= 0.985; p.x += p.vx; p.y += p.vy; p.life++;
+        ctx.globalAlpha = Math.min(1, (p.max - p.life) / 20);
+        ctx.fillStyle = '#000'; ctx.fillRect(Math.round(p.x) - 1, Math.round(p.y) - 1, p.s + 2, p.s + 2);
+        ctx.fillStyle = p.c; ctx.fillRect(Math.round(p.x), Math.round(p.y), p.s, p.s);
+      }
+      ctx.globalAlpha = 1;
+      raf = bits.length && scene.isConnected ? requestAnimationFrame(frame) : 0;
+    }
+    const fling = list => { bits.push(...list); if (!raf) raf = requestAnimationFrame(frame); };
+    // the boss bursts into its own pixels (pixel-art sprites), or into coloured chunks (emoji bosses)
+    function shatter(power = 1) {
+      const r = boss.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+      const svg = boss.querySelector('svg'), list = [];
+      if (svg && svg.viewBox.baseVal && svg.viewBox.baseVal.width) {
+        const vb = svg.viewBox.baseVal, sr = svg.getBoundingClientRect(), px = sr.width / vb.width, py = sr.height / vb.height;
+        for (const rc of svg.querySelectorAll('rect')) {
+          const x = sr.left + (+rc.getAttribute('x') + 0.5) * px, y = sr.top + (+rc.getAttribute('y') + 0.5) * py;
+          list.push({ x, y, s: Math.max(4, Math.round(Math.min(px, py))), c: rc.getAttribute('fill'), g: 0.42, life: 0, max: 140,
+            vx: (x - cx) / r.width * 18 * power + (Math.random() - 0.5) * 6, vy: (y - cy) / r.height * 10 * power - 6 - Math.random() * 8 });
+        }
+      } else {
+        for (let k = 0; k < 70; k++) list.push({ x: cx + (Math.random() - 0.5) * r.width * 0.6, y: cy + (Math.random() - 0.5) * r.height * 0.6,
+          s: pick([6, 9, 12]), c: pick(['#e53935', '#ffd54f', '#ffffff', '#8e5cff', '#2ee6d6']), g: 0.42, life: 0, max: 140,
+          vx: (Math.random() - 0.5) * 22 * power, vy: -Math.random() * 16 - 4 });
+      }
+      fling(list);
+    }
+    function dust(x, y, n = 26) {
+      fling(Array.from({ length: n }, (_, k) => ({ x, y, s: pick([6, 9]), c: pick(['#d7ccc8', '#bcaaa4', '#ffffff']), g: -0.04, life: 0, max: 50,
+        vx: (k % 2 ? 1 : -1) * (2 + Math.random() * 7), vy: -Math.random() * 2.5 })));
+    }
+    const centre = el => { const r = el.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2, r }; };
+    const shout = (text, cls = '') => { caption.className = 'cs-text ' + cls; caption.textContent = text; replay(caption, 'show'); };
+    const flash = () => scene.animate([{ filter: 'brightness(4)' }, { filter: 'none' }], { duration: 260, easing: 'steps(3)' });
+    const quake = () => stage.animate([
+      { transform: 'translate(0,0)' }, { transform: 'translate(-14px,8px)' }, { transform: 'translate(12px,-10px)' },
+      { transform: 'translate(-8px,6px)' }, { transform: 'translate(6px,-4px)' }, { transform: 'translate(0,0)' },
+    ], { duration: 420, easing: 'steps(6)' });
+    // anim() just plays; await move() waits for it and stops the scene if it was skipped meanwhile
+    const anim = (el, frames, ms, easing = 'steps(8)') => el.animate(frames, { duration: ms, easing, fill: 'forwards' });
+    const move = async (...args) => { await anim(...args).finished; if (over) throw STOP; };
+
+    async function hammer() {
+      const c = centre(boss), sr = stage.getBoundingClientRect();
+      const ham = h('div', { class: 'cs-prop', 'aria-hidden': 'true', style: `left:${c.x - sr.left - 60}px;top:${c.r.top - sr.top - 130}px` }, '🔨');
+      stage.append(ham);
+      shout('HAMMER TIME!');
+      sfx.whoosh();
+      await move(ham, [{ transform: 'translateY(-420px) rotate(-70deg)' }, { transform: 'translateY(0) rotate(25deg)' }], 320, 'ease-in');
+      sfx.smash(); flash(); quake();
+      boss.style.transformOrigin = '50% 100%';
+      boss.animate([{ transform: 'none' }, { transform: 'scale(1.8, .15)' }], { duration: 90, fill: 'forwards' });
+      dust(c.x, c.r.bottom - 6);
+      shout('SMASH!', 'big');
+      anim(ham, [{ transform: 'translateY(0) rotate(25deg)' }, { transform: 'translateY(-70px) rotate(-10deg)', opacity: 1 }, { transform: 'translateY(-90px) rotate(-30deg)', opacity: 0 }], 600);
+      await step(800);
+      sfx.boom(); shatter(0.6); boss.style.visibility = 'hidden';
+      shout('PANCAKED!');
+    }
+    async function launch() {
+      const a = centre(hero), c = centre(boss), dx = c.x - a.x - c.r.width * 0.45;
+      shout('UPPERCUT!');
+      sfx.whoosh();
+      await move(hero, [{ transform: 'none' }, { transform: `translateX(${dx}px)` }], 260);
+      await move(hero, [{ transform: `translateX(${dx}px)` }, { transform: `translate(${dx + 10}px, -90px) rotate(-20deg) scale(1.2)` }], 160);
+      sfx.bossHit(); flash(); quake(); sfx.launch();
+      shout('POW!', 'big');
+      anim(boss, [{ transform: 'none' }, { transform: 'translate(180px, -900px) rotate(1080deg) scale(.15)' }], 900, 'ease-in');
+      dust(c.x, c.r.bottom - 6, 14);
+      await step(300);
+      anim(hero, [{ transform: `translate(${dx + 10}px, -90px) rotate(-20deg) scale(1.2)` }, { transform: 'none' }], 380);
+      await step(800);
+      const sr = stage.getBoundingClientRect();
+      const star = h('div', { class: 'cs-prop twinkle', 'aria-hidden': 'true', style: `left:${Math.min(c.x - sr.left + 60, sr.width - 60)}px;top:-40px` }, '✨');
+      stage.append(star);
+      sfx.ding();
+      anim(star, [{ transform: 'scale(0)' }, { transform: 'scale(1.6) rotate(45deg)' }, { transform: 'scale(0) rotate(90deg)' }], 700);
+      shout('BYE BYE!');
+    }
+    async function explode() {
+      const zap = b.heroAttack || '⚡';
+      shout('SUPER COMBO!');
+      for (let k = 0; k < 3; k++) {
+        projectile(zap, hero, boss, 'cs-shot'); sfx.zap();
+        await step(380);
+        sfx.bossHit(); replay(boss, 'cs-hit');
+      }
+      boss.classList.add('cs-rumble');
+      shout('IT\'S GOING TO BLOW!');
+      seq([200, 230, 260, 300, 340, 390, 450], 0.07, 'sawtooth', 0.05);
+      await step(900);
+      sfx.boom(); flash(); quake(); shatter(1.2);
+      boss.style.visibility = 'hidden';
+      shout('KABOOM!', 'big');
+    }
+
+    (async () => {
+      try {
+        // intro: letterbox bars slide in, the boss wobbles and begs, the hero powers up
+        await step(350);
+        bubble.textContent = fill(pick(lines.beg)); bubble.classList.add('show'); replay(bubble, 'pop');
+        await step(1100);
+        bubble.classList.remove('show');
+        hero.classList.add('cs-charge'); sfx.charge(); shout('FINAL BLOW!', 'big');
+        sparkle(stage, hero, 18);
+        await step(700);
+        sparkle(stage, hero, 18);
+        await step(400);
+        hero.classList.remove('cs-charge');
+        boss.classList.remove('cs-dizzy');
+        await pick([hammer, launch, explode])();
+        await step(1100);
+        // the boss's last words, then victory!
+        bubble.textContent = fill(lines.defeat); bubble.classList.add('show', 'ghost'); replay(bubble, 'pop');
+        await step(1000);
+        sfx.win(); confetti(160);
+        hero.getAnimations().forEach(x => { if (x.constructor === Animation) x.cancel(); }); // let the CSS cheer take over
+        hero.classList.add('cs-cheer'); shout('VICTORY!', 'big gold');
+        skip.textContent = '🏆 See my score ▶'; skip.className = 'btn gold big cs-skip'; skip.focus();
+      } catch (e) { if (e !== STOP) throw e; }
+    })();
+    boss.classList.add('cs-dizzy');
+    skip.focus();
+  }
+
   function bossFight(b, total) {
     const lines = Object.assign({}, BOSS_LINES, b.lines);
-    let hp = total, lives = LIVES, half = false, dodgeDue = false, rounds = 0, sinceDodge = 0;
+    let hp = total, lives = LIVES, half = false, dodgeDue = false, rounds = 0, sinceDodge = 0, streak = 0, moveT = 0;
     const lostOn = new Set();
     // boss panel
     const fillEl = h('div', { class: 'hp-fill', style: 'width:100%' });
@@ -3797,12 +3987,25 @@
         h('div', { class: 'hero-top' }, h('div', { class: 'hero-name' }, settings.name || 'You'), hearts,
           h('div', { class: 'boss-sub' }, `Lose all ${LIVES} hearts and ${b.name} wins!`)),
         heroTalk.el));
+    // swaps the avatar's current move (attack, celebration, ouch) for a fresh one
+    const avatarBase = avatar.className;
+    function act(cls) { avatar.className = avatarBase; void avatar.offsetWidth; avatar.className = avatarBase + ' ' + cls; }
+    // the avatar celebrates a right answer; a longer streak = a bigger party
+    function celebrate() {
+      const word = COMBO_WORDS[Math.min(streak, COMBO_WORDS.length) - 1];
+      popText(hero, streak > 1 ? `${word} x${streak}` : word, 'combo' + (streak >= 3 ? ' mega' : ''));
+      act(streak >= 3 ? 'power' : pick(HERO_MOVES));
+      replay(hero, 'glow');
+      sparkle(hero, avatar, 8 + Math.min(streak, 5) * 4);
+      if (streak >= 2) sfx.combo(streak);
+      hero.classList.toggle('powered', streak >= 3);
+    }
 
     function breakHeart() {
       const heart = hearts.children[lives];
       heart.textContent = '🖤'; heart.classList.add('lost'); replay(heart, 'break');
       hearts.setAttribute('aria-label', `Lives: ${lives} of ${LIVES}`);
-      replay(avatar, 'hurt'); shake(stageCard); popText(hero, '-1 ❤️', 'ouch');
+      act('hurt'); shake(stageCard); popText(hero, '-1 ❤️', 'ouch');
       if (!lives) { hero.classList.add('fainted'); heroTalk.say('Oh no…', 0); bossTalk.say(lines.win, 0); banner(hero, 'GAME OVER', 'over'); }
       else heroTalk.say(lives === 1 ? 'Last heart… careful now!' : pick(HERO_LINES.hurt), 1600);
     }
@@ -3814,15 +4017,18 @@
         hp = Math.max(0, hp - 1); sinceDodge++;
         // first dodge round at half HP, then every 3 hits (never on the knockout)
         if (hp && ((!half && hp <= total / 2) || (half && sinceDodge >= 3))) dodgeDue = true;
-        replay(avatar, 'lunge'); heroTalk.say(pick(HERO_LINES.hit), 1400);
+        streak++;
+        act('lunge'); heroTalk.say(pick(HERO_LINES.hit), 1400);
+        clearTimeout(moveT); moveT = setTimeout(celebrate, calm() ? 0 : 450);
         projectile(b.heroAttack || '⚡', avatar, sprite);
         setTimeout(() => {
           fillEl.style.width = hp / total * 100 + '%';
           replay(sprite, 'hurt'); sfx.bossHit(); replay(el, 'flash');
           popText(el, hp ? 'HIT!' : 'K.O.!', 'dmg');
           if (!hp) {
-            hpText.textContent = 'DEFEATED!'; el.classList.remove('enraged'); el.classList.add('defeated');
-            banner(el, 'K.O.!', 'ko'); bossTalk.say(lines.defeat, 0); heroTalk.say(HERO_LINES.win, 0);
+            // stunned and wobbling: the "Final blow!" button plays the finishing cut scene
+            hpText.textContent = 'STUNNED! Finish it!'; el.classList.remove('enraged'); el.classList.add('stunned');
+            banner(el, 'FINISH IT!', 'ko'); bossTalk.say(lines.stunned, 0); heroTalk.say('Time for the FINAL BLOW!', 0);
           } else if (dodgeDue) {
             if (!half) { half = true; el.classList.add('enraged'); }
             hpText.textContent = `HP ${hp}/${total} · ${b.name} is getting angry!`;
@@ -3840,6 +4046,7 @@
       // returns true when the last heart is lost
       zap(qi) {
         replay(sprite, 'lunge-boss'); sfx.zap();
+        streak = 0; clearTimeout(moveT); hero.classList.remove('powered');
         if (lostOn.has(qi)) { bossTalk.say(pick(lines.taunt), 1600); return false; } // one heart per question
         lostOn.add(qi); lives--;
         projectile(b.attack || '💥', sprite, avatar);
@@ -3863,6 +4070,7 @@
         });
       },
       lives: () => lives,
+      finale: done => finisher(b, lines, done),
     };
   }
   function renderQuiz(s, i) {
@@ -3875,7 +4083,7 @@
       boss = s.boss ? bossFight(s.boss, qs.length) : null;
       const qArea = h('div', { class: 'q-area' });
       put(area, boss && boss.el, qArea, boss && boss.hero);
-      runQuestions(qArea, qs, { key: 'quiz', boss, done: results, lost: gameOver, lastLabel: s.boss ? '⚔️ Final blow!' : 'See my score 🏆' });
+      runQuestions(qArea, qs, { key: 'quiz', boss, done: score => (boss ? boss.finale(() => results(score)) : results(score)), lost: gameOver, lastLabel: s.boss ? '⚔️ Final blow!' : 'See my score 🏆' });
       nav.hideNext();
     }
 
