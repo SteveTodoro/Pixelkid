@@ -9,6 +9,8 @@ Each lesson is about 30–40 minutes: Start → Recap of last lesson → Read �
 
 **Force Lab (`forces` game):** hands-on physics. Gesture tasks `{ thing, label, force: 'push'|'pull', effect, yes }`: swipe ▶ = push (away from you), swipe ◀ = pull, tap = press (push). Slide tasks `{ slide: 'ice'|'wood'|'carpet'|'grass'|'sand', thing, label }`: flick so friction stops it in the green zone. Magnet mode: `hold: '🧲', snap: true, noTap: true, words: {...}` relabels the arrows (e.g. ATTRACT/REPEL, STICKS/NO STICK) and tasks add `holdTag`/`tag` for facing poles (e.g. 'N ▶', '◀ S'). Used in Magnet Magic (will it stick? + pole power), Pushes, Pulls & Friction (rounds) and as a hands-on warm-up in recap stages via `review.game`. Keep task labels free of the words push/pull.
 
+**Simulated experiments (for when real tools aren't available):** `ramp` (Ramp Lab: stack 1–4 books, pick a floor from towel/sand/grass/carpet/wood/tiles/ice, let the car go, results table; `missions: [{ text, need: { surface, height }, yes, ask }]`) and `garden` (Seed Garden: drag seeds into pots, drag pots between sunny window and dark cupboard, pour from the watering can, fast-forward 2 weeks; `missions: [{ text, pots, goal: 'healthy'|'lightTest'|'waterTest'|'dryTest', yes, fix, ask }]`). Add tactile interaction wherever possible in new lessons.
+
 **Plants style:** mascot Professor Bolt, `finishAch: 'gardener'` (Green Thumb, unlocks the gardener's straw hat); shop pet Sunny the sunflower. Bosses so far: Weedzilla, King Gloom.
 | Animals incl. Humans | Food groups & healthy eating · Skeletons & muscles · Animals with and without backbones |
 | Rocks | Types of rock · How fossils form · What soil is made of |

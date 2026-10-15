@@ -823,3 +823,16 @@ a { color: var(--brand-dark); }
 .dodge { position: relative; }
 .dodge-pot { display: inline-block; margin: 0 auto 8px; padding: 4px 12px; font-weight: 700; font-size: 1rem; background: #12210f; color: #fff; border: 3px solid #000; }
 .dodge .pop-text { left: 50%; top: 40%; transform: translateX(-50%); }
+
+/* ---------- simulated experiments (ramp lab, seed garden) ---------- */
+.lab-mission { max-width: 720px; margin: 0 auto 12px; padding: 10px 14px; background: #fff3a8; border: 4px solid #000; font-weight: 700; font-size: 1.1rem; }
+.lab-mission-tag { font-family: var(--pixel); background: #000; color: #ffd43b; padding: 2px 8px; margin-right: 4px; }
+.lab-controls { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; margin: 14px auto 0; max-width: 720px; }
+.lab-label { font-family: var(--pixel); font-weight: 700; margin-left: 6px; }
+.lab-count { font-family: Lexend, sans-serif; font-weight: 700; font-size: 1.2rem; min-width: 2.6em; text-align: center; }
+.lab-chip { font: inherit; font-weight: 700; padding: 8px 12px; min-height: 44px; background: #e2e2e2; color: #000; border: 3px solid #000; box-shadow: inset -3px -3px 0 #9a9a9a, inset 3px 3px 0 #fff; cursor: pointer; touch-action: manipulation; }
+.lab-chip.on { background: var(--good-soft); box-shadow: inset -3px -3px 0 #6fbf4a, inset 3px 3px 0 #e2ffd2; }
+.lab-chip:disabled { opacity: .6; cursor: not-allowed; }
+.lab-ask:not(:empty) { margin-top: 16px; }
+.lab .data-box { margin-top: 16px; }
+.data-box tr.new td { background: #fff3a8; }

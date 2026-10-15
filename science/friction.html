@@ -300,8 +300,32 @@ window.LESSON = {
     },
 
     {
-      type: 'game', title: 'Friction Lab', short: 'Game 2', minutes: 8,
+      type: 'game', title: 'Friction Lab', short: 'Game 2', minutes: 12,
       rounds: [
+        {
+          game: 'ramp', title: 'Ramp Lab',
+          intro: 'Be a real scientist! Build a ramp with books, choose a floor, then let the toy car go. **Don\'t push it** – just let it roll, so every test is fair.',
+          say: 'Drag the top of the ramp to add books. Then tap the car to let it go!',
+          surfaces: ['carpet', 'wood', 'ice'],
+          missions: [
+            { text: 'Stack **2 books** and roll the car onto the **carpet**.', need: { surface: 'carpet', height: 2 }, yes: 'Measured! Now let\'s change ONE thing – the floor.' },
+            { text: 'Keep **2 books**. Now try the **wooden floor**.', need: { surface: 'wood', height: 2 }, yes: 'Further than on carpet! Let\'s try one more floor.' },
+            {
+              text: 'Keep **2 books**. Now try the **ice**!', need: { surface: 'ice', height: 2 }, yes: 'WHOA! Look at the table – compare all three floors.',
+              ask: [
+                { type: 'mcq', q: 'Look at your table. On which floor did the car roll the FURTHEST?', options: ['🧊 ice', '🪵 wooden floor', '🧶 carpet'], answer: 0 },
+                { type: 'mcq', q: 'Why did it stop so quickly on the carpet?', options: ['Carpet is rough, so there is lots of friction', 'The carpet was magnetic', 'The car was tired'], answer: 0 },
+                { type: 'mcq', q: 'In these three tests, what did we keep the SAME?', options: ['the car and the ramp height', 'the floor', 'nothing at all'], answer: 0, hint: 'We only changed the floor.' },
+              ],
+            },
+            {
+              text: 'New question: does a HIGHER ramp make a difference? Stack **4 books** and use the **carpet** again.', need: { surface: 'carpet', height: 4 }, yes: 'Compare it with your very first test on carpet!',
+              ask: [
+                { type: 'mcq', q: 'Compare test 1 (2 books) with this test (4 books), both on carpet. What happened?', options: ['The higher ramp made the car go further', 'The higher ramp made the car go less far', 'It made no difference'], answer: 0, explain: 'A higher ramp makes the car go faster at the bottom, so it rolls further before friction stops it.' },
+              ],
+            },
+          ],
+        },
         {
           game: 'questions', title: 'Ramp test',
           intro: 'Professor Bolt rolled the same toy car down the same ramp onto four surfaces. Read the table carefully!',

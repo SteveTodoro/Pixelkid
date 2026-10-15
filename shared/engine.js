@@ -2459,10 +2459,8 @@
         if (task && task.holdTag) pxText(ctx, task.holdTag, 104, FLOOR - 92, 22, '#ffffff');
       }
       if (task && phase !== 'done') {
-        ctx.font = EMOJI(60);
-        ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
         const wob = !task.slide && phase === 'ready' ? Math.sin(time * 4) * 3 : 0;
-        ctx.fillText(task.thing, obj.x, FLOOR - 4 + wob);
+        emojiAt(ctx, task.thing, obj.x, FLOOR - 4 + wob, 60);
         if (task.tag) pxText(ctx, task.tag, obj.x, FLOOR - 92 + wob, 22, '#ffffff');
       }
       if (trail.length > 1) {
@@ -2491,6 +2489,429 @@
     };
     root._stop = stopLoop;
     next();
+    return root;
+  };
+
+  // ---------- simulated experiments (shared bits) ----------
+  const EMOJI_FONT = n => `${n}px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`;
+  const FACES_LEFT = new Set(['🚗', '🚙', '🏎️', '🚌', '🚚']); // these emoji face left, so flip them to drive right
+  function emojiAt(ctx, e, x, y, size, angle = 0) {
+    ctx.save(); ctx.translate(x, y); if (angle) ctx.rotate(angle);
+    if (FACES_LEFT.has(e)) ctx.scale(-1, 1);
+    ctx.font = EMOJI_FONT(size); ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+    ctx.fillText(e, 0, 0); ctx.restore();
+  }
+  function skyAndGround(ctx, W, H, floorY) {
+    const sc = AV ? AV.sceneDef() : null;
+    const sky = sc ? sc.sky : ['#5fb8f5', '#c4e8ff'], ground = sc ? sc.ground : ['#5bbf3a', '#3d8a26', '#8a5a32', '#6b4425'];
+    const g = ctx.createLinearGradient(0, 0, 0, floorY);
+    g.addColorStop(0, sky[0]); g.addColorStop(1, sky[1]);
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, floorY);
+    ctx.fillStyle = ground[2]; ctx.fillRect(0, floorY, W, H - floorY);
+    ctx.fillStyle = ground[0]; ctx.fillRect(0, floorY, W, 8);
+  }
+  // A results table that grows one row per test. cols: header labels; add(cells) highlights the newest row.
+  function resultsTable(caption, cols) {
+    const body = h('tbody');
+    const box = h('div', { class: 'data-box', hidden: true },
+      h('table', null, h('caption', null, caption), h('thead', null, h('tr', null, cols.map(c => h('th', null, c)))), body));
+    return {
+      el: box,
+      add(cells) {
+        body.querySelectorAll('tr.new').forEach(tr => tr.classList.remove('new'));
+        body.append(h('tr', { class: 'new' }, cells.map(c => h('td', null, String(c)))));
+        box.hidden = false;
+      },
+    };
+  }
+  // Missions for the simulated experiments: show the mission, and after a success ask its questions (if any).
+  function missionRunner(r, key, done, onStart) {
+    const missions = r.missions || [];
+    let mi = -1;
+    const box = h('div', { class: 'lab-mission' });
+    const ask = h('div', { class: 'lab-ask' });
+    const self = {
+      box, ask,
+      get i() { return mi; }, get m() { return missions[mi]; }, get count() { return missions.length; },
+      next() {
+        mi++; put(ask);
+        if (mi >= missions.length) { put(box, '🏆 All missions complete – brilliant science!'); done(); return; }
+        put(box, h('span', { class: 'lab-mission-tag' }, `MISSION ${mi + 1}/${missions.length}`), ' ', h('span', { html: fmt(missions[mi].text, false) }));
+        onStart(missions[mi]);
+      },
+      // the child's test matched the mission: pay a gem, then ask the follow-up questions
+      win(fromEl) {
+        const m = missions[mi];
+        sfx.good(); award(`${key}:m${mi}`, fromEl); confetti(40);
+        say(m.yes || 'Mission complete!');
+        const go = h('button', { class: 'btn big ready', type: 'button', onclick() { sfx.tap(); self.next(); } }, mi < missions.length - 1 ? 'Next mission ▶' : 'Finish ✔');
+        if (m.ask && m.ask.length) runQuestions(ask, m.ask, { key: `${key}:q${mi}`, lastLabel: 'Done ✔', done: () => put(ask, h('div', { class: 'btn-row' }, go)) });
+        else put(ask, h('div', { class: 'btn-row' }, go));
+      },
+    };
+    return self;
+  }
+
+  // ===== Ramp Lab: roll a toy car down a ramp onto different floors and measure how far it goes =====
+  // r.surfaces: ['carpet', 'wood', 'ice'] (towel, carpet, grass, sand, wood, tiles, ice) · r.thing: '🚗'
+  // r.missions: [{ text, need: { surface, height }, yes, ask: [questions] }]
+  // Drag the top of the ramp (or use − / +) to stack 1–4 books, pick a floor, then let the car go.
+  const RAMP_FLOORS = {
+    towel: { name: 'Towel', emoji: '🛁', a: 650, c: ['#f5f5f5', '#9ecbff'] },
+    sand: { name: 'Sand', emoji: '🏖️', a: 800, c: ['#f2d16b', '#d9b24a'] },
+    grass: { name: 'Grass', emoji: '🌱', a: 520, c: ['#5bbf3a', '#3d8a26'] },
+    carpet: { name: 'Carpet', emoji: '🧶', a: 450, c: ['#b0413e', '#8c2f2c'] },
+    wood: { name: 'Wooden floor', emoji: '🪵', a: 200, c: ['#c08a52', '#9c6b3c'] },
+    tiles: { name: 'Shiny tiles', emoji: '🔲', a: 130, c: ['#e8eef2', '#b8c4cc'] },
+    ice: { name: 'Ice', emoji: '🧊', a: 90, c: ['#cfefff', '#ffffff'] },
+  };
+  GAMES.ramp = function (r, key, done) {
+    const W = 640, H = 330, FLOOR = 262, X0 = 40, XB = 200, BOOK = 30, CM = 0.5; // 1 pixel = half a centimetre
+    const { cv, ctx } = arcadeCanvas(W, H);
+    const floors = (r.surfaces || ['carpet', 'wood', 'ice']).filter(k => RAMP_FLOORS[k]);
+    const thing = r.thing || '🚗';
+    let height = 2, floor = floors[0], car = null, marks = [], busy = false, dragY = null, time = 0, runN = 0;
+    const topY = () => FLOOR - height * BOOK;
+    const slope = () => { const dx = XB - X0, dy = height * BOOK; return { len: Math.hypot(dx, dy), ang: Math.atan2(dy, dx) }; };
+    const resetCar = () => { car = { phase: 'ready', s: 12, v: 0, x: 0 }; };
+    const table = resultsTable(r.caption || '🚗 Our ramp results', ['Test', 'Ramp', 'Floor', 'Distance']);
+    const missions = missionRunner(r, key, done, () => { busy = false; resetCar(); syncControls(); });
+
+    function release() {
+      if (busy || car.phase !== 'ready') return;
+      busy = true; sfx.tap(); car.phase = 'ramp';
+      say('Wheee! Watch how far it rolls…');
+    }
+    function stopped() {
+      car.phase = 'stopped';
+      const cm = Math.round((car.x - XB) * CM);
+      runN++;
+      marks.push({ x: car.x, cm, floor });
+      if (marks.length > 4) marks.shift();
+      table.add([runN, `📚 ${height} book${height > 1 ? 's' : ''}`, `${RAMP_FLOORS[floor].emoji} ${RAMP_FLOORS[floor].name}`, `${cm} cm`]);
+      const m = missions.m, need = (m && m.need) || {};
+      if (m && (!need.surface || need.surface === floor) && (!need.height || need.height === height)) {
+        missions.win(cv);
+      } else {
+        const fix = [];
+        if (need.height && need.height !== height) fix.push(`stack ${need.height} book${need.height > 1 ? 's' : ''}`);
+        if (need.surface && need.surface !== floor) fix.push(`choose the ${RAMP_FLOORS[need.surface].name.toLowerCase()}`);
+        say(`${cm} cm! ${fix.length ? 'Interesting test – but for this mission, ' + fix.join(' and ') + '.' : ''}`);
+        setTimeout(() => { busy = false; resetCar(); syncControls(); }, 900);
+      }
+      syncControls();
+    }
+    function setHeight(n) {
+      n = Math.max(1, Math.min(4, n));
+      if (n === height || busy) return;
+      height = n; sfx.tap(); resetCar(); syncControls();
+    }
+
+    // ----- dragging the ramp up and down, or tapping the car -----
+    cv.addEventListener('pointerdown', e => {
+      if (busy) return;
+      const [x, y] = toGame(cv, W, H, e);
+      e.preventDefault();
+      if (x < XB - 40 && Math.abs(y - topY()) < 50) { dragY = y; try { cv.setPointerCapture(e.pointerId); } catch (_) { /* ignore */ } return; }
+      const sl = slope(), cx = X0 + Math.cos(sl.ang) * car.s, cy = topY() + Math.sin(sl.ang) * car.s;
+      if (Math.hypot(x - cx, y - cy) < 50) release();
+    });
+    cv.addEventListener('pointermove', e => {
+      if (dragY == null) return;
+      const [, y] = toGame(cv, W, H, e);
+      setHeight(Math.round((FLOOR - y) / BOOK));
+    });
+    const endDrag = () => { dragY = null; };
+    cv.addEventListener('pointerup', endDrag); cv.addEventListener('pointercancel', endDrag);
+
+    function step(dt) {
+      time += dt;
+      const sl = slope();
+      if (car.phase === 'ramp') {
+        // speed at the bottom grows with the height of the ramp
+        const vEnd = 135 * Math.sqrt(height);
+        car.v += vEnd * vEnd / (2 * sl.len) * dt; car.s += car.v * dt;
+        if (car.s >= sl.len) { car.phase = 'floor'; car.x = XB; car.v = vEnd; }
+      } else if (car.phase === 'floor') {
+        car.x += car.v * dt; car.v -= RAMP_FLOORS[floor].a * dt;
+        if (car.v <= 0) { car.v = 0; stopped(); }
+      }
+      draw(sl);
+    }
+    function draw(sl) {
+      skyAndGround(ctx, W, H, FLOOR);
+      const F = RAMP_FLOORS[floor];
+      for (let x = XB; x < W; x += 16) { ctx.fillStyle = F.c[((x - XB) / 16) % 2 | 0]; ctx.fillRect(x, FLOOR, 16, 14); }
+      // measuring tape
+      ctx.fillStyle = '#ffd43b'; ctx.fillRect(XB, FLOOR + 20, W - XB, 24); ctx.fillStyle = '#000'; ctx.fillRect(XB, FLOOR + 44, W - XB, 2);
+      for (let x = XB, n = 0; x < W; x += 20, n++) {
+        ctx.fillStyle = '#000'; ctx.fillRect(x, FLOOR + 20, 2, n % 5 ? 7 : 13);
+        if (n % 5 === 0 && n) pxText(ctx, String(n * 20 * CM), x, FLOOR + 37, 10, '#fff');
+      }
+      pxText(ctx, 'cm', W - 16, FLOOR + 37, 10, '#fff');
+      // stack of books under the ramp
+      const BC = ['#e53935', '#2e7bd6', '#ffb800', '#7c4dff'];
+      for (let i = 0; i < height; i++) {
+        const y = FLOOR - (i + 1) * BOOK;
+        ctx.fillStyle = '#000'; ctx.fillRect(X0 - 30, y, 52, BOOK);
+        ctx.fillStyle = BC[i]; ctx.fillRect(X0 - 28, y + 2, 48, BOOK - 4);
+        ctx.fillStyle = '#fff'; ctx.fillRect(X0 - 28, y + 8, 48, 3);
+      }
+      // the ramp board
+      ctx.strokeStyle = '#000'; ctx.lineWidth = 12; ctx.beginPath(); ctx.moveTo(X0 - 6, topY()); ctx.lineTo(XB + 4, FLOOR + 2); ctx.stroke();
+      ctx.strokeStyle = '#c08a52'; ctx.lineWidth = 7; ctx.beginPath(); ctx.moveTo(X0 - 4, topY()); ctx.lineTo(XB, FLOOR); ctx.stroke();
+      if (!busy) pxText(ctx, '↕ drag', X0 - 4, topY() - 22 + Math.sin(time * 4) * 2, 13, '#ffd43b');
+      // where earlier cars stopped
+      marks.forEach((mk, k) => {
+        const last = k === marks.length - 1;
+        ctx.fillStyle = last ? '#e53935' : 'rgba(0,0,0,.35)'; ctx.fillRect(mk.x - 1, FLOOR - 40, 3, 40);
+        if (last) { ctx.fillStyle = '#e53935'; ctx.fillRect(mk.x + 2, FLOOR - 40, 16, 10); }
+        if (last) pxText(ctx, mk.cm + ' cm', mk.x, FLOOR - 52, 14, '#fff'); // only the newest run is labelled, the table has the rest
+      });
+      // the car
+      if (car.phase === 'ready' || car.phase === 'ramp') {
+        const cx = X0 + Math.cos(sl.ang) * car.s, cy = topY() + Math.sin(sl.ang) * car.s;
+        emojiAt(ctx, thing, cx + Math.sin(sl.ang) * 2, cy - 4, 34, sl.ang);
+      } else emojiAt(ctx, thing, car.x, FLOOR + 2, 34);
+      ctx.fillStyle = 'rgba(0,0,0,.6)'; ctx.fillRect(0, 0, W, 30);
+      pxText(ctx, `📚 ${height} book${height > 1 ? 's' : ''} high · ${F.name}`, W / 2, 16, 15, '#ffd43b');
+      if (car.phase === 'ready' && !busy) pxText(ctx, 'TAP THE CAR TO LET IT GO!', W / 2, 60, 15, '#ffffff');
+    }
+
+    // ----- controls under the screen -----
+    const hCount = h('span', { class: 'lab-count' });
+    const minus = h('button', { class: 'lab-chip', type: 'button', 'aria-label': 'fewer books', onclick: () => setHeight(height - 1) }, '−');
+    const plus = h('button', { class: 'lab-chip', type: 'button', 'aria-label': 'more books', onclick: () => setHeight(height + 1) }, '+');
+    const floorBtns = floors.map(k => h('button', { class: 'lab-chip', type: 'button', onclick() { if (busy || floor === k) return; floor = k; sfx.tap(); resetCar(); syncControls(); } }, `${RAMP_FLOORS[k].emoji} ${RAMP_FLOORS[k].name}`));
+    const goBtn = h('button', { class: 'btn big green', type: 'button', onclick: release }, `${thing} Let it go!`);
+    function syncControls() {
+      hCount.textContent = `📚 ${height}`;
+      floorBtns.forEach((b, k) => { b.classList.toggle('on', floors[k] === floor); b.disabled = busy; });
+      minus.disabled = plus.disabled = busy; goBtn.disabled = busy || !car || car.phase !== 'ready';
+    }
+
+    resetCar();
+    const stopLoop = gameLoop(cv, step);
+    const root = h('div', { class: 'game arcade lab ramp' },
+      missions.box,
+      h('div', { class: 'arc-screen' }, cv),
+      h('div', { class: 'lab-controls' },
+        h('span', { class: 'lab-label' }, 'Ramp:'), minus, hCount, plus,
+        h('span', { class: 'lab-label' }, 'Floor:'), ...floorBtns),
+      h('div', { class: 'btn-row' }, goBtn),
+      missions.ask, table.el);
+    root._test = {
+      frames(n) { for (let i = 0; i < n; i++) step(1 / 60); },
+      set(hh, f) { if (hh) setHeight(hh); if (f) { floor = f; resetCar(); syncControls(); } },
+      release, get car() { return car; }, get busy() { return busy; }, get mission() { return missions.i; },
+    };
+    root._stop = stopLoop;
+    missions.next();
+    return root;
+  };
+
+  // ===== Seed Garden: plant seeds, choose sun or dark, water them, then fast-forward 2 weeks =====
+  // r.missions: [{ text, pots: 1–3, goal: 'healthy' | 'lightTest' | 'waterTest' | 'dryTest', yes, fix, ask: [questions] }]
+  // Drag a seed from the packet into each pot, drag pots between the sunny window and the dark cupboard,
+  // and drag the watering can over a pot to pour. The meter shows too little, just right or too much.
+  const GROW = {
+    healthy: { h: 120, stem: '#2e9e3e', leaf: '#5bbf3a', bend: 0, look: 'green and strong' },
+    pale: { h: 150, stem: '#d8d27a', leaf: '#f0eaa0', bend: 34, look: 'pale yellow and floppy' },
+    dry: { h: 24, stem: '#8a6a3a', leaf: '#a0743a', bend: 12, look: 'brown and droopy' },
+    rot: { h: 40, stem: '#9bb04a', leaf: '#d9c94a', bend: 6, look: 'yellow leaves, mushy roots' },
+    asleep: { h: 0, look: 'nothing grew – no water' },
+  };
+  const waterCat = w => (w < 0.3 ? 'none' : w < 2 ? 'dry' : w <= 5 ? 'good' : 'soggy');
+  const WATER_WORD = { none: 'no water', dry: 'too little', good: 'just right', soggy: 'too much' };
+  GAMES.garden = function (r, key, done) {
+    const W = 640, H = 400, SHELF = 318, MIDX = 330, POT_W = 64, POT_H = 52;
+    const { cv, ctx } = arcadeCanvas(W, H);
+    const PACKET = { x: 20, y: 44, w: 92, h: 58 }, CAN_HOME = { x: 560, y: 70 };
+    const canSpr = spriteCanvas(['......kkkk....', '.....k....k...', 'k...kbbbbbbk..', 'kk.kbbbbbbbbk.', '.kkbbbbbbbbbk.', '..kbbBbbbbbbk.', '...kbbbbbbbk..', '...kbbbbbbbk..', '....kkkkkkk...'], { k: '#1b1b1b', b: '#4caf50', B: '#a5e08a' }, 4);
+    let pots = [], phase = 'setup', drag = null, can = { ...CAN_HOME, pouring: false }, drops = [], growT = 0, time = 0;
+    const table = resultsTable(r.caption || '🌱 Our growing results (after 2 weeks)', ['Pot', 'Place', 'Water', 'Height', 'How it looks']);
+    const missions = missionRunner(r, key, done, m => setup(m.pots || 1));
+    const place = p => (p.x < MIDX ? 'sun' : 'dark');
+    function setup(n) {
+      pots = Array.from({ length: n }, (_, i) => ({ id: 'ABC'[i], x: 90 + i * 85 + (n === 1 ? 70 : 0), seed: false, water: 0, res: null, plant: 0 }));
+      phase = 'setup'; growT = 0; drops = []; can = { ...CAN_HOME, pouring: false }; syncControls();
+    }
+    function outcome(p) {
+      const w = waterCat(p.water);
+      if (w === 'none') return 'asleep';
+      if (w === 'soggy') return 'rot';
+      if (w === 'dry') return 'dry';
+      return place(p) === 'sun' ? 'healthy' : 'pale';
+    }
+    const potAt = (x, y) => pots.find(p => Math.abs(x - p.x) < POT_W / 2 + 6 && y > SHELF - POT_H - 30 && y < SHELF + 6);
+
+    // ----- dragging seeds, pots and the watering can -----
+    cv.addEventListener('pointerdown', e => {
+      if (phase !== 'setup') return;
+      const [x, y] = toGame(cv, W, H, e);
+      e.preventDefault();
+      try { cv.setPointerCapture(e.pointerId); } catch (_) { /* ignore */ }
+      if (x > PACKET.x && x < PACKET.x + PACKET.w && y > PACKET.y && y < PACKET.y + PACKET.h) { drag = { kind: 'seed', x, y }; sfx.tap(); return; }
+      if (Math.abs(x - can.x) < 40 && Math.abs(y - can.y) < 30) { drag = { kind: 'can', dx: can.x - x, dy: can.y - y }; sfx.tap(); return; }
+      const p = potAt(x, y);
+      if (p) { drag = { kind: 'pot', p, dx: p.x - x }; return; }
+    });
+    cv.addEventListener('pointermove', e => {
+      if (!drag) return;
+      const [x, y] = toGame(cv, W, H, e);
+      if (drag.kind === 'seed') { drag.x = x; drag.y = y; }
+      if (drag.kind === 'can') { can.x = Math.max(30, Math.min(W - 30, x + drag.dx)); can.y = Math.max(40, Math.min(SHELF - 60, y + drag.dy)); }
+      if (drag.kind === 'pot') drag.p.x = Math.max(44, Math.min(W - 44, x + drag.dx));
+    });
+    const drop = () => {
+      if (!drag) return;
+      if (drag.kind === 'seed') {
+        const p = potAt(drag.x, drag.y + 30);
+        if (p && !p.seed) { p.seed = true; sfx.good(); say(pots.every(q => q.seed) ? 'Planted! Now choose a spot and water it.' : 'Planted! Next pot!'); }
+        else if (p) say('That pot already has a seed!');
+        else say('Drop the seed right into a pot!');
+      }
+      if (drag.kind === 'pot') sfx.tap();
+      if (drag.kind === 'can') { can.x = CAN_HOME.x; can.y = CAN_HOME.y; can.pouring = false; }
+      drag = null; syncControls();
+    };
+    cv.addEventListener('pointerup', drop); cv.addEventListener('pointercancel', drop);
+
+    function grow() {
+      if (phase !== 'setup') return;
+      if (!pots.every(p => p.seed)) { sfx.bad(); say('Plant a seed in every pot first! Drag one from the packet.'); return; }
+      pots.forEach(p => { p.res = outcome(p); });
+      phase = 'growing'; growT = 0; sfx.tap(); syncControls();
+      say('Fast-forward! Watch them grow for two weeks…');
+    }
+    function grown() {
+      phase = 'grown';
+      pots.forEach(p => table.add([`${missions.i + 1}${p.id}`, place(p) === 'sun' ? '☀️ sunny window' : '🌑 dark cupboard', WATER_WORD[waterCat(p.water)],
+        `${Math.round(GROW[p.res].h / 6)} cm`, GROW[p.res].look]));
+      const R = pots.map(p => ({ sun: place(p) === 'sun', w: waterCat(p.water), res: p.res }));
+      const m = missions.m;
+      const ok = {
+        healthy: () => R.some(q => q.res === 'healthy'),
+        lightTest: () => R.some(q => q.sun) && R.some(q => !q.sun) && R.every(q => q.w === 'good'),
+        waterTest: () => R.every(q => q.sun) && R.some(q => q.w === 'good') && R.some(q => q.w === 'soggy'),
+        dryTest: () => R.every(q => q.sun) && R.some(q => q.w === 'good') && R.some(q => q.w === 'none' || q.w === 'dry'),
+      }[m.goal] || (() => true);
+      if (ok()) missions.win(cv);
+      else {
+        sfx.bad();
+        say(m.fix || 'Interesting result! But that was not quite the mission. Read it again, then press Start again.');
+      }
+      syncControls();
+    }
+
+    function step(dt) {
+      time += dt;
+      if (drag && drag.kind === 'can') {
+        // pour when the spout (left end of the can) is over a pot
+        const sx = can.x - 30, p = pots.find(q => Math.abs(sx - q.x) < POT_W / 2);
+        can.pouring = !!p;
+        if (p) {
+          p.water = Math.min(10, p.water + 2.2 * dt);
+          if (Math.random() < 0.6) drops.push({ x: sx + (Math.random() - 0.5) * 8, y: can.y - 4, vy: 60 });
+        }
+      }
+      drops.forEach(d => { d.vy += 600 * dt; d.y += d.vy * dt; });
+      drops = drops.filter(d => d.y < SHELF - POT_H + 6);
+      if (phase === 'growing') { growT += dt / 4; if (growT >= 1) { growT = 1; grown(); } }
+      draw();
+    }
+    function drawPlant(p, prog) {
+      const g = GROW[p.res], top = SHELF - POT_H;
+      if (p.res === 'asleep') { pxText(ctx, 'z z z', p.x, top - 20 - Math.sin(time * 2) * 3, 14, '#ffffff'); return; }
+      const hh = g.h * prog;
+      for (let y = 0; y < hh; y += 4) {
+        const f = y / Math.max(1, g.h), off = g.bend * f * f;
+        ctx.fillStyle = g.stem; ctx.fillRect(p.x - 3 + off, top - y - 4, 6, 5);
+        if (y > 14 && y % 28 < 4) {
+          const side = (y / 28 | 0) % 2 ? 1 : -1;
+          ctx.fillStyle = '#000'; ctx.fillRect(p.x + off + (side > 0 ? 2 : -20), top - y - 6, 20, 10);
+          ctx.fillStyle = g.leaf; ctx.fillRect(p.x + off + (side > 0 ? 3 : -19), top - y - 5, 18, 8);
+        }
+      }
+      if (p.res === 'rot') { ctx.fillStyle = '#5a4630'; ctx.fillRect(p.x - POT_W / 2 + 8, top - 2, POT_W - 16, 6); }
+    }
+    function draw() {
+      // sunny window on the left, dark cupboard on the right
+      skyAndGround(ctx, W, H, SHELF);
+      ctx.fillStyle = '#fff3a8'; ctx.fillRect(130, 34, 150, 150);
+      ctx.fillStyle = '#ffcc33'; ctx.fillRect(170, 64, 70, 70); ctx.fillStyle = '#fff6c2'; ctx.fillRect(184, 78, 42, 42);
+      ctx.strokeStyle = '#6b4423'; ctx.lineWidth = 8; ctx.strokeRect(130, 34, 150, 150);
+      ctx.beginPath(); ctx.moveTo(205, 34); ctx.lineTo(205, 184); ctx.moveTo(130, 109); ctx.lineTo(280, 109); ctx.stroke();
+      ctx.fillStyle = 'rgba(255,230,107,.18)'; ctx.fillRect(0, 0, MIDX, SHELF);
+      ctx.fillStyle = '#1a140f'; ctx.fillRect(MIDX, 20, W - MIDX, SHELF - 20);
+      ctx.fillStyle = '#6b4423'; ctx.fillRect(MIDX - 8, 20, 8, SHELF - 20); ctx.fillRect(MIDX, 12, W - MIDX, 8);
+      ctx.fillStyle = '#8a5a32'; ctx.fillRect(W - 26, 20, 26, SHELF - 20);
+      pxText(ctx, '☀️ SUNNY WINDOW', 205, 206, 14, '#ffd43b');
+      pxText(ctx, '🌑 DARK CUPBOARD', (MIDX + W) / 2, 40, 14, '#9fa8d9');
+      // the shelf
+      ctx.fillStyle = '#000'; ctx.fillRect(0, SHELF, W, 14); ctx.fillStyle = '#c08a52'; ctx.fillRect(0, SHELF + 2, W, 10);
+      // seed packet
+      ctx.fillStyle = '#000'; ctx.fillRect(PACKET.x - 3, PACKET.y - 3, PACKET.w + 6, PACKET.h + 6);
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(PACKET.x, PACKET.y, PACKET.w, PACKET.h);
+      ctx.fillStyle = '#5bbf3a'; ctx.fillRect(PACKET.x, PACKET.y, PACKET.w, 16);
+      pxText(ctx, 'BEANS', PACKET.x + PACKET.w / 2, PACKET.y + 9, 11, '#ffffff');
+      emojiAt(ctx, '🫘', PACKET.x + PACKET.w / 2, PACKET.y + 50, 28);
+      // pots, plants and water meters
+      pots.forEach(p => {
+        const top = SHELF - POT_H;
+        if (p.res) drawPlant(p, phase === 'growing' ? growT : 1);
+        ctx.fillStyle = '#000'; ctx.beginPath(); ctx.moveTo(p.x - POT_W / 2 - 3, top - 3); ctx.lineTo(p.x + POT_W / 2 + 3, top - 3); ctx.lineTo(p.x + POT_W / 2 - 9, SHELF); ctx.lineTo(p.x - POT_W / 2 + 9, SHELF); ctx.fill();
+        ctx.fillStyle = '#d9733b'; ctx.beginPath(); ctx.moveTo(p.x - POT_W / 2, top); ctx.lineTo(p.x + POT_W / 2, top); ctx.lineTo(p.x + POT_W / 2 - 11, SHELF - 3); ctx.lineTo(p.x - POT_W / 2 + 11, SHELF - 3); ctx.fill();
+        ctx.fillStyle = '#b5552a'; ctx.fillRect(p.x - POT_W / 2, top, POT_W, 10);
+        const wc = waterCat(p.water);
+        ctx.fillStyle = wc === 'none' || wc === 'dry' ? '#8a5a32' : '#4a2f18'; ctx.fillRect(p.x - POT_W / 2 + 4, top + 1, POT_W - 8, 6);
+        if (p.seed && !p.res) { ctx.fillStyle = '#000'; ctx.fillRect(p.x - 6, top - 3, 12, 7); ctx.fillStyle = '#c98a5a'; ctx.fillRect(p.x - 5, top - 2, 10, 5); }
+        pxText(ctx, p.id, p.x, top + 28, 18, '#ffffff');
+        if (phase === 'setup') {
+          // water meter: brown = too little, green = just right, blue = too much
+          const mx = p.x + POT_W / 2 + 6, my = top - 6, mh = 54;
+          ctx.fillStyle = '#000'; ctx.fillRect(mx - 2, my - 2, 12, mh + 4);
+          ctx.fillStyle = '#c6a06a'; ctx.fillRect(mx, my + mh * 0.8, 8, mh * 0.2);
+          ctx.fillStyle = '#7cfc3a'; ctx.fillRect(mx, my + mh * 0.5, 8, mh * 0.3);
+          ctx.fillStyle = '#5aa8f0'; ctx.fillRect(mx, my, 8, mh * 0.5);
+          const lvl = my + mh - Math.min(10, p.water) / 10 * mh;
+          ctx.fillStyle = '#ffffff'; ctx.fillRect(mx - 4, lvl - 2, 16, 4);
+          pxText(ctx, WATER_WORD[wc], p.x, SHELF + 30, 11, wc === 'good' ? '#7cfc3a' : '#ffffff');
+        } else if (p.res && phase === 'grown') pxText(ctx, `${Math.round(GROW[p.res].h / 6)} cm`, p.x, SHELF + 30, 13, '#ffd43b');
+      });
+      // falling water
+      ctx.fillStyle = '#5aa8f0'; drops.forEach(d => ctx.fillRect(d.x, d.y, 3, 6));
+      // the watering can (tilts while pouring)
+      ctx.save(); ctx.translate(can.x, can.y); if (can.pouring) ctx.rotate(-0.45);
+      ctx.drawImage(canSpr, -canSpr.width / 2, -canSpr.height / 2); ctx.restore();
+      if (drag && drag.kind === 'seed') emojiAt(ctx, '🫘', drag.x, drag.y, 26);
+      if (phase === 'growing') {
+        ctx.fillStyle = 'rgba(0,0,0,.55)'; ctx.fillRect(W / 2 - 110, 120, 220, 44);
+        pxText(ctx, `⏩ DAY ${Math.min(14, 1 + Math.floor(growT * 14))}`, W / 2, 142, 22, '#ffd43b');
+      }
+    }
+
+    const growBtn = h('button', { class: 'btn big green', type: 'button', onclick: grow }, '⏩ Grow for 2 weeks!');
+    const againBtn = h('button', { class: 'btn ghost', type: 'button', onclick() { sfx.tap(); missions.ask.replaceChildren(); setup((missions.m && missions.m.pots) || 1); say('Fresh pots! Try again.'); } }, '↺ Start again');
+    function syncControls() {
+      growBtn.disabled = phase !== 'setup';
+      growBtn.classList.toggle('ready', phase === 'setup' && pots.length > 0 && pots.every(p => p.seed && p.water > 0.3));
+      againBtn.hidden = phase === 'growing';
+    }
+    const stopLoop = gameLoop(cv, step);
+    const root = h('div', { class: 'game arcade lab garden' },
+      missions.box,
+      h('div', { class: 'arc-screen' }, cv),
+      h('p', { class: 'arc-tip' }, '🫘 Drag a seed into each pot · 🪴 drag pots to the sun or the dark · 🚿 drag the green can over a pot to water it'),
+      h('div', { class: 'btn-row' }, againBtn, growBtn),
+      missions.ask, table.el);
+    root._test = {
+      frames(n) { for (let i = 0; i < n; i++) step(1 / 60); },
+      plant(i) { pots[i].seed = true; syncControls(); }, move(i, x) { pots[i].x = x; }, water(i, w) { pots[i].water = w; syncControls(); },
+      grow, get pots() { return pots; }, get phase() { return phase; }, get mission() { return missions.i; },
+    };
+    root._stop = stopLoop;
+    missions.next();
     return root;
   };
 

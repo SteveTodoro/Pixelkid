@@ -195,7 +195,7 @@ window.LESSON = {
     },
 
     {
-      type: 'game', title: 'Growing Lab', short: 'Game 1', minutes: 9,
+      type: 'game', title: 'Growing Lab', short: 'Game 1', minutes: 13,
       rounds: [
         {
           game: 'sort', title: 'Plant, person or both?',
@@ -216,6 +216,31 @@ window.LESSON = {
             { label: 'water', emoji: '💧', bucket: 'both', hint: 'Every living thing needs water!' },
             { label: 'space to grow', emoji: '↔️', bucket: 'both', hint: 'Plants and children both grow bigger and need room.' },
             { label: 'warmth – not freezing cold', emoji: '🌡️', bucket: 'both', hint: 'Do plants like freezing weather? Do you?' },
+          ],
+        },
+        {
+          game: 'garden', title: 'Seed Garden',
+          intro: 'No seeds at home? Grow some here! Drag a bean seed into each pot, choose where it lives, and water it with the green watering can. Then fast-forward two weeks!',
+          say: 'Drag a bean from the packet into the pot!',
+          missions: [
+            { text: 'Grow **one healthy bean plant**. Plant the seed, keep it in the sun and water it **just right** (the green part of the meter).', pots: 1, goal: 'healthy', yes: 'A healthy bean! Light plus just the right water = a happy plant.', fix: 'Not quite healthy! Did it get sunshine AND just-right water (the green part of the meter)? Press Start again.' },
+            {
+              text: 'Fair test: **do beans need light?** Plant two pots. Drag pot B into the **dark cupboard**. Give BOTH pots **just-right** water.', pots: 2, goal: 'lightTest',
+              yes: 'Look at your two beans! Only the light was different.',
+              fix: 'For a fair test, put one pot in the sun and one in the cupboard – and give BOTH just-right water. Press Start again.',
+              ask: [
+                { type: 'mcq', q: 'What happened to the bean in the dark cupboard?', options: ['It grew tall, but pale and floppy', 'It grew green and strong', 'It grew flowers'], answer: 0 },
+                { type: 'mcq', q: 'Why was this a fair test?', options: ['Only the light was different', 'Both pots were in the dark', 'We gave them different water'], answer: 0 },
+              ],
+            },
+            {
+              text: 'What does **too much water** do? Keep both pots in the **sun**. Water pot A **just right**, and give pot B **far too much** (the blue part).', pots: 2, goal: 'waterTest',
+              yes: 'See the difference? Pot B was drowning!',
+              fix: 'Keep both pots in the sun. Fill A to the green part and B right up into the blue part. Press Start again.',
+              ask: [
+                { type: 'mcq', q: 'What happened to the bean with too much water?', options: ['Its roots went mushy and its leaves turned yellow', 'It grew the tallest', 'Nothing – more water is always better'], answer: 0 },
+              ],
+            },
           ],
         },
         {
