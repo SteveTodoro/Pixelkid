@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Clock Quest: To the Minute</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <script src="../shared/pixel.js"></script>
+  <script src="../shared/avatar.js"></script>
+  <script src="../shared/clock.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// ---------- clock pictures for this lesson ----------
+const C = (t, o) => Clock.svg(t, o);                                   // a plain clock
+const H = t => Clock.svg(t, { halves: true, ring: 'pastto' });         // with the PAST / TO helper
+const R = t => Clock.svg(t, { roman: true });                          // Roman numerals
+
+// the boss: the Time Bandit, who steals minutes from everyone's day
+const BANDIT = Pixel.svg([
+  '..kkkkkkkk..',
+  '..kkkkkkkk..',
+  'kkkkkkkkkkkk',
+  '.kssssssssk.',
+  '.kkkkkkkkkk.',
+  '.kkwkkkkwkk.',
+  '.kssssssssk.',
+  '.ksskkkkssk.',
+  '..kssssssk..',
+  '.kttttttkyyy',
+  'kttTTTTttkyy',
+  'kTTTTTTTTkyy',
+  '.kttttttk.y.',
+  '..kk..kk....',
+], { k: '#1b1b1b', s: '#f2c9a0', w: '#ffffff', t: '#37474f', T: '#eceff1', y: '#ffd43b' });
+
+// ---------- the lesson ----------
+window.LESSON = {
+  id: 'maths-clock-quest',
+  subject: 'maths',
+  title: 'Clock Quest: To the Minute',
+  emoji: '🕰️',
+  home: '../index.html',
+  finishAch: 'miner',
+  mascot: {
+    name: 'Tock the Clock-Bot',
+    sprite: Pixel.sprites.tock,
+    praise: ['Tick-tock, TOP clock!', 'Right on the minute!', 'Clock-tastic!', 'Critical hit!', 'You nailed it!', 'Brilliant!', 'Time lord!'],
+    oops: ['Oops! Have another go.', 'Not quite – short hand first!', 'Hmm, think again!', 'So close! One more try.'],
+  },
+  glossary: {
+    second: { emoji: '⏱️', def: 'A tiny bit of time – about as long as it takes to say "one elephant". 60 seconds make 1 minute.' },
+    'a.m.': { emoji: '🌅', def: 'Times from midnight until midday – the night and the morning.' },
+    'p.m.': { emoji: '🌇', def: 'Times from midday until midnight – the afternoon and the evening.' },
+    midday: { emoji: '☀️', def: '12 o\'clock in the middle of the day. Also called noon.' },
+    midnight: { emoji: '🌙', def: '12 o\'clock in the middle of the night, when a new day begins.' },
+    'roman numerals': { emoji: '🏛️', def: 'The way the Romans wrote numbers, with letters: I = 1, V = 5, X = 10.' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'Clock Quest', short: 'Start', minutes: 1,
+      pic: C('6:52'),
+      hello: "Welcome back to the MATHS MINE! Last time you mastered past and to. Today we read clocks to the EXACT minute!",
+      question: 'The long hand is pointing between two numbers. How can you tell exactly what time it is?',
+      intro: 'Recap, read, watch, type the times, run through a level, crack Roman numeral clocks – then catch the **Time Bandit**!',
+      nameLabel: 'Player name:',
+    },
+
+    {
+      type: 'review', title: 'Last time…', short: 'Recap', minutes: 3,
+      from: { title: 'Tick Tock Time', emoji: '⏰', url: 'time.html' },
+      facts: [
+        'Long hand on the right side: PAST. Long hand on the left side: TO.',
+        'Quarter past: long hand on the 3. Quarter to: long hand on the 9 – and say the hour that is COMING.',
+        'Every number is worth 5 minutes: count 5, 10, 15, 20, 25…',
+        'Digital clocks count on: 4:50 is 50 minutes past 4, which is 10 to 5.',
+      ],
+      questions: [
+        { type: 'mcq', q: 'What time does this clock show?', pic: C('9:45'), options: ['quarter to 10', 'quarter to 9', 'quarter past 9'], answer: 0, hint: 'Where is the short hand heading?' },
+        { type: 'mcq', q: 'What time does this clock show?', pic: C('1:40'), options: ['20 to 2', '20 past 1', '40 to 1'], answer: 0, hint: 'Left side means TO. Count back from the 12: 5, 10, 15, 20.' },
+        { type: 'mcq', q: 'A digital clock shows 6:55. In clock words, that is…', options: ['5 to 7', '5 past 6', '5 to 6'], answer: 0 },
+        { type: 'tf', q: 'At 10 past 3, the long hand points at the 10.', answer: false, explain: '10 minutes is two jumps of 5, so the long hand points at the 2.' },
+      ],
+    },
+
+    {
+      type: 'read', title: 'To the exact minute', short: 'Read 1', minutes: 6,
+      say: 'Read each page carefully – the checks use NEW clocks. Tap the yellow words for a 💎.',
+      cards: [
+        {
+          title: '60 tiny steps', pic: C('3:00'),
+          text: [
+            'Look at the little marks round the edge. There are 60 of them – one for every minute in an hour.',
+            'Each minute is made of 60 even tinier bits of time, called [[second|second]]s.',
+          ],
+          check: { q: 'The long hand moves from one little mark to the very next one. How much time has passed?', options: ['1 minute', '1 hour', '5 minutes'], answer: 0 },
+        },
+        {
+          title: 'Short hand first!', pic: C('4:56'),
+          text: [
+            'Always read the short hand first. Here it is between the 4 and the 5. That means it is still 4-something – even though it is nearly at the 5!',
+            'It only becomes 5-something when the long hand reaches the 12 again.',
+          ],
+          check: { q: 'The short hand is between the 8 and the 9, very close to the 9. The time is…', options: ['8-something', '9-something', "exactly 9 o'clock"], answer: 0, hint: 'Has the short hand actually reached the 9 yet?' },
+        },
+        {
+          title: 'Count 5s, then 1s', pic: C('2:38'),
+          text: [
+            'For the long hand, count in 5s up to the last number it has passed. Then count on the little marks in 1s.',
+            'Here: 5, 10, 15, 20, 25, 30, 35… then 36, 37, 38. The time is 2:38.',
+          ],
+          check: { q: 'The long hand is 2 little marks after the 4. How many minutes past the hour is it?', options: ['22', '42', '6'], answer: 0, hint: 'Count in 5s to the 4 first: 5, 10, 15, 20. Then 2 more.' },
+        },
+        {
+          title: 'Minutes to, to the minute', pic: H('7:52'),
+          text: [
+            'A digital clock shows this time as 7:52 – 52 minutes past 7.',
+            'From the long hand, count on to the 12: 53, 54… 60. That is 8 more minutes. So it is also 8 minutes to 8!',
+          ],
+          check: { q: 'A clock says 3:56. How many minutes to 4 o\'clock?', options: ['4', '6', '56'], answer: 0, hint: 'Count on from 56 to 60.' },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'Time to the Minute', short: 'Video 1', minutes: 9,
+      video: { id: 'Bqo6-DMzdB8', title: 'Telling the Time for Kids: To the Minute', channel: 'Learn and Play Online!', duration: '8:05' },
+      say: 'Watch how to read a clock to the minute. Grab a pencil and try each clock before the video does!',
+      clues: [
+        'Why are there 60 lines on the clock?',
+        'How many little lines are between each number?',
+        'Which hand should you look at first?',
+        'How does the video read 6:52?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'Why are there 60 little lines on the clock face?', options: ['because there are 60 minutes in an hour', 'because there are 60 hours in a day', 'to make it look pretty'], answer: 0 },
+        { type: 'mcq', q: 'How many little lines are there between each number?', options: ['4', '5', '10'], answer: 0, explain: '4 little lines in between, plus the line at the number, makes jumps of 5.' },
+        { type: 'mcq', q: 'The video says you should always look at which hand first?', options: ['the hour hand', 'the minute hand', 'the second hand'], answer: 0 },
+        { type: 'mcq', q: 'The hour hand is past the 10. The minute hand points at the line at the 7. What time is it?', options: ['10:35', '10:07', '7:10'], answer: 0, hint: 'Count in 5s up to the 7.' },
+        { type: 'mcq', q: 'How did the video find 6:52?', options: ['count in 5s up to 50, then 51, 52', 'count in 1s all the way from the 12', 'look at the hour hand only'], answer: 0 },
+        { type: 'tf', q: 'When the minute hand reaches the 12, the minutes start again from 0, because a new hour has begun.', answer: true },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Minute Mission', short: 'Game 1', minutes: 8,
+      rounds: [
+        {
+          game: 'clock', mode: 'read', title: 'Read the clock',
+          intro: 'What time does each clock show? Tap the HOUR first (the short hand), then type the MINUTES (the long red hand).',
+          say: 'Short hand first! Then count 5s and 1s.',
+          times: ['1:20', '4:07', '6:52', '9:38', '11:14', '2:46'],
+        },
+        {
+          game: 'clock', mode: 'set', title: 'Set it to the minute', show: 'digital', step: 1, helper: 'off', start: '12:00',
+          intro: 'Now set each clock to the digital time. Drag the red hand – or use the + and − buttons for single minutes.',
+          say: 'Get close by dragging, then use the buttons to get it exactly right!',
+          times: ['3:08', '7:23', '10:51', '5:36'],
+        },
+        {
+          game: 'platformer', title: 'TO-Time Runner',
+          intro: 'Run and jump! Collect only the times that are **TO times** (more than 30 minutes past) – dodge the PAST times.',
+          say: '◀ ▶ to run, ⬆ to jump. Collect the TO times!',
+          prompt: 'Collect the TO times!',
+          items: [
+            { label: '5:40', ok: true },
+            { label: '9:50', ok: true },
+            { label: '2:35', ok: true },
+            { label: '11:55', ok: true },
+            { label: '1:45', ok: true },
+            { label: '4:10', ok: false, why: '4:10 is on the PAST side – 10 past 4.' },
+            { label: '7:25', ok: false, why: '7:25 is on the PAST side – 25 past 7.' },
+            { label: '12:15', ok: false, why: '12:15 is quarter PAST 12.' },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'read', title: 'Clock secrets', short: 'Read 2', minutes: 6,
+      say: 'Morning or afternoon? And what are those funny letters on old clocks? Read on!',
+      cards: [
+        {
+          title: 'Morning or afternoon?', pic: '🌅 ☀️ 🌙',
+          text: [
+            'The short hand goes all the way round the clock twice every day. So 7 o\'clock happens twice: once in the morning and once in the evening!',
+            'We write [[a.m.]] for times from midnight to midday, and [[p.m.]] for times from midday to midnight.',
+          ],
+          check: { q: 'You eat your breakfast at 7:30. How do we write that?', options: ['7:30 a.m.', '7:30 p.m.', '7:30 midnight'], answer: 0 },
+        },
+        {
+          title: 'Midnight and midday', pic: C('12:00'),
+          text: [
+            'At 12 o\'clock in the middle of the day it is [[midday]], also called noon.',
+            'At 12 o\'clock in the middle of the night it is [[midnight]]. That is when a brand new day begins!',
+          ],
+          check: { q: 'You are fast asleep in bed and the clock shows 3 o\'clock. What time is it?', options: ['3 a.m.', '3 p.m.', 'midday'], answer: 0, hint: 'Is it before or after midday?' },
+        },
+        {
+          title: 'Roman numeral clocks', pic: R('10:10'),
+          text: [
+            'Some clocks use [[roman numerals]]. I is 1, V is 5 and X is 10.',
+            'A small one AFTER a big one means add: VI is 6, XI is 11. A small one BEFORE a big one means take away: IV is 4, IX is 9.',
+          ],
+          check: { q: 'Which Roman numeral is at the bottom of the clock, where the 6 goes?', options: ['VI', 'IV', 'XI'], answer: 0, hint: '6 is 5 add 1. Where does the I go to add?' },
+        },
+        {
+          title: 'Time facts', pic: '⏱️ 60 · 60 · 24',
+          text: [
+            '60 seconds make 1 minute. 60 minutes make 1 hour. 24 hours make 1 day.',
+            'A clap takes about 1 second. Brushing your teeth takes about 2 minutes. A film takes about 2 hours.',
+          ],
+          check: { q: 'Which of these would take about 1 MINUTE?', options: ['singing "Happy Birthday" three times', 'blinking your eyes once', 'a whole school day'], answer: 0 },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'Clock Island: a.m. and p.m.', short: 'Video 2', minutes: 3,
+      video: { id: 'p1Kl2K_XSoY', title: 'Clock Island: AM PM', channel: 'Nessy', duration: '2:08' },
+      say: 'Join Mr Hour and Mrs Minute on their walk round Clock Island. It is short – watch closely!',
+      clues: [
+        'When do Mr Hour and Mrs Minute start walking?',
+        'How many times does Mr Hour walk round the island in a day?',
+        'What trick helps you remember a.m.?',
+        'What trick helps you remember p.m.?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'Mr Hour and Mrs Minute start walking at 12 o\'clock in the middle of the night. What is that time called?', options: ['midnight', 'midday', 'morning'], answer: 0 },
+        { type: 'mcq', q: 'When Mr Hour has walked all the way round, back to the 12, it is…', options: ['midday – the middle of the day', 'midnight again', 'bedtime'], answer: 0 },
+        { type: 'mcq', q: 'How many times does Mr Hour walk round Clock Island in one day?', options: ['twice', 'once', '12 times'], answer: 0 },
+        { type: 'mcq', q: 'The video\'s trick to remember a.m. is to think it stands for…', options: ['"all morning"', '"after midday"', '"a minute"'], answer: 0 },
+        { type: 'mcq', q: 'The trick to remember p.m. is…', options: ['"past midday"', '"pretty morning"', '"place minute"'], answer: 0 },
+        { type: 'tf', q: 'a.m. and p.m. really come from Latin words – the language of the Romans.', answer: true },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Time Detective', short: 'Game 2', minutes: 8,
+      rounds: [
+        {
+          game: 'match', title: 'Roman code-breaker',
+          intro: 'Crack the Roman code! Match each Roman numeral to its number.',
+          say: 'I is 1, V is 5, X is 10. Before means take away!',
+          pairs: [
+            { a: 'IV', b: '4' }, { a: 'VI', b: '6' }, { a: 'IX', b: '9' },
+            { a: 'XI', b: '11' }, { a: 'VII', b: '7' }, { a: 'XII', b: '12' },
+          ],
+        },
+        {
+          game: 'clock', mode: 'set', title: 'Roman clocks', roman: true, show: 'digital', helper: 'off', start: '12:00',
+          intro: 'This clock uses Roman numerals! Set it to each digital time.',
+          say: 'Same clock, different numbers. You can do it!',
+          times: ['4:45', '9:20', '11:05', '7:30'],
+        },
+        {
+          game: 'sort', title: 'a.m. or p.m.?',
+          intro: 'Is each one a.m. (midnight to midday) or p.m. (midday to midnight)? Sort them!',
+          say: 'Before midday is a.m. After midday is p.m.',
+          buckets: [
+            { id: 'am', label: 'a.m.', emoji: '🌅' },
+            { id: 'pm', label: 'p.m.', emoji: '🌇' },
+          ],
+          items: [
+            { label: 'eating breakfast', emoji: '🥣', bucket: 'am' },
+            { label: 'school starts', emoji: '🏫', bucket: 'am' },
+            { label: 'fast asleep at 2 o\'clock', emoji: '😴', bucket: 'am', hint: '2 o\'clock in the middle of the night is after midnight, so it is a.m.' },
+            { label: 'the sun comes up', emoji: '🌄', bucket: 'am' },
+            { label: 'after-school football', emoji: '⚽', bucket: 'pm' },
+            { label: 'eating dinner', emoji: '🍝', bucket: 'pm' },
+            { label: 'going to bed', emoji: '🛏️', bucket: 'pm' },
+            { label: 'home time from school', emoji: '🎒', bucket: 'pm' },
+          ],
+        },
+        {
+          game: 'wordsearch', title: 'Time word hunt', size: 10,
+          intro: 'Find the hidden time words!',
+          say: 'Drag across each word you spot.',
+          words: ['MINUTE', 'SECOND', 'HOUR', 'MIDNIGHT', 'MIDDAY', 'ROMAN', 'MORNING', 'NOON'],
+        },
+      ],
+    },
+
+    {
+      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
+      say: 'Time to move – tick-tock style!',
+      wiggle: {
+        title: '⏱️ Minute Moves!',
+        seconds: 60,
+        moves: [
+          '⭐ How many star jumps can you do in 10 seconds? Count them!',
+          '🐢 Walk on the spot in super slow motion, like the hour hand.',
+          '🐇 Now run on the spot super fast, like the second hand!',
+          '🌙 Midnight! Curl up small and pretend to snore.',
+          '☀️ Midday! Jump up and stretch as tall as the sun.',
+          '🏛️ Make Roman numerals with your arms: a V… then an X!',
+        ],
+      },
+      tryit: {
+        title: '🏠 Try it at home: The One-Minute Challenge',
+        intro: 'With a grown-up and a timer (or a clock with a second hand), find out what YOU can do in exactly 1 minute.',
+        steps: [
+          'Before each challenge, guess how many you can do. Tap the first box when you have guessed.',
+          'Ask a grown-up to time 1 minute while you try it.',
+          'Tap the second box if you beat your guess!',
+        ],
+        table: {
+          cols: ['I guessed', 'I beat my guess'],
+          items: ['✍️ write my name', '👏 clap my hands', '🦘 hop on one foot', '🔢 count out loud'],
+        },
+        tip: 'Tap once for ✅ and twice for ❌. 1 minute = 60 seconds – that is a LOT of claps!',
+      },
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: The Time Bandit', short: 'Boss', kind: 'Boss battle', minutes: 7,
+      say: 'Oh no! The TIME BANDIT is stealing minutes from everyone\'s day – nobody will get to school on time! Every right answer is a hit. Catch him, {name}!',
+      boss: {
+        name: 'The Time Bandit', sprite: BANDIT, attack: '⏳',
+        lines: {
+          intro: 'Heh heh! I\'m the TIME BANDIT! I steal minutes – and yours are NEXT!',
+          hurt: ['Oof! Caught a minute!', 'Hey! Give that back!', 'Argh! Right on time!', 'My sack of seconds!'],
+          taunt: ['Heh heh! Wrong minute!', 'Stole that one!', 'Tick-tock, too slow!', 'Your time is MINE!'],
+          angry: 'Grr! Now I\'m stealing HOURS!',
+          dodge: 'Sand-timer storm… GO!',
+          miss: 'What?! You dodged every single second!',
+          last: 'No… I\'m running out of time…',
+          defeat: 'NOOO! Caught red-handed… and minute-handed!',
+          win: 'Heh heh! I got away with your minutes! Come back when you can read the clock!',
+        },
+      },
+      bonus: {
+        title: '⭐ Bonus quest (for a grown-up to help with)',
+        text: 'Want more practice? Watch "Telling Time (\'Past\' and \'To\')" (3 min) – pause on each clock and say the time before the video does.',
+        url: 'https://www.youtube.com/watch?v=f1AavpvRLvo',
+        button: 'Watch the bonus video ▶',
+      },
+      questions: [
+        { type: 'mcq', q: 'What time does this clock show?', pic: C('3:27'), options: ['3:27', '4:27', '5:15'], answer: 0, hint: 'Short hand first – which number has it just passed? Then count 5s and 1s.' },
+        { type: 'mcq', q: 'What time does this clock show?', pic: C('8:53'), options: ['8:53', '9:53', '8:47'], answer: 0, hint: 'The short hand has NOT reached the 9 yet.' },
+        { type: 'mcq', q: 'Which clock shows 6:12?', optionsHtml: true, options: [C('6:12'), C('6:02'), C('7:12')], answer: 0, hint: '12 minutes: count 5, 10 up to the 2, then 2 more marks.' },
+        { type: 'gap', q: 'There are ___ seconds in a minute.', options: ['60', '100', '12'], answer: 0 },
+        { type: 'mcq', q: 'You go to bed at half past 7 in the evening. How do we write that?', options: ['7:30 p.m.', '7:30 a.m.', '7:30 midday'], answer: 0 },
+        { type: 'mcq', q: 'This clock uses Roman numerals. What time is it?', pic: R('9:15'), options: ['quarter past 9', 'quarter past 3', 'quarter to 9'], answer: 0, hint: 'The long hand is on III (3). The short hand is just past IX (9).' },
+        { type: 'mcq', q: 'Which Roman numeral means 9?', options: ['IX', 'XI', 'VIIII'], answer: 0, hint: 'Take 1 away from 10: put the I BEFORE the X.' },
+        { type: 'tf', q: '12 o\'clock in the middle of the night is called midday.', answer: false, explain: 'That is midnight! Midday is 12 o\'clock in the middle of the day.' },
+        { type: 'mcq', q: 'The clock shows 10:57. How many minutes until 11 o\'clock?', options: ['3', '7', '57'], answer: 0, hint: 'Count on from 57 to 60.' },
+        { type: 'mcq', q: 'Which is the LONGEST time?', options: ['1 hour', '59 minutes', '100 seconds'], answer: 0, hint: '1 hour is 60 minutes. 100 seconds is less than 2 minutes!' },
+        { type: 'order', q: 'Put these in order, from the start of the day.', items: ['🌙 midnight', '🥣 7:30 a.m.', '☀️ midday', '🍕 5:00 p.m.'], hint: 'A new day starts at midnight.' },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>

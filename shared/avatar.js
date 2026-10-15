@@ -108,6 +108,7 @@
     { id: 'crown', cat: 'hat', name: 'Crown', price: 60, rows: ['..y..yy..y..', '..yryyyyry..'], pal: { y: '#ffd43b', r: '#e53935' } },
     { id: 'knight', cat: 'hat', name: 'Knight helmet', price: 0, unlock: 'boss', rows: ['.....rr.....', '..mmmmmmmm..', '.mmmmmmmmmm.', '.mmmmmmmmmm.', '.mmmmmmmmmm.', '.mkkkkkkkkm.', '.mmmmmmmmmm.', '.mmm.mm.mmm.', '..mmmmmmmm..'], pal: { m: '#b8c2cc', k: '#1b1b1b', r: '#e53935' } },
     { id: 'beret', cat: 'hat', name: 'Artist beret', price: 0, unlock: 'artist', rows: ['......c.....', '...cccccc...', '.cccccccccc.'], pal: { c: '#e53935' } },
+    { id: 'miner-helmet', cat: 'hat', name: 'Miner helmet', price: 0, unlock: 'miner', rows: ['.....yy.....', '....yLLy....', '..cccccccc..', '.cccccccccc.', 'CCCCCCCCCCCC'], pal: { c: '#ffb800', C: '#c98a00', y: '#1b1b1b', L: '#fff59d' } },
     { id: 'explorer-hat', cat: 'hat', name: 'Explorer hat', price: 0, unlock: 'wonder', rows: ['...cccccc...', '..cccccccc..', '..CCCCCCCC..', 'cccccccccccc'], pal: { c: '#d8b77a', C: '#7a5230' } },
     // hideHair: covers the whole head, so the hair layer is skipped
     { id: 'ninja-mask', cat: 'hat', name: 'Ninja mask', price: 80, special: true, hideHair: true, y: 1, rows: ['...kkkkkk...', '..kkkkkkkk..', '..RRRRRRRRRR', '..kkkkkkkk.R', '..k......k..', '..kkkkkkkk..', '..kkkkkkkk..', '...kkkkkk...'], pal: { k: '#22252b', R: '#e53935' } },
@@ -122,6 +123,7 @@
     { id: 'cape-red', cat: 'extra', name: 'Hero cape', price: 50, behind: true, y: 9, rows: ['.cccccccccc.', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', '.cccccccccc.'], pal: { c: '#d9433b' } },
     { id: 'cape-gold', cat: 'extra', name: 'Champion cape', price: 0, unlock: 'perfect', behind: true, y: 9, rows: ['.cccccccccc.', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', '.cccccccccc.'], pal: { c: '#ffb800' } },
     { id: 'wings', cat: 'extra', name: 'Wings', price: 80, behind: true, y: 8, rows: ['w..........w', 'ww........ww', 'wWw......wWw', 'wWw......wWw', 'ww........ww', 'w..........w'], pal: { w: '#ffffff', W: '#bfefff' } },
+    { id: 'pocket-watch', cat: 'extra', name: 'Pocket watch', price: 40, y: 9, rows: ['...y........', '....y.......', '.....y..yyy.', '......yykwy.', '........yyy.'], pal: { y: '#ffd43b', w: '#ffffff', k: '#1b1b1b' } },
     { id: 'golden-quill', cat: 'extra', name: 'Golden quill', price: 0, unlock: 'speller', y: 6, rows: ['...........y', '..........yy', '..........yy', '.........yy.', '.........k..', '........k...'], pal: { y: '#ffd43b', k: '#1b1b1b' } },
     { id: 'designer-scarf', cat: 'extra', name: 'Designer scarf', price: 0, unlock: 'designer', y: 8, rows: ['..cccccccc..', '..cCcCcCcc..', '.......cc...', '.......Cc...'], pal: { c: '#8e5cff', C: '#ffd43b' } },
     { id: 'papyrus-scarf', cat: 'extra', name: 'Papyrus scarf', price: 70, special: true, y: 8, rows: ['..cccccccc..', '..cccccccc..', '.......cc...', '.......cc...', '........cc..'], pal: { c: '#e53935' } },
@@ -135,6 +137,7 @@
     { id: 'pet-dragon', cat: 'pet', name: 'Baby dragon', price: 100, rows: ['.p.gg.p.', '.pggggp.', 'pgkggkgp', '.gggggg.', '.gyyyyg.', '..gyyg..', '.gg..gg.', '.g....g.'], pal: { g: '#2e9e3e', p: '#8e5cff', k: '#1b1b1b', y: '#ffd43b' } },
     { id: 'pet-annoying-dog', cat: 'pet', name: 'Annoying Dog', price: 100, special: true, rows: ['ww....ww', 'wwwwwwww', '.wkwwkw.', '.wwwwww.', '.wwkkww.', '..wwww..', '.wwwwww.', '.w.ww.w.'], pal: { w: '#ffffff', k: '#1b1b1b' } },
     { id: 'pet-jellyfish', cat: 'pet', name: 'Immortal jelly', price: 100, special: true, rows: ['..kkkk..', '.kPPPPk.', 'kPPrrPPk', 'kPrrrrPk', 'kPkPPkPk', 'kkkkkkkk', '.t.tt.t.', 't.t..t.t'], pal: { k: '#5b2a6e', P: '#ffd1ec', r: '#e53935', t: '#f7a8d8' } },
+    { id: 'pet-clockcroc', cat: 'pet', name: 'Tick-Tock Croc', price: 100, special: true, rows: ['.kk.kk..', 'kggggggk', 'kgwkgggk', 'kggggggg', 'kgwwwwgk', 'kggywygk', '.kgkkgk.', 'kgk..kgk'], pal: { k: '#1b4d1b', g: '#4caf50', w: '#ffffff', y: '#ffd43b' } },
     { id: 'pet-tardigrade', cat: 'pet', name: 'Water bear', price: 100, special: true, rows: ['.kkkkkk.', 'kppppppk', 'kpkppkpk', 'kppooppk', 'kpPppPpk', 'kppppppk', '.kkkkkk.', 'k.k..k.k'], pal: { k: '#4a3426', p: '#e9cfa6', P: '#c9a477', o: '#e57373' } },
   ];
   // ---------- background scenes (change the sky, decorations and ground everywhere) ----------
@@ -210,6 +213,7 @@
     designer: 'Finish Design a Poster to unlock',
     wonder: 'Finish any Wonders of the World lesson to unlock',
     speller: 'Finish any Word Kingdom lesson to unlock',
+    miner: 'Finish any Maths Mine lesson to unlock',
     perfect: 'Get a perfect boss score to unlock',
     video: 'Finish any video quest to unlock',
   };

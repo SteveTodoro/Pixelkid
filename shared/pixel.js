@@ -104,6 +104,28 @@
       '..kkk..kkk..',
     ], { k: K, g: '#6bbf3a', y: '#ffd43b', w: '#ffffff', b: '#8a5a32' }),
 
+    // Tock the Clock-Bot (Maths Mine mascot for time lessons)
+    tock: svg([
+      '....kkkkk....',
+      '..kkwwrwwkk..',
+      '.kwbwwrwwbwk.',
+      '.kwbwwrwwbwk.',
+      'kwwwwwrwwwwwk',
+      'kwwwwwykkkwwk',
+      'kwwwwwwwwwwwk',
+      '.kwwkwwwkwwk.',
+      '.kwwwkkkwwwk.',
+      '..kkwwwwwkk..',
+      '....kkkkk....',
+      '.....kgk.....',
+      '..kkkgggkkk..',
+      '.kgggggggggk.',
+      'kgkggggyggkgk',
+      'k.kgggggggk.k',
+      '..kgk...kgk..',
+      '..kkk...kkk..',
+    ], { k: K, w: '#ffffff', r: '#d9433b', y: '#ffd43b', b: '#1e88e5', g: '#e09a00' }),
+
   };
 
   window.Pixel = { svg, sprites };

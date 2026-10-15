@@ -5,6 +5,7 @@
  * Game types: sort, match, label, order, truefalse, questions, wordsearch, crossword, trainai, pixelcopy, pixelstudio, poster,
  *   spelltest (spelling test: listen / look-cover-write-check / fix the mistake),
  *   and arcade games: invaders, platformer, blocks.
+ *   clock (needs shared/clock.js): set the clock by dragging the hands, or read a clock and type the time.
  * Questions can set optionsHtml: true to show pictures (HTML) as the answer buttons.
  * Question types (quiz, video, questions game): mcq, tf, gap, order.
  */
@@ -195,6 +196,7 @@
     designer: { icon: '🖼️', name: 'Graphic Designer' },
     wonder: { icon: '🌍', name: 'Wonder Hunter' },
     speller: { icon: '🪄', name: 'Spell Master' },
+    miner: { icon: '⛏️', name: 'Maths Miner' },
   }, L.achievements);
   function achieve(id) {
     const a = ACH[id];
@@ -727,7 +729,7 @@
       let sel = null, matched = 0;
       const colors = ['#ffe66b', '#b9f29a', '#a8dcff', '#ffc2e2', '#d6c4ff', '#ffcf99', '#9ff2e6'];
       const mk = (idx, side) => {
-        const b = h('button', { class: 'match-item', type: 'button', html: fmt(r.pairs[idx][side], false) });
+        const b = h('button', { class: 'match-item', type: 'button', html: r.html ? r.pairs[idx][side] : fmt(r.pairs[idx][side], false) });
         b._idx = idx; b._side = side;
         b.addEventListener('click', () => choose(b));
         return b;
@@ -1783,8 +1785,10 @@
     requestAnimationFrame(f);
     return () => { stopped = true; };
   }
+  // Numbers use the reading font: in the pixel font a 5 looks like an S and a 2 like an 8.
+  const canvasFont = (text, size) => (/\d/.test(text) ? `700 ${size}px Lexend, "Trebuchet MS", sans-serif` : `700 ${size}px "Pixelify Sans", monospace`);
   function pxText(ctx, text, x, y, size, color = '#fff', align = 'center') {
-    ctx.font = `700 ${size}px "Pixelify Sans", monospace`;
+    ctx.font = canvasFont(String(text), size);
     ctx.textAlign = align; ctx.textBaseline = 'middle';
     ctx.lineJoin = 'round'; ctx.lineWidth = Math.max(3, size / 4); ctx.strokeStyle = '#000';
     ctx.strokeText(text, x, y); ctx.fillStyle = color; ctx.fillText(text, x, y);
@@ -1933,7 +1937,7 @@
         ctx.globalAlpha = a.flash ? 0.6 : 1;
         ctx.drawImage(spr, x - spr.width / 2, y - spr.height / 2 - 10);
         ctx.globalAlpha = 1;
-        ctx.font = '700 15px "Pixelify Sans", monospace';
+        ctx.font = canvasFont(a.it.label, 15);
         const tw = ctx.measureText(a.it.label).width + 14;
         ctx.fillStyle = a.flash ? 'rgba(229,57,53,.9)' : 'rgba(0,0,0,.7)';
         ctx.fillRect(x - tw / 2, y + 22, tw, 24);
@@ -2094,7 +2098,7 @@
       placed.forEach(pl => {
         if (pl.done) return;
         const bob = Math.sin(time * 3 + pl.x) * 4, x = pl.x - cam, y = pl.y + bob;
-        ctx.font = '700 14px "Pixelify Sans", monospace';
+        ctx.font = canvasFont(pl.it.label, 14);
         const tw = Math.max(40, ctx.measureText(pl.it.label).width + 16);
         ctx.fillStyle = '#ffffff'; ctx.fillRect(x - tw / 2, y - 14, tw, 28);
         ctx.strokeStyle = '#000'; ctx.lineWidth = 3; ctx.strokeRect(x - tw / 2, y - 14, tw, 28);
@@ -2263,6 +2267,167 @@
         h('button', { class: 'btn ghost', type: 'button', onclick: reset }, '↺ Reset'),
         h('button', { class: 'btn big green', type: 'button', onclick: go }, '▶ GO, ROBOT!')));
     root._test = { tap: tapCell, go, select(id) { selId = id; drawInv(); }, get finished() { return finished; } };
+    return root;
+  };
+
+  // ---------- clock games (need shared/clock.js) ----------
+  // Set the clock: { game: 'clock', mode: 'set', times: ['3:45' | { time, say }], show: 'words' | 'digital' | 'both',
+  //   step: 5, helper: 'on' | 'off' | 'none' (the PAST / TO helper ring), roman: true }
+  //   Drag the red minute hand (the hour hand moves with it, like a real clock) or the short hour hand.
+  // Read the clock: { game: 'clock', mode: 'read', times: [...] } – pick the hour, then type the minutes.
+  const angGap = (a, b) => { const d = Math.abs(a - b) % 360; return d > 180 ? 360 - d : d; };
+  GAMES.clock = function (r, key, done) {
+    const CK = window.Clock;
+    if (!CK) return h('p', null, 'This game needs shared/clock.js.');
+    const items = r.times.map(t => (typeof t === 'string' ? { time: t } : t)).map(t => Object.assign({}, t, CK.parse(t.time)));
+    const read = r.mode === 'read';
+    const step = r.step || (read ? 1 : 5);
+    let qi = 0, misses = 0, T = 0, helper = r.helper === 'on', dragging = null, locked = false;
+    let pickH = null, mins = '';
+    const face = h('div', { class: 'clk-face' + (read ? '' : ' live'), 'aria-label': 'Clock' });
+    const prompt = h('div', { class: 'clk-prompt' });
+    const count = h('div', { class: 'q-count' });
+    const fb = h('div', { class: 'feedback', hidden: true });
+    const controls = h('div', { class: 'clk-controls' });
+    const nextBtn = h('button', { class: 'btn', type: 'button', hidden: true, onclick() { sfx.tap(); qi++; if (qi < items.length) show(); else { put(controls); nextBtn.hidden = true; done(); } } }, 'Next clock ▶');
+    const it = () => items[qi];
+    const target = () => (it().h % 12) * 60 + it().m;
+    const faceOpts = () => ({ roman: r.roman || it().roman, halves: helper, ring: helper ? 'pastto' : (r.ring || null) });
+    const sayTime = t => t.say || CK.words(t.h, t.m);
+
+    function draw() {
+      const p = read ? it() : { h: Math.floor(T / 60), m: T % 60 };
+      face.innerHTML = CK.svg(p.h, p.m, faceOpts());
+      if (!read && misses >= 2) { // ghost hands show where to go
+        const g = CK.svg(it().h, it().m, { ticks: false });
+        const ghost = h('div', { class: 'clk-ghost', html: g });
+        face.append(ghost);
+      }
+    }
+    function setT(v) { T = ((v % 720) + 720) % 720; sfx.tap(); draw(); }
+    // pointer → angle (0 = 12 o'clock, clockwise) and distance in SVG units (face is 200 wide)
+    function polar(e) {
+      const b = face.getBoundingClientRect(), x = (e.clientX - b.left) / b.width * 200 - 100, y = (e.clientY - b.top) / b.height * 200 - 100;
+      return { ang: (Math.atan2(x, -y) * 180 / Math.PI + 360) % 360, dist: Math.hypot(x, y) };
+    }
+    function dragTo(e) {
+      const { ang } = polar(e);
+      if (dragging === 'm') {
+        const nm = (Math.round(ang / 6 / step) * step) % 60;
+        let d = nm - T % 60;
+        if (d > 30) d -= 60; else if (d < -30) d += 60;
+        if (d) setT(T + d);
+      } else {
+        const hr = ((Math.round((ang - (T % 60) * 0.5) / 30) % 12) + 12) % 12;
+        if (hr !== Math.floor(T / 60)) setT(hr * 60 + T % 60);
+      }
+    }
+    if (!read) {
+      face.addEventListener('pointerdown', e => {
+        if (locked) return;
+        e.preventDefault();
+        const { ang, dist } = polar(e);
+        const hDeg = (T / 2) % 360, mDeg = (T % 60) * 6, R = helper ? 70 : 88;
+        // near the middle on the short hand → hour hand (even when the hands overlap); anywhere else → minute hand
+        dragging = dist < R * 0.55 && angGap(ang, hDeg) < 30 ? 'h' : 'm';
+        try { face.setPointerCapture(e.pointerId); } catch (_) { /* ignore */ }
+        dragTo(e);
+      });
+      face.addEventListener('pointermove', e => { if (dragging && !locked) dragTo(e); });
+      const end = () => { dragging = null; };
+      face.addEventListener('pointerup', end); face.addEventListener('pointercancel', end);
+    }
+
+    function hintSet() {
+      const t = it(), cm = T % 60, ch = Math.floor(T / 60) % 12 || 12, th = t.h % 12 || 12, next = th % 12 + 1;
+      const num = m => (m === 0 ? 12 : m / 5);
+      if (cm !== t.m) {
+        if (t.m % 30 && cm === (60 - t.m) % 60) return `Careful – wrong side! ${t.m < 30 ? 'PAST times are on the RIGHT side' : 'TO times are on the LEFT side'}. The minute hand should point at the ${num(t.m)}.`;
+        return t.m % 5 ? `Count the little marks: the red minute hand goes on ${t.m} minutes.` : `The long red minute hand should point at the ${num(t.m)}.`;
+      }
+      if (t.m > 30 && ch === next) return `So close! "${sayTime(t)}" is BEFORE ${next} o'clock, so the short hand is just before the ${next} – not past it.`;
+      if (t.m === 0) return `The short hour hand should point straight at the ${th}.`;
+      return t.m <= 30 ? `The short hour hand should be just past the ${th}.` : `The short hour hand should be just before the ${next}.`;
+    }
+    function hintRead(gh, gm) {
+      const t = it(), th = t.h % 12 || 12;
+      if (gh !== th) {
+        if (gh === th % 12 + 1) return `Look again at the short hand – it has NOT reached the ${gh} yet. So it is still ${th} something!`;
+        return 'Look at the short hour hand first. Which number has it just gone past?';
+      }
+      if (gm === 60 - t.m) return 'Digital times count the minutes PAST the hour – all the way round from the 12.';
+      return 'Count in 5s from the 12 to the last number before the red hand, then count on in 1s.';
+    }
+    function right(el) {
+      locked = true;
+      if (misses === 0) award(`${key}:${qi}`, el);
+      sfx.good(); say(praise());
+      fb.className = 'feedback good'; fb.hidden = false;
+      fb.innerHTML = `✔ ${esc(sayTime(it()))} = <b>${CK.digital(it())}</b>`;
+      if (!read) { misses = 0; draw(); }
+      nextBtn.textContent = qi < items.length - 1 ? 'Next clock ▶' : 'Done ✔';
+      nextBtn.hidden = false;
+      controls.querySelectorAll('button').forEach(b => { b.disabled = true; });
+    }
+    function wrong(el, msg) {
+      misses++; shake(el); sfx.bad(); say('💡 ' + msg);
+      fb.className = 'feedback try'; fb.hidden = false;
+      fb.innerHTML = '💡 ' + esc(msg) + (misses >= 2 ? (read ? ` The answer is <b>${CK.digital(it())}</b> – type it in.` : ' The faint hands show where to go!') : '');
+      if (!read) draw();
+    }
+
+    function setControls() {
+      const btn = (label, fn, cls = 'btn ghost') => h('button', { class: cls, type: 'button', onclick: fn }, label);
+      const check = btn('✔ Check', e => { if (T === target()) right(face); else wrong(face, hintSet()); }, 'btn big green');
+      const helpBtn = r.helper !== 'none' && btn(helper ? '💡 Helper ON' : '💡 Helper', e => { helper = !helper; e.currentTarget.textContent = helper ? '💡 Helper ON' : '💡 Helper'; sfx.tap(); draw(); }, 'btn gold');
+      put(controls,
+        h('div', { class: 'clk-nudge' },
+          btn('⟲ hour', () => setT(T - 60)), btn(`− ${step} min`, () => setT(T - step)),
+          btn(`+ ${step} min`, () => setT(T + step)), btn('hour ⟳', () => setT(T + 60))),
+        h('div', { class: 'btn-row' }, helpBtn, check));
+    }
+    function readControls() {
+      const lcd = h('div', { class: 'clk-lcd' });
+      const paint = () => { lcd.textContent = `${pickH || '?'}:${(mins + '__').slice(0, 2)}`; };
+      const hours = Array.from({ length: 12 }, (_, k) => h('button', {
+        class: 'clk-hr', type: 'button', onclick(e) { pickH = k + 1; hours.forEach(b => b.classList.toggle('on', b === e.currentTarget)); sfx.tap(); paint(); },
+      }, String(k + 1)));
+      const keys = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map(n => h('button', { class: 'clk-key', type: 'button', onclick() { if (mins.length < 2) { mins += n; sfx.tap(); paint(); } } }, String(n)));
+      const del = h('button', { class: 'clk-key', type: 'button', 'aria-label': 'Delete', onclick() { mins = mins.slice(0, -1); paint(); } }, '⌫');
+      const check = h('button', {
+        class: 'btn big green', type: 'button', onclick(e) {
+          if (!pickH) { shake(e.currentTarget); say('First tap the HOUR – look at the short hand!'); return; }
+          if (mins.length < 2) { shake(e.currentTarget); say('Type 2 digits for the minutes – like 07 or 52.'); return; }
+          const gm = +mins;
+          if (pickH === (it().h % 12 || 12) && gm === it().m) right(lcd);
+          else { wrong(lcd, hintRead(pickH, gm)); mins = ''; paint(); }
+        },
+      }, '✔ Check');
+      paint();
+      put(controls, lcd,
+        h('div', { class: 'clk-step' }, '1️⃣ Which HOUR? (short hand)'), h('div', { class: 'clk-hours' }, hours),
+        h('div', { class: 'clk-step' }, '2️⃣ How many MINUTES past? (long red hand)'), h('div', { class: 'clk-keys' }, keys, del),
+        h('div', { class: 'btn-row' }, check));
+    }
+
+    function show() {
+      misses = 0; locked = false; pickH = null; mins = '';
+      const t = it();
+      if (!read) T = t.start ? (CK.parse(t.start).h % 12) * 60 + CK.parse(t.start).m : (r.start ? (CK.parse(r.start).h % 12) * 60 + CK.parse(r.start).m : 0);
+      count.textContent = `Clock ${qi + 1} of ${items.length}`;
+      const showMode = t.show || r.show || 'words';
+      if (read) put(prompt, h('span', null, t.ask || 'What time does this clock show?'));
+      else put(prompt, h('span', null, 'Set the clock to: '),
+        showMode !== 'digital' && h('b', { class: 'clk-words' }, sayTime(t)),
+        showMode !== 'words' && h('span', { class: 'clk-lcd small' }, CK.digital(t)));
+      fb.hidden = true; nextBtn.hidden = true;
+      draw();
+      if (read) readControls(); else setControls();
+      if (qi === 0) say(r.say || (read ? 'Short hand first, then the long red hand!' : 'Drag the long red minute hand around the clock!'));
+    }
+    const root = h('div', { class: 'game clock' }, count, prompt, h('div', { class: 'clk-wrap' }, face, controls), fb, h('div', { class: 'btn-row' }, nextBtn));
+    show();
+    root._test = { set(v) { T = (CK.parse(v).h % 12) * 60 + CK.parse(v).m; draw(); }, get T() { return T; } };
     return root;
   };
 
@@ -3095,7 +3260,7 @@
           : pct >= 0.5 ? 'Good effort! Play again to beat your score! 💪'
             : 'Nice try! Read the pages again, then have another go! 📖';
       sfx.win(); confetti(pct >= 0.75 ? 220 : 90);
-      say(pct >= 0.75 ? `Amazing, {name}! You're a real ${L.subject === 'science' ? 'scientist' : 'star'}!` : 'Every try makes your brain stronger!');
+      say(pct >= 0.75 ? `Amazing, {name}! You're a real ${L.subject === 'science' ? 'scientist' : L.subject === 'maths' ? 'mathematician' : 'star'}!` : 'Every try makes your brain stronger!');
       put(area, h('div', { class: 'results' },
         s.boss && h('h2', null, `${s.boss.name.toUpperCase()} IS DEFEATED!`),
         s.boss && h('div', { class: 'victory' }, heroImg('hero-sprite cheer'), pic(s.boss.sprite || s.boss.emoji || '👾', 'boss-sprite ko')),
