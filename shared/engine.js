@@ -382,11 +382,21 @@
       runQuestions(area, s.questions, {
         key: `s${i}rv`,
         done(score) {
-          sfx.win(); confetti(80); complete(i);
-          say(score === s.questions.length ? 'Your memory is EPIC! Now for something new…' : 'Great recap! Now for something new…');
-          put(area, h('div', { class: 'results' }, h('div', { class: 'trophy' }, '🧠'), h('h2', null, 'RECAP COMPLETE!'),
-            h('p', { class: 'lead' }, `You remembered ${score} of ${s.questions.length} first time.`)));
-          nav.set(nextLabel(i), () => go(i + 1));
+          const finish = () => {
+            sfx.win(); confetti(80); complete(i);
+            say(score === s.questions.length ? 'Your memory is EPIC! Now for something new…' : 'Great recap! Now for something new…');
+            put(area, h('div', { class: 'results' }, h('div', { class: 'trophy' }, '🧠'), h('h2', null, 'RECAP COMPLETE!'),
+              h('p', { class: 'lead' }, `You remembered ${score} of ${s.questions.length} first time.`)));
+            nav.set(nextLabel(i), () => go(i + 1));
+          };
+          // optional hands-on warm-up round after the memory questions, e.g. { game: 'forces', tasks: [...] }
+          if (!s.game) return finish();
+          sfx.good();
+          put(area,
+            h('div', { class: 'round-tag' }, `HANDS-ON${s.game.title ? ' · ' + s.game.title : ''}`),
+            s.game.intro && h('p', { class: 'instr', html: fmt(s.game.intro) }),
+            GAMES[s.game.game](s.game, `s${i}rvg`, () => setTimeout(finish, 1200)));
+          say(s.game.say || 'Memory test done! Now try it with your hands…');
         },
       });
     };
@@ -2270,6 +2280,201 @@
         h('button', { class: 'btn ghost', type: 'button', onclick: reset }, '↺ Reset'),
         h('button', { class: 'btn big green', type: 'button', onclick: go }, '▶ GO, ROBOT!')));
     root._test = { tap: tapCell, go, select(id) { selId = id; drawInv(); }, get finished() { return finished; } };
+    return root;
+  };
+
+  // ===== Force Lab: hands-on pushes, pulls and friction =====
+  // You stand on the left. A PUSH moves things away from you (swipe ▶ or tap to press), a PULL brings them towards you (swipe ◀).
+  // r.tasks: [{ thing: '🔔', label: 'Ring the doorbell!', force: 'push' | 'pull', effect: 'DING DONG!', yes, why }]
+  //   or slide tasks: [{ slide: 'ice' | 'wood' | 'carpet' | 'grass' | 'sand', thing: '🥌', label, zone: [x0, x1] }]
+  //   – flick the thing so friction stops it inside the zone. Rough surfaces need a big push, smooth ones a gentle one.
+  const SURFACES = {
+    ice: { name: 'ICE', a: 70, c: ['#cfefff', '#ffffff'], tip: 'Ice is smooth – hardly any friction, so a GENTLE push goes a long way!' },
+    wood: { name: 'WOODEN FLOOR', a: 260, c: ['#c08a52', '#9c6b3c'], tip: 'Wood is quite smooth – not much friction, so give it a medium push.' },
+    carpet: { name: 'CARPET', a: 620, c: ['#b0413e', '#8c2f2c'], tip: 'Carpet is rough – lots of friction! It needs a BIG push.' },
+    grass: { name: 'GRASS', a: 760, c: ['#5bbf3a', '#3d8a26'], tip: 'Grass is rough and bumpy – lots of friction! Push hard.' },
+    sand: { name: 'SAND', a: 950, c: ['#f2d16b', '#d9b24a'], tip: 'Sand is very rough – loads of friction! Give it your BIGGEST push.' },
+  };
+  GAMES.forces = function (r, key, done) {
+    const W = 640, H = 360, FLOOR = 288, HOME = 150, MID = 380;
+    const { cv, ctx } = arcadeCanvas(W, H);
+    const sceneD = AV ? AV.sceneDef() : null;
+    const sky = sceneD ? sceneD.sky : ['#5fb8f5', '#c4e8ff'];
+    const ground = sceneD ? sceneD.ground : ['#5bbf3a', '#3d8a26', '#8a5a32', '#6b4425'];
+    const hero = AV ? AV.draw(AV.load().look, { scale: 3 }) : spriteCanvas(SPR.robot, ROBOT_PAL, 4);
+    const tasks = r.shuffle ? shuffle(r.tasks) : r.tasks;
+    let ti = -1, task = null, obj = null, phase = 'ready', wrong = 0, helped = false, banner = null, later = null, finished = false, ptr = null, trail = [];
+    const surf = () => SURFACES[task.slide] || SURFACES.wood;
+    const zone = () => task.zone || [380, 560];
+    const show = (text, color, t = 1.4) => { banner = { text, color, t }; };
+    const after = (t, fn) => { later = { t, fn }; };
+
+    function next() {
+      ti++;
+      if (ti >= tasks.length) { finished = true; phase = 'done'; show('FORCE LAB COMPLETE!', '#7cfc3a', 99); done(); return; }
+      task = tasks[ti]; wrong = 0; helped = false; phase = 'ready'; banner = null;
+      obj = { x: task.slide ? HOME + 20 : MID, vx: 0, a: 0, back: false };
+      obj.home = obj.x;
+      if (ti > 0) say(task.say || (task.slide ? `Flick it ▶ so it stops in the green box. The floor is ${surf().name.toLowerCase()}!` : 'Push or pull? Swipe it the right way!'));
+    }
+    function act(dir, speed, tapped) {
+      if (phase !== 'ready' || !task) return;
+      if (task.slide) {
+        if (dir === 'pull') { wrong++; sfx.bad(); show('THAT\'S A PULL!', '#ff7a7a'); say('That brings it TOWARDS you. Push it AWAY ▶ to slide it!'); return; }
+        phase = 'moving'; sfx.tap();
+        obj.vx = Math.min(1300, Math.max(tapped ? 260 : 0, speed * 0.55)); obj.a = surf().a;
+        if (obj.vx < 5) { obj.vx = 0; stopped(); }
+        return;
+      }
+      if (dir === task.force) {
+        phase = 'moving'; sfx.good();
+        obj.vx = (dir === 'push' ? 1 : -1) * Math.min(900, Math.max(420, speed * 0.7)); obj.a = 650;
+        if (!wrong) award(`${key}:${ti}`, cv);
+        show(task.effect || (dir === 'push' ? 'PUSH!' : 'PULL!'), '#ffd43b', 1.6);
+        say(task.yes || (dir === 'push' ? 'Yes – a PUSH! It moved away from you.' : 'Yes – a PULL! It came towards you.'));
+      } else {
+        wrong++; sfx.bad();
+        obj.vx = (dir === 'push' ? 1 : -1) * 220; obj.a = 1100; obj.back = true;
+        show(dir === 'push' ? (tapped ? 'A PRESS IS A PUSH!' : 'THAT WAS A PUSH') : 'THAT WAS A PULL', '#ff7a7a');
+        say(task.why || (task.force === 'push' ? 'Hmm! Does this one move AWAY from you? Try a push ▶' : 'Hmm! Does this one come TOWARDS you? Try a pull ◀'));
+      }
+    }
+    function stopped() {
+      if (!task.slide) { if (!obj.back) after(1.1, next); return; }
+      const [z0, z1] = zone(), S = surf();
+      if (obj.x >= z0 && obj.x <= z1) {
+        phase = 'moving'; sfx.good();
+        if (!helped) award(`${key}:${ti}`, cv);
+        show(task.effect || 'PERFECT STOP!', '#7cfc3a', 1.6);
+        say(helped ? 'There! See how far it needed to go? Next one!' : (task.yes || 'Perfect! ' + S.tip));
+        after(1.6, next);
+        return;
+      }
+      wrong++; sfx.bad();
+      const tooHard = obj.x > z1;
+      show(obj.bonk ? 'BONK! TOO HARD!' : tooHard ? 'TOO HARD!' : 'TOO GENTLE!', '#ff7a7a');
+      if (wrong >= 4) {
+        say('Let me help with this one!');
+        after(1.2, () => {
+          obj.x = obj.home; obj.bonk = false; helped = true;
+          obj.a = S.a; obj.vx = Math.sqrt(2 * S.a * ((z0 + z1) / 2 - obj.x)); phase = 'moving';
+        });
+      } else {
+        say((tooHard ? 'Whoa, too far! Push a bit more gently. ' : 'Not far enough! Push a bit harder. ') + S.tip);
+        after(1.2, () => { obj.x = obj.home; obj.bonk = false; phase = 'ready'; });
+      }
+    }
+
+    // ----- swipes and taps -----
+    cv.addEventListener('pointerdown', e => {
+      if (phase !== 'ready') return;
+      e.preventDefault();
+      try { cv.setPointerCapture(e.pointerId); } catch (_) { /* ignore */ }
+      const [x, y] = toGame(cv, W, H, e);
+      ptr = { id: e.pointerId, x0: x, y0: y, pts: [[performance.now(), x, y]] }; trail = [[x, y]];
+    });
+    cv.addEventListener('pointermove', e => {
+      if (!ptr || e.pointerId !== ptr.id) return;
+      const [x, y] = toGame(cv, W, H, e);
+      ptr.pts.push([performance.now(), x, y]); trail.push([x, y]);
+      if (trail.length > 24) trail.shift();
+    });
+    cv.addEventListener('pointerup', e => {
+      if (!ptr || e.pointerId !== ptr.id) return;
+      const p = ptr; ptr = null;
+      const now = performance.now(), last = p.pts[p.pts.length - 1];
+      const dx = last[1] - p.x0, dy = last[2] - p.y0;
+      if (Math.abs(dx) < 14 && Math.abs(dy) < 14) {
+        // a tap: pressing the thing is a push
+        if (Math.abs(p.x0 - obj.x) < 55 && p.y0 > FLOOR - 90 && p.y0 < FLOOR + 10) act('push', 0, true);
+        else say('Swipe the thing itself: ▶ away from you, or ◀ towards you.');
+        return;
+      }
+      if (Math.abs(dx) < Math.abs(dy)) { say('Swipe sideways! ▶ away from you, or ◀ towards you.'); return; }
+      // speed from the last part of the swipe, so a quick flick counts more than a slow drag
+      const from = p.pts.find(q => now - q[0] < 120) || last;
+      const speed = Math.abs(last[1] - from[1]) / Math.max(16, now - from[0]) * 1000;
+      act(dx > 0 ? 'push' : 'pull', speed);
+    });
+    cv.addEventListener('pointercancel', () => { ptr = null; });
+
+    // ----- physics -----
+    let time = 0;
+    function step(dt) {
+      time += dt;
+      if (banner && banner.t < 99) { banner.t -= dt; if (banner.t <= 0) banner = null; }
+      if (later) { later.t -= dt; if (later.t <= 0) { const f = later.fn; later = null; f(); } }
+      if (obj && obj.vx) {
+        const s = Math.sign(obj.vx);
+        obj.x += obj.vx * dt;
+        obj.vx -= s * obj.a * dt;
+        if (Math.sign(obj.vx) !== s) obj.vx = 0;
+        if (task.slide && obj.x > W - 46) { obj.x = W - 46; obj.vx = 0; obj.bonk = true; sfx.hit(); }
+        if (!task.slide && !obj.back && obj.vx < 0 && obj.x < HOME) { obj.x = HOME; obj.vx = 0; }
+        if (!obj.vx) stopped();
+      } else if (obj && obj.back) {
+        obj.x += (obj.home - obj.x) * Math.min(1, dt * 8);
+        if (Math.abs(obj.x - obj.home) < 1) { obj.x = obj.home; obj.back = false; }
+      }
+      if (!ptr && trail.length) trail.shift();
+      draw();
+    }
+    function draw() {
+      const g = ctx.createLinearGradient(0, 0, 0, FLOOR);
+      g.addColorStop(0, sky[0]); g.addColorStop(1, sky[1]);
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, FLOOR);
+      ctx.fillStyle = ground[2]; ctx.fillRect(0, FLOOR, W, H - FLOOR);
+      ctx.fillStyle = ground[0]; ctx.fillRect(0, FLOOR, W, 10);
+      ctx.fillStyle = ground[3]; for (let x = 8; x < W; x += 40) ctx.fillRect(x, FLOOR + 28 + (x % 80 ? 12 : 0), 8, 8);
+      if (task && task.slide) {
+        const S = surf(), [z0, z1] = zone();
+        for (let x = 110; x < W; x += 16) { ctx.fillStyle = S.c[(x / 16) % 2 | 0]; ctx.fillRect(x, FLOOR, 16, 16); }
+        ctx.fillStyle = '#000'; ctx.fillRect(110, FLOOR + 16, W - 110, 3);
+        ctx.fillStyle = 'rgba(124,252,58,.35)'; ctx.fillRect(z0, FLOOR - 74, z1 - z0, 74);
+        ctx.strokeStyle = '#7cfc3a'; ctx.lineWidth = 3; ctx.setLineDash([8, 6]); ctx.strokeRect(z0, FLOOR - 74, z1 - z0, 74); ctx.setLineDash([]);
+        pxText(ctx, 'STOP HERE', (z0 + z1) / 2, FLOOR - 88, 15, '#7cfc3a');
+        // a brick wall at the end of the track
+        for (let y = FLOOR - 120; y < FLOOR; y += 12) for (let x = W - 24; x < W; x += 12) { ctx.fillStyle = (x + y) % 24 ? '#b5452f' : '#8c2f22'; ctx.fillRect(x, y, 11, 11); }
+        pxText(ctx, 'FLOOR: ' + S.name, W / 2, H - 26, 16, '#fff');
+      } else if (task) {
+        pxText(ctx, '◀ PULL', 90, H - 34, 16, '#ffffff');
+        pxText(ctx, '(towards you)', 90, H - 14, 11, '#dddddd');
+        pxText(ctx, 'PUSH ▶', W - 90, H - 34, 16, '#ffffff');
+        pxText(ctx, '(away from you)', W - 90, H - 14, 11, '#dddddd');
+      }
+      ctx.drawImage(hero, 46, FLOOR - hero.height + 2);
+      if (task && phase !== 'done') {
+        ctx.font = '60px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+        const wob = !task.slide && phase === 'ready' ? Math.sin(time * 4) * 3 : 0;
+        ctx.fillText(task.thing, obj.x, FLOOR - 4 + wob);
+      }
+      if (trail.length > 1) {
+        ctx.strokeStyle = 'rgba(255,255,255,.85)'; ctx.lineWidth = 6; ctx.lineCap = 'round';
+        ctx.beginPath(); trail.forEach(([x, y], k) => (k ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.stroke();
+      }
+      ctx.fillStyle = 'rgba(0,0,0,.6)'; ctx.fillRect(0, 0, W, 36);
+      if (task) pxText(ctx, task.label, W / 2, 19, 18, '#ffd43b');
+      pxText(ctx, `✔ ${Math.max(0, finished ? tasks.length : ti)}/${tasks.length}`, W - 12, 56, 18, '#7cfc3a', 'right');
+      if (banner) pxText(ctx, banner.text, W / 2, 120, 32, banner.color);
+    }
+
+    const stopLoop = gameLoop(cv, step);
+    const root = h('div', { class: 'game arcade forces' },
+      h('div', { class: 'arc-screen' }, cv),
+      h('p', { class: 'arc-tip' }, r.tip || 'You are on the left. Swipe ▶ to PUSH (away from you), swipe ◀ to PULL (towards you), or tap to PRESS.'));
+    keys(root, {
+      ArrowRight: [() => act('push', 1000)],
+      ArrowLeft: [() => act('pull', 1000)],
+    });
+    root._test = {
+      frames(n) { for (let i = 0; i < n; i++) step(1 / 60); },
+      act, get task() { return task; }, get obj() { return obj; }, get phase() { return phase; }, get finished() { return finished; },
+      // the push speed that would stop a slide task right in the middle of its zone
+      perfect() { const [z0, z1] = zone(); return Math.sqrt(2 * surf().a * ((z0 + z1) / 2 - obj.home)) / 0.55; },
+    };
+    root._stop = stopLoop;
+    next();
     return root;
   };
 

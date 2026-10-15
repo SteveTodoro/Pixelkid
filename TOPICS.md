@@ -7,6 +7,8 @@ Each lesson is about 30–40 minutes: Start → Recap of last lesson → Read �
 |------|--------------|
 | Plants | Parts of a plant & their jobs ✅ *(Plant Detectives)* · What plants need to grow + how water travels up a stem ✅ *(What Do Plants Need?)* · next: Flower life cycle (pollination, seeds, seed dispersal) |
 
+**Force Lab (`forces` game):** hands-on physics. Gesture tasks `{ thing, label, force: 'push'|'pull', effect, yes }`: swipe ▶ = push (away from you), swipe ◀ = pull, tap = press (push). Slide tasks `{ slide: 'ice'|'wood'|'carpet'|'grass'|'sand', thing, label }`: flick so friction stops it in the green zone. Used in Pushes, Pulls & Friction (rounds) and as a hands-on warm-up in recap stages via `review.game`. Keep task labels free of the words push/pull.
+
 **Plants style:** mascot Professor Bolt, `finishAch: 'gardener'` (Green Thumb, unlocks the gardener's straw hat); shop pet Sunny the sunflower. Bosses so far: Weedzilla, King Gloom.
 | Animals incl. Humans | Food groups & healthy eating · Skeletons & muscles · Animals with and without backbones |
 | Rocks | Types of rock · How fossils form · What soil is made of |

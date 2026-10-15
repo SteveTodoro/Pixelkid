@@ -169,8 +169,21 @@ window.LESSON = {
     },
 
     {
-      type: 'game', title: 'Force Finder', short: 'Game 1', minutes: 8,
+      type: 'game', title: 'Force Finder', short: 'Game 1', minutes: 10,
       rounds: [
+        {
+          game: 'forces', title: 'Hands-on: push or pull?', shuffle: true,
+          intro: 'You are standing on the left. Do each job with your finger! Swipe ▶ to **push** something away from you, swipe ◀ to **pull** it towards you – or tap to press it.',
+          say: 'Swipe the thing the right way! Away from you, or towards you?',
+          tasks: [
+            { thing: '🔔', label: 'Ring the doorbell!', force: 'push', effect: 'DING DONG!', yes: 'DING DONG! Pressing a button is a push.' },
+            { thing: '🗄️', label: 'Open the drawer!', force: 'pull', effect: 'IT\'S OPEN!', yes: 'Yes! Opening a drawer pulls it towards you.' },
+            { thing: '⚽', label: 'Kick the ball!', force: 'push', effect: 'GOAL!', yes: 'GOAL! A kick pushes the ball away from you.' },
+            { thing: '🪢', label: 'Win the tug of war!', force: 'pull', effect: 'HEAVE!', yes: 'You win! In tug of war you pull the rope towards you.' },
+            { thing: '🍎', label: 'Pick the apple!', force: 'pull', effect: 'YUM!', yes: 'Yes! You pull an apple off the tree.' },
+            { thing: '🎳', label: 'Bowl at the skittles!', force: 'push', effect: 'STRIKE!', yes: 'STRIKE! Bowling pushes the ball away from you.' },
+          ],
+        },
         {
           game: 'sort', title: 'Push or pull?',
           intro: 'Is each action a **push** or a **pull**? Think: does it move away from you, or towards you?',
@@ -287,7 +300,7 @@ window.LESSON = {
     },
 
     {
-      type: 'game', title: 'Friction Lab', short: 'Game 2', minutes: 6,
+      type: 'game', title: 'Friction Lab', short: 'Game 2', minutes: 8,
       rounds: [
         {
           game: 'questions', title: 'Ramp test',
@@ -301,6 +314,18 @@ window.LESSON = {
             { type: 'tf', q: 'The rougher the surface, the further the car rolled.', answer: false, explain: 'Rough surfaces make more friction, so the car stops sooner.' },
             { type: 'mcq', q: 'To keep the test fair, what must stay the same?', options: ['the height of the ramp', 'the surface', 'the distance the car rolls'], answer: 0, hint: 'We only change ONE thing – the surface.' },
             { type: 'order', q: 'Put the surfaces in order from MOST friction to LEAST friction.', items: ['🛁 towel (25 cm)', '🧶 carpet (40 cm)', '🪵 wooden floor (120 cm)', '🧊 shiny tiles (150 cm)'], hint: 'Most friction = shortest distance.' },
+          ],
+        },
+        {
+          game: 'forces', title: 'Slide Challenge',
+          intro: 'Flick each thing ▶ so that friction stops it inside the green box. Watch the floor! **Rough** floors need a big push. **Smooth** floors need only a gentle one.',
+          say: 'A quick flick is a big push. A slow little flick is a gentle push!',
+          tip: 'Flick ▶ fast for a big push, or slowly for a gentle push. Rough floor = more friction!',
+          tasks: [
+            { slide: 'wood', thing: '🚗', label: 'Slide the car into the box!' },
+            { slide: 'carpet', thing: '🚗', label: 'Now try it on carpet!' },
+            { slide: 'ice', thing: '🥌', label: 'Slide the curling stone on the ice!' },
+            { slide: 'sand', thing: '📦', label: 'Slide the box across the sand!' },
           ],
         },
         {
