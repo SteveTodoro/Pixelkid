@@ -510,28 +510,37 @@
   }
 
   // Runs a list of questions one at a time inside `area`; calls done(firstTryScore) at the end.
-  function runQuestions(area, qs, { key, done, boss, lastLabel = 'Finish ▶' }) {
+  // In a boss battle, boss.zap(qi) returns true when the last heart is gone; then lost(score) is called.
+  function runQuestions(area, qs, { key, done, boss, lost, lastLabel = 'Finish ▶' }) {
     let qi = 0, score = 0;
     function show() {
       const q = qs[qi], isLast = qi === qs.length - 1;
       const fb = h('div', { class: 'feedback', hidden: true });
       const nextBtn = h('button', {
         class: 'btn', type: 'button', hidden: true,
-        onclick() { sfx.tap(); qi++; if (qi < qs.length) show(); else done(score); },
+        onclick() {
+          sfx.tap(); qi++;
+          const next = () => { if (qi < qs.length) show(); else done(score); };
+          if (boss && boss.dodgeDue()) boss.dodge(area, dead => (dead ? lost(score) : next()));
+          else next();
+        },
       }, isLast ? lastLabel : 'Next question ▶');
       const onRight = (el, first) => {
         if (first) { score++; award(`${key}:${qi}`, el); }
         sfx.good(); say(praise());
         fb.className = 'feedback good'; fb.hidden = false;
         fb.innerHTML = '✔ ' + fmt(q.explain || (first ? 'Correct!' : 'You got there!'), false);
-        if (boss) boss.hit();
+        if (boss) { boss.hit(); if (boss.dodgeDue()) nextBtn.textContent = '⚠️ Get ready to DODGE! ▶'; }
         nextBtn.hidden = false;
       };
       const onMiss = () => {
         say(q.hint ? '💡 ' + q.hint : oops());
         fb.className = 'feedback try'; fb.hidden = false;
         fb.innerHTML = '💡 ' + fmt(q.hint || 'Not quite – have another go!', false);
-        if (boss) boss.zap();
+        if (boss && boss.zap(qi)) {
+          area.classList.add('locked');
+          setTimeout(() => { area.classList.remove('locked'); lost(score); }, 1600);
+        }
       };
       put(area,
         h('div', { class: 'qbar' }, h('div', { class: 'qbar-fill', style: `width:${qi / qs.length * 100}%` })),
@@ -2782,22 +2791,263 @@
   }
 
   // ---------- stage: quiz (with optional boss battle) ----------
-  function bossPanel(b, total) {
-    let hp = total;
+  // A boss battle: the boss panel on top, the questions, then the player's avatar with 3 hearts at the bottom.
+  // Right answer = the avatar attacks; wrong answer = the boss attacks and takes a heart (at most one per question).
+  // Bosses can set attack (emoji they fire) and lines: { intro, hurt: [], taunt: [], angry, dodge, miss, last, defeat, win }.
+  // From half HP the boss also fights back with dodge rounds (see dodgeRound).
+  const LIVES = 3;
+  const BOSS_LINES = {
+    intro: 'Mwahaha! You will never beat me!',
+    hurt: ['Ouch!', 'Argh! Lucky shot!', 'Grr! Stop that!', 'Nooo! My power!', 'That tickled… a bit.', 'Hey! No fair!'],
+    taunt: ['Ha ha! Missed!', 'Too slow!', 'Is that all you\'ve got?', 'Mwahaha!', 'Hee hee! Wrong!'],
+    angry: 'Right, now I\'m REALLY cross!',
+    last: 'No… not like this…',
+    defeat: 'NOOOOO! I\'ve been beaten!',
+    win: 'Mwahaha! I win! Come back when you\'re cleverer!',
+  };
+  const HERO_LINES = {
+    hit: ['Take that!', 'Pow!', 'Bullseye!', 'Got you!', 'Hi-yah!', 'Boom!', 'Easy!'],
+    hurt: ['Ouch!', 'Oof!', 'Eek!', 'Yikes!', 'I\'ll get the next one!'],
+    win: 'Victory! 🏆',
+  };
+  const calm = () => window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const replay = (el, cls) => { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); };
+  function speech(cls) {
+    const el = h('div', { class: 'fight-bubble ' + cls });
+    let t = 0;
+    return {
+      el,
+      say(msg, ms = 2200) {
+        el.textContent = fill(msg); el.classList.add('show'); replay(el, 'pop');
+        clearTimeout(t); if (ms) t = setTimeout(() => { el.classList.remove('show'); }, ms);
+      },
+    };
+  }
+  // flies an emoji from one element to another (the attack)
+  function projectile(emoji, from, to, cls = '') {
+    if (calm() || !from.isConnected || !to.isConnected) return;
+    const a = from.getBoundingClientRect(), b = to.getBoundingClientRect();
+    const p = h('div', { class: 'projectile ' + cls, 'aria-hidden': 'true' }, emoji);
+    document.body.append(p);
+    const x0 = a.left + a.width / 2 - 20, y0 = a.top + a.height / 2 - 20, x1 = b.left + b.width / 2 - 20, y1 = b.top + b.height / 2 - 20;
+    const anim = p.animate([
+      { transform: `translate(${x0}px, ${y0}px) scale(.6) rotate(0)` },
+      { transform: `translate(${(x0 + x1) / 2}px, ${Math.min(y0, y1) - 60}px) scale(1.3) rotate(180deg)` },
+      { transform: `translate(${x1}px, ${y1}px) scale(1) rotate(360deg)` },
+    ], { duration: 420, easing: 'linear' });
+    anim.onfinish = () => p.remove();
+  }
+  function popText(parent, text, cls) {
+    const t = h('div', { class: 'pop-text ' + cls, 'aria-hidden': 'true' }, text);
+    parent.append(t); setTimeout(() => t.remove(), 1000);
+  }
+  function banner(parent, text, cls = '') {
+    const b = h('div', { class: 'fight-banner ' + cls, 'aria-hidden': 'true' }, text);
+    parent.append(b); setTimeout(() => b.remove(), 1500);
+  }
+  function heroImg(cls) {
+    return AV ? h('img', { class: cls, src: AV.dataURL(AV.load().look, { scale: 4 }), alt: 'You' }) : h('div', { class: cls + ' emoji', 'aria-hidden': 'true' }, '🧒');
+  }
+  function heartsRow(n) {
+    return Array.from({ length: LIVES }, (_, k) => h('span', { class: 'heart' + (k < n ? '' : ' lost') }, k < n ? '❤️' : '🖤'));
+  }
+
+  // Undertale-style dodge round: the avatar is the "soul" in a box and the boss fires its attack emoji in patterns.
+  // Arrow keys / WASD or drag anywhere on the box. A hit costs at most one heart per round; a perfect dodge earns gems.
+  // end({ hit, dead }) is called when the round is over.
+  function dodgeRound(area, b, round, { loseHeart, end }) {
+    const W = 360, H = 240, DUR = 7.5, speed = 1 + 0.15 * round;
+    const cvs = h('canvas', { class: 'dodge-box', width: W * 2, height: H * 2, 'aria-label': 'Dodge the attacks! Use the arrow keys or drag to move.' });
+    const ctx = cvs.getContext('2d'); ctx.scale(2, 2); ctx.imageSmoothingEnabled = false;
+    const timer = h('div', { class: 'dodge-timer' }, h('div', { class: 'dodge-timer-fill' }));
+    const status = h('div', { class: 'dodge-status' }, '3…');
+    put(area, h('div', { class: 'dodge' },
+      h('div', { class: 'dodge-title' }, `⚠️ ${b.name} attacks! DODGE!`),
+      h('div', { class: 'dodge-help' }, '⬅️⬆️⬇️➡️ arrow keys, or drag your finger on the box'),
+      cvs, timer, status));
+    // sprites: the avatar (or a heart) and the boss's attack, drawn once
+    const me = AV ? AV.draw(AV.load().look, { scale: 2 }) : null;
+    const pw = me ? me.width : 22, ph = me ? me.height : 22;
+    const shot = (() => {
+      const c = document.createElement('canvas'); c.width = c.height = 48;
+      const g = c.getContext('2d'); g.font = '36px serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
+      g.fillText(b.attack || '💥', 24, 27); return c;
+    })();
+    const p = { x: W / 2, y: H / 2 }, keys = {}, bullets = [];
+    let t = -1.5, last = 0, hitAt = -9, hit = false, over = false, raf = 0, spawnT = 0;
+    // two random patterns per round
+    const PATTERNS = {
+      rain(dt) { if ((spawnT += dt) > 0.32 / speed) { spawnT = 0; bullets.push({ x: 10 + Math.random() * (W - 20), y: -12, vx: 0, vy: (80 + Math.random() * 50) * speed, r: 10 }); } },
+      sweep(dt) {
+        if ((spawnT += dt) > 0.9 / speed) {
+          spawnT = 0; const left = Math.random() < 0.5, gap = 30 + Math.random() * (H - 100);
+          for (let y = 12; y < H; y += 26) if (y < gap || y > gap + 64) bullets.push({ x: left ? -12 : W + 12, y, vx: (left ? 1 : -1) * 95 * speed, vy: 0, r: 9 });
+        }
+      },
+      aimed(dt) {
+        if ((spawnT += dt) > 0.5 / speed) {
+          spawnT = 0; const a = Math.random() * Math.PI * 2, x = W / 2 + Math.cos(a) * 220, y = H / 2 + Math.sin(a) * 160;
+          const d = Math.hypot(p.x - x, p.y - y) || 1, v = 110 * speed;
+          bullets.push({ x, y, vx: (p.x - x) / d * v, vy: (p.y - y) / d * v, r: 10 });
+        }
+      },
+      ring(dt) {
+        if ((spawnT += dt) > 1.3 / speed) {
+          spawnT = 0; const cx = 40 + Math.random() * (W - 80), n = 10, off = Math.random();
+          for (let k = 0; k < n; k++) { const a = (k + off) / n * Math.PI * 2; bullets.push({ x: cx, y: 20, vx: Math.cos(a) * 80 * speed, vy: Math.sin(a) * 80 * speed + 30, r: 9 }); }
+        }
+      },
+    };
+    const plan = shuffle(Object.keys(PATTERNS)).slice(0, 2);
+
+    const KEYS = { ArrowLeft: 'l', a: 'l', A: 'l', ArrowRight: 'r', d: 'r', D: 'r', ArrowUp: 'u', w: 'u', W: 'u', ArrowDown: 'd', s: 'd', S: 'd' };
+    const kd = e => { const k = KEYS[e.key]; if (k) { keys[k] = true; e.preventDefault(); } };
+    const ku = e => { const k = KEYS[e.key]; if (k) { keys[k] = false; e.preventDefault(); } };
+    document.addEventListener('keydown', kd); document.addEventListener('keyup', ku);
+    // drag: the avatar follows the finger's movement (not its position), so the finger never hides it
+    let drag = null;
+    cvs.addEventListener('pointerdown', e => { e.preventDefault(); drag = { x: e.clientX, y: e.clientY }; try { cvs.setPointerCapture(e.pointerId); } catch (_) { /* ignore */ } });
+    cvs.addEventListener('pointermove', e => {
+      if (!drag) return;
+      const k = W / cvs.getBoundingClientRect().width * 1.3;
+      p.x += (e.clientX - drag.x) * k; p.y += (e.clientY - drag.y) * k; drag = { x: e.clientX, y: e.clientY };
+    });
+    const undrag = () => { drag = null; };
+    cvs.addEventListener('pointerup', undrag); cvs.addEventListener('pointercancel', undrag);
+    const stop = () => { over = true; cancelAnimationFrame(raf); document.removeEventListener('keydown', kd); document.removeEventListener('keyup', ku); };
+
+    function finish(dead) {
+      stop();
+      if (dead) return end({ hit, dead });
+      if (!hit) { status.textContent = '✨ PERFECT DODGE! +2 💎'; award(`dodge:${round}:a`, status); award(`dodge:${round}:b`, status); sfx.win(); }
+      else status.textContent = 'Phew! Back to the questions!';
+      setTimeout(() => end({ hit, dead }), 1300);
+    }
+    function frame(now) {
+      if (over) return;
+      if (!cvs.isConnected) return stop(); // left the stage mid-round
+      const dt = Math.min(0.05, last ? (now - last) / 1000 : 0); last = now; t += dt;
+      if (t < 0) status.textContent = t < -1 ? '3… 2…' : '1…';
+      else {
+        status.textContent = hit ? 'Ouch! Keep dodging!' : 'Dodge!';
+        const phase = t < DUR / 2 ? 0 : 1;
+        if (t < DUR - 0.6) PATTERNS[plan[phase]](dt);
+        timer.firstChild.style.width = Math.max(0, 100 - t / DUR * 100) + '%';
+      }
+      const v = 150 * dt;
+      p.x += ((keys.r ? 1 : 0) - (keys.l ? 1 : 0)) * v; p.y += ((keys.d ? 1 : 0) - (keys.u ? 1 : 0)) * v;
+      p.x = Math.max(pw / 2, Math.min(W - pw / 2, p.x)); p.y = Math.max(ph / 2, Math.min(H - ph / 2, p.y));
+      for (const q of bullets) { q.x += q.vx * dt; q.y += q.vy * dt; }
+      for (let k = bullets.length - 1; k >= 0; k--) { const q = bullets[k]; if (q.x < -30 || q.x > W + 30 || q.y < -30 || q.y > H + 30) bullets.splice(k, 1); }
+      // a small, forgiving hitbox in the middle of the avatar
+      const safe = t - hitAt < 1.2;
+      if (!safe) for (const q of bullets) {
+        if (Math.abs(q.x - p.x) < q.r * 0.7 + pw * 0.28 && Math.abs(q.y - p.y) < q.r * 0.7 + ph * 0.3) {
+          hitAt = t; sfx.hit(); shake(cvs);
+          if (!hit) { hit = true; if (loseHeart()) return finish(true); }
+          break;
+        }
+      }
+      // draw
+      ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+      if (!(t - hitAt < 1.2 && Math.floor(t * 12) % 2)) {
+        if (me) ctx.drawImage(me, Math.round(p.x - pw / 2), Math.round(p.y - ph / 2));
+        else { ctx.font = '22px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('❤️', p.x, p.y); }
+      }
+      for (const q of bullets) ctx.drawImage(shot, q.x - q.r * 1.2, q.y - q.r * 1.2, q.r * 2.4, q.r * 2.4);
+      if (t >= DUR) return finish(false);
+      raf = requestAnimationFrame(frame);
+    }
+    raf = requestAnimationFrame(frame);
+    cvs.scrollIntoView({ block: 'center', behavior: calm() ? 'auto' : 'smooth' });
+  }
+
+  function bossFight(b, total) {
+    const lines = Object.assign({}, BOSS_LINES, b.lines);
+    let hp = total, lives = LIVES, half = false, dodgeDue = false, rounds = 0, sinceDodge = 0;
+    const lostOn = new Set();
+    // boss panel
     const fillEl = h('div', { class: 'hp-fill', style: 'width:100%' });
     const hpText = h('div', { class: 'boss-sub' }, `HP ${hp}/${total} · Every right answer is a hit!`);
     const sprite = pic(b.sprite || b.emoji || '👾', 'boss-sprite');
-    const el = h('div', { class: 'boss' }, sprite, h('div', { class: 'boss-info' }, h('div', { class: 'boss-name' }, b.name), h('div', { class: 'hp' }, fillEl), hpText));
-    const flash = cls => { sprite.classList.remove(cls); void sprite.offsetWidth; sprite.classList.add(cls); };
+    const bossTalk = speech('from-boss');
+    const el = h('div', { class: 'boss' }, sprite, h('div', { class: 'boss-info' }, h('div', { class: 'boss-name' }, b.name), h('div', { class: 'hp' }, fillEl), hpText, bossTalk.el));
+    // player panel
+    const avatar = heroImg('hero-sprite');
+    const hearts = h('div', { class: 'hearts', role: 'img', 'aria-label': `Lives: ${lives} of ${LIVES}` }, heartsRow(lives));
+    const heroTalk = speech('from-hero');
+    const hero = h('div', { class: 'hero' }, avatar,
+      h('div', { class: 'hero-info' },
+        h('div', { class: 'hero-top' }, h('div', { class: 'hero-name' }, settings.name || 'You'), hearts,
+          h('div', { class: 'boss-sub' }, `Lose all ${LIVES} hearts and ${b.name} wins!`)),
+        heroTalk.el));
+
+    function breakHeart() {
+      const heart = hearts.children[lives];
+      heart.textContent = '🖤'; heart.classList.add('lost'); replay(heart, 'break');
+      hearts.setAttribute('aria-label', `Lives: ${lives} of ${LIVES}`);
+      replay(avatar, 'hurt'); shake(stageCard); popText(hero, '-1 ❤️', 'ouch');
+      if (!lives) { hero.classList.add('fainted'); heroTalk.say('Oh no…', 0); bossTalk.say(lines.win, 0); banner(hero, 'GAME OVER', 'over'); }
+      else heroTalk.say(lives === 1 ? 'Last heart… careful now!' : pick(HERO_LINES.hurt), 1600);
+    }
+
+    setTimeout(() => { banner(el, 'FIGHT!'); bossTalk.say(lines.intro, 2600); }, 300);
     return {
-      el,
+      el, hero,
       hit() {
-        hp = Math.max(0, hp - 1); fillEl.style.width = hp / total * 100 + '%';
-        hpText.textContent = hp ? `HP ${hp}/${total} · Keep going!` : 'DEFEATED!';
-        flash('hurt'); sfx.hit();
-        if (!hp) el.classList.add('defeated');
+        hp = Math.max(0, hp - 1); sinceDodge++;
+        // first dodge round at half HP, then every 3 hits (never on the knockout)
+        if (hp && ((!half && hp <= total / 2) || (half && sinceDodge >= 3))) dodgeDue = true;
+        replay(avatar, 'lunge'); heroTalk.say(pick(HERO_LINES.hit), 1400);
+        projectile(b.heroAttack || '⚡', avatar, sprite);
+        setTimeout(() => {
+          fillEl.style.width = hp / total * 100 + '%';
+          replay(sprite, 'hurt'); sfx.hit(); replay(el, 'flash');
+          popText(el, hp ? 'HIT!' : 'K.O.!', 'dmg');
+          if (!hp) {
+            hpText.textContent = 'DEFEATED!'; el.classList.remove('enraged'); el.classList.add('defeated');
+            banner(el, 'K.O.!', 'ko'); bossTalk.say(lines.defeat, 0); heroTalk.say(HERO_LINES.win, 0);
+          } else if (dodgeDue) {
+            if (!half) { half = true; el.classList.add('enraged'); }
+            hpText.textContent = `HP ${hp}/${total} · ${b.name} is getting angry!`;
+            bossTalk.say(rounds ? (lines.dodge || 'Dodge THIS!') : lines.angry, 2600);
+          } else if (hp === 1) {
+            hpText.textContent = `HP ${hp}/${total} · One more hit!`; bossTalk.say(lines.last);
+          } else if (!half && hp <= total / 2) {
+            half = true; el.classList.add('enraged');
+            hpText.textContent = `HP ${hp}/${total} · ${b.name} is getting angry!`; bossTalk.say(lines.angry, 2600);
+          } else {
+            hpText.textContent = `HP ${hp}/${total} · Keep going!`; bossTalk.say(pick(lines.hurt), 1600);
+          }
+        }, calm() ? 0 : 400);
       },
-      zap() { shake(stageCard); sfx.zap(); },
+      // returns true when the last heart is lost
+      zap(qi) {
+        replay(sprite, 'lunge-boss'); sfx.zap();
+        if (lostOn.has(qi)) { bossTalk.say(pick(lines.taunt), 1600); return false; } // one heart per question
+        lostOn.add(qi); lives--;
+        projectile(b.attack || '💥', sprite, avatar);
+        setTimeout(() => { breakHeart(); if (lives) bossTalk.say(pick(lines.taunt), 1600); }, calm() ? 0 : 400);
+        return !lives;
+      },
+      dodgeDue: () => dodgeDue,
+      // the bullet-hell round shown in place of the questions; done(dead)
+      dodge(area, done) {
+        dodgeDue = false; sinceDodge = 0; rounds++;
+        el.classList.add('attacking'); heroTalk.say('Here it comes!', 1500);
+        dodgeRound(area, b, rounds, {
+          loseHeart() { lives--; breakHeart(); return !lives; },
+          end({ hit, dead }) {
+            el.classList.remove('attacking');
+            if (!dead) {
+              bossTalk.say(hit ? pick(lines.taunt) : (lines.miss || 'WHAT?! You dodged everything?!'), 2200);
+              heroTalk.say(hit ? 'Phew! Back to the questions!' : 'Too slow! 😎', 1800);
+            }
+            setTimeout(() => done(dead), dead ? 1600 : 0);
+          },
+        });
+      },
+      lives: () => lives,
     };
   }
   function renderQuiz(s, i) {
@@ -2807,15 +3057,33 @@
     let boss = null;
 
     function begin() {
-      boss = s.boss ? bossPanel(s.boss, qs.length) : null;
-      const qArea = h('div');
-      put(area, boss && boss.el, qArea);
-      runQuestions(qArea, qs, { key: 'quiz', boss, done: results, lastLabel: s.boss ? '⚔️ Final blow!' : 'See my score 🏆' });
+      boss = s.boss ? bossFight(s.boss, qs.length) : null;
+      const qArea = h('div', { class: 'q-area' });
+      put(area, boss && boss.el, qArea, boss && boss.hero);
+      runQuestions(qArea, qs, { key: 'quiz', boss, done: results, lost: gameOver, lastLabel: s.boss ? '⚔️ Final blow!' : 'See my score 🏆' });
+      nav.hideNext();
+    }
+
+    // the boss took all 3 hearts: no completion, just a retry
+    function gameOver(score) {
+      const lines = Object.assign({}, BOSS_LINES, s.boss.lines);
+      sfx.bad();
+      say('Don\'t give up, {name}! Have a quick look back at the pages, then try again!');
+      put(area, h('div', { class: 'results lose' },
+        h('h2', null, `${s.boss.name.toUpperCase()} WINS…`),
+        h('div', { class: 'gloat' }, pic(s.boss.sprite || s.boss.emoji || '👾', 'boss-sprite'),
+          h('div', { class: 'fight-bubble from-boss show' }, fill(lines.win))),
+        h('div', { class: 'hearts big' }, heartsRow(0)),
+        h('p', { class: 'lead' }, `You landed ${score} first-try hit${score === 1 ? '' : 's'} before your hearts ran out. You can do it – have another go!`),
+        h('div', { class: 'btn-row' },
+          h('button', { class: 'btn big green', type: 'button', onclick() { sfx.good(); begin(); } }, '↺ Retry battle'),
+          h('a', { class: 'btn ghost', href: L.home || '../index.html' }, '🏠 Library'))));
       nav.hideNext();
     }
 
     function results(score) {
       const total = qs.length, pct = score / total;
+      const livesLeft = boss ? boss.lives() : 0;
       complete(i);
       const prev = (store.get(RKEY, {})[L.id] || {}).best || 0;
       saveRecord({ best: Math.max(prev, score), total, done: true });
@@ -2830,7 +3098,9 @@
       say(pct >= 0.75 ? `Amazing, {name}! You're a real ${L.subject === 'science' ? 'scientist' : 'star'}!` : 'Every try makes your brain stronger!');
       put(area, h('div', { class: 'results' },
         s.boss && h('h2', null, `${s.boss.name.toUpperCase()} IS DEFEATED!`),
-        h('div', { class: 'trophy' }, pct >= 0.75 ? '🏆' : '🎖️'),
+        s.boss && h('div', { class: 'victory' }, heroImg('hero-sprite cheer'), pic(s.boss.sprite || s.boss.emoji || '👾', 'boss-sprite ko')),
+        s.boss && h('div', { class: 'hearts big', role: 'img', 'aria-label': `${livesLeft} of ${LIVES} hearts left` }, heartsRow(livesLeft)),
+        !s.boss && h('div', { class: 'trophy' }, pct >= 0.75 ? '🏆' : '🎖️'),
         h('div', { class: 'score' }, `${score} / ${total}`),
         h('p', { class: 'lead' }, msg),
         h('p', { class: 'stars-earned' }, `You collected ${state.stars} ${CUR.icon} and reached LEVEL ${levelOf(state.stars)}!`),

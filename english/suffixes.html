@@ -340,7 +340,7 @@ window.LESSON = {
     {
       type: 'quiz', title: "Boss Battle: Grumblegob's Revenge", short: 'Boss', kind: 'Boss battle', minutes: 6,
       say: 'GRUMBLEGOB is back – and now he is chopping the ends off words! Every right answer is a hit. Finish him, {name}!',
-      boss: { name: 'Grumblegob', sprite: Pixel.sprites.goblin },
+      boss: { name: 'Grumblegob', sprite: Pixel.sprites.goblin, attack: '🪨', lines: { intro: 'Grumblegob is back! And I\'m even grumpier-ER!', hurt: ['Ow! That was pain-FUL!', 'Grumble grumble!', 'Argh! Too clever!'], taunt: ['Hehehe! Wrong!', 'Grumble-WIN!', 'Missed me!'], angry: 'Now I\'m angri-EST!', defeat: 'NOOO! Grumblegob is help-LESS!', win: 'Hehehe! Grumblegob wins again! Go back and practise!' } },
       questions: [
         { type: 'mcq', q: 'Where does a suffix go?', options: ['at the end of a word', 'at the front of a word', 'in a different sentence'], answer: 0 },
         { type: 'mcq', q: 'A cup with no handle is…', options: ['handleless', 'handleful', 'handlely'], answer: 0 },
