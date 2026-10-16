@@ -105,4 +105,5 @@ One country per lesson: find it on the map, then the history and culture childre
 - Keep **bold** out of reading-page text (yellow [[glossary]] words are fine). Never bold the exact phrase a question asks about.
 - Wrong options should be believable, not silly, at least for the reading checks.
 - Only a first-try answer earns the gem on a reading page; a wrong guess makes the child re-read for a few seconds.
+**Read to me:** every reading card and recap gets a 🔊 Read to me button automatically (built-in British voice, free). Each word lights up as it is spoken (read-along), and it stops when the page changes. No lesson data needed.
 **Text tricks:** `**bold**` and `[[word]]` (tappable glossary word — add the word to `glossary`).

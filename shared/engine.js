@@ -388,6 +388,7 @@
     const nav = navRow(() => go(i - 1, true));
     const from = s.from || {};
     const start = () => {
+      stopReading();
       sfx.good();
       say('Notes hidden! How much can you remember?');
       runQuestions(area, s.questions, {
@@ -411,14 +412,85 @@
         },
       });
     };
+    const factEls = (s.facts || []).map(f => h('li', { html: fmt(f, false) }));
+    const reader = readAloud(factEls);
+    cleanup = reader.stop;
     put(area,
       h('div', { class: 'panel-inner recap' },
         h('h3', null, `⏪ Last time: ${from.emoji || ''} ${from.title || 'our last lesson'}`),
-        h('ul', null, (s.facts || []).map(f => h('li', { html: fmt(f, false) }))),
+        h('ul', null, factEls),
+        h('div', { class: 'read-row' }, reader.btn),
         from.url && h('a', { class: 'recap-link', href: from.url }, '↺ Replay that lesson')),
       h('div', { class: 'btn-row' }, h('button', { class: 'btn big green ready', type: 'button', onclick: start }, '🧠 Test my memory!')));
     nav.set(nextLabel(i), () => go(i + 1), !!state.complete[i]);
     return shell(s, [mascot(s.say || 'Welcome back! First, a quick recap of last time. Read the notes, then test your memory!'), area, nav.el]);
+  }
+
+  // ---------- read-aloud: a 🔊 button that reads a passage, lighting up each word as it is spoken ----------
+  // readAloud([elements]) wraps every word in a span and returns { btn, stop }. Each element (title, paragraph, list item)
+  // is spoken as its own short utterance; word highlighting uses the voice's word-boundary events, and if a voice
+  // doesn't send them, the whole line stays lit instead.
+  let stopReading = () => {};
+  function readAloud(els) {
+    const lines = els.filter(Boolean).map(el => {
+      const words = [];
+      let text = '';
+      const walk = node => {
+        for (const n of [...node.childNodes]) {
+          if (n.nodeType === 3) {
+            const frag = document.createDocumentFragment();
+            n.textContent.split(/(\s+)/).forEach(part => {
+              if (!part) return;
+              if (/^\s+$/.test(part)) frag.append(part);
+              else { const sp = h('span', { class: 'rd-w' }, part); words.push({ sp, start: text.length, end: text.length + part.length }); frag.append(sp); }
+              text += part;
+            });
+            n.replaceWith(frag);
+          } else if (n.nodeType === 1) walk(n);
+        }
+      };
+      walk(el);
+      return { el, words, text };
+    });
+    let playing = false, lit = null;
+    const btn = h('button', { class: 'btn gold read-aloud', type: 'button', 'aria-label': 'Read this page to me' }, '🔊 Read to me');
+    const light = sp => { if (lit) lit.classList.remove('rd-now'); lit = sp; if (sp) sp.classList.add('rd-now'); };
+    const stop = () => {
+      if (!playing) return;
+      playing = false;
+      try { speechSynthesis.cancel(); } catch (e) { /* ignore */ }
+      light(null); lines.forEach(l => l.el.classList.remove('rd-line'));
+      btn.textContent = '🔊 Read to me'; btn.classList.remove('on');
+    };
+    const play = k => {
+      if (!playing) return;
+      if (k >= lines.length) return stop();
+      const line = lines[k];
+      if (!line.text.trim()) return play(k + 1);
+      const u = new SpeechSynthesisUtterance(line.text), v = voiceFor('en-GB');
+      if (v) u.voice = v;
+      u.lang = v ? v.lang : 'en-GB'; u.rate = 0.9;
+      u.onstart = () => { if (playing) line.el.classList.add('rd-line'); };
+      u.onboundary = e => {
+        if (!playing || (e.name && e.name !== 'word')) return;
+        const w = line.words.find(x => e.charIndex >= x.start && e.charIndex < x.end) || line.words.find(x => x.start >= e.charIndex);
+        if (w) light(w.sp);
+      };
+      u.onend = () => { line.el.classList.remove('rd-line'); light(null); play(k + 1); };
+      u.onerror = () => stop();
+      speechSynthesis.speak(u);
+    };
+    btn.addEventListener('click', () => {
+      if (playing) { stop(); return; }
+      if (!canSpeak) { say('Sorry – this device can\'t read aloud.'); return; }
+      stopReading();
+      try { speechSynthesis.cancel(); } catch (e) { /* ignore */ }
+      playing = true; btn.textContent = '⏹ Stop reading'; btn.classList.add('on');
+      stopReading = stop;
+      play(0);
+    });
+    if (!canSpeak) btn.hidden = true;
+    return { btn, stop };
   }
 
   // ---------- stage: read ----------
@@ -429,6 +501,7 @@
     const nav = navRow(() => { if (ci > 0) { ci--; show(); } else go(i - 1, true); });
 
     function show() {
+      if (cleanup) { cleanup(); cleanup = null; }
       const c = s.cards[ci];
       const key = `s${i}c${ci}`;
       let answered = !c.check || !!state.awarded[key];
@@ -483,12 +556,15 @@
           optsBox, fb);
       }
 
+      const titleEl = c.title && h('h2', { class: 'story-title' }, c.title);
+      const paras = [].concat(c.text).map(p => h('p', { html: fmt(p) }));
+      const reader = readAloud([titleEl, ...paras]);
+      const prevCleanup = cleanup;
+      cleanup = () => { if (prevCleanup) prevCleanup(); reader.stop(); };
       put(area, h('div', { class: 'story-anim' },
         h('div', { class: 'panel-inner story' },
           pic(c.pic),
-          h('div', { class: 'story-text' },
-            c.title && h('h2', { class: 'story-title' }, c.title),
-            [].concat(c.text).map(p => h('p', { html: fmt(p) })))),
+          h('div', { class: 'story-text' }, titleEl, paras, h('div', { class: 'read-row' }, reader.btn))),
         check));
       dots.replaceChildren(...s.cards.map((_, j) => h('span', { class: 'dot' + (j === ci ? ' on' : j < ci ? ' seen' : '') })));
       nav.set(label, goNext, answered);
