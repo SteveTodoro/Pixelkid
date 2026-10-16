@@ -141,6 +141,8 @@
     { id: 'pet-clockcroc', cat: 'pet', name: 'Tick-Tock Croc', price: 100, special: true, rows: ['.kk.kk..', 'kggggggk', 'kgwkgggk', 'kggggggg', 'kgwwwwgk', 'kggywygk', '.kgkkgk.', 'kgk..kgk'], pal: { k: '#1b4d1b', g: '#4caf50', w: '#ffffff', y: '#ffd43b' } },
     { id: 'pet-sunflower', cat: 'pet', name: 'Sunny the sunflower', price: 100, special: true, rows: ['.y.yy.y.', 'yybbbbyy', 'ybkbbkby', 'ybbkkbby', 'yybbbbyy', '.y.gg.y.', '..lgg...', '...ggl..'], pal: { y: '#ffcc33', b: '#8a5a32', k: '#1b1b1b', g: '#2e9e3e', l: '#5bbf3a' } },
     { id: 'pet-tardigrade', cat: 'pet', name: 'Water bear', price: 100, special: true, rows: ['.kkkkkk.', 'kppppppk', 'kpkppkpk', 'kppooppk', 'kpPppPpk', 'kppppppk', '.kkkkkk.', 'k.k..k.k'], pal: { k: '#4a3426', p: '#e9cfa6', P: '#c9a477', o: '#e57373' } },
+    { id: 'pet-echo', cat: 'pet', name: 'Echo the ghost', price: 100, special: true, rows: ['..wwww..', '.wwwwww.', 'wwkwwkww', 'wwkwwkww', 'wwwbbwww', 'wwwwwwww', 'wwwwwwww', 'w.ww.ww.'], pal: { w: '#eef3ff', k: '#1b1b1b', b: '#7aa2ff' } },
+    { id: 'pet-octopus', cat: 'pet', name: 'An octopus', price: 100, special: true, rows: ['..oooo..', '.oooooo.', 'owkoowko', 'oooooooo', '.oooooo.', 'o.o.o.o.', '.o.o.o.o', 'o.o.o.o.'], pal: { o: '#ff6f91', w: '#ffffff', k: '#1b1b1b' } },
   ];
   // ---------- background scenes (change the sky, decorations and ground everywhere) ----------
   const svgURI = (w, hh, inner) => `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${hh}' viewBox='0 0 ${w} ${hh}' shape-rendering='crispEdges'>${inner}</svg>`)}")`;

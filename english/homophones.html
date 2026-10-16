@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Homophone Hunters</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <script src="../shared/pixel.js"></script>
+  <script src="../shared/avatar.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// ---------- blocky pictures for this lesson ----------
+// SEA and SEE: two words that look different but make the same sound
+const SOUND_TWINS = Pixel.svg([
+  '....cc..cc..cc......cc..cc..cc...',
+  '...c..cc..cc..c....c..cc..cc..c..',
+  '.................................',
+  'bbbbbbbbbbbbbbb...bbbbbbbbbbbbbbb',
+  'bwwwwwwwwwwwwwb...bwwwwwwwwwwwwwb',
+  'bwkkkwkkkwkkkwb...bwkkkwkkkwkkkwb',
+  'bwkwwwkwwwkwkwb...bwkwwwkwwwkwwwb',
+  'bwkkkwkkkwkkkwb...bwkkkwkkkwkkkwb',
+  'bwwwkwkwwwkwkwb...bwwwkwkwwwkwwwb',
+  'bwkkkwkkkwkwkwb...bwkkkwkkkwkkkwb',
+  'bwwwwwwwwwwwwwb...bwwwwwwwwwwwwwb',
+  'bbbbbbbbbbbbbbb...bbbbbbbbbbbbbbb',
+], { k: '#1b1b1b', w: '#ffffff', b: '#1b1b1b', c: '#2ee6d6' });
+
+// Echo the Mix-Up Ghost (boss): swaps words that sound the same
+const ECHO_GHOST = Pixel.svg([
+  '....kkkkkk....',
+  '..kkwwwwwwkk..',
+  '.kwwwwwwwwwwk.',
+  '.kwwkkwwkkwwk.',
+  'kwwwkbwwkbwwwk',
+  'kwwwkkwwkkwwwk',
+  'kwwwwwwwwwwwwk',
+  'kwwwwwkkwwwwwk',
+  'kwwwwkbbkwwwwk',
+  'kwwwwwkkwwwwwk',
+  'kwwwwwwwwwwwwk',
+  'kwwkwwwkwwwkwk',
+  'kwk.kwk.kwk.kk',
+  '.k...k...k....',
+], { k: '#1b1b1b', w: '#eef3ff', b: '#3b5bdb' });
+
+// ---------- the lesson ----------
+window.LESSON = {
+  id: 'english-homophones',
+  subject: 'english',
+  title: 'Homophone Hunters',
+  emoji: '👂',
+  home: '../index.html',
+  finishAch: 'speller',
+  mascot: {
+    name: 'Quill the Wizard',
+    sprite: Pixel.sprites.wizard,
+    praise: ['Spell-tastic!', 'Sharp ears!', 'Word wizardry!', 'Critical hit!', 'Abraca-DABRA!', 'Nailed it!', 'Hunter skills!'],
+    oops: ['Oops! Have another go.', 'Not quite – what does the word MEAN?', 'Hmm, think again!', 'So close! One more try.'],
+  },
+  glossary: {
+    homophone: { emoji: '👂', def: 'A word that sounds the same as another word but has a different spelling and meaning, like sea and see.' },
+    meaning: { emoji: '💭', def: 'What a word is about. The meaning of sea is a huge stretch of salty water.' },
+    contraction: { emoji: '🤏', def: 'Two words squashed into one, with an apostrophe where letters went missing. they are → they\'re.' },
+    apostrophe: { emoji: '✏️', def: 'A little mark like a floating comma (\'). In a contraction it sits where letters are missing.' },
+    knight: { emoji: '🛡️', def: 'A soldier in armour who rode a horse, long ago. The k is silent!' },
+    flour: { emoji: '🍞', def: 'A soft white powder made from grain. You bake bread and cakes with it.' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'Homophone Hunters', short: 'Start', minutes: 1,
+      pic: SOUND_TWINS,
+      hello: "Welcome back to the WORD KINGDOM! A ghost called Echo is haunting the castle, swapping words that SOUND the same. Only a hunter with sharp ears – and sharp eyes – can stop it!",
+      question: 'If night and knight sound exactly the same, how do you know which one to write?',
+      intro: 'Recap, read, watch, proofread the ghost\'s mischief, build a **word castle** with your spelling – then banish Echo the Mix-Up Ghost!',
+      nameLabel: 'Hunter name:',
+    },
+
+    {
+      type: 'review', title: 'Last time…', short: 'Recap', minutes: 3,
+      from: { title: 'Suffix Squad', emoji: '🧩', url: 'suffixes.html' },
+      facts: [
+        'A suffix goes on the END of a word: ful = full of, less = without, ly = how it is done.',
+        'ful only ever has ONE l: careful, hopeful, beautiful.',
+        'Ends in a consonant then y? Swap y for i: happy → happily.',
+        'Ends in le? Swap le for ly: gentle → gently. Drop the e before ous: fame → famous.',
+      ],
+      questions: [
+        { type: 'mcq', q: 'A dog with no home is…', options: ['homeless', 'homeful', 'rehome'], answer: 0 },
+        { type: 'mcq', q: 'Which is spelt correctly?', options: ['thankful', 'thankfull', 'thankfol'], answer: 0, hint: 'How many l letters does ful have?' },
+        { type: 'mcq', q: 'What is noisy + ly?', options: ['noisily', 'noisyly', 'noisly'], answer: 0, hint: 'noisy ends in a y…' },
+        { type: 'tf', q: 'A cave full of danger is dangerous.', answer: true },
+      ],
+      game: {
+        game: 'fixit', title: 'Goblin leftovers',
+        intro: 'Grumblegob left some suffix mistakes behind! Tap the wrong word, then drag the right spelling onto it.',
+        noOk: true,
+        sentences: [
+          { text: 'Be carefull on the icy path.', wrong: 'carefull', fix: 'careful', options: ['carful'], why: 'ful has only ONE l.' },
+          { text: 'The puppy wagged its tail happyly.', wrong: 'happyly', fix: 'happily', options: ['happly'], why: 'Swap the y for i, then add ly.' },
+        ],
+      },
+    },
+
+    {
+      type: 'read', title: 'Sound twins', short: 'Read 1', minutes: 5,
+      say: 'Read each page carefully – the checks test if you really understood. Tap the yellow words for a 💎.',
+      cards: [
+        {
+          title: 'What is a homophone?', pic: SOUND_TWINS,
+          text: [
+            'A [[homophone]] sounds just like another word, but it is spelt differently and means something different.',
+            'homo means same and phone means sound. Night (when it is dark) and [[knight]] (in shining armour) are homophones.',
+          ],
+          check: { q: 'Which pair are homophones?', options: ['🌊 sea and 👀 see', '🐱 cat and 🎩 hat', '🐘 big and 🐘 large'], answer: 0, hint: 'They must SOUND exactly the same but be spelt differently.' },
+        },
+        {
+          title: 'Hear or here?', pic: '👂📍',
+          text: [
+            'You hear with your ear – and hear has the word ear hiding inside it!',
+            'here is a place, like there and where. "Come over here."',
+          ],
+          check: { q: 'Granny turns the radio up because she can\'t ___ it.', options: ['hear', 'here', 'heer'], answer: 0, hint: 'Is it about a place, or about using your ears?' },
+        },
+        {
+          title: 'To, two or too?', pic: '2️⃣➕',
+          text: [
+            'two is the number 2. Think of tw in twins and twelve.',
+            'too means also, or more than enough – it has one o too many! Everything else is to: "We went to the park."',
+          ],
+          check: { q: 'Mia can\'t pick up the box. It is ___ heavy.', options: ['too', 'to', 'two'], answer: 0, hint: 'It is MORE than she can lift.' },
+        },
+        {
+          title: 'Meaning picks the spelling', pic: '🌷🍞',
+          text: [
+            'You can\'t hear the difference, so think about the [[meaning]].',
+            'A flower grows in the garden. [[flour]] goes in a cake. A bear growls, but bare feet have no socks on.',
+          ],
+          check: { q: 'Dad is baking bread. Which does he need?', options: ['flour', 'flower', 'flowr'], answer: 0, hint: 'He needs the white powder, not a daisy!' },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'Homophones are weird!', short: 'Video 1', minutes: 7,
+      video: { id: 'rQuWqcVzqUU', title: 'Homophones for Kids | Grammar for Elementary Students', channel: 'Homeschool Pop', duration: '5:07' },
+      say: 'This video says homophones are WEIRD – like a cow that works in a city! Watch, then answer.',
+      clues: [
+        'What did the baby eat?',
+        'What is hay for?',
+        'What was the person buying?',
+        'How many homophones are there in English?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'The video explains that homophones sound the same but…', options: ['look different and mean different things', 'mean exactly the same thing', 'are always spelt the same'], answer: 0 },
+        { type: 'mcq', q: '"He knows what homophones are." Which word sounds just like knows?', options: ['nose', 'now', 'knees'], answer: 0 },
+        { type: 'mcq', q: 'In the video, the baby ate a…', options: ['watermelon', 'banana', 'biscuit'], answer: 0 },
+        { type: 'mcq', q: 'The video says hay is…', options: ['food for horses', 'a way to say goodbye', 'a kind of bird'], answer: 0 },
+        { type: 'mcq', q: 'The seagull flew over the ocean. The homophone of flew is…', options: ['flu – a kind of sickness', 'fly – a buzzing insect', 'flow – how a river moves'], answer: 0 },
+        { type: 'mcq', q: 'How many homophones does the video say English has?', options: ['over 7,000', 'about 20', 'exactly 100'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Homophone Hunt', short: 'Game 1', minutes: 8,
+      rounds: [
+        {
+          game: 'match', title: 'Sound twins',
+          intro: 'Each pair of twins sounds the same! Match each word to its meaning.',
+          say: 'Tap a word, then tap what it means.',
+          pairs: [
+            { a: 'sea', b: '🌊 salty water where fish live' },
+            { a: 'see', b: '👀 to look with your eyes' },
+            { a: 'flour', b: '🍞 white powder for baking' },
+            { a: 'flower', b: '🌷 grows in a garden' },
+            { a: 'bear', b: '🐻 a big furry animal' },
+            { a: 'bare', b: '🦶 with nothing covering it' },
+          ],
+        },
+        {
+          game: 'sort', title: 'To, two or too?',
+          intro: 'Which word fills each gap? Sort the sentences into the right chest.',
+          say: 'The number? Also / too much? Or plain old to?',
+          tapHint: 'Now tap the chest with the word that fits!',
+          buckets: [
+            { id: 'to', label: 'to', emoji: '➡️' },
+            { id: 'two', label: 'two', emoji: '2️⃣' },
+            { id: 'too', label: 'too', emoji: '➕' },
+          ],
+          items: [
+            { label: 'We walked ___ the shop.', bucket: 'to' },
+            { label: 'Give the ball ___ me!', bucket: 'to' },
+            { label: 'It\'s time ___ go to bed.', bucket: 'to' },
+            { label: 'A bike has ___ wheels.', bucket: 'two' },
+            { label: 'I have ___ little sisters.', bucket: 'two' },
+            { label: 'One, ___, three, go!', bucket: 'two' },
+            { label: 'Can I come ___?', bucket: 'too', hint: 'It means ALSO here.' },
+            { label: 'This soup is ___ hot!', bucket: 'too', hint: 'MORE than you want.' },
+            { label: 'I ate ___ much cake.', bucket: 'too', hint: 'MORE than enough!' },
+          ],
+        },
+        {
+          game: 'wordsearch', title: 'Homophone word hunt', size: 9,
+          intro: 'Find the hidden homophones – both twins of each pair are in there!',
+          say: 'Drag across each word you spot.',
+          words: ['HEAR', 'HERE', 'NIGHT', 'KNIGHT', 'FLOUR', 'FLOWER', 'SEA', 'SEE'],
+        },
+      ],
+    },
+
+    {
+      type: 'read', title: 'There, their or they\'re?', short: 'Read 2', minutes: 5,
+      say: 'The trickiest triplets in the Kingdom! Each one has a secret test.',
+      cards: [
+        {
+          title: 'they\'re = they are', pic: '🤏 they are',
+          text: [
+            'they\'re is a [[contraction]]: they are squashed together. The [[apostrophe]] sits where the a fell out.',
+            'Test: if you can say "they are" instead, write they\'re.',
+          ],
+          check: { q: '"___ playing football in the rain." Which test works?', options: ['They are playing football… makes sense, so write they\'re', 'Here playing football… makes sense', 'His playing football… makes sense'], answer: 0 },
+        },
+        {
+          title: 'their = it belongs to them', pic: '🎒🎒',
+          text: [
+            'their tells you who owns something: "The twins packed their bags."',
+            'Test: swap in his or her. "He packed his bag" still makes sense, so it is their.',
+          ],
+          check: { q: 'The ducks waddled back to ___ pond.', options: ['their', 'there', 'they\'re'], answer: 0, hint: 'Whose pond is it?' },
+        },
+        {
+          title: 'there = a place', pic: '📍👉',
+          text: [
+            'there is about places, and the word here hides inside it: t-HERE.',
+            'Test: swap in here. "Put it down there" → "Put it down here" still works. We also say "There is…" and "There are…".',
+          ],
+          check: { q: 'Look! ___ is a spider on your hat!', options: ['There', 'Their', 'They\'re'], answer: 0, hint: 'Try the they are test and the his/her test first. Do they work?' },
+        },
+        {
+          title: 'Myth-buster: the computer will fix it!', pic: '💻❌',
+          text: [
+            'Lots of people think a spellchecker will catch homophone mistakes. It usually won\'t!',
+            'their, there and they\'re are all real words, so the computer thinks they are fine. Only a sharp-eyed hunter spots them.',
+          ],
+          check: { q: 'Sam typed "I can here you" and the computer didn\'t underline it. Why?', options: ['here is a real word – just the wrong one', 'The spelling is right', 'Computers never check spelling'], answer: 0 },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'They\'re, their or there?', short: 'Video 2', minutes: 7,
+      video: { id: 'SCtWH2AdvUE', title: 'When to Use They\'re, Their, or There: Using Homophones for Kids', channel: 'Free School', duration: '4:44' },
+      say: 'FreeSchool shows a handy test for each one. Watch closely – then try the test yourself!',
+      clues: [
+        'Which one is a contraction?',
+        'Which word hides inside there?',
+        'What could the dog catch?',
+        'What were they afraid of?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'The video says they\'re is a contraction of…', options: ['they are', 'they were', 'there are'], answer: 0 },
+        { type: 'mcq', q: 'Which word hides inside t-h-e-r-e and helps you test it?', options: ['here', 'her', 'the'], answer: 0 },
+        { type: 'mcq', q: 'To test for their, the video swaps in…', options: ['his or her', 'here', 'they are'], answer: 0 },
+        { type: 'mcq', q: 'In the video, "___ dog can catch a ball." Which word fits?', options: ['Their', 'There', 'They\'re'], answer: 0 },
+        { type: 'mcq', q: '"The squirrel is over ___." Which word fits?', options: ['there', 'their', 'they\'re'], answer: 0 },
+        { type: 'tf', q: 'In the video, "they\'re all afraid of ghosts" uses they\'re because it means they are.', answer: true },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Ghost Patrol', short: 'Game 2', minutes: 8,
+      rounds: [
+        {
+          game: 'fixit', title: 'Ghost graffiti',
+          intro: 'Echo the ghost has sneaked homophone mistakes into the castle notices! Tap the wrong word, then drag the right twin onto it. Careful – some notices are already perfect.',
+          say: 'Read each sentence aloud in your head. Which word has the wrong meaning?',
+          sentences: [
+            { text: 'I can here the birds singing.', wrong: 'here', fix: 'hear', options: ['hair'], why: 'You hear with your ear!' },
+            { text: 'Their going to the beach today.', wrong: 'Their', fix: 'they\'re', options: ['there'], why: 'They are going → they\'re going.' },
+            { text: 'The knight rode into the castle at night.', ok: true, why: 'Both twins are right! A knight in armour, and night-time.' },
+            { text: 'We ate to many cakes at the party.', wrong: 'to', fix: 'too', options: ['two'], why: 'too many = more than enough.' },
+            { text: 'Hang your coats over their by the door.', wrong: 'their', fix: 'there', options: ['they\'re'], why: 'It is a place – over here works too, so it is there.' },
+            { text: 'Mum made pancakes with flower and eggs.', wrong: 'flower', fix: 'flour', options: ['floor'], why: 'Flour is the baking powder. A flower grows in the garden!' },
+            { text: 'The children put on their wellies.', ok: true, why: 'Whose wellies? Theirs – so their is right.' },
+            { text: 'We swam in the see on holiday.', wrong: 'see', fix: 'sea', options: ['she'], why: 'The salty water is the sea. You see with your eyes.' },
+          ],
+        },
+        {
+          game: 'crossword', title: 'Homophone Crossword',
+          intro: 'Solve the crossword! Watch out – each clue wants ONE twin, not the other.',
+          say: 'Crossword time! Stuck? Press 💡 Hint for a free letter.',
+          entries: [
+            { answer: 'KNIGHT', clue: 'A soldier in armour (silent k)' },
+            { answer: 'FLOUR', clue: 'White powder for baking bread' },
+            { answer: 'HEAR', clue: 'What you do with your ears' },
+            { answer: 'TWO', clue: 'The number after one' },
+            { answer: 'BEAR', clue: 'A big furry animal' },
+            { answer: 'SEA', clue: 'Salty water where whales swim' },
+            { answer: 'THEIR', clue: 'Belongs to them' },
+          ],
+        },
+        {
+          game: 'invaders', title: 'Twin Blaster',
+          intro: 'Arcade round! Read the sentence at the top and **shoot the twin that fits**. Dodge the wrong ones!',
+          say: 'Read the sentence, then blast the right word!',
+          waves: [
+            { prompt: 'They zipped up ___ coats.', items: [{ label: 'their', ok: true }, { label: 'there', ok: false, why: 'there is a place. Whose coats? Theirs!' }, { label: 'they\'re', ok: false, why: '"They are coats"? No – it is about who owns them.' }] },
+            { prompt: 'I have ___ hands.', items: [{ label: 'two', ok: true }, { label: 'to', ok: false, why: 'It is the number 2 – two.' }, { label: 'too', ok: false, why: 'too means also or too much. You need the number.' }] },
+            { prompt: 'I ___ the doorbell!', items: [{ label: 'hear', ok: true }, { label: 'here', ok: false, why: 'You need your EARS for this one: hear.' }] },
+            { prompt: 'Shoot every word that means a time or place!', items: [{ label: 'night', ok: true }, { label: 'there', ok: true }, { label: 'here', ok: true }, { label: 'knight', ok: false, why: 'A knight is a person in armour, not a time.' }, { label: 'hear', ok: false, why: 'hear is what your ears do.' }] },
+          ],
+          done: 'TWIN BLASTER CLEAR! Echo is getting nervous…',
+        },
+      ],
+    },
+
+    {
+      type: 'game', title: 'The Spell Test: Word Castle', short: 'Spell test', icon: '🪄', kind: 'Spelling test', minutes: 10,
+      rounds: [
+        {
+          game: 'spelltest', mode: 'peek', title: 'Look, Cover, Write, Check', scene: 'castle', prize: 'the hunters\' lookout',
+          intro: 'Warm up! Look at each word, spot its tricky bit, then the blocks cover it and you write it from memory. Every word lays a row of castle stones.',
+          say: 'Look at the word. Spot the tricky bit!',
+          words: [
+            { word: 'their', clue: 'belongs to them', hint: 'the + ir' },
+            { word: 'there', clue: 'a place (here is hiding inside)', hint: 't + here' },
+            { word: 'hear', clue: 'listen with your ears', hint: 'h + ear' },
+            { word: 'two', clue: 'the number 2', hint: 'tw like twins, then o' },
+            { word: 'knight', clue: 'a soldier in armour', hint: 'silent k, then night' },
+          ],
+        },
+        {
+          game: 'spelltest', mode: 'listen', title: 'The Real Spell Test', scene: 'castle', prize: 'the Homophone Castle',
+          intro: 'The real test! Homophones sound the same, so **listen to the sentence** to work out which twin you need. Every right word builds the castle higher…',
+          say: 'Listen to the WHOLE sentence – it tells you which twin to spell!',
+          words: [
+            { word: 'their', sentence: 'The children waved ___ flags.', clue: 'belongs to them', hint: 'Whose flags? Use the his/her test – the + ir.' },
+            { word: 'there', sentence: 'Put the box over ___.', clue: 'a place', hint: 'here is hiding inside it.' },
+            { word: 'hear', sentence: 'Can you ___ the thunder?', clue: 'listen with your ears', hint: 'It has ear inside it.' },
+            { word: 'here', sentence: 'Come and sit ___ next to me.', clue: 'this place', hint: 'Just four letters – h-e-r-e.' },
+            { word: 'too', sentence: 'My little brother wants to come ___.', clue: 'also', hint: 'One o too many!' },
+            { word: 'two', sentence: 'A bird has ___ wings.', clue: 'the number 2', hint: 'tw like twins.' },
+            { word: 'knight', sentence: 'The brave ___ fought the dragon.', clue: 'a soldier in armour', hint: 'A silent k at the start, then night.' },
+            { word: 'flour', sentence: 'We need ___ to make pizza dough.', clue: 'white baking powder', hint: 'f-l-o-u-r. The garden one has a w.' },
+            { word: 'flower', sentence: 'A bee landed on the ___.', clue: 'it grows in the garden', hint: 'f-l-o-w-e-r.' },
+            { word: 'sea', sentence: 'A whale swam in the deep blue ___.', clue: 'salty water', hint: 's-e-a. The looking one has two e letters.' },
+          ],
+        },
+        {
+          game: 'invaders', title: 'Letter Blaster',
+          intro: 'Bonus arcade round! Read the clue at the top, then **shoot the letters in order** to spell the word. Press 🔊 to hear it.',
+          say: 'Shoot the letters IN ORDER!',
+          waves: [
+            { spell: 'knight', clue: 'In armour (silent k!)', decoys: 'eo' },
+            { spell: 'their', clue: 'Belongs to them', decoys: 'ya' },
+            { spell: 'flour', clue: 'Powder for baking', decoys: 'we' },
+          ],
+          done: 'LETTER BLASTER CLEAR! The castle is safe – nearly…',
+        },
+      ],
+    },
+
+    {
+      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
+      say: 'Time to move! The twins sound the same – but the moves are different.',
+      wiggle: {
+        title: '👂 Twin Moves!',
+        seconds: 60,
+        moves: [
+          '🌊 SEA: make big waves with your arms!',
+          '👀 SEE: shade your eyes and look far, far away.',
+          '🌙 NIGHT: curl up and pretend to snore…',
+          '🛡️ KNIGHT: sword fight an invisible dragon!',
+          '🐻 BEAR: stomp around and growl!',
+          '2️⃣ TWO: hop TWO times… now two more!',
+        ],
+      },
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: Echo the Mix-Up Ghost', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      say: 'ECHO THE MIX-UP GHOST is swapping words all over the Kingdom! Every right answer is a hit. Banish it, {name}!',
+      boss: { name: 'Echo the Mix-Up Ghost', sprite: ECHO_GHOST, attack: '👻', lines: {
+        intro: 'Wooo-ooo! I swap the twins… twins… twins! Nobody can HERE me coming!',
+        hurt: ['Ow-ow-ow! That really… hurt-urt-urt!', 'Boo-hoo-hoo! You spotted me!', 'Eek! Too clever… clever… clever!'],
+        taunt: ['Wrong-ong-ong! Hee hee!', 'Boo! Got you – you – you!', 'Sounds right, looks WRONG!'],
+        angry: 'Now I\'m a very CROSS ghost… ghost… GHOST!',
+        dodge: 'Wooo! Can\'t catch a ghost!',
+        miss: 'Missed me! I\'m see-through!',
+        last: 'Wait-ait-ait… one more hit and I\'m toast-oast!',
+        defeat: 'Nooo… my echo is fading… fading… fad…',
+        win: 'Wooo-hoo! The twins are mixed up for EVER-ever-ever!',
+        stunned: 'Ooh… everything is going quiet… quiet… qui…',
+        beg: ['Wait! I can be a nice ghost… ghost…', 'I promise to only say BOO… boo…', 'Spare me! I\'ll be a whole new ghost – not a hole new ghost!'],
+      } },
+      questions: [
+        { type: 'mcq', q: 'Which pair are homophones?', options: ['knew and new', 'cat and dog', 'happy and glad'], answer: 0, hint: 'They must sound the same but mean different things.' },
+        { type: 'gap', q: 'I can ___ a strange noise in the attic!', options: ['hear', 'here', 'hair'], answer: 0 },
+        { type: 'gap', q: 'We are going ___ the cinema tonight.', options: ['to', 'too', 'two'], answer: 0 },
+        { type: 'mcq', q: 'Echo wrote: "The baker bought a bag of flower." What should it say?', options: ['flour – the baking powder', 'flower – it is right', 'floor – the ground'], answer: 0 },
+        { type: 'gap', q: '___ coming to my party on Saturday!', options: ['They\'re', 'Their', 'There'], answer: 0, hint: 'Try the they are test.' },
+        { type: 'gap', q: 'The players lifted ___ trophy.', options: ['their', 'there', 'they\'re'], answer: 0, hint: 'Whose trophy?' },
+        { type: 'gap', q: 'Is ___ any juice left in the fridge?', options: ['there', 'their', 'they\'re'], answer: 0 },
+        { type: 'tf', q: 'A spellchecker always spots homophone mistakes.', answer: false, explain: 'Both twins are real words, so the computer thinks they are fine!' },
+        { type: 'mcq', q: 'Which sentence is correct?', options: ['The knight rode through the night.', 'The night rode through the knight.', 'The knight rode through the knight.'], answer: 0 },
+        { type: 'mcq', q: 'Which word could finish: "Please ___ me a story"?', options: ['read', 'red', 'reed'], answer: 0, explain: 'read sounds like red – but red is a colour and a reed is a tall plant!' },
+        { type: 'order', q: 'Use the hunter\'s method on "___ dog is barking": put the steps in order.', items: ['🗣️ Read the whole sentence', '🧪 Try "They are dog is barking" – no!', '🧪 Try "His dog is barking" – yes!', '✍️ So write their dog'], hint: 'Read first, then test.' },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>

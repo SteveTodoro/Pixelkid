@@ -251,6 +251,15 @@ a { color: var(--brand-dark); }
 .tf-row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
 .tf-row .opt { min-width: 170px; font-size: 1.3rem; padding: 16px 22px; }
 .why { margin: 16px auto 0; max-width: 660px; padding: 10px 16px; background: var(--paper); border: 3px solid #000; font-size: 1.05rem; font-weight: 500; }
+.fixit { text-align: center; }
+.fx-label { font-family: var(--pixel); font-weight: 700; font-size: 1.15rem; color: var(--brand-dark); margin-top: 6px; }
+.fx-sentence { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 14px auto 18px; max-width: 720px; }
+.fx-word { font: 600 1.35rem var(--read); padding: 8px 12px; background: #fff; border: 3px solid #000; box-shadow: inset -3px -3px 0 #a5a5a5, inset 3px 3px 0 #fff, 0 3px 0 #000; cursor: pointer; color: #000; }
+.fx-word:hover { background: #fffbe0; }
+.fx-word.found { background: var(--bad-soft); color: var(--bad); text-decoration: wavy underline var(--bad); text-underline-offset: 5px; animation: pop .3s steps(3); }
+.fx-word.found.over { outline: 4px dashed var(--gold); }
+.fx-word.fixed { background: var(--good-soft); box-shadow: inset -3px -3px 0 #6fbf4a, inset 3px 3px 0 #e2ffd2, 0 3px 0 #000; animation: pop .3s steps(3); cursor: default; }
+.fixit .tray { justify-content: center; }
 
 .match-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 10px 16px; }
 .match-col { display: grid; gap: 10px; align-content: start; }
@@ -487,6 +496,13 @@ a { color: var(--brand-dark); }
 .cs-boss.cs-dizzy { animation: dizzy 1s steps(4) infinite; }
 .cs-boss.cs-hit { animation: hurt .3s steps(3); }
 .cs-boss.cs-rumble { animation: csrumble .12s steps(2) infinite; filter: brightness(2.2); }
+.cs-power { position: absolute; left: 50%; bottom: 13vh; transform: translateX(-50%); z-index: 4; width: min(520px, calc(100% - 32px)); text-align: center; display: grid; gap: 10px; justify-items: center; }
+.cs-meter-label { font-family: var(--pixel); font-weight: 700; color: #ffd54f; text-shadow: 3px 3px 0 #000; font-size: 1.15rem; }
+.cs-meter { width: 100%; height: 30px; background: #1b1b1b; border: 4px solid #000; box-shadow: 0 0 0 3px #fff; overflow: hidden; }
+.cs-meter-fill { height: 100%; width: 0; background: repeating-linear-gradient(90deg, #ffd54f 0 18px, #ffb800 18px 22px); transition: width .05s steps(2); }
+.cs-power.hot .cs-meter-fill { background: repeating-linear-gradient(90deg, #ff7043 0 18px, #e53935 18px 22px); }
+.cs-power.full .cs-meter { animation: hurt .3s steps(3) infinite; }
+.cs-tap { touch-action: manipulation; user-select: none; -webkit-user-select: none; font-size: 1.3rem; min-width: 240px; }
 .cs-bubble { position: absolute; right: 4%; top: 0; max-width: 60%; margin: 0; }
 .cs-bubble::before { top: auto; bottom: -12px; left: auto; right: 30px; border-bottom-color: transparent; border-top-color: #000; }
 .cs-bubble.ghost { opacity: .85; }
@@ -614,6 +630,8 @@ a { color: var(--brand-dark); }
 .sp-scene-pic svg { width: 100%; height: auto; display: block; }
 .sp-scene-pic.flash { animation: hurt .5s steps(3); }
 .sp-scene-pic.wobble svg { animation: wiggle 1.2s steps(4) infinite; transform-origin: 50% 90%; }
+.sp-scene-pic.launch svg { animation: sprocket .9s steps(4) infinite alternate; }
+@keyframes sprocket { from { transform: translateY(4px); } to { transform: translateY(-14px); } }
 .sp-scene-pic.bubbling::before, .sp-scene-pic.bubbling::after { content: ''; position: absolute; width: 8px; height: 8px; background: #fff; border: 2px solid #000; top: 4%; left: 35%; animation: spbubble 1.6s steps(6) infinite; }
 .sp-scene-pic.bubbling::after { left: 62%; animation-delay: .8s; }
 @keyframes spbubble { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-40px); opacity: 0; } }

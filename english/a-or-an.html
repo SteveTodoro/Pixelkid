@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A or An?</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <script src="../shared/pixel.js"></script>
+  <script src="../shared/avatar.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// ---------- blocky pictures for this lesson ----------
+// AN, with a little bridge across to the apple
+const AN_BRIDGE = Pixel.svg([
+  'bbbbbbbbbbbb.......g......',
+  'bwwwwwwwwwwb......gg......',
+  'bwkkkwkwwkwb....rrrrrrr...',
+  'bwkwkwkkwkwb....rrwrrrrr..',
+  'bwkkkwkwkkwb....rwrrrrrr..',
+  'bwkwkwkwwkwb....rrrrrrrr..',
+  'bwkwkwkwwkwb....rrrrrrrr..',
+  'bwwwwwwwwwwbyyyy.rrrrrr...',
+  'bbbbbbbbbbbb......rr.rr...',
+], { k: '#1b1b1b', w: '#ffffff', y: '#ffd43b', r: '#e53935', g: '#2e9e3e' });
+
+// Snatchit the magpie (boss): steals the n from an
+const MAGPIE = Pixel.svg([
+  '.....kkkk.....',
+  '....kkkkkk....',
+  '...kkwkkkkk...',
+  '..ykkkkkkkk...',
+  '.yykkkkkkkkk..',
+  '...kwwwwwkkkk.',
+  '..kwwwwwwwbkkk',
+  '..kwwwwwwbbbkk',
+  '...kwwwwbbbkkk',
+  '....kkkkkkk.kk',
+  '.....y..y...kk',
+  '....yy.yy....k',
+], { k: '#1b1b1b', w: '#ffffff', y: '#ffb800', b: '#2b6fd6' });
+
+// ---------- the lesson ----------
+window.LESSON = {
+  id: 'english-a-or-an',
+  subject: 'english',
+  title: 'A or An?',
+  emoji: '🍎',
+  home: '../index.html',
+  finishAch: 'speller',
+  mascot: {
+    name: 'Quill the Wizard',
+    sprite: Pixel.sprites.wizard,
+    praise: ['Spell-tastic!', 'Sharp ears!', 'Word wizardry!', 'Critical hit!', 'Abraca-DABRA!', 'Nailed it!', 'An excellent answer!'],
+    oops: ['Oops! Say it out loud.', 'Not quite – listen to the first SOUND!', 'Hmm, think again!', 'So close! One more try.'],
+  },
+  glossary: {
+    vowel: { emoji: '🅰️', def: 'One of the letters a, e, i, o or u. Vowel sounds come out with your mouth open.' },
+    consonant: { emoji: '🅱️', def: 'Any letter that is not a vowel, like b, c, d, m or t.' },
+    'silent h': { emoji: '🤫', def: 'An h that you write but don\'t say, like in hour and honest.' },
+    noun: { emoji: '📦', def: 'A naming word for a person, place or thing, like apple, castle or dragon.' },
+    determiner: { emoji: '👉', def: 'A little word that comes before a noun, like a, an or the.' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'A or An?', short: 'Start', minutes: 1,
+      pic: AN_BRIDGE,
+      hello: "Welcome back to the WORD KINGDOM! A sneaky magpie called Snatchit is stealing the n from AN. Now everyone is saying \"a apple\" and getting their tongues in a twist!",
+      question: 'Why do we say AN apple but A banana?',
+      intro: 'Recap, read, watch, sort, proofread, fuel a **rocket** with your spelling – then get the n back from Snatchit the magpie!',
+      nameLabel: 'Player name:',
+    },
+
+    {
+      type: 'review', title: 'Last time…', short: 'Recap', minutes: 3,
+      from: { title: 'Homophone Hunters', emoji: '👂', url: 'homophones.html' },
+      facts: [
+        'Homophones sound the same but have different spellings and meanings: sea and see, night and knight.',
+        'hear has ear in it. two is the number. too means also or too much.',
+        'they\'re = they are · their = belongs to them · there = a place (here hides inside).',
+        'A spellchecker can\'t catch homophones – only a sharp-eyed hunter can!',
+      ],
+      questions: [
+        { type: 'gap', q: 'The cats licked ___ paws.', options: ['their', 'there', 'they\'re'], answer: 0, hint: 'Whose paws?' },
+        { type: 'gap', q: 'I\'ve eaten ___ many sweets!', options: ['too', 'two', 'to'], answer: 0 },
+        { type: 'mcq', q: 'Which word goes with a bee: "The bee buzzed round the ___."', options: ['flower', 'flour', 'flowr'], answer: 0 },
+        { type: 'tf', q: 'Knight and night are homophones.', answer: true },
+      ],
+      game: {
+        game: 'fixit', title: 'Quick proofread',
+        intro: 'Echo the ghost left one last note. Tap the wrong word, then drag the right twin onto it!',
+        noOk: true,
+        sentences: [
+          { text: 'Can you here the waves?', wrong: 'here', fix: 'hear', options: ['hair'], why: 'Ears → hear.' },
+          { text: 'There going to build a sandcastle.', wrong: 'There', fix: 'they\'re', options: ['their'], why: 'They are going → they\'re.' },
+        ],
+      },
+    },
+
+    {
+      type: 'read', title: 'Two tiny words', short: 'Read 1', minutes: 5,
+      say: 'Read each page carefully – the checks test if you really understood. Tap the yellow words for a 💎.',
+      cards: [
+        {
+          title: 'A and an both mean one', pic: '1️⃣🍌 1️⃣🍎',
+          text: [
+            'a and an are tiny words called [[determiner]]s. They both mean one, and they go before a [[noun]]: a banana, an apple.',
+          ],
+          check: { q: 'Which one is wrong?', options: ['a horses', 'a horse', 'an owl'], answer: 0, hint: 'a and an mean ONE thing.' },
+        },
+        {
+          title: 'An before a vowel sound', pic: AN_BRIDGE,
+          text: [
+            'The [[vowel]]s are a, e, i, o and u. If the next word starts with a vowel sound, use an: an ant, an igloo, an orange.',
+            'Try saying "a egg" – your mouth gets stuck! The n is a little bridge that joins the words.',
+          ],
+          check: { q: 'You spot a huge grey animal with a trunk. It is ___ elephant.', options: ['an', 'a', 'the a'], answer: 0, hint: 'What sound does elephant start with?' },
+        },
+        {
+          title: 'A before a consonant sound', pic: '🐶🪁🦒',
+          text: [
+            'Every other letter is a [[consonant]]. Before a consonant sound, use a: a dog, a kite, a giraffe.',
+          ],
+          check: { q: 'Which one should go with a (not an)?', options: ['robot', 'owl', 'insect'], answer: 0, hint: 'Say each word. Which one starts with a consonant sound?' },
+        },
+        {
+          title: 'Look at the very next word', pic: '🍎➡️🔴🍎',
+          text: [
+            'A describing word can sneak in front. Only the word straight after a or an counts.',
+            'an apple, but a red apple. a cat, but an angry cat.',
+          ],
+          check: { q: 'Dad cooked ___ enormous pizza.', options: ['an', 'a'], answer: 0, hint: 'Ignore pizza! Look at the word straight after the gap.' },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'Superlexia: A vs An', short: 'Video 1', minutes: 7,
+      video: { id: '84LU4Phzvco', title: 'A VS. AN – Spelling and Grammar for Kids (Superlexia, Episode 6)', channel: 'Smile and Learn - English', duration: '5:11' },
+      say: 'A superhero who guards spelling and grammar! Watch out for the sneaky words with a "secret identity".',
+      clues: [
+        'What does Superlexia guard?',
+        'Where do they live?',
+        'Which animal starts with u but sounds like y?',
+        'Why does hour need an?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'Superlexia is the guardian of…', options: ['spelling and grammar', 'maths and numbers', 'the school library'], answer: 0 },
+        { type: 'mcq', q: 'In the video, they live in ___ igloo.', options: ['an', 'a'], answer: 0 },
+        { type: 'mcq', q: 'Which word does the video say is on "team a", even though it starts with u?', options: ['unicorn', 'umbrella', 'uncle'], answer: 0, explain: 'unicorn starts with a "you" sound, which acts like a consonant.' },
+        { type: 'mcq', q: 'Why does the video say we write an hour?', options: ['The h is silent, so hour starts with a vowel sound', 'Because hour is a long word', 'Because hour has a u in it'], answer: 0 },
+        { type: 'mcq', q: 'Which of these words with a silent h does the video put on team an?', options: ['honest', 'horse', 'hat'], answer: 0 },
+        { type: 'tf', q: 'The video says "an herb". In Britain we say the h in herb, so we say "a herb"!', answer: true, explain: 'In America the h in herb is silent – that is why the video says an herb. The SOUND decides!' },
+      ],
+    },
+
+    {
+      type: 'game', title: 'The Vowel Gate', short: 'Game 1', minutes: 8,
+      rounds: [
+        {
+          game: 'sort', title: 'A or An?',
+          intro: 'Say each word out loud. Drag it through the right gate. Listen to the first SOUND, not just the letter!',
+          say: 'Say it with a, then with an. Which sounds smooth?',
+          tapHint: 'Now tap the gate it belongs in!',
+          buckets: [
+            { id: 'a', label: 'a', emoji: '🅰️' },
+            { id: 'an', label: 'an', emoji: '🌉' },
+          ],
+          items: [
+            { label: 'dog', emoji: '🐶', bucket: 'a' },
+            { label: 'apple', emoji: '🍎', bucket: 'an' },
+            { label: 'owl', emoji: '🦉', bucket: 'an' },
+            { label: 'banana', emoji: '🍌', bucket: 'a' },
+            { label: 'egg', emoji: '🥚', bucket: 'an' },
+            { label: 'octopus', emoji: '🐙', bucket: 'an' },
+            { label: 'horse', emoji: '🐴', bucket: 'a', hint: 'You can HEAR the h in horse.' },
+            { label: 'umbrella', emoji: '☂️', bucket: 'an' },
+            { label: 'unicorn', emoji: '🦄', bucket: 'a', hint: 'Say it: "YOU-nicorn". That starts with a y sound!' },
+            { label: 'hour', emoji: '⏰', bucket: 'an', hint: 'The h is silent – hour sounds like "our".' },
+          ],
+        },
+        {
+          game: 'wordsearch', title: 'An-imal word hunt', size: 9,
+          intro: 'Find the hidden words. Every one of them takes AN!',
+          say: 'Drag across each word you spot.',
+          words: ['APPLE', 'EGG', 'OWL', 'IGLOO', 'ORANGE', 'HOUR', 'ANT', 'INSECT'],
+        },
+        {
+          game: 'platformer', title: 'An Run',
+          intro: 'Run and jump! Collect only words that need **an** – leave the a words behind.',
+          say: '◀ ▶ to run, ⬆ to jump. Collect the AN words!',
+          prompt: 'Collect words that need AN!',
+          items: [
+            { label: 'egg', ok: true },
+            { label: 'island', ok: true },
+            { label: 'orange', ok: true },
+            { label: 'hour', ok: true },
+            { label: 'ant', ok: true },
+            { label: 'cat', ok: false, why: 'cat starts with a consonant sound: a cat.' },
+            { label: 'unicorn', ok: false, why: 'unicorn starts with a "you" sound: a unicorn.' },
+            { label: 'house', ok: false, why: 'You can hear the h: a house.' },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'read', title: 'Listen, don\'t look!', short: 'Read 2', minutes: 5,
+      say: 'Some words try to trick your eyes. Your ears always know the answer!',
+      cards: [
+        {
+          title: 'The silent h', pic: '⏰🤫',
+          text: [
+            'In hour and honest, the h is a [[silent h]]. They really start with a vowel sound, so we say an hour and an honest knight.',
+            'But you can hear the h in hat and horse, so it is a hat and a horse.',
+          ],
+          check: { q: 'The film lasted ___ hour.', options: ['an', 'a'], answer: 0, hint: 'Say hour out loud. Can you hear the h?' },
+        },
+        {
+          title: 'When u says "you"', pic: '🦄👕',
+          text: [
+            'Sometimes u sounds like the word you. Then it acts like a consonant: a unicorn, a uniform, a useful tool.',
+            'When u makes an "uh" sound, use an: an umbrella, an ugly troll.',
+          ],
+          check: { q: 'Ali wears ___ uniform to school.', options: ['a', 'an'], answer: 0, hint: 'Say it: "YOU-niform".' },
+        },
+        {
+          title: 'The ear test', pic: '👂✅',
+          text: [
+            'Not sure? Say it both ways in a whisper. "a ugly troll" or "an ugly troll"? The smooth one is right.',
+          ],
+          check: { q: 'Use the ear test. Which is right?', options: ['an ugly troll', 'a ugly troll'], answer: 0 },
+        },
+        {
+          title: 'Myth-buster: vowel LETTER = an?', pic: '❌🔤 ✅👂',
+          text: [
+            'Lots of people think every word that starts with a, e, i, o or u takes an. Busted!',
+            'It is the first SOUND that counts, not the letter. That is why we say a unicorn but an hour.',
+          ],
+          check: { q: 'Your friend writes "an useful map". What do you tell them?', options: ['useful starts with a "you" sound, so it is a useful map', 'It is perfect – u is a vowel', 'It should be "the an useful map"'], answer: 0 },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'Let\'s learn a and an', short: 'Video 2', minutes: 9,
+      video: { id: 'EB5UJ2OHY_8', title: 'Let\'s Learn A and An || Use A and An || English Lesson for Kids', channel: 'School Ready with Teacher Rae', duration: '6:58' },
+      say: 'Teacher Rae goes through lots of examples – then there\'s a quiz at the end. Shout your answers before she does!',
+      clues: [
+        'Which instrument does she show?',
+        'What is an eraser?',
+        'Why can\'t we say "a balloons"?',
+        'Which animals are in her quiz?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'Teacher Rae says we say ___ guitar.', options: ['a', 'an'], answer: 0 },
+        { type: 'mcq', q: 'She says "an eraser". In Britain we usually call an eraser…', options: ['a rubber', 'a ruler', 'a pencil'], answer: 0, explain: 'Rubber starts with r, so it is a rubber – but an eraser!' },
+        { type: 'mcq', q: 'Why does she say we can\'t say "a balloons"?', options: ['a means one, and balloons is more than one', 'balloons starts with a vowel', 'balloons is too long'], answer: 0 },
+        { type: 'mcq', q: 'Which of these is on her list of vowels?', options: ['i', 'h', 'y'], answer: 0 },
+        { type: 'mcq', q: 'In her quiz, which animal needs an?', options: ['iguana', 'rabbit', 'tree frog'], answer: 0 },
+        { type: 'tf', q: 'She says an ice cream, because ice starts with a vowel.', answer: true },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Catch the Magpie', short: 'Game 2', minutes: 8,
+      rounds: [
+        {
+          game: 'fixit', title: 'Snatchit\'s scribbles',
+          intro: 'Snatchit has been pecking at the castle notices! Tap the wrong word, then drag the right one onto it. Some notices are already perfect…',
+          say: 'Read each sentence aloud in a whisper. Which bit sounds clunky?',
+          sentences: [
+            { text: 'I saw a elephant at the zoo.', wrong: 'a', fix: 'an', options: ['and'], why: 'elephant starts with a vowel sound: an elephant.' },
+            { text: 'Mum packed an banana for lunch.', wrong: 'an', fix: 'a', options: ['and'], why: 'banana starts with a b sound: a banana.' },
+            { text: 'We waited an hour for the bus.', ok: true, why: 'The h is silent, so an hour is right!' },
+            { text: 'He wore a orange hat to the party.', wrong: 'a', fix: 'an', options: ['and'], why: 'an orange hat – look at the word straight after.' },
+            { text: 'There was an huge spider in the bath.', wrong: 'an', fix: 'a', options: ['and'], why: 'You can hear the h in huge: a huge spider.' },
+            { text: 'She rode a unicorn over the rainbow.', ok: true, why: 'unicorn starts with a "you" sound, so a unicorn is right.' },
+            { text: 'A honest knight never tells lies.', wrong: 'A', fix: 'an', options: ['and'], why: 'honest has a silent h: an honest knight.' },
+            { text: 'Grandad drives a old red car.', wrong: 'a', fix: 'an', options: ['and'], why: 'old starts with a vowel sound: an old red car.' },
+          ],
+        },
+        {
+          game: 'crossword', title: 'A-or-An Crossword',
+          intro: 'Solve the crossword! Every clue shows whether the word takes a or an – that is a big hint.',
+          say: 'Crossword time! Stuck? Press 💡 Hint for a free letter.',
+          entries: [
+            { answer: 'VOWEL', clue: 'a, e, i, o or u' },
+            { answer: 'HOUR', clue: 'an ___ is 60 minutes (silent h)' },
+            { answer: 'UNICORN', clue: 'a ___ has one horn' },
+            { answer: 'UMBRELLA', clue: 'an ___ keeps you dry' },
+            { answer: 'IGLOO', clue: 'an ___ is a house made of ice' },
+            { answer: 'OCTOPUS', clue: 'an ___ has eight arms' },
+            { answer: 'ONE', clue: 'a and an both mean this number' },
+          ],
+        },
+        {
+          game: 'invaders', title: 'N-Blaster',
+          intro: 'Arcade round! Read the gap at the top and **shoot a or an** – whichever fits. In the last wave, shoot every word that takes an!',
+          say: 'Say the next word out loud – then blast!',
+          waves: [
+            { prompt: 'I live in ___ igloo.', items: [{ label: 'an', ok: true }, { label: 'a', ok: false, why: 'igloo starts with a vowel sound: an igloo.' }] },
+            { prompt: 'I want ___ pet dog.', items: [{ label: 'a', ok: true }, { label: 'an', ok: false, why: 'Look at the very next word: pet. a pet dog.' }] },
+            { prompt: 'Look, ___ unicorn!', items: [{ label: 'a', ok: true }, { label: 'an', ok: false, why: 'unicorn starts with a "you" sound: a unicorn.' }] },
+            { prompt: 'Shoot every word that takes AN!', items: [{ label: 'owl', ok: true }, { label: 'egg', ok: true }, { label: 'hour', ok: true }, { label: 'cat', ok: false, why: 'a cat!' }, { label: 'uniform', ok: false, why: 'a uniform – it starts with a "you" sound.' }, { label: 'hat', ok: false, why: 'You can hear the h: a hat.' }] },
+          ],
+          done: 'N-BLASTER CLEAR! Snatchit is running out of feathers…',
+        },
+      ],
+    },
+
+    {
+      type: 'game', title: 'The Spell Test: Rocket Launch', short: 'Spell test', icon: '🪄', kind: 'Spelling test', minutes: 10,
+      rounds: [
+        {
+          game: 'spelltest', mode: 'fix', title: 'Feather Scribbles', scene: 'rocket', prize: 'the test rocket',
+          intro: 'Snatchit has scribbled spelling mistakes on the launch pad! Write each red word correctly. Every word pumps fuel into a rocket.',
+          say: 'Uh-oh, a magpie got here! Write the red word correctly.',
+          words: [
+            { word: 'hour', wrong: 'our', sentence: 'The rocket launches in an ___.', hint: 'It is the one with the silent h.' },
+            { word: 'umbrella', wrong: 'umbrela', sentence: 'Take an ___ – it is raining!', hint: 'There are two l letters.' },
+            { word: 'octopus', wrong: 'octupus', sentence: 'An ___ has eight arms.', hint: 'oct-o-pus. oct means eight.' },
+            { word: 'island', wrong: 'iland', sentence: 'We sailed to an ___.', hint: 'There is a silent s: is-land.' },
+            { word: 'uniform', wrong: 'youniform', sentence: 'The astronaut wore a ___.', hint: 'It starts with u, even though it sounds like "you".' },
+          ],
+        },
+        {
+          game: 'spelltest', mode: 'listen', title: 'The Real Spell Test', scene: 'rocket', prize: 'your rocket',
+          intro: 'The real test! Press 🔊 to hear each word in a sentence, then spell it. Every word adds fuel – fill the tank and your rocket blasts off!',
+          say: 'Listen carefully… then type the word!',
+          words: [
+            { word: 'elephant', sentence: 'There was an ___ in the jungle.', clue: 'a huge animal with a trunk', hint: 'ph makes the f sound: ele-ph-ant.' },
+            { word: 'enormous', sentence: 'The giant ate an ___ sandwich.', clue: 'really, really big', hint: 'e-nor-mous. It ends in ous!' },
+            { word: 'insect', sentence: 'A beetle is an ___.', clue: 'a bug with six legs', hint: 'in + sect' },
+            { word: 'orange', sentence: 'I peeled an ___.', clue: 'a juicy round fruit', hint: 'or + ange' },
+            { word: 'astronaut', sentence: 'An ___ flew to the Moon.', clue: 'a space traveller', hint: 'astro (star) + naut' },
+            { word: 'honest', sentence: 'He gave an ___ answer.', clue: 'telling the truth', hint: 'A silent h at the start: h-on-est.' },
+            { word: 'unicorn', sentence: 'I drew a ___ with a rainbow horn.', clue: 'a magic horse with one horn', hint: 'uni (one) + corn' },
+            { word: 'invisible', sentence: 'The wizard wore an ___ cloak.', clue: 'cannot be seen', hint: 'in + vis + ible' },
+            { word: 'adventure', sentence: 'We went on an ___ in the woods.', clue: 'an exciting journey', hint: 'ad + ven + ture' },
+            { word: 'animal', sentence: 'A tiger is a wild ___.', clue: 'a living creature, like a dog or a lion', hint: 'an + i + mal' },
+          ],
+        },
+        {
+          game: 'invaders', title: 'Letter Blaster',
+          intro: 'Bonus arcade round! Read the clue at the top, then **shoot the letters in order** to spell the word. Press 🔊 to hear it.',
+          say: 'Shoot the letters IN ORDER!',
+          waves: [
+            { spell: 'igloo', clue: 'An ice house', decoys: 'ea' },
+            { spell: 'hour', clue: 'An ___ is 60 minutes (silent h!)', decoys: 'ae' },
+            { spell: 'orange', clue: 'A juicy fruit', decoys: 'iu' },
+          ],
+          done: 'LETTER BLASTER CLEAR! You are an a-or-an ace!',
+        },
+      ],
+    },
+
+    {
+      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
+      say: 'Time to move – the A-or-AN way! Shout the right word before each move.',
+      wiggle: {
+        title: '🌉 A-or-AN Moves!',
+        seconds: 60,
+        moves: [
+          '🦅 AN eagle: flap your wings and soar!',
+          '🐙 AN octopus: wiggle your arms like eight tentacles!',
+          '🦄 A unicorn: gallop on the spot!',
+          '⏰ AN hour hand: turn round slowly with your arm out.',
+          '🐘 AN elephant: swing your trunk and stomp!',
+          '🚀 A rocket: crouch… 3, 2, 1… JUMP!',
+        ],
+      },
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: Snatchit the Magpie', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      say: 'SNATCHIT THE MAGPIE has stolen every n in the Kingdom! Every right answer gets one back. Go, {name}!',
+      boss: { name: 'Snatchit the Magpie', sprite: MAGPIE, attack: '🪶', lines: {
+        intro: 'Caw-caw! Shiny n\'s are MINE! Enjoy your "a apple", hehehe!',
+        hurt: ['Caw! My feathers!', 'Squawk! Give that n back!', 'Ow! That was a-n-noying!'],
+        taunt: ['Caw-caw! Wrong!', 'Hehehe – a egg, a egg, a egg!', 'Shiny mistake! I\'ll keep it!'],
+        angry: 'Now I\'m an ANGRY magpie! Hear that? AN angry!',
+        dodge: 'Flap-flap! Too quick for you!',
+        miss: 'Ha! Missed by a feather!',
+        last: 'Caw… my nest is nearly empty…',
+        defeat: 'CAAAW! Take your n\'s back… I never liked them anyway!',
+        win: 'Caw-caw! Every n is in my nest for ever!',
+        stunned: 'Ooh… I see stars… shiny stars…',
+        beg: ['Wait! Here – have an n! Have two!', 'Don\'t pluck me! I\'m an honest bird!', 'I\'ll swap you for a shiny button?'],
+      } },
+      questions: [
+        { type: 'mcq', q: 'a and an both mean…', options: ['one', 'two', 'the best'], answer: 0 },
+        { type: 'gap', q: 'Mum bought ___ ice cream for each of us.', options: ['an', 'a'], answer: 0 },
+        { type: 'gap', q: 'We saw ___ penguin waddling on the ice.', options: ['a', 'an'], answer: 0 },
+        { type: 'gap', q: 'Snatchit pecked ___ old shoe.', options: ['an', 'a'], answer: 0 },
+        { type: 'gap', q: 'The match lasted ___ hour and a half.', options: ['an', 'a'], answer: 0, hint: 'Is the h silent?' },
+        { type: 'gap', q: 'The nurse wore ___ blue uniform.', options: ['a', 'an'], answer: 0, hint: 'Look at the word straight after the gap!' },
+        { type: 'mcq', q: 'Which is correct?', options: ['a useful tool', 'an useful tool'], answer: 0, hint: 'Say it: "YOU-sful".' },
+        { type: 'mcq', q: 'Which one is wrong?', options: ['a apple', 'an apple', 'a red apple'], answer: 0 },
+        { type: 'tf', q: 'Every word that starts with the letter u takes an.', answer: false, explain: 'It is the SOUND that counts: an umbrella, but a unicorn.' },
+        { type: 'mcq', q: 'Which pair are BOTH right?', options: ['a hat and an hour', 'an hat and a hour', 'a hat and a hour'], answer: 0 },
+        { type: 'order', q: 'Choose a or an for "___ honest answer": put the steps in order.', items: ['👀 Find the word straight after the gap: honest', '🗣️ Say it out loud: "onest"', '👂 The h is silent – it starts with a vowel sound', '✍️ So write an honest answer'], hint: 'Find the word first, then say it.' },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>

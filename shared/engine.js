@@ -837,6 +837,72 @@
       return box;
     },
 
+    // Proofreader: tap the goblin's wrong word in a sentence, then drag the right word onto it.
+    // r.sentences: [{ text, wrong: 'here', fix: 'hear', options: ['hair'], why, hint }] or { text, ok: true, why } (nothing to fix).
+    // r.noOk: hide the "No mistakes!" button when every sentence has a mistake.
+    fixit(r, key, done) {
+      let si = 0;
+      const box = h('div', { class: 'game fixit' });
+      const bare = w => w.toLowerCase().replace(/^[^a-z']+|[^a-z']+$/gi, '');
+      function show() {
+        const st = r.sentences[si];
+        let slip = false, over = false;
+        const tokens = st.text.split(/\s+/);
+        const wi = st.ok ? -1 : st.wrongAt != null ? st.wrongAt : tokens.findIndex(t => bare(t) === st.wrong.toLowerCase());
+        const why = h('div', { class: 'why', hidden: true });
+        const tray = h('div', { class: 'tray' });
+        const trayWrap = h('div', { class: 'tray-wrap', hidden: true }, h('div', { class: 'tray-label' }, '👇 Drag the right word onto the red one (or tap it, then tap the red word)'), tray);
+        const nextBtn = h('button', { class: 'btn', type: 'button', hidden: true, onclick() { sfx.tap(); si++; show(); } }, 'Next sentence ▶');
+        const finish = (el, text) => {
+          over = true; sfx.good();
+          if (!slip) award(`${key}:${si}`, el);
+          say(praise());
+          why.innerHTML = '✔ ' + fmt(text || 'Fixed!', false); why.hidden = false;
+          okBtn.disabled = true;
+          if (si < r.sentences.length - 1) nextBtn.hidden = false; else done();
+        };
+        const miss = (el, msg) => { slip = true; shake(el); sfx.bad(); say(msg); };
+        const words = tokens.map((t, i) => {
+          const b = h('button', { class: 'fx-word', type: 'button' }, t);
+          b.addEventListener('click', () => {
+            if (over || b.classList.contains('found')) return;
+            if (i !== wi) return miss(b, st.ok ? 'Look again – is anything really wrong in this sentence?' : st.hint || 'That word is fine. Read the sentence aloud – which word has the wrong meaning?');
+            sfx.zap(); b.classList.add('found'); b.setAttribute('data-drop', 'fix');
+            say('Found it! Now drag the right word onto it.');
+            const chips = dropGame({
+              items: [st.fix, ...(st.options || []).filter(o => o !== st.fix)], targets: [b], tapHint: 'Now tap the red word to swap it!',
+              makeChip: w => h('div', null, w),
+              check: chip => chip._it === st.fix,
+              onRight(chip) {
+                const [, pre, post] = t.match(/^([^a-z']*)[a-z']+(.*)$/i) || [, '', ''];
+                const cap = /^[^a-z]*[A-Z]/.test(t) ? st.fix[0].toUpperCase() + st.fix.slice(1) : st.fix;
+                b.textContent = pre + cap + post; b.classList.remove('found'); b.classList.add('fixed'); b.removeAttribute('data-drop');
+                trayWrap.hidden = true;
+                finish(b, st.why);
+              },
+              onWrong(chip) { slip = true; say(st.hint || `"${chip._it}" doesn't fit here. Think about what the word means!`); },
+            });
+            put(tray, chips); trayWrap.hidden = false;
+          });
+          return b;
+        });
+        const okBtn = h('button', { class: 'btn ghost', type: 'button', hidden: !!r.noOk, onclick() {
+          if (over) return;
+          if (st.ok) finish(okBtn, st.why || 'Every word is right!');
+          else miss(okBtn, 'Hmm – a sneaky mistake is hiding in here. Hunt for it!');
+        } }, '✔ No mistakes!');
+        put(box,
+          h('div', { class: 'tf-count' }, `${si + 1} of ${r.sentences.length}`),
+          h('div', { class: 'fx-label' }, st.ok ? '🔍 Is there a mistake?' : '🔍 Tap the wrong word'),
+          h('p', { class: 'fx-sentence' }, words),
+          trayWrap, why,
+          h('div', { class: 'btn-row' }, okBtn, nextBtn));
+        box._test = { words, okBtn, tray, get over() { return over; }, next: () => nextBtn.click() };
+      }
+      show();
+      return box;
+    },
+
     // Read a picture / table, then answer questions about it.
     questions(r, key, done) {
       const area = h('div');
@@ -1532,6 +1598,7 @@
   // r.words: [{ word, sentence ('… ___ …', read aloud with the word filled in), clue, hint, wrong (mode 'fix'), emoji }]
   // r.mode: 'listen' (default: hear the word and a sentence) | 'peek' (look, cover, write, check) | 'fix' (correct a misspelt word)
   // r.scene: 'potion' (default: each word adds an ingredient to a cauldron) | 'egg' (each word cracks a dragon egg)
+  //   | 'castle' (each word builds a row of a castle tower) | 'rocket' (each word fuels a rocket, which blasts off at the end)
   // r.prize: the name of the finished potion / dragon. First-try spellings earn a gem; two misses show the word to copy.
   const SP_LIQUID = ['#7cfc3a', '#2ee6d6', '#b44dff', '#ff7eb6', '#ffb800', '#4fc3ff'];
   function cauldronSVG(p, n) {
@@ -1556,6 +1623,34 @@
   const POTION = Pixel.svg(['....kkkk....', '....kbbk....', '.....kk.....', '....kwLk....', '...kwLLLk...', '..kLLLLLLk..', '.kLwLLLLLLk.', '.kLLLLLLLLk.', '.kLLLLLLwLk.', '..kLLLLLLk..', '...kkkkkk...'],
     { k: '#1b1b1b', b: '#8a5a32', w: '#ffffff', L: '#b44dff' });
 
+  // castle: each word lays another row of stones, bottom up (unbuilt rows show as a faint outline)
+  const CASTLE_ROWS = ['.ss..ss..ss..ss.', '.ss..ss..ss..ss.', '.ssssssssssssss.', '.sSssssssssssSs.', '.sssskkssskksss.', '.sssskwssskwsss.', '.ssssssssssssss.',
+    '.sSsssssssssSss.', '.ssssssssssssss.', '.ssssskkkksssss.', '.sssskddddkssSs.', '.ssSskddddkssss.', '.sssskddddkssss.'];
+  const CASTLE_PAL = { s: '#9aa3ad', S: '#6b7480', k: '#1b1b1b', w: '#ffd43b', d: '#8a5a32', g: '#dfe3e8', r: '#e53935', f: '#5a3a1a' };
+  const castleFlag = ['.......frr......', '.......frrrr....', '.......frr......', '.......f........'];
+  function castleSVG(p) {
+    const built = Math.round(p * CASTLE_ROWS.length);
+    return Pixel.svg(['................', '................', '................', '................']
+      .concat(CASTLE_ROWS.map((r, y) => (y >= CASTLE_ROWS.length - built ? r : r.replace(/[^.]/g, 'g')))), CASTLE_PAL);
+  }
+  const CASTLE_DONE = Pixel.svg(castleFlag.concat(CASTLE_ROWS), CASTLE_PAL);
+  // rocket: each word pours fuel into the tank; when it is full, the engines fire
+  const ROCKET = ['.....kk.....', '....krrk....', '...krrrrk...', '...kwwwwk...', '..kwwccwwk..', '..kwcbbcwk..', '..kwcbbcwk..', '..kwwccwwk..',
+    '..kFFFFFFk..', '..kFFFFFFk..', '..kFFFFFFk..', '..kFFFFFFk..', '.rkFFFFFFkr.', 'rrkFFFFFFkrr', 'rrkkkkkkkkrr', 'r..kk..kk..r'];
+  function rocketSVG(p, fire) {
+    const fill = Math.round(p * 6);
+    const rows = ROCKET.map((r, y) => (y >= 8 && y <= 13 && 14 - y <= fill ? r.replace(/F/g, 'L') : r));
+    return Pixel.svg(rows.concat(fire ? ['...oyyyyo...', '....oyyo....', '.....oo.....'] : ['............', '............', '............']),
+      { k: '#1b1b1b', r: '#e53935', w: '#e8eef5', c: '#9fd8ff', b: '#2b6fd6', F: '#2b2f3a', L: '#7cfc3a', o: '#ff8c1a', y: '#ffd43b' });
+  }
+  // r.scene → how the picture, caption and finish banner look
+  const SP_SCENES = {
+    potion: { prize: 'the magic potion', draw: (p, n, full) => (full ? POTION : cauldronSVG(p, n)), cap: (n, of, prize) => `🧪 ${n}/${of} ingredients in ${prize}`, made: prize => `🧪 ${prize} is ready!`, done: '🧪 POTION BREWED!', anim: 'bubbling' },
+    egg: { prize: 'your baby dragon', draw: (p, n, full) => (full ? BABY_DRAGON : eggSVG(p)), cap: (n, of) => `🥚 ${n}/${of} words · each one cracks the egg`, made: prize => `🐲 ${prize} has hatched!`, done: '🐲 IT HATCHED!', anim: 'wobble' },
+    castle: { prize: 'your word castle', draw: (p, n, full) => (full ? CASTLE_DONE : castleSVG(p)), cap: (n, of) => `🧱 ${n}/${of} words · each one builds a row of stones`, made: prize => `🏰 ${prize} is built!`, done: '🏰 CASTLE BUILT!' },
+    rocket: { prize: 'your rocket', draw: (p, n, full) => rocketSVG(p, full), cap: (n, of) => `⛽ ${n}/${of} words · each one adds fuel`, made: prize => `🚀 ${prize} has blasted off!`, done: '🚀 BLAST OFF!', anim: 'launch' },
+  };
+
   const canSpeak = 'speechSynthesis' in window && typeof window.SpeechSynthesisUtterance === 'function';
   // read words aloud in a British voice (the 🔊 button always speaks; automatic reading respects mute)
   function speak(text, { rate = 0.85, force = false } = {}) {
@@ -1572,8 +1667,8 @@
   }
 
   GAMES.spelltest = function (r, key, done) {
-    const mode = r.mode || 'listen', scene = r.scene || 'potion';
-    const prize = r.prize || (scene === 'egg' ? 'your baby dragon' : 'the magic potion');
+    const mode = r.mode || 'listen', scene = SP_SCENES[r.scene] ? r.scene : 'potion', SC = SP_SCENES[scene];
+    const prize = r.prize || SC.prize;
     const DEF_EMOJI = ['🍄', '🦎', '🌟', '🪶', '🐸', '💎', '🌙', '🍯', '🕷️', '🌈', '🔥', '❄️'];
     const words = r.words.map((w, i) => Object.assign({ emoji: DEF_EMOJI[i % DEF_EMOJI.length] }, typeof w === 'string' ? { word: w } : w));
     const results = {}; // word -> 'first' | 'second' | 'copied'
@@ -1590,12 +1685,10 @@
 
     function drawScene(added) {
       const p = count / words.length, full = count === words.length;
-      sceneBox.classList.toggle('wobble', scene === 'egg' && !full && count > 0);
-      if (scene === 'egg') sceneBox.innerHTML = full ? BABY_DRAGON : eggSVG(p);
-      else sceneBox.innerHTML = full ? POTION : cauldronSVG(p, count);
-      sceneBox.classList.toggle('bubbling', scene === 'potion' && count > 0 && !full);
-      sceneCap.textContent = full ? (scene === 'egg' ? `🐲 ${prize} has hatched!` : `🧪 ${prize} is ready!`)
-        : scene === 'egg' ? `🥚 ${count}/${words.length} words · each one cracks the egg` : `🧪 ${count}/${words.length} ingredients in ${prize}`;
+      sceneBox.innerHTML = SC.draw(p, count, full);
+      ['wobble', 'bubbling'].forEach(a => sceneBox.classList.toggle(a, SC.anim === a && count > 0 && !full));
+      sceneBox.classList.toggle('launch', SC.anim === 'launch' && full);
+      sceneCap.textContent = full ? SC.made(prize) : SC.cap(count, words.length, prize);
       if (added) {
         const chip = h('span', { class: 'sp-ing pop' }, added.emoji);
         ingredients.append(chip);
@@ -1759,7 +1852,7 @@
       if (canSpeak) speechSynthesis.cancel();
       put(board,
         h('div', { class: 'results' },
-          h('h2', null, scene === 'egg' ? '🐲 IT HATCHED!' : '🧪 POTION BREWED!'),
+          h('h2', null, SC.done),
           h('p', { class: 'lead' }, `${firsts} of ${words.length} spelt right first time.`),
           h('ul', { class: 'sp-report' }, words.map(w => h('li', { class: 'r-' + results[w.word.toLowerCase()] },
             h('span', null, mark[results[w.word.toLowerCase()]] || '•'), h('b', null, w.word)))),
@@ -3809,7 +3902,7 @@
   }
 
   // ---------- the finishing-move cut scene ----------
-  // Plays full screen after the "Final blow!" button, then calls done(). One of three finishers at random:
+  // Plays full screen after the "Final blow!" button, then calls done(). First the player taps to fill a power meter, then one of three finishers at random:
   // a giant hammer squashes the boss flat, an uppercut launches it into the sky, or it explodes into its own pixels.
   function finisher(b, lines, done) {
     if (calm()) { done(); return; }
@@ -3939,18 +4032,60 @@
       shout('KABOOM!', 'big');
     }
 
+    // the player taps (or presses space) to fill the power meter; it drains slowly when they stop, then the blow lands
+    async function powerUp() {
+      let power = 0, idle = 0, taps = 0;
+      const fillBar = h('div', { class: 'cs-meter-fill' });
+      const tapBtn = h('button', { class: 'btn gold big cs-tap', type: 'button' }, '👊 TAP! TAP! TAP!');
+      const meter = h('div', { class: 'cs-power' },
+        h('div', { class: 'cs-meter-label' }, '⚡ CHARGE YOUR FINAL BLOW!'),
+        h('div', { class: 'cs-meter', role: 'progressbar', 'aria-label': 'Power', 'aria-valuemin': 0, 'aria-valuemax': 100 }, fillBar),
+        tapBtn);
+      const tap = e => {
+        if (e) e.preventDefault();
+        if (over || power >= 1) return;
+        power = Math.min(1, power + 0.1); idle = 0; taps++;
+        tone(220 + power * 660, 0, 0.08, 'square', 0.05);
+        hero.classList.add('cs-charge'); replay(tapBtn, 'pop');
+        if (taps % 3 === 0) sparkle(stage, hero, 8);
+      };
+      const onSpace = e => { if (e.key === ' ' || e.key === 'Enter') tap(e); };
+      tapBtn.addEventListener('pointerdown', tap);
+      tapBtn.addEventListener('click', e => e.preventDefault());
+      document.addEventListener('keydown', onSpace);
+      scene.append(meter); tapBtn.focus();
+      shout('POWER UP!');
+      scene._test = Object.assign(scene._test || {}, { tap: () => tap(), get power() { return power; } });
+      try {
+        while (power < 1) {
+          await step(50);
+          idle += 50;
+          if (idle > 500 && power > 0) power = Math.max(0, power - 0.012); // gentle drain: keep tapping!
+          if (!power) hero.classList.remove('cs-charge');
+          fillBar.style.width = power * 100 + '%';
+          meter.querySelector('.cs-meter').setAttribute('aria-valuenow', Math.round(power * 100));
+          meter.classList.toggle('hot', power > 0.7);
+        }
+        fillBar.style.width = '100%'; meter.classList.add('full');
+        shout('MAX POWER!', 'big gold'); sparkle(stage, hero, 24);
+        await step(600);
+      } finally {
+        document.removeEventListener('keydown', onSpace);
+        meter.remove(); skip.focus();
+      }
+    }
+
     (async () => {
       try {
-        // intro: letterbox bars slide in, the boss wobbles and begs, the hero powers up
+        // intro: letterbox bars slide in, the boss wobbles and begs, the player charges the meter, the hero powers up
         await step(350);
         bubble.textContent = fill(pick(lines.beg)); bubble.classList.add('show'); replay(bubble, 'pop');
         await step(1100);
         bubble.classList.remove('show');
+        await powerUp();
         hero.classList.add('cs-charge'); sfx.charge(); shout('FINAL BLOW!', 'big');
         sparkle(stage, hero, 18);
         await step(700);
-        sparkle(stage, hero, 18);
-        await step(400);
         hero.classList.remove('cs-charge');
         boss.classList.remove('cs-dizzy');
         await pick([hammer, launch, explode])();
