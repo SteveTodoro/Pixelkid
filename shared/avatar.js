@@ -81,6 +81,9 @@
     { id: 'frisk-jumper', cat: 'top', name: 'Frisk stripy jumper', price: 80, special: true, y: 9, rows: ['.bbbbbbbbbb.', '.pppppppppp.', '.bbbbbbbbbb.', '.pppppppppp.', '...bbbbbb...'], pal: { b: '#4a7fd8', p: '#c459d1' } },
     { id: 'papyrus-armour', cat: 'top', name: 'Papyrus battle body', price: 100, special: true, y: 9, rows: ['yyyttttttyyy', '.tttttttttt.', '.ttTttttTtt.', '.tttttttttt.', '.rr.bbbb.rr.'], pal: { y: '#ffcc33', t: '#ffffff', T: '#d6dbe1', r: '#e53935', b: '#2f5fd0' } },
     { id: 'undyne-top', cat: 'top', name: 'Undyne tank top', price: 50, special: true, y: 9, rows: ['..kkkkkkkk..', '..kkkkkkkk..', '..kkkkkkkk..', '..kkkkkkkk..', '...kkkkkk...'], pal: { k: '#1b1b1b' } },
+    { id: 'happi-coat', cat: 'top', name: 'Happi festival coat', price: 30, y: 9, rows: ['.tWttttttWt.', '.ttWttttWtt.', '.tttWttWttt.', '.tttttttttt.', '...tWWWWt...'], pal: { t: '#1f3c88', W: '#ffffff' } },
+    { id: 'anpan-suit', cat: 'top', name: 'Anpanman suit', price: 50, special: true, y: 9, rows: ['.tttttttttt.', '.ttttyytttt.', '.ttttyytttt.', '.tttttttttt.', '...yyyyyy...'], pal: { t: '#e53935', y: '#ffd43b' } },
+    { id: 'guard-tunic', cat: 'top', name: 'Royal Guard tunic', price: 50, special: true, y: 9, rows: ['.tttttttttt.', '.ttttyttttt.', '.ttttyttttt.', '.ttttyttttt.', '...wwwwww...'], pal: { t: '#d32f2f', y: '#ffd43b', w: '#ffffff' } },
     // ----- bottoms -----
     { id: 'jeans', cat: 'legs', name: 'Jeans', price: 0, y: 14, rows: ['...llllll...', '...ll..ll...', '...ll..ll...', '...ll..ll...'], pal: { l: '#2f5d9e' } },
     { id: 'shorts', cat: 'legs', name: 'Shorts', price: 10, y: 14, rows: ['...llllll...', '...ll..ll...'], pal: { l: '#8a5a32' } },
@@ -91,6 +94,8 @@
     { id: 'chef-trousers', cat: 'legs', name: 'Chef check trousers', price: 40, special: true, y: 14, rows: ['...lLlLlL...', '...Ll..Ll...', '...lL..lL...', '...Ll..Ll...'], pal: { l: '#ffffff', L: '#1b1b1b' } },
     { id: 'sans-shorts', cat: 'legs', name: 'Sans shorts', price: 40, special: true, y: 14, rows: ['...kkkkkk...', '...wk..kw...'], pal: { k: '#1b1b1b', w: '#ffffff' } },
     { id: 'papyrus-shorts', cat: 'legs', name: 'Papyrus shorts', price: 40, special: true, y: 14, rows: ['...bbbbbb...', '...bb..bb...'], pal: { b: '#2f5fd0' } },
+    { id: 'elephant-pants', cat: 'legs', name: 'Thai elephant trousers', price: 25, y: 14, rows: ['...pPpPpP...', '...Pp..pP...', '...pP..Pp...', '...Pp..pP...'], pal: { p: '#6a1b9a', P: '#ffd43b' } },
+    { id: 'anpan-legs', cat: 'legs', name: 'Anpanman trousers', price: 30, special: true, y: 14, rows: ['...llllll...', '...ll..ll...', '...ll..ll...', '...ll..ll...'], pal: { l: '#e53935' } },
     // ----- shoes -----
     { id: 'trainers', cat: 'shoes', name: 'Trainers', price: 0, y: 18, rows: ['...oo..oo...', '..oOo..oOo..'], pal: { o: '#ffffff', O: '#1e6fd9' } },
     { id: 'trainers-red', cat: 'shoes', name: 'Red kicks', price: 10, y: 18, rows: ['...oo..oo...', '..oOo..oOo..'], pal: { o: '#e53935', O: '#ffffff' } },
@@ -111,6 +116,9 @@
     { id: 'miner-helmet', cat: 'hat', name: 'Miner helmet', price: 0, unlock: 'miner', rows: ['.....yy.....', '....yLLy....', '..cccccccc..', '.cccccccccc.', 'CCCCCCCCCCCC'], pal: { c: '#ffb800', C: '#c98a00', y: '#1b1b1b', L: '#fff59d' } },
     { id: 'explorer-hat', cat: 'hat', name: 'Explorer hat', price: 0, unlock: 'wonder', rows: ['...cccccc...', '..cccccccc..', '..CCCCCCCC..', 'cccccccccccc'], pal: { c: '#d8b77a', C: '#7a5230' } },
     { id: 'straw-hat', cat: 'hat', name: "Gardener's straw hat", price: 0, unlock: 'gardener', rows: ['...cCcCcc...', '..cCcCcCcc..', '..rrrrrrpy..', 'cCcCcCcCcCcC'], pal: { c: '#f2d16b', C: '#d9b24a', r: '#e53935', p: '#ff7eb6', y: '#ffcc33' } },
+    { id: 'pilot-cap', cat: 'hat', name: 'Pilot cap & goggles', price: 0, unlock: 'traveller', rows: ['...cccccc...', '..cccccccc..', '.ckkcccckkc.', '.kgGkcckgGk.', '.ckkcccckkc.', '.cc......cc.', '.cc......cc.'], pal: { c: '#7a4b2a', k: '#1b1b1b', g: '#7fd0ff', G: '#ffffff' } },
+    { id: 'anpan-head', cat: 'hat', name: 'Anpanman head', price: 70, special: true, hideHair: true, y: 1, rows: ['...kkkkkk...', '..kbbbbbbk..', '.kbkkbbkkbk.', '.kbbkbbkbbk.', 'kbrrbrrbrrbk', 'kbrrbrrbrrbk', '.kbbkkkkbbk.', '..kbbbbbbk..', '...kkkkkk...'], pal: { k: '#5a3214', b: '#eba45a', r: '#e53935' } },
+    { id: 'bearskin', cat: 'hat', name: 'Royal Guard bearskin', price: 50, special: true, hideHair: true, rows: ['..kkkkkkkk..', '..kkkKkkkk..', '..kkkkkkkk..', '..kkkkkkkk..', '..y......y..', '..y......y..', '...y....y...', '....yyyy....'], pal: { k: '#15171b', K: '#3a3a3a', y: '#ffd43b' } },
     // hideHair: covers the whole head, so the hair layer is skipped
     { id: 'ninja-mask', cat: 'hat', name: 'Ninja mask', price: 80, special: true, hideHair: true, y: 1, rows: ['...kkkkkk...', '..kkkkkkkk..', '..RRRRRRRRRR', '..kkkkkkkk.R', '..k......k..', '..kkkkkkkk..', '..kkkkkkkk..', '...kkkkkk...'], pal: { k: '#22252b', R: '#e53935' } },
     { id: 'chef-hat', cat: 'hat', name: 'Chef hat', price: 60, special: true, rows: ['.cccccccccc.', '.ccCccccCcc.', '..cccccccc..', '..CCCCCCCC..'], pal: { c: '#ffffff', C: '#d6dbe1' } },
@@ -129,6 +137,7 @@
     { id: 'designer-scarf', cat: 'extra', name: 'Designer scarf', price: 0, unlock: 'designer', y: 8, rows: ['..cccccccc..', '..cCcCcCcc..', '.......cc...', '.......Cc...'], pal: { c: '#8e5cff', C: '#ffd43b' } },
     { id: 'papyrus-scarf', cat: 'extra', name: 'Papyrus scarf', price: 70, special: true, y: 8, rows: ['..cccccccc..', '..cccccccc..', '.......cc...', '.......cc...', '........cc..'], pal: { c: '#e53935' } },
     { id: 'undyne-patch', cat: 'extra', name: 'Eye patch & grin', price: 50, special: true, y: 4, rows: ['..kkkk......', '..kkk..y....', '............', '....wwww....'], pal: { k: '#1b1b1b', y: '#ffd43b', w: '#ffffff' } },
+    { id: 'water-blaster', cat: 'extra', name: 'Songkran water blaster', price: 40, y: 11, rows: ['..........ww', '........bb.w', '.......bbbbb', '.......bcc..', '.......b....'], pal: { b: '#1e88e5', c: '#ffd43b', w: '#7fd0ff' } },
     // ----- pets -----
     { id: 'pet-none', cat: 'pet', name: 'No pet', price: 0, rows: [] },
     { id: 'pet-cat', cat: 'pet', name: 'Pixel cat', price: 40, rows: ['.o....o.', '.oo..oo.', '.oooooo.', '.ogoogo.', '.oooooo.', '..oppo..', '.oooooo.', '.o.oo.o.'], pal: { o: '#ff8c1a', g: '#2e9e3e', p: '#ff7eb6' } },
@@ -138,6 +147,8 @@
     { id: 'pet-dragon', cat: 'pet', name: 'Baby dragon', price: 100, rows: ['.p.gg.p.', '.pggggp.', 'pgkggkgp', '.gggggg.', '.gyyyyg.', '..gyyg..', '.gg..gg.', '.g....g.'], pal: { g: '#2e9e3e', p: '#8e5cff', k: '#1b1b1b', y: '#ffd43b' } },
     { id: 'pet-annoying-dog', cat: 'pet', name: 'Annoying Dog', price: 100, special: true, rows: ['ww....ww', 'wwwwwwww', '.wkwwkw.', '.wwwwww.', '.wwkkww.', '..wwww..', '.wwwwww.', '.w.ww.w.'], pal: { w: '#ffffff', k: '#1b1b1b' } },
     { id: 'pet-jellyfish', cat: 'pet', name: 'Immortal jelly', price: 100, special: true, rows: ['..kkkk..', '.kPPPPk.', 'kPPrrPPk', 'kPrrrrPk', 'kPkPPkPk', 'kkkkkkkk', '.t.tt.t.', 't.t..t.t'], pal: { k: '#5b2a6e', P: '#ffd1ec', r: '#e53935', t: '#f7a8d8' } },
+    { id: 'pet-bear', cat: 'pet', name: 'Marmalade bear', price: 80, special: true, rows: ['.rrrrrr.', 'rrrrrrrr', '.bbbbbb.', '.bkbbkb.', '.bbnnbb.', '.CCCCCC.', '.CCyCCC.', '.bb..bb.'], pal: { r: '#d32f2f', b: '#a86b3c', k: '#1b1b1b', n: '#5a3214', C: '#1e5fbf', y: '#ffd43b' } },
+    { id: 'pet-elephant', cat: 'pet', name: 'Baby elephant', price: 100, special: true, rows: ['...gggg.', '..gggggg', 'gGGkgggg', 'gGGggggg', 'g.gggggg', 'g.gggggg', '..gg.gg.', '..gg.gg.'], pal: { g: '#9aa4ae', G: '#7b8590', k: '#1b1b1b' } },
     { id: 'pet-clockcroc', cat: 'pet', name: 'Tick-Tock Croc', price: 100, special: true, rows: ['.kk.kk..', 'kggggggk', 'kgwkgggk', 'kggggggg', 'kgwwwwgk', 'kggywygk', '.kgkkgk.', 'kgk..kgk'], pal: { k: '#1b4d1b', g: '#4caf50', w: '#ffffff', y: '#ffd43b' } },
     { id: 'pet-sunflower', cat: 'pet', name: 'Sunny the sunflower', price: 100, special: true, rows: ['.y.yy.y.', 'yybbbbyy', 'ybkbbkby', 'ybbkkbby', 'yybbbbyy', '.y.gg.y.', '..lgg...', '...ggl..'], pal: { y: '#ffcc33', b: '#8a5a32', k: '#1b1b1b', g: '#2e9e3e', l: '#5bbf3a' } },
     { id: 'pet-tardigrade', cat: 'pet', name: 'Water bear', price: 100, special: true, rows: ['.kkkkkk.', 'kppppppk', 'kpkppkpk', 'kppooppk', 'kpPppPpk', 'kppppppk', '.kkkkkk.', 'k.k..k.k'], pal: { k: '#4a3426', p: '#e9cfa6', P: '#c9a477', o: '#e57373' } },
@@ -207,6 +218,8 @@
     { id: 'set-sans', name: 'Sans', special: true, parts: { hat: 'sans-skull', top: 'sans-hoodie', legs: 'sans-shorts', shoes: 'sans-slippers', extra: 'extra-none' } },
     { id: 'set-papyrus', name: 'Papyrus', special: true, parts: { hat: 'papyrus-skull', top: 'papyrus-armour', legs: 'papyrus-shorts', shoes: 'papyrus-boots', extra: 'papyrus-scarf' } },
     { id: 'set-undyne', name: 'Undyne', special: true, parts: { skin: 'skin-undyne', hair: 'undyne-ponytail', hat: 'hat-none', top: 'undyne-top', legs: 'jeans', shoes: 'boots', extra: 'undyne-patch' } },
+    { id: 'set-anpan', name: 'Anpanman', special: true, parts: { hat: 'anpan-head', top: 'anpan-suit', legs: 'anpan-legs', shoes: 'boots', extra: 'cape-red' } },
+    { id: 'set-guard', name: 'Royal Guard', special: true, parts: { hat: 'bearskin', top: 'guard-tunic', legs: 'trousers-black', shoes: 'boots', extra: 'extra-none' } },
     { id: 'set-frisk', name: 'Frisk', special: true, parts: { hair: 'hair-bob', hairColor: 'hc-brown', hat: 'hat-none', top: 'frisk-jumper', legs: 'jeans', shoes: 'boots', extra: 'extra-none' } },
   ];
 
@@ -219,6 +232,7 @@
     speller: 'Finish any Word Kingdom lesson to unlock',
     miner: 'Finish any Maths Mine lesson to unlock',
     gardener: 'Finish any Plants lesson to unlock',
+    traveller: 'Finish any Around the World lesson to unlock',
     perfect: 'Get a perfect boss score to unlock',
     video: 'Finish any video quest to unlock',
   };

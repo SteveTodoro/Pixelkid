@@ -35,6 +35,7 @@ body.maths   { --brand: #e09a00; --brand-dark: #8a5d00; --brand-soft: #ffe9b3; }
 body.english { --brand: #d9433b; --brand-dark: #85201b; --brand-soft: #ffd0cc; }
 body.future  { --brand: #7c4dff; --brand-dark: #3d1f99; --brand-soft: #e3d9ff; }
 body.wonders { --brand: #1e88e5; --brand-dark: #0d47a1; --brand-soft: #d6e9ff; }
+body.world   { --brand: #f4511e; --brand-dark: #a3300b; --brand-soft: #ffe0d3; }
 
 * { box-sizing: border-box; }
 html { font-size: 18px; }
@@ -917,3 +918,71 @@ a { color: var(--brand-dark); }
 .lab-ask:not(:empty) { margin-top: 16px; }
 .lab .data-box { margin-top: 16px; }
 .data-box tr.new td { background: #fff3a8; }
+
+/* ---------- Around the World: Map Explorer ---------- */
+.worldmap .lab-mission { text-align: left; }
+.worldmap .arc-screen { background: #2f7cd6; }
+.worldmap .arcade-canvas { cursor: pointer; }
+
+/* ---------- Around the World: Chef ---------- */
+.cook-ticket { display: flex; align-items: center; gap: 14px; max-width: 760px; margin: 0 auto 12px; padding: 10px 14px; background: #fff3a8; border: 4px solid #000; font-weight: 700; font-size: 1.1rem; }
+.cook-cust { font-size: 3rem; line-height: 1; }
+.cook-cust.happy { animation: hop .5s steps(4) 2; }
+@keyframes hop { 50% { transform: translateY(-12px); } }
+.cook-wrap { display: grid; grid-template-columns: minmax(180px, 240px) 1fr; gap: 16px; max-width: 760px; margin: 0 auto 14px; align-items: start; }
+@media (max-width: 620px) { .cook-wrap { grid-template-columns: 1fr; } }
+.cook-side { display: flex; flex-direction: column; gap: 8px; }
+.cook-card { background: var(--paper); border: 4px solid #000; box-shadow: var(--bevel); padding: 10px 14px; }
+.cook-card h3 { margin: 0 0 6px; font-family: var(--pixel); font-size: 1.1rem; }
+.cook-card ol { margin: 0; padding-left: 22px; font-size: .95rem; }
+.cook-card li { margin: 3px 0; }
+.cook-card li.done { text-decoration: line-through; color: #777; }
+.cook-card li.now { font-weight: 700; background: #fff3a8; }
+.cook-memory { font-weight: 700; margin: 6px 0; }
+.cook-clock { font-family: var(--read); font-weight: 700; font-size: 1.2rem; text-align: center; background: #000; color: #7cfc3a; padding: 4px; border: 3px solid #3a3a3a; }
+.cook-main { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.cook-tip { font-family: var(--pixel); font-weight: 700; font-size: 1.1rem; background: #000; color: #ffd43b; padding: 4px 12px; animation: pop .3s steps(3); }
+.cook-board { position: relative; width: min(100%, 360px); height: 220px; touch-action: none; user-select: none; -webkit-user-select: none;
+  background: repeating-linear-gradient(90deg, #d9a35f 0 26px, #c98f4c 26px 30px); border: 4px solid #000; box-shadow: var(--bevel), 0 6px 0 rgba(0,0,0,.3);
+  display: grid; place-items: center; overflow: hidden; }
+.cook-board.over { outline: 4px solid #7cfc3a; outline-offset: -4px; }
+.cook-board.act { cursor: pointer; animation: glow 1s steps(2) infinite; }
+@keyframes glow { 50% { box-shadow: var(--bevel), 0 0 0 5px #ffd43b; } }
+.cook-board.act-roll { background: repeating-linear-gradient(0deg, #e9d29a 0 10px, #cdb57a 10px 13px); }
+.cook-board.act-stir { background: radial-gradient(circle, #3a3a3a 0 55%, #1b1b1b 56% 62%, #8b8b8b 63%); }
+.cook-board.ready { background: radial-gradient(circle, #fff 0 45%, #e8e8e8 46% 55%, #c98f4c 56%); }
+.cook-layer { grid-area: 1 / 1; font-size: 4.5rem; line-height: 1; transform: translate(var(--dx, 0), calc(var(--k, 0) * -6px)); transition: transform .15s; pointer-events: none; }
+.cook-layer.made { font-size: 6rem; animation: pop .3s steps(3); }
+.cook-layer svg { width: 110px; height: auto; display: block; }
+.cook-layer.made svg { width: 150px; }
+.cook-board.act-roll .cook-layer { transform: translate(var(--dx, 0), calc(var(--k, 0) * -6px)) scaleY(calc(1 - var(--roll, 0) * .6)); }
+.cook-board.act-stir .cook-layer { transform: rotate(var(--spin, 0deg)); }
+.cook-cut { position: absolute; top: 8%; bottom: 8%; width: 5px; background: #fff; box-shadow: 0 0 0 2px #000; animation: pop .25s steps(3); pointer-events: none; }
+.cook-meter { width: min(100%, 360px); height: 18px; background: #333; border: 3px solid #000; }
+.cook-meter > div { height: 100%; width: 0; background: #7cfc3a; transition: width .1s; }
+.cook-item .ci-emoji { font-size: 1.6rem; }
+.cook-item .ci-emoji svg { width: 30px; height: auto; display: block; }
+
+/* ---------- Around the World: Say it! ---------- */
+.phrase-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); margin-bottom: 12px; }
+.phrase-card { background: var(--paper); border: 4px solid #000; box-shadow: var(--bevel); padding: 12px; text-align: center; display: flex; flex-direction: column; gap: 2px; }
+.phrase-emoji { font-size: 2.4rem; line-height: 1.1; }
+.phrase-native { font-size: 1.7rem; font-weight: 700; font-family: "Hiragino Sans", "Noto Sans JP", "Thonburi", "Noto Sans Thai", var(--read); }
+.phrase-roman { font-family: var(--pixel); font-size: 1.4rem; font-weight: 700; color: var(--brand-dark); }
+.phrase-means { font-weight: 700; }
+.phrase-sound { font-size: .9rem; color: #444; }
+.phrase-note { font-size: .85rem; color: #444; }
+.phrase-card .btn-row { margin-top: 8px; gap: 6px; }
+.phrase-card .btn { padding: 8px 12px; font-size: 1rem; }
+.phrase-stage { position: relative; max-width: 420px; height: 280px; margin: 10px auto; touch-action: none; user-select: none; -webkit-user-select: none;
+  background: var(--brand-soft); border: 4px solid #000; box-shadow: var(--bevel-in); display: grid; place-items: center; }
+.phrase-hero { height: 200px; image-rendering: pixelated; transform-origin: 50% 90%; transition: transform .08s; pointer-events: none; }
+.phrase-hero.emoji { font-size: 7rem; height: auto; }
+.phrase-hero.bowed { animation: bow 1s steps(6); }
+@keyframes bow { 40%, 60% { transform: rotate(35deg); } }
+.phrase-arrow { position: absolute; right: 20px; top: 40%; font-size: 2.6rem; animation: hop .8s steps(4) infinite; pointer-events: none; }
+.wai-hand { position: absolute; top: 46%; font-size: 3.2rem; line-height: 1; touch-action: none; }
+.wai-hand.left { left: 22%; pointer-events: none; }
+.wai-hand.right { right: 8%; cursor: grab; animation: hop .8s steps(4) infinite; }
+.wai-join { position: absolute; top: 40%; font-size: 4rem; }
+.wai-join.pop { animation: pop .4s steps(3); }

@@ -63,16 +63,30 @@ Inspired by "amazing facts" videos (e.g. Zack D Films). Each lesson is one wonde
 
 **Wonders style:** a "Fact or Fiction?" `truefalse` round, plus a "Myth-buster!" card in every lesson. Use kid-safe videos only (Peekaboo Kidz, Wild Kratts, SciShow Kids, Nat Geo Kids, TED-Ed as a bonus). Check every Zack D Films Short first, because some are gory or scary.
 
+## 🗺️ Around the World (countries & culture – curated, beyond the curriculum)
+One country per lesson: find it on the map, then the history and culture children love (food, characters, games, greetings, festivals). The player lives in **Thailand**: every map shows a 🏠 home pin there (`World.HOME` in `shared/world.js`), and lessons compare places with home (distance, flight time, weather). Each lesson also adds **one map skill**.
+| Lesson | Map skill | Culture |
+|------|------|------|
+| Japan: Land of the Rising Sun ✅ | 7 continents & 5 oceans, island countries | bowing + greetings, sushi chef, Anpanman pixel art, samurai, Setsubun (boss Grumbly Oni) |
+| England: Castles, Kings & Cups of Tea ✅ | compass N/E/S/W, the 4 UK nations + capitals | Flag Factory (Union Jack layers), afternoon tea, Royal Guard pixel art, London (boss Sir Soggy the Drizzle Dragon) |
+| Thailand: Welcome Home! ✅ | neighbours, the equator & climate, comparing flight times from home | wai + Thai phrases, Thai kitchen, elephant pixel art, Songkran, Loy Krathong (boss the Mango Bandit) |
+| Next ideas | China, South Korea, India, Italy, France, Egypt, Kenya, the USA, Mexico, Brazil, Australia | |
+
+**Around the World style:** lessons go in `world/`, `subject: 'world'` (coral theme), `finishAch: 'traveller'` (unlocks the pilot cap), `stamp: { id: 'JPN', name, flag }` (a passport stamp on the library page, saved in `y3:passport`). Mascot Captain Bolt (`Pixel.sprites.robot`). Load `../shared/world-map.js` and `../shared/world.js` before `engine.js`. Every lesson has a Map Explorer round, a Chef round, a pixel-art copy of something iconic, an arcade round, and (for non-English countries) a Say it! greetings round. Recaps can end with a quick map round via `review.game`. Shop items so far: happi coat, Anpanman costume, Royal Guard costume, Marmalade bear, baby elephant, Thai elephant trousers, Songkran water blaster.
+**Map Explorer:** `worldmap` (`view`: world | europe | asia | eastasia | uk | ukfrance | japan | home | thailand; `colour: 'countries'` + `colours: { ENG: '#…' }`; `labels`, `equator: true`, `compass: true`; `tasks`: `{ find }` tap a place, `{ place, pin }` drag a flag onto it, `{ fly, hours }` drag the ✈️ from home – shows km and hours; targets are continents (`asia`), oceans (`pacific`), map units (`JPN`, `ENG`, `SCT`, `FXX` = France) or `GBR`; any task can add `from` + `dir` (a compass arrow) and `then: [questions]`). The map is generated from Natural Earth by `tools/build-world.js` (0.5° world grid plus sharper UK/Japan/South-East Asia close-ups).
+**Chef:** `cook` (`recipes: [{ name, emoji, customer, fact, steps: [{ add, label, emoji, makes } | { do: roll | slice | pour | squeeze | stir, label, makes }] }]`, `pantry` decoys with a `why`, `memory: true` + `par` seconds for a timed rush, `yum`). Emoji or `Pixel.svg` pictures both work, and it doubles as a layer-builder (the Flag Factory).
+**Say it!:** `phrases` (`lang: 'ja-JP' | 'th-TH'`, `phrases: [{ text, roman, means, emoji, sound }]`, `quiz` situation questions, `gesture: { kind: 'bow' | 'wai', say }`). 🔊 uses a native voice only when the device has one; otherwise it shows the "say it like" spelling.
+
 ## 👕 Avatar & Wardrobe
 - Every 💎 earned in any lesson also goes into a wallet (`y3:wallet`). The **Wardrobe & Shop** (`avatar.html`) spends it on pixel clothes, hair, hats, extras and pets (catalogue in `shared/avatar.js`).
-- Some items are secret and unlock with achievements (`unlock: 'boss' | 'artist' | 'designer' | 'perfect' | 'video'`).
+- Some items are secret and unlock with achievements (`unlock: 'boss' | 'artist' | 'designer' | 'perfect' | 'video' | 'traveller' …`).
 - The avatar appears on the library page and lesson start screens, is the hero in the Platformer and Block Builder, and is shown on certificates.
 - **Scenes** (🌄 tab): Sunny (free), Sunset, Night sky, Snowy, Underwater, Jungle, Space galaxy, Chocolate factory, and Rainbow land (secret – reach level 5). The chosen scene restyles the page sky/decorations/ground on every page (via CSS variables set by `Avatar.applyScene`), the avatar backdrops, the Block Builder sky and the Platformer level.
 - Every lesson page must load `../shared/avatar.js` (after `pixel.js`, before the lesson script).
 
 ## Making a new lesson
 1. Copy `science/magnets.html` into the right subject folder (e.g. `maths/fractions.html`).
-2. Change the `window.LESSON = { … }` data: `id`, `subject` (`science` / `maths` / `english` / `future` sets the colours), title, mascot, glossary, and the stages.
+2. Change the `window.LESSON = { … }` data: `id`, `subject` (`science` / `maths` / `english` / `future` / `wonders` / `world` sets the colours), title, mascot, glossary, and the stages.
 3. Add it to the `LIBRARY` list in `index.html` by setting its `file`.
 
 **Stage types:** `welcome`, `review` ("Last time…" recap: `from`, `facts`, `questions` — put one in every lesson after the first), `read`, `video` (YouTube `id` + questions), `game`, `break` (wiggle moves and/or a `tryit` activity, plus 🕹️ Brain Games – boss tic-tac-toe, steady hand, maze, hangman (uses the lesson's glossary words as a theme) – added automatically; `games: ['maze']` picks some, `games: false` turns them off), `quiz` (add `boss` for a boss battle).

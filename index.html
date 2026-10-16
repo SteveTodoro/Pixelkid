@@ -23,6 +23,16 @@
     .tab.english[aria-selected="true"] { background: #d9433b; }
     .tab.future[aria-selected="true"] { background: #7c4dff; }
     .tab.wonders[aria-selected="true"] { background: #1e88e5; }
+    .tab.world[aria-selected="true"] { background: #f4511e; }
+    .passport { position: relative; z-index: 1; max-width: 1040px; margin: 10px auto 0; padding: 0 16px; }
+    .passport-book { padding: 12px 16px; background: #7a1f1f; border: 4px solid #000; box-shadow: var(--bevel), 0 6px 0 rgba(0,0,0,.25); color: #ffd43b; }
+    .passport-book h2 { margin: 0 0 8px; font-size: 1.2rem; color: #ffd43b; text-shadow: 2px 2px 0 #000; }
+    .stamps { display: flex; flex-wrap: wrap; gap: 10px; }
+    .stamp { width: 96px; height: 96px; display: grid; place-items: center; align-content: center; gap: 2px; text-align: center; background: var(--paper); color: #a3300b;
+      border: 3px dashed #a3300b; font-family: var(--pixel); font-weight: 700; font-size: .8rem; transform: rotate(var(--tilt, -4deg)); }
+    .stamp .sf { font-size: 2.2rem; line-height: 1; }
+    .stamp.empty { background: rgba(255,255,255,.15); color: #e8c9c9; border-color: #e8c9c9; transform: none; }
+    .stamp.empty .sf { filter: grayscale(1); opacity: .45; }
     .shelf { position: relative; z-index: 1; max-width: 1040px; margin: 0 auto; padding: 16px 16px 90px; display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); }
     .lesson-card {
       position: relative; display: flex; flex-direction: column; gap: 4px; padding: 16px; min-height: 190px;
@@ -51,6 +61,7 @@
     </div>
   </header>
   <nav class="tabs" role="tablist" id="tabs"></nav>
+  <section class="passport" id="passport" hidden></section>
   <main class="shelf" id="shelf"></main>
 
 <script>
@@ -142,6 +153,25 @@ const LIBRARY = {
       { title: "Your Body's Secret Superpowers", emoji: '🧠', unit: 'Your Amazing Body' },
     ],
   },
+  world: {
+    label: '🗺️ Around the World',
+    lessons: [
+      { id: 'world-japan', title: 'Japan: Land of the Rising Sun', emoji: '🇯🇵', unit: 'Asia', file: 'world/japan.html', stamp: 'JPN' },
+      { id: 'world-england', title: 'England: Castles, Kings & Cups of Tea', emoji: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', unit: 'Europe', file: 'world/england.html', stamp: 'ENG' },
+      { id: 'world-thailand', title: 'Thailand: Welcome Home!', emoji: '🇹🇭', unit: 'Asia – home!', file: 'world/thailand.html', stamp: 'THA' },
+      { title: 'China: Dragons & the Great Wall', emoji: '🇨🇳', unit: 'Asia' },
+      { title: 'South Korea: K-Pop & Kimchi', emoji: '🇰🇷', unit: 'Asia' },
+      { title: 'India: Colours & Elephants', emoji: '🇮🇳', unit: 'Asia' },
+      { title: 'Italy: Pizza, Pasta & Volcanoes', emoji: '🇮🇹', unit: 'Europe' },
+      { title: 'France: Croissants & the Eiffel Tower', emoji: '🇫🇷', unit: 'Europe' },
+      { title: 'Egypt: Pyramids & Pharaohs', emoji: '🇪🇬', unit: 'Africa' },
+      { title: 'Kenya: Safari Adventure', emoji: '🇰🇪', unit: 'Africa' },
+      { title: 'The USA: Space Rockets & Hot Dogs', emoji: '🇺🇸', unit: 'North America' },
+      { title: 'Mexico: Piñatas & Tacos', emoji: '🇲🇽', unit: 'North America' },
+      { title: 'Brazil: Rainforest & Carnival', emoji: '🇧🇷', unit: 'South America' },
+      { title: 'Australia: Kangaroos & the Reef', emoji: '🇦🇺', unit: 'Oceania' },
+    ],
+  },
 };
 
 const get = (k, d) => { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } };
@@ -158,8 +188,30 @@ if (window.Avatar) { const me = document.getElementById('me'); me.src = Avatar.d
 if (settings.name) document.getElementById('hello').textContent = `Welcome back, ${settings.name}! Pick a level.`;
 
 const tabs = document.getElementById('tabs'), shelf = document.getElementById('shelf');
+// Around the World: the passport shows a stamp for every country lesson finished
+function passport() {
+  const box = document.getElementById('passport');
+  box.hidden = current !== 'world';
+  if (box.hidden) return;
+  const got = get('y3:passport', {});
+  const stamps = LIBRARY.world.lessons.filter(l => l.stamp).map((l, k) => {
+    const st = got[l.stamp], d = document.createElement('div');
+    d.className = 'stamp' + (st ? '' : ' empty');
+    d.style.setProperty('--tilt', ((k * 7) % 11 - 5) + 'deg');
+    d.innerHTML = '<span class="sf"></span><span class="sn"></span><span class="sd"></span>';
+    d.querySelector('.sf').textContent = l.emoji;
+    d.querySelector('.sn').textContent = st ? st.name.toUpperCase() : '?';
+    d.querySelector('.sd').textContent = st ? st.date : 'not yet';
+    return d;
+  });
+  const n = Object.keys(got).length;
+  box.innerHTML = '<div class="passport-book"><h2></h2><div class="stamps"></div></div>';
+  box.querySelector('h2').textContent = `🛂 My passport – ${n} countr${n === 1 ? 'y' : 'ies'} visited`;
+  box.querySelector('.stamps').replaceChildren(...stamps);
+}
 function render() {
   document.body.className = current;
+  passport();
   tabs.replaceChildren(...Object.entries(LIBRARY).map(([key, s]) => {
     const b = document.createElement('button');
     b.className = 'tab ' + key; b.type = 'button'; b.setAttribute('role', 'tab');

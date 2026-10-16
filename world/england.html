@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>England: Castles, Kings & Cups of Tea</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <script src="../shared/pixel.js"></script>
+  <script src="../shared/avatar.js"></script>
+  <script src="../shared/world-map.js"></script>
+  <script src="../shared/world.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// ---------- blocky pictures for this lesson ----------
+const K = '#1b1b1b', W = '#ffffff';
+const grid = (w, hh, f) => Array.from({ length: hh }, (_, y) => Array.from({ length: w }, (_, x) => f(x, y)).join(''));
+
+// Flags, built layer by layer (for the Flag Factory)
+const FW = 31, FH = 19;
+const diag = (x, y) => Math.min(Math.abs(y / (FH - 1) - x / (FW - 1)), Math.abs(y / (FH - 1) - (1 - x / (FW - 1))));
+const crossD = (x, y) => Math.min(Math.abs(x - 15), Math.abs(y - 9));
+function ukFlag(stage) { // 0 blue cloth · 1 + white X (Scotland) · 2 + red X (St Patrick) · 3 + red cross (England) = Union Jack
+  return Pixel.svg(grid(FW, FH, (x, y) => {
+    if (stage >= 3 && crossD(x, y) <= 1.5) return 'r';
+    if (stage >= 3 && crossD(x, y) <= 3) return 'w';
+    if (stage >= 2 && diag(x, y) < 0.04) return 'r';
+    if (stage >= 1 && diag(x, y) < 0.09) return 'w';
+    return 'b';
+  }), { b: '#1f3c88', w: W, r: '#d32f2f' });
+}
+const FLAG_WHITE = Pixel.svg(grid(FW, FH, () => 'w'), { w: W });
+const FLAG_ENGLAND = Pixel.svg(grid(FW, FH, (x, y) => (crossD(x, y) <= 2 ? 'r' : 'w')), { w: W, r: '#d32f2f' });
+const FLAG_WALES_BG = Pixel.svg(grid(FW, FH, (x, y) => (y < 9 ? 'w' : 'g')), { w: W, g: '#2e9e3e' });
+const DRAGON_SMALL = [
+  '......................',
+  '.........rr...........',
+  '........rrrr..r.......',
+  '..r....rrrrrrrr.......',
+  '.rrr..rrrrrrr.........',
+  '..rrrrrrrrrr..........',
+  '....rrrrrrrrr.........',
+  '....rr...rr.rr........',
+];
+const FLAG_WALES = Pixel.svg(grid(FW, FH, (x, y) => (DRAGON_SMALL[y - 5] && DRAGON_SMALL[y - 5][x - 5] === 'r' ? 'r' : (y < 9 ? 'w' : 'g'))), { w: W, g: '#2e9e3e', r: '#d32f2f' });
+
+// Tea time
+function cup(fill) {
+  return Pixel.svg([
+    '.kkkkkkkk...',
+    '.k' + fill.repeat(6) + 'kkk.',
+    '.k' + fill.repeat(6) + 'k.k.',
+    '.kwwwwwwkkk.',
+    '..kwwwwk....',
+    'kkkkkkkkkk..',
+  ], { k: '#5c6bc0', w: W, t: '#8d4f1e', m: '#c98f5c', '.': null, e: W });
+}
+const CUP = cup('e'), TEA = cup('t'), MILKY_TEA = cup('m');
+function sconeHalf(top, under) {
+  return Pixel.svg([
+    top ? '.' + top.repeat(8) + '.' : '..........',
+    under ? '.' + under.repeat(8) + '.' : '..........',
+    'yyyyyyyyyy',
+    'yYyyYyyYyy',
+    'dddddddddd',
+  ], { y: '#e8b25c', Y: '#c98f3c', d: '#a8702c', r: '#c62828', c: '#fff6dc' });
+}
+const SCONE = Pixel.svg(['..yyyyyy..', '.yYyyYyyy.', 'yyyyyyyyyy', 'yYyyyYyyYy', 'dddddddddd'], { y: '#e8b25c', Y: '#c98f3c', d: '#a8702c' });
+const SCONE_OPEN = sconeHalf(null, null);
+const SCONE_JAM = sconeHalf(null, 'r'), SCONE_CORNISH = sconeHalf('c', 'r');
+const SCONE_CREAM = sconeHalf(null, 'c'), SCONE_DEVON = sconeHalf('r', 'c');
+
+// a Royal Guard to copy (symmetrical – the mirror tool helps!)
+const GUARD = {
+  colors: { k: K, s: '#f1c27d', y: '#ffd43b', r: '#d32f2f', w: W },
+  names: { [K]: 'black', '#f1c27d': 'skin', '#ffd43b': 'gold', '#d32f2f': 'red', [W]: 'white' },
+  target: [
+    '...kkkk...',
+    '..kkkkkk..',
+    '..kkkkkk..',
+    '..kkkkkk..',
+    '..kkkkkk..',
+    '..kssssk..',
+    '..skssks..',
+    '..ssssss..',
+    '..yssssy..',
+    '.rrrrrrrr.',
+    'rrrryyrrrr',
+    'srrryyrrrs',
+    '.rrrrrrrr.',
+    '.wwwwwwww.',
+    '.kkk..kkk.',
+    '.kkk..kkk.',
+    'kkkk..kkkk',
+  ],
+};
+
+// the boss: Sir Soggy the Drizzle Dragon, with his own little rain cloud
+const SOGGY = Pixel.svg([
+  '.cccccc.....',
+  'cccccccc....',
+  '.b..b..b....',
+  '..........gg',
+  '.......ggggg',
+  '......ggwkgg',
+  '..y...gggggr',
+  '.yyy.gggggg.',
+  'yyyygggggg..',
+  '.yggggyggg..',
+  '..gggyyygg..',
+  '..gg.gg.gg..',
+  '..kk.kk.kk..',
+], { c: '#b0bec5', b: '#4fc3f7', g: '#43a047', w: W, k: K, y: '#ffd43b', r: '#e53935' });
+
+// ---------- the lesson ----------
+window.LESSON = {
+  id: 'world-england',
+  subject: 'world',
+  title: 'England: Castles, Kings & Cups of Tea',
+  emoji: '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
+  home: '../index.html',
+  finishAch: 'traveller',
+  stamp: { id: 'ENG', name: 'England', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿' },
+  mascot: {
+    name: 'Captain Bolt',
+    sprite: Pixel.sprites.robot,
+    praise: ['Brilliant!', 'Smashing!', 'Jolly good!', 'Top marks!', 'Spot on!', 'Bolt-tastic!', 'Splendid!'],
+    oops: ['Oops! Have another go.', 'Not quite – read it again!', 'Hmm, think again!', 'So close! One more try.'],
+  },
+  glossary: {
+    compass: { emoji: '🧭', def: 'A tool with a needle that always points north. It helps you find your way.' },
+    europe: { emoji: '🇪🇺', word: 'Europe', def: 'A continent with about 45 countries, including England, France, Spain and Italy.' },
+    'great britain': { emoji: '🏝️', word: 'Great Britain', def: 'The big island that England, Scotland and Wales share.' },
+    'united kingdom': { emoji: '🇬🇧', word: 'United Kingdom', def: 'One country made of four: England, Scotland, Wales and Northern Ireland. People call it the UK for short.' },
+    capital: { emoji: '🏙️', def: 'The city where a country\'s government (its leaders) works.' },
+    monarch: { emoji: '👑', def: 'A king or a queen.' },
+    legend: { emoji: '📜', def: 'A very old story that might be partly true – or might be made up!' },
+    'crown jewels': { emoji: '💎', word: 'Crown Jewels', def: 'The crowns, sceptres and other treasures that kings and queens wear on special days.' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'England: Castles, Kings & Cups of Tea', short: 'Start', minutes: 1,
+      pic: ukFlag(3),
+      hello: 'Hello, {name}! Welcome back to AROUND THE WORLD! Fasten your seatbelt – today we fly to ENGLAND! ✈️',
+      question: 'Which country has a King, red buses, fish and chips – and LOTS of rain?',
+      intro: 'Learn to read a compass, find the four countries of the UK, build a flag, make afternoon tea – then stop Sir Soggy the Drizzle Dragon to earn your next 🛂 passport stamp!',
+      nameLabel: 'Traveller name:',
+    },
+
+    {
+      type: 'review', title: 'Last time…', short: 'Recap', minutes: 4,
+      from: { title: 'Japan: Land of the Rising Sun', emoji: '🇯🇵', url: 'japan.html' },
+      facts: [
+        'There are 7 continents and 5 oceans. Thailand and Japan are both in Asia.',
+        'Japan is a country of islands in the Pacific Ocean. Its capital is Tokyo.',
+        'People in Japan bow to say hello, take their shoes off indoors and say "itadakimasu" before eating.',
+        'Maki sushi is rice and fillings rolled up in nori seaweed, then sliced.',
+      ],
+      questions: [
+        { type: 'mcq', q: 'Your cousin flies from Bangkok to Tokyo. Which continent are they in when they land?', options: ['Asia', 'Europe', 'Africa'], answer: 0, hint: 'Thailand and Japan are on the same continent.' },
+        { type: 'mcq', q: 'What do you say in Japan just before you start eating?', options: ['itadakimasu', 'sayōnara', 'ohayō'], answer: 0 },
+        { type: 'mcq', q: 'What is the very last step when you make a maki roll?', options: ['Slice it into pieces', 'Put the nori on the mat', 'Press on the rice'], answer: 0 },
+        { type: 'tf', q: 'Anpanman\'s head is made of bread.', answer: true, explain: 'A bun filled with sweet red bean paste!' },
+      ],
+      game: {
+        game: 'worldmap', title: 'Find Japan', view: 'world',
+        intro: 'Can you still find Japan? Tap it on the map!',
+        say: 'Quick! Where is Japan?',
+        tasks: [
+          { find: 'JPN', ask: 'Tap JAPAN – the islands off the east coast of Asia.', yes: 'Konnichiwa, Japan! Your map memory is great!', hint: 'Look to the right of your home 🏠, past China, out in the sea.' },
+          { find: 'pacific', ask: 'Tap the ocean Japan sits in.', yes: 'The Pacific – the biggest ocean!', hint: 'It is the huge ocean next to Japan.' },
+        ],
+      },
+    },
+
+    {
+      type: 'read', title: 'Where in the world is England?', short: 'Read 1', minutes: 6,
+      say: 'Time to learn how to read a map like a real explorer!',
+      cards: [
+        {
+          title: 'North, east, south, west', pic: '🧭',
+          text: [
+            'A [[compass]] shows the four main directions: north, east, south and west. On most maps, north is at the top and south is at the bottom.',
+            'To remember them going clockwise, say: Never Eat Soggy Weetabix! (Weetabix is a breakfast cereal in England.)',
+          ],
+          check: { q: 'You are looking at a map and move your finger straight DOWN the page. Which way are you going?', options: ['South', 'North', 'East'], answer: 0, hint: 'North is at the top of the map – so which direction is at the bottom?' },
+        },
+        {
+          title: 'Far away in Europe', pic: '✈️❄️',
+          text: [
+            'England is in [[europe|Europe]], about 9,500 km north-west of Thailand. The flight takes about 13 hours – more than twice as long as flying to Japan!',
+            'Because England is so far north, it is much colder than Thailand. In winter it can even snow.',
+          ],
+          check: { q: 'Your family is flying from Bangkok to London in December. What should you pack?', options: ['A warm coat and a hat', 'Only shorts and flip-flops', 'Nothing – it will be hot'], answer: 0 },
+        },
+        {
+          title: 'Four countries in one', pic: '🏴󠁧󠁢󠁥󠁮󠁧󠁿🏴󠁧󠁢󠁳󠁣󠁴󠁿🏴󠁧󠁢󠁷󠁬󠁳󠁿',
+          text: [
+            'England shares a big island called [[great britain|Great Britain]] with Scotland and Wales. Across the sea to the west is Northern Ireland.',
+            'Together these four countries make one bigger country: the [[united kingdom|United Kingdom]], or the UK for short.',
+          ],
+          check: { q: 'Isla lives in Scotland. Does she live in the UK?', options: ['Yes – Scotland is one of the four UK countries', 'No – only England is in the UK', 'No – Scotland is in Asia'], answer: 0 },
+        },
+        {
+          title: 'Four capital cities', pic: '🏙️',
+          text: [
+            'Each of the four countries has its own [[capital]] city: London in England, Edinburgh in Scotland, Cardiff in Wales and Belfast in Northern Ireland.',
+            'London is also the capital of the whole UK. It is the biggest city in England, with about 9 million people.',
+          ],
+          check: { q: 'A family moves from Cardiff to London. Which countries are they moving between?', options: ['From Wales to England', 'From Scotland to Wales', 'From England to Scotland'], answer: 0, hint: 'Cardiff is the capital of Wales.' },
+        },
+        {
+          title: 'Four seasons in one day', pic: '🌦️☂️',
+          text: [
+            'The weather in England changes all the time. It can be sunny in the morning and pouring with rain by lunchtime!',
+            'That is why English people love to talk about the weather – and why lots of them carry an umbrella, just in case.',
+          ],
+          check: { q: 'It is sunny when you leave your hotel in London. What is a good idea?', options: ['Take an umbrella anyway', 'Leave your coat behind – it will stay sunny', 'Wear a swimming costume'], answer: 0 },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'The Four Countries of the UK', short: 'Video 1', minutes: 6,
+      video: { id: 'ncqDJW4EhmE', title: 'UK Geography / UK Country', channel: 'Kids Learning Tube', duration: '3:02' },
+      say: 'Sing along and learn the four countries of the UK and their capitals!',
+      clues: [
+        'What does "UK" stand for?',
+        'Which famous clock tower is in London?',
+        'Which country is in the north of Great Britain?',
+        'What languages are spoken in Wales?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'What does UK stand for?', options: ['United Kingdom', 'Under King', 'Unicorn Kingdom'], answer: 0 },
+        { type: 'mcq', q: 'Which famous clock tower does the song say is in London?', options: ['Big Ben', 'Big Bob', 'Tall Tim'], answer: 0 },
+        { type: 'mcq', q: 'What is the capital of Northern Ireland?', options: ['Belfast', 'London', 'Tokyo'], answer: 0 },
+        { type: 'mcq', q: 'The song says Scotland covers which part of Great Britain?', options: ['the north', 'the south', 'the middle'], answer: 0 },
+        { type: 'mcq', q: 'Which two languages does the song say are spoken in Wales?', options: ['Welsh and English', 'French and Spanish', 'Japanese and Thai'], answer: 0 },
+        { type: 'mcq', q: 'Which famous band does the song say was born in England?', options: ['The Beatles', 'The Penguins', 'The Pandas'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Map Explorer', short: 'Game 1', minutes: 10,
+      rounds: [
+        {
+          game: 'worldmap', title: 'Fly to England', view: 'world',
+          intro: 'First, find England on the world map – then fly there!',
+          say: 'Where in the world is England?',
+          tasks: [
+            { find: 'europe', ask: 'Tap EUROPE – the continent England is in.', yes: 'Europe! England is on its north-west edge.', hint: 'Europe is above Africa, to the left of Asia.' },
+            { place: 'GBR', pin: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', ask: 'Drag the England flag onto the UK – the islands at the top-left of Europe.', yes: 'Spot on! The UK – England is its biggest country.', hint: 'Look for the islands to the left of Europe, above France.' },
+            {
+              fly: 'ENG', hours: 13, ask: 'Now fly ✈️ from your home 🏠 all the way to England!', yes: 'Touchdown in London!',
+              then: [{ type: 'mcq', q: 'Japan was about 6 hours away. England is about 13 hours. Which country is further from home?', options: ['England', 'Japan', 'They are the same'], answer: 0 }],
+            },
+          ],
+        },
+        {
+          game: 'worldmap', title: 'The four nations', view: 'uk', colour: 'countries',
+          colours: { ENG: '#e8584e', SCT: '#5c7cfa', WLS: '#3fae5a', NIR: '#f2b33d', IRL: '#9e9e9e' },
+          intro: 'Zoom in on the UK! Find each of the four countries.',
+          say: 'Tap each country of the UK!',
+          tasks: [
+            { find: 'ENG', ask: 'Tap ENGLAND – the biggest of the four countries.', yes: 'England! Its capital is London.', hint: 'England is the big red country at the bottom of the island.' },
+            {
+              find: 'SCT', ask: 'Tap SCOTLAND – north of England.', yes: 'Scotland – land of castles, mountains and lochs!', hint: 'North is at the top. Look above England.',
+              then: [{ type: 'mcq', q: 'What is the capital city of Scotland?', options: ['Edinburgh', 'Cardiff', 'Belfast'], answer: 0 }],
+            },
+            {
+              find: 'WLS', ask: 'Tap WALES – to the west of England.', yes: 'Wales! Its flag has a red dragon.', hint: 'West is on the left. Look for the bump sticking out on the left of England.',
+              then: [{ type: 'mcq', q: 'What is the capital city of Wales?', options: ['Cardiff', 'Edinburgh', 'London'], answer: 0 }],
+            },
+            {
+              find: 'NIR', ask: 'Tap NORTHERN IRELAND – across the sea, on the next island.', yes: 'Northern Ireland! Its capital is Belfast.', hint: 'Look at the island on the left. Northern Ireland is the top-right corner of it.',
+            },
+          ],
+        },
+        {
+          game: 'worldmap', title: 'Compass challenge', view: 'ukfrance', colour: 'countries', compass: true,
+          colours: { ENG: '#e8584e', SCT: '#5c7cfa', WLS: '#3fae5a', NIR: '#f2b33d', IRL: '#9e9e9e', FXX: '#b65bd1', BEL: '#d9a066', NLD: '#f57f2a', ESP: '#c9b458', DEU: '#8d8d8d', LUX: '#d9a066', CHE: '#bdbdbd' },
+          intro: 'Follow the yellow arrow from one country to another. Use the **compass** – north is up!',
+          say: 'Follow the arrow! Where do you end up?',
+          tasks: [
+            { find: 'FXX', from: 'ENG', dir: 'S', ask: 'Start in England and go SOUTH across the sea. Which country do you reach? Tap it!', yes: 'France! Trains even zoom under the sea in a tunnel between England and France.', hint: 'South is down. Follow the arrow across the sea.' },
+            { find: 'IRL', from: 'WLS', dir: 'W', ask: 'Start in Wales and go WEST across the sea. Tap the country you reach!', yes: 'Ireland! It shares an island with Northern Ireland.', hint: 'West is to the left. Follow the arrow across the water.' },
+            { find: 'SCT', from: 'ENG', dir: 'N', ask: 'Start in England and go NORTH. Tap where you end up!', yes: 'Scotland – north of England!', hint: 'North is up. Keep going up past England.' },
+            { find: 'atlantic', ask: 'Which ocean is to the WEST of the UK and Ireland? Tap it!', yes: 'The Atlantic Ocean – next stop, America!', hint: 'West is left. Tap the big ocean on the left of the map.' },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'read', title: 'Castles, Kings & Cups of Tea', short: 'Read 2', minutes: 6,
+      say: 'Now let\'s explore England\'s history and fun traditions!',
+      cards: [
+        {
+          title: 'A land of kings and queens', pic: '👑🏰',
+          text: [
+            'England has had kings and queens for more than 1,000 years. Today\'s [[monarch]] is King Charles III. His main home is Buckingham Palace in London.',
+            'Outside the palace, soldiers called the King\'s Guard stand very still in red coats and tall, furry black hats called bearskins.',
+          ],
+          check: { q: 'Why do soldiers stand outside Buckingham Palace?', options: ['To guard the King\'s home', 'To sell ice cream', 'To direct the traffic'], answer: 0 },
+        },
+        {
+          title: 'The Tower of London', pic: '🏰🐦‍⬛',
+          text: [
+            'The Tower of London is a castle nearly 1,000 years old. Over the years it has been a fortress, a prison – and even a zoo with lions and a polar bear!',
+            'Today the [[crown jewels|Crown Jewels]] are kept there, guarded by soldiers called Beefeaters. Ravens live there too. A story says that if the ravens ever leave, the kingdom will fall!',
+          ],
+          check: { q: 'Why do you think the Crown Jewels are kept inside a castle with guards?', options: ['To keep the treasure safe from thieves', 'Because the King forgot where he put them', 'So the ravens can play with them'], answer: 0 },
+        },
+        {
+          title: 'St George and the dragon', pic: '🐉🛡️',
+          text: [
+            'England\'s flag is a red cross on a white background: the cross of St George.',
+            'In an old [[legend]], brave George fought a fierce dragon to save a town. England celebrates St George\'s Day every year on 23 April.',
+          ],
+          check: { q: 'Which flag belongs to England?', options: ['a red cross on white', 'a red circle on white', 'red, white and blue stripes'], answer: 0, hint: 'The red circle is Japan. The stripes are Thailand!' },
+        },
+        {
+          title: 'Time for tea!', pic: '☕🍰',
+          text: [
+            'People in the UK drink about 100 million cups of tea every day – usually with milk. Afternoon tea is a treat with little sandwiches, cakes and scones.',
+            'People argue about scones! In Cornwall, they put the jam on first, then the cream. In Devon, it is cream first, then jam on top.',
+          ],
+          check: { q: 'Your friend from Devon is making a scone. What will she spread on first?', options: ['the cream', 'the jam', 'ketchup'], answer: 0, hint: 'Devon and Cornwall do it in opposite orders.' },
+        },
+        {
+          title: 'Football and fish and chips', pic: '⚽🐟🍟',
+          text: [
+            'Football, rugby, cricket and tennis all got their first rules in England. Today millions of people watch the football Premier League every weekend.',
+            'A favourite treat is fish and chips: fish fried in crispy batter with chunky chips, often eaten at the seaside.',
+          ],
+          check: { q: 'It is Saturday afternoon in England. Lots of people are cheering in a huge stadium. What are they most likely watching?', options: ['A football match', 'A sumo wrestling match', 'A Songkran water fight'], answer: 0 },
+        },
+        {
+          title: 'A bear from Peru', pic: '🧸🍊',
+          text: [
+            'One of England\'s most famous characters is Paddington: a polite little bear from Peru in a blue coat and a red hat.',
+            'He was found at Paddington station in London, and he loves marmalade sandwiches – he keeps one under his hat for emergencies!',
+          ],
+          check: { q: 'What would Paddington most like for his lunch?', options: ['A marmalade sandwich', 'A bowl of sushi', 'A plate of carrots'], answer: 0 },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'A Guide to London', short: 'Video 2', minutes: 6,
+      video: { id: 'KtqVoo8iqeo', title: 'A Guide to London for Kids', channel: 'Twinkl Kids TV', duration: '3:22' },
+      say: 'Let\'s take a tour of London! Watch, then answer my questions.',
+      clues: [
+        'What wild animals live in some London parks?',
+        'What is the Tube?',
+        'What is really called Big Ben?',
+        'What can Tower Bridge do?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'Which part of England is London in?', options: ['the south-east', 'the far north', 'the middle of the sea'], answer: 0 },
+        { type: 'mcq', q: 'Which wild animals can you see in Richmond Park?', options: ['deer', 'elephants', 'kangaroos'], answer: 0 },
+        { type: 'mcq', q: 'What is the Tube?', options: ['An underground railway – the oldest in the world', 'A giant water slide', 'A tall tower'], answer: 0 },
+        { type: 'mcq', q: 'What is kept in the Tower of London?', options: ['the Crown Jewels', 'the world\'s biggest teapot', 'a dinosaur'], answer: 0 },
+        { type: 'mcq', q: 'The name Big Ben really belongs to…', options: ['the giant bell inside the tower', 'the tallest guard', 'the river'], answer: 0, explain: 'The tower itself is called the Elizabeth Tower.' },
+        { type: 'mcq', q: 'What can Tower Bridge do?', options: ['Lift up in two parts to let big boats through', 'Spin around in a circle', 'Float down the river'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Flags & Afternoon Tea', short: 'Game 2', minutes: 10,
+      rounds: [
+        {
+          game: 'cook', title: 'Flag Factory', yum: 'Flag-tastic!',
+          intro: 'The UK flag is made by putting flags on top of each other! Follow the plan: **drag** each layer onto the table.',
+          say: 'Welcome to the Flag Factory! Let\'s build some flags.',
+          pantry: [{ add: 'sun', label: 'red sun', emoji: '🔴', why: 'A red sun is on Japan\'s flag, not the UK\'s!' }],
+          recipes: [
+            {
+              name: 'Flag of England', emoji: FLAG_ENGLAND, customer: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', order: 'Make the flag of England!',
+              fact: 'The red cross on white is the cross of St George, England\'s patron saint.',
+              steps: [{ add: 'white', label: 'white cloth', emoji: FLAG_WHITE, makes: FLAG_WHITE }, { add: 'cross', label: 'red cross of St George', emoji: '➕', makes: FLAG_ENGLAND }],
+            },
+            {
+              name: 'Union Jack', emoji: ukFlag(3), customer: '💂', order: 'Make the flag of the whole UK – the Union Jack!',
+              fact: 'The Union Jack mixes the crosses of England, Scotland and Ireland. Wales isn\'t on it – so its dragon flies on its own flag!',
+              steps: [
+                { add: 'blue', label: 'blue cloth', emoji: ukFlag(0), makes: ukFlag(0) },
+                { add: 'saltire', label: 'white X of St Andrew (Scotland)', emoji: '✖️', makes: ukFlag(1) },
+                { add: 'patrick', label: 'red X of St Patrick (Ireland)', emoji: '❌', makes: ukFlag(2) },
+                { add: 'cross', label: 'red cross of St George', emoji: '➕', makes: ukFlag(3) },
+              ],
+            },
+            {
+              name: 'Flag of Wales', emoji: FLAG_WALES, customer: '🐉', order: 'Make the flag of Wales!',
+              fact: 'The red dragon of Wales is one of the oldest flag pictures in the world.',
+              steps: [{ add: 'whitegreen', label: 'white and green cloth', emoji: FLAG_WALES_BG, makes: FLAG_WALES_BG }, { add: 'dragon', label: 'red dragon', emoji: '🐉', makes: FLAG_WALES }],
+            },
+          ],
+        },
+        {
+          game: 'cook', title: 'Afternoon Tea', yum: 'Scrumptious!',
+          intro: 'Now run an English tea room! **Drag** ingredients onto the plate, then pour, slice or stir.',
+          say: 'Welcome to your tea room! Your first customer would like a cuppa.',
+          pantry: [{ add: 'rice', label: 'sushi rice', emoji: '🍚', why: 'That\'s for sushi! Wrong country.' }, { add: 'ketchup', label: 'ketchup', emoji: '🍅', why: 'Ketchup on a scone? No thank you!' }],
+          recipes: [
+            {
+              name: 'Cup of tea with milk', emoji: MILKY_TEA, customer: '👵',
+              fact: 'Most people in England have their tea with a splash of milk. "Fancy a cuppa?" means "Would you like a cup of tea?"',
+              steps: [{ add: 'cup', label: 'teacup', emoji: CUP }, { do: 'pour', label: 'Pour the tea from the teapot 🫖', makes: TEA }, { add: 'milk', label: 'milk', emoji: '🥛', makes: MILKY_TEA }, { do: 'stir', label: 'Stir it' }],
+            },
+            {
+              name: 'Scone – the Cornish way', emoji: SCONE_CORNISH, customer: '🧑',
+              fact: 'In Cornwall, the jam goes on first, then the clotted cream on top.',
+              steps: [{ add: 'scone', label: 'scone', emoji: SCONE }, { do: 'slice', label: 'Slice it in half', makes: SCONE_OPEN }, { add: 'jam', label: 'strawberry jam', emoji: '🍓', makes: SCONE_JAM }, { add: 'cream', label: 'clotted cream', emoji: '🍦', makes: SCONE_CORNISH }],
+            },
+            {
+              name: 'Scone – the Devon way', emoji: SCONE_DEVON, customer: '👴',
+              fact: 'In Devon, it\'s cream first, then jam. Which way would YOU choose?',
+              steps: [{ add: 'scone', label: 'scone', emoji: SCONE }, { do: 'slice', label: 'Slice it in half', makes: SCONE_OPEN }, { add: 'cream', label: 'clotted cream', emoji: '🍦', makes: SCONE_CREAM }, { add: 'jam', label: 'strawberry jam', emoji: '🍓', makes: SCONE_DEVON }],
+            },
+            {
+              name: 'Cucumber sandwiches', emoji: '🥪', customer: '💂',
+              fact: 'At a posh afternoon tea, the sandwiches are tiny and the crusts are cut off!',
+              steps: [{ add: 'bread', label: 'bread', emoji: '🍞' }, { add: 'butter', label: 'butter', emoji: '🧈' }, { add: 'cucumber', label: 'cucumber', emoji: '🥒' }, { add: 'bread', label: 'bread', emoji: '🍞' }, { do: 'slice', label: 'Cut into little triangles', makes: '🥪' }],
+            },
+          ],
+        },
+        {
+          game: 'crossword', title: 'England Crossword',
+          intro: 'Solve the crossword! Tap a clue, then type the answer with the letter keys.',
+          say: 'Crossword time! Stuck? Press 💡 Hint for a free letter.',
+          entries: [
+            { answer: 'LONDON', clue: 'The capital city of England and the UK' },
+            { answer: 'NORTH', clue: 'The direction at the top of most maps' },
+            { answer: 'WALES', clue: 'The UK country with a red dragon on its flag' },
+            { answer: 'SCONE', clue: 'A little cake eaten with jam and cream' },
+            { answer: 'CASTLE', clue: 'A big, strong building where kings and queens lived long ago' },
+            { answer: 'TEA', clue: 'England\'s favourite hot drink' },
+            { answer: 'KING', clue: 'Charles III is the ____ of the UK' },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'game', title: 'London Studio', short: 'Game 3', icon: '💂', minutes: 8,
+      rounds: [
+        Object.assign({
+          game: 'pixelcopy', title: 'Draw a Royal Guard', mirror: true,
+          intro: 'Copy the Royal Guard! The **🪞 Mirror** is ON – paint one half and the other half copies you.',
+          say: 'Start with his tall black bearskin hat, then the red coat!',
+          tips: ['Paint the tall **black** hat first.', 'Use **🪣 Fill** for big areas like the red coat.', 'Add the **gold** chin strap and buttons.', 'Finish with the **white** belt and black boots.'],
+          done: 'ATTEN-TION! Your Royal Guard is standing perfectly still!',
+        }, GUARD),
+        {
+          game: 'platformer', title: 'London Dash',
+          intro: 'Run and jump through London! Collect the things that come **from England** – dodge things from other countries.',
+          say: '◀ ▶ to run, ⬆ to jump. Collect the ENGLISH things!',
+          prompt: 'Collect things from ENGLAND – dodge the rest!',
+          items: [
+            { label: '🚌 red bus', ok: true },
+            { label: '🐟 fish & chips', ok: true },
+            { label: '☕ cup of tea', ok: true },
+            { label: '👑 Crown Jewels', ok: true },
+            { label: '💂 Royal Guard', ok: true },
+            { label: '🍣 sushi', ok: false, why: 'Sushi comes from Japan!' },
+            { label: '🛺 tuk-tuk', ok: false, why: 'Tuk-tuks zoom around Thailand.' },
+            { label: '🦘 kangaroo', ok: false, why: 'Kangaroos live in Australia.' },
+            { label: '🗻 Mount Fuji', ok: false, why: 'Mount Fuji is in Japan.' },
+          ],
+          done: 'LONDON DASH COMPLETE! You know your England from your Japan!',
+        },
+      ],
+    },
+
+    {
+      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
+      say: 'Time to march like the King\'s Guard!',
+      wiggle: {
+        title: '💂 Royal Guard Workout!',
+        seconds: 60,
+        moves: [
+          '💂 Stand to attention! Arms by your sides – don\'t move a muscle… for 5 seconds!',
+          '🥾 March on the spot! Knees up high – left, right, left, right!',
+          '🧭 Point NORTH (up)… SOUTH (down)… EAST (right)… WEST (left)! Faster!',
+          '🐉 Be St George! Lunge forward and fight the dragon!',
+          '☂️ It\'s raining! Open your umbrella and jump over the puddles!',
+          '👑 Walk like a king or queen – slowly, with your nose in the air!',
+        ],
+      },
+      tryit: {
+        title: '☂️ Try it at home: Best Umbrella Test',
+        intro: 'It rains a LOT in England, so a good umbrella matters! Find a paper towel, a piece of plastic bag, a scrap of cotton cloth and some kitchen foil.',
+        steps: [
+          'Before you test, tap the first box for each one: do you THINK water will get through?',
+          'Hold each material over a cup and drip a spoonful of water on top.',
+          'Tap the second box: did the water go THROUGH into the cup?',
+          'Which would make the best umbrella? Which would be the worst?',
+        ],
+        table: {
+          cols: ['I think it stays dry…', 'It stayed dry…'],
+          items: ['🧻 paper towel', '🛍️ plastic bag', '👕 cotton cloth', '✨ kitchen foil'],
+        },
+        tip: 'Tap once for ✅ and twice for ❌. Materials that keep water out are called waterproof!',
+      },
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: Sir Soggy the Drizzle Dragon', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      say: 'Oh no! SIR SOGGY THE DRIZZLE DRAGON wants to rain on every picnic in England! Every right answer is a hit. Be as brave as St George, {name}!',
+      boss: {
+        name: 'Sir Soggy', sprite: SOGGY, attack: '💧',
+        lines: {
+          intro: 'Rrroar! I\'m SIR SOGGY, the Drizzle Dragon! I\'ll rain on every picnic, every football match AND every cup of tea in England!',
+          hurt: ['Ouch! That was a royal hit!', 'Blimey! My scales are soggy!', 'Not my cloud!', 'Crumbs! You\'re clever!'],
+          taunt: ['Wrong! Better bring an umbrella!', 'Splish splash, you missed!', 'Ha! Wet as a rainy Monday!', 'Rubbish, old bean!'],
+          angry: 'Now I\'m in a proper STORM of a mood!',
+          dodge: 'A DOWNPOUR! Dodge the drizzle!',
+          miss: 'Crikey! You stayed as dry as a biscuit!',
+          last: 'Please… just a tiny little drizzle?',
+          defeat: 'Fizzle… drizzle… I\'m just… a puddle…',
+          win: 'Rain wins again! Come back when you know your scones from your castles!',
+          stunned: 'Everything\'s spinning like a teacup ride…',
+          beg: ['Mercy! I\'ll only rain at night!', 'I\'ll make you a nice cup of tea!', 'St George beat me once already – have pity!'],
+        },
+      },
+      bonus: {
+        title: '⭐ Bonus quest (for a grown-up to help with)',
+        text: 'Want more? Watch Professor Propeller\'s "UK for Kids" (10 min) for more about the four countries of the UK.',
+        url: 'https://www.youtube.com/watch?v=YgK9GOUgfWg',
+        button: 'Watch the bonus video ▶',
+      },
+      questions: [
+        { type: 'mcq', q: 'You walk from England to Scotland. Which direction are you walking?', options: ['North', 'South', 'East'], answer: 0, hint: 'Scotland is above England on the map.' },
+        { type: 'mcq', q: 'Sir Soggy says, "England is in Asia, right next to Japan!" What could you tell him?', options: ['No – England is in Europe', 'Yes, that\'s right', 'No – England is in Africa'], answer: 0 },
+        { type: 'gap', q: 'The capital city of Scotland is ___.', options: ['Edinburgh', 'Cardiff', 'Belfast'], answer: 0 },
+        { type: 'mcq', q: 'Which four countries make up the UK?', options: ['England, Scotland, Wales and Northern Ireland', 'England, France, Spain and Wales', 'England, Japan, Thailand and Scotland'], answer: 0 },
+        { type: 'mcq', q: 'You are on a ferry from England to France. Which way are you sailing?', options: ['South', 'North', 'West'], answer: 0 },
+        { type: 'mcq', q: 'A flight to Japan takes about 6 hours, and a flight to England about 13 hours. What does that tell you?', options: ['England is further from Thailand than Japan is', 'Japan is further away', 'They are next to each other'], answer: 0 },
+        { type: 'mcq', q: 'Your Cornish friend is making a scone. What goes on first?', options: ['the jam', 'the cream', 'the butter and sushi'], answer: 0, hint: 'Cornwall and Devon do it in opposite orders. Devon is cream first!' },
+        { type: 'mcq', q: 'A tall ship needs to sail under Tower Bridge. What happens?', options: ['The bridge lifts up in two parts', 'The ship has to turn back', 'The bridge sinks'], answer: 0 },
+        { type: 'order', q: 'Put the steps for an English cup of tea in order.', items: ['☕ Get a teacup', '🫖 Pour the tea', '🥛 Add a splash of milk', '🥄 Stir it'], hint: 'The milk goes into the tea, so the tea goes in first.' },
+        { type: 'tf', q: 'The Union Jack has a dragon on it for Wales.', answer: false, explain: 'Wales isn\'t on the Union Jack – its dragon has its own flag!' },
+        { type: 'mcq', q: 'In the old legend, what did St George fight to save a town?', options: ['a dragon', 'an oni', 'a giant jellyfish'], answer: 0 },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>

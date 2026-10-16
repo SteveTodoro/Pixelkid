@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Japan: Land of the Rising Sun</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <script src="../shared/pixel.js"></script>
+  <script src="../shared/avatar.js"></script>
+  <script src="../shared/world-map.js"></script>
+  <script src="../shared/world.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// ---------- blocky pictures for this lesson ----------
+const K = '#1b1b1b', W = '#ffffff';
+
+// Anpanman – copy him in the pixel studio (he's symmetrical, so the mirror tool helps!)
+const ANPANMAN = {
+  colors: { k: '#5a3214', b: '#f0a855', r: '#e53935', e: K },
+  names: { '#5a3214': 'dark brown (outline)', '#f0a855': 'bread brown', '#e53935': 'red', [K]: 'black' },
+  target: [
+    '...kkkkkk...',
+    '..kbbbbbbk..',
+    '.kbbbbbbbbk.',
+    'kbeebbbbeebk',
+    'kbbebbbbebbk',
+    'kbbebbbbebbk',
+    'krrbbrrbbrrk',
+    'krrbrrrrbrrk',
+    'kbbbbrrbbbbk',
+    '.kbebbbbebk.',
+    '..kbeeeebk..',
+    '...kkkkkk...',
+  ],
+};
+
+// Japan's flag: a red sun on white (drawn as a pixel circle)
+const FLAG = Pixel.svg(Array.from({ length: 14 }, (_, y) => Array.from({ length: 21 }, (_, x) =>
+  (x === 0 || y === 0 || x === 20 || y === 13) ? 'k' : (Math.hypot(x - 10, y - 6.5) < 4.3 ? 'r' : 'w')).join('')), { k: K, w: W, r: '#d32f2f' });
+
+// Mount Fuji with its snowy top
+const FUJI = Pixel.svg([
+  '......ww......',
+  '.....wwww.....',
+  '....wwbwww....',
+  '...bwbbbwbb...',
+  '..bbbbbbbbbb..',
+  '.bbbbbbbbbbbb.',
+  'gggggggggggggg',
+], { w: W, b: '#5c6bc0', g: '#5bbf3a' });
+
+// sushi bits for the Chef game
+const NORI = Pixel.svg(['gggggggg', 'gGgggGgg', 'ggggggGg', 'gGgggggg', 'gggGgggg', 'ggggggGg'], { g: '#1f3d1f', G: '#2f5d2f' });
+const RICE_BED = Pixel.svg(['gggggggg', 'gwwwwwwg', 'gwwwwwwg', 'gwwwwwwg', 'gwwwwwwg', 'gggggggg'], { g: '#1f3d1f', w: '#f4f1e8' });
+const MAKI_LOG = Pixel.svg(['.gggggggggg.', 'gggggggggggg', 'gGgggGgggGgg', 'gggggggggggg', '.gggggggggg.'], { g: '#1f3d1f', G: '#2f5d2f' });
+const MAKI = Pixel.svg([
+  '.ggg..ggg..ggg.',
+  'gwwwggwwwggwwwg',
+  'gwcwggwtwggwcwg',
+  'gwwwggwwwggwwwg',
+  '.ggg..ggg..ggg.',
+], { g: '#1f3d1f', w: '#f4f1e8', c: '#5bbf3a', t: '#f5d6a0' });
+const RICE_PILLOW = Pixel.svg(['..wwwwww..', '.wwwwwwww.', 'wwwwwwwwww', '.wwwwwwww.'], { w: '#f4f1e8' });
+const SALMON = Pixel.svg(['.oooooooo.', 'owoooowooo', 'oooowoooow', '.oooooooo.'], { o: '#ff8a50', w: '#ffd0b5' });
+const NIGIRI = Pixel.svg(['..oooooooo..', '.owoooowoooo', 'oooowoooowoo', '.wwwwwwwwww.', 'wwwwwwwwwwww', '.wwwwwwwwww.'], { o: '#ff8a50', w: '#f4f1e8' });
+const RICE_TRI = Pixel.svg(['....ww....', '...wwww...', '..wwwwww..', '.wwwwwwww.', 'wwwwwwwwww'], { w: '#f4f1e8' });
+
+// the boss: Grumbly Oni, the grumpy demon from the Setsubun festival
+const ONI = Pixel.svg([
+  '.y........y.',
+  '.yy.kkkk.yy.',
+  '..ykkkkkky..',
+  '.kkrrrrrrkk.',
+  '.krwkrrkwrk.',
+  '.krrrrrrrrk.',
+  '.krkwkkwkrk.',
+  '..krrrrrrk..',
+  '.rr.kyyk.rr.',
+  '.rryykkyyrr.',
+  '..rykyykyr..',
+  '..rr....rr..',
+  '..kk....kk..',
+], { y: '#ffd43b', k: K, r: '#e53935', w: W });
+
+// ---------- the lesson ----------
+window.LESSON = {
+  id: 'world-japan',
+  subject: 'world',
+  title: 'Japan: Land of the Rising Sun',
+  emoji: '🇯🇵',
+  home: '../index.html',
+  finishAch: 'traveller',
+  stamp: { id: 'JPN', name: 'Japan', flag: '🇯🇵' },
+  mascot: {
+    name: 'Captain Bolt',
+    sprite: Pixel.sprites.robot,
+    praise: ['Sugoi! (Amazing!)', 'Subarashii! (Wonderful!)', 'Critical hit!', 'Brilliant!', 'Super traveller!', 'Bolt-tastic!', 'Yatta! (We did it!)'],
+    oops: ['Oops! Have another go.', 'Not quite – read it again!', 'Hmm, think again!', 'So close! One more try.'],
+  },
+  glossary: {
+    continents: { emoji: '🌍', word: 'continents', def: 'The 7 huge areas of land on Earth: Asia, Africa, North America, South America, Antarctica, Europe and Oceania (Australia).' },
+    oceans: { emoji: '🌊', word: 'oceans', def: 'The 5 enormous areas of salty water that cover most of the Earth: the Pacific, Atlantic, Indian, Arctic and Southern Oceans.' },
+    island: { emoji: '🏝️', def: 'A piece of land with water all the way around it.' },
+    capital: { emoji: '🏙️', def: 'The city where a country\'s government (its leaders) works. It is often the biggest city too.' },
+    volcano: { emoji: '🌋', def: 'A mountain with a hole at the top, where hot melted rock (lava) can burst out.' },
+    earthquake: { emoji: '🫨', def: 'When the ground suddenly shakes, because huge pieces of the Earth\'s crust are moving.' },
+    nori: { emoji: '🟩', def: 'Thin, dark green sheets of dried seaweed. They are used to wrap sushi.' },
+    anime: { emoji: '📺', def: 'Cartoons made in Japan, like Pokémon and Anpanman.' },
+    samurai: { emoji: '⚔️', def: 'Warriors in Japan long ago. They had curved swords and followed strict rules about being brave and honest.' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'Japan: Land of the Rising Sun', short: 'Start', minutes: 1,
+      pic: FLAG,
+      hello: 'Konnichiwa! Welcome to AROUND THE WORLD! Grab your passport, {name} – our first flight is to JAPAN! ✈️',
+      question: 'Which country gave us sushi, bullet trains, Pokémon AND Anpanman?',
+      intro: 'Find Japan on the map, learn to say hello in Japanese, make sushi, draw Anpanman – then chase away Grumbly Oni to earn your first 🛂 passport stamp!',
+      nameLabel: 'Traveller name:',
+    },
+
+    {
+      type: 'read', title: 'Where in the world is Japan?', short: 'Read 1', minutes: 6,
+      say: 'Read each page carefully – the checks test if you really understood it! Tap the yellow words for a 💎.',
+      cards: [
+        {
+          title: 'Our big blue planet', pic: '🌍🌊',
+          text: [
+            'The land on Earth is split into 7 huge pieces called [[continents]]. The water is split into 5 [[oceans]].',
+            'You live in Thailand, which is on the biggest continent of all: Asia. More than half of all the people in the world live in Asia!',
+          ],
+          check: { q: 'Thailand and Japan are both in Asia. What does that tell you?', options: ['They are on the same continent', 'They are the same country', 'They are in the middle of the ocean'], answer: 0, hint: 'A continent is a huge area of land with lots of countries on it.' },
+        },
+        {
+          title: 'A country made of islands', pic: '🏝️🏝️🏝️',
+          text: [
+            'Japan is an [[island]] country. It sits in the Pacific Ocean, off the east coast of Asia.',
+            'It has 4 big islands and thousands of tiny ones. People say its long, curvy shape looks a bit like a dragon!',
+          ],
+          check: { q: 'Your family wants to visit Japan from Thailand. Why can\'t you just drive there?', options: ['Japan is made of islands, with sea all around', 'The roads are too bumpy', 'Cars are not allowed in Japan'], answer: 0 },
+        },
+        {
+          title: 'Land of the Rising Sun', pic: FLAG,
+          text: [
+            'People in Japan call their country Nippon. It means "where the sun comes from". That is why Japan is called the Land of the Rising Sun – and why its flag has a big red sun on it.',
+            'The sun rises in the east. Japan is a long way east, so the sun comes up there about two hours before it comes up in Thailand.',
+          ],
+          check: { q: 'It is sunrise in Tokyo. What is happening at your home in Thailand?', options: ['It is still dark – the sun comes up later', 'It is lunchtime', 'The sun is setting'], answer: 0, hint: 'The sun reaches Japan first, then Thailand about two hours later.' },
+        },
+        {
+          title: 'Mountains and wobbles', pic: FUJI,
+          text: [
+            'Most of Japan is covered in mountains and forests. The tallest is Mount Fuji. It is a [[volcano]], but it has been asleep for about 300 years.',
+            'Japan also has lots of small [[earthquake]]s – a few every day! Most are so tiny that nobody notices them.',
+          ],
+          check: { q: 'Children in Japan practise hiding under their desks. Why?', options: ['To stay safe if there is an earthquake', 'To play hide and seek', 'To keep out of the rain'], answer: 0 },
+        },
+        {
+          title: 'Tokyo and the bullet train', pic: '🏙️🚄',
+          text: [
+            'Tokyo is the [[capital]] of Japan. Together with the towns around it, it is the biggest city in the world – more than 35 million people live there!',
+            'Super-fast bullet trains called shinkansen zoom between the cities at up to 320 km an hour – about three times faster than a car on the motorway!',
+          ],
+          check: { q: 'Your family is in Tokyo and wants to get to the city of Osaka really fast, without flying. What could you take?', options: ['🚄 a bullet train', '🚲 a bicycle', '⛵ a sailing boat'], answer: 0 },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'Japan for Kids', short: 'Video 1', minutes: 7,
+      video: { id: 'QEC3MrWgnMU', title: 'Japan for Kids – A kids guide to Japan', channel: "Professor Propeller's Planet", duration: '4:11' },
+      say: 'Professor Propeller is flying to Japan! Watch, then answer my questions.',
+      clues: [
+        'What does the shape of Japan look a bit like?',
+        'What strange shape are some Japanese watermelons?',
+        'How many earthquakes does Japan get every day?',
+        'How do you count to 3 in Japanese?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'The video says Japan looks a bit like…', options: ['🐉 a dragon', '🐘 an elephant', '🍌 a banana'], answer: 0 },
+        { type: 'mcq', q: 'Which fun fruit does the video show from Japan?', options: ['square watermelons', 'blue bananas', 'giant purple apples'], answer: 0 },
+        { type: 'mcq', q: 'Japan invented karaoke. What do you do in karaoke?', options: ['Sing along to music', 'Fold paper into animals', 'Race little cars'], answer: 0, explain: 'Karaoke means "empty orchestra" – YOU are the singer!' },
+        { type: 'mcq', q: 'About how many earthquakes does the video say Japan has every day?', options: ['2 or 3 – mostly too small to notice', 'none at all', 'about 100 big ones'], answer: 0 },
+        { type: 'mcq', q: 'What does the video say you can buy from some Japanese vending machines?', options: ['hot soup, clothes and even flowers', 'only water', 'live puppies'], answer: 0 },
+        { type: 'mcq', q: 'How do you count to three in Japanese?', options: ['ichi, ni, san', 'un, deux, trois', 'nueng, song, sam'], answer: 0, explain: 'Ichi, ni, san! (Nueng, song, sam is Thai, and un, deux, trois is French.)' },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Map Explorer', short: 'Game 1', minutes: 8,
+      rounds: [
+        {
+          game: 'worldmap', title: 'Map Explorer', view: 'world',
+          intro: 'Explore the world map! Follow each mission at the top. Your home is the 🏠.',
+          say: 'Tap the right place on the map! Your home is the 🏠.',
+          tasks: [
+            { find: 'asia', ask: 'Tap ASIA – the biggest continent. Your home is on it!', yes: 'Yes! Asia – home to Thailand AND Japan!', hint: 'Look for the 🏠 – Asia is the big continent all around it.' },
+            { find: 'pacific', ask: 'Tap the PACIFIC OCEAN – the biggest ocean of all.', yes: 'The Pacific! It is bigger than all the land on Earth put together!', hint: 'The Pacific is the huge ocean to the right of Asia (and on the left of the map too – it wraps around!).' },
+            { find: 'europe', ask: 'Tap EUROPE – the continent where England is.', yes: 'Europe! We will fly there next lesson.', hint: 'Europe is above Africa, to the left of Asia.' },
+            { find: 'africa', ask: 'Tap AFRICA.', yes: 'Africa – home of lions, giraffes and the pyramids!', hint: 'Africa is the big continent below Europe.' },
+            { find: 'atlantic', ask: 'Tap the ATLANTIC OCEAN.', yes: 'The Atlantic – between the Americas and Europe and Africa.', hint: 'It is the ocean between America on the left and Europe and Africa.' },
+            { place: 'JPN', pin: '🇯🇵', ask: 'Drag the Japan flag onto JAPAN – the islands off the east coast of Asia!', yes: 'Perfect! Japan – a chain of islands in the Pacific!', hint: 'Japan is to the right of China and Korea, at the edge of Asia, in the sea.' },
+            {
+              fly: 'JPN', hours: 6, ask: 'Now fly ✈️ from your home 🏠 to Japan! Drag the plane all the way there.', yes: 'Touchdown in Tokyo! Welcome to Japan!',
+              then: [{ type: 'mcq', q: 'The flight took about 6 hours. Which takes about the same time?', options: ['a whole school day', 'brushing your teeth', 'a whole week'], answer: 0 }],
+            },
+          ],
+        },
+        {
+          game: 'wordsearch', title: 'Word Hunt',
+          intro: 'Find all the **Japan words** hidden in the grid. They go across ➡ or down ⬇.',
+          say: 'Hunt for the hidden words! Drag across a word – or tap the first letter, then the last.',
+          size: 10,
+          words: ['JAPAN', 'TOKYO', 'ISLAND', 'PACIFIC', 'VOLCANO', 'FUJI', 'ASIA', 'OCEAN'],
+        },
+      ],
+    },
+
+    {
+      type: 'read', title: 'Life in Japan', short: 'Read 2', minutes: 6,
+      say: 'Now let\'s meet the people of Japan – and learn their manners!',
+      cards: [
+        {
+          title: 'Bow and shoes off!', pic: '🙇🩴',
+          text: [
+            'In Japan, people say hello with a bow. The deeper you bow, the more respect you show.',
+            'Before going into a home, everyone takes their shoes off at the door and puts on slippers. That keeps the floors clean!',
+          ],
+          check: { q: 'You visit a friend\'s home in Japan. What do you do at the door?', options: ['Take off your shoes', 'Ring a big bell three times', 'Clap your hands'], answer: 0 },
+        },
+        {
+          title: 'Chopsticks and slurping', pic: '🥢🍜',
+          text: [
+            'Most meals have rice, soup, vegetables and fish, and people eat with chopsticks. Before eating, they say "itadakimasu" – a way of saying thank you for the food.',
+            'Here is a surprise: slurping your noodles loudly is polite in Japan! It shows the cook that you are enjoying them.',
+          ],
+          check: { q: 'Ken slurps his ramen noodles noisily in a Tokyo restaurant. What does the cook think?', options: ['He is enjoying the food – great!', 'He is being very rude', 'He has burnt his tongue'], answer: 0 },
+        },
+        {
+          title: 'Super sushi', pic: '🍣🍙',
+          text: [
+            'Sushi is rice mixed with a little vinegar, served with fish or vegetables. For maki sushi, the rice and fillings are rolled up in [[nori]] seaweed, then sliced.',
+            'For nigiri sushi, the chef squeezes the rice into a little pillow and lays a slice of fish on top. Sushi is a treat – most days people eat things like rice, miso soup, noodles or curry.',
+          ],
+          check: { q: 'Which of these is maki sushi?', options: ['Rice and cucumber rolled up in seaweed, then sliced', 'A slice of fish on a little pillow of rice', 'A bowl of noodle soup'], answer: 0, hint: 'Maki means "roll".' },
+        },
+        {
+          title: 'Anpanman to the rescue!', pic: Pixel.svg(ANPANMAN.target, ANPANMAN.colors),
+          text: [
+            'Japan makes lots of cartoons, called [[anime]], and video games – Pokémon and Super Mario both come from Japan!',
+            'The favourite hero of little children is Anpanman. His head is a bun filled with sweet red bean paste. When someone is hungry, he lets them eat part of his head – then Uncle Jam bakes him a fresh one!',
+          ],
+          check: { q: 'What makes Anpanman such a kind hero?', options: ['He shares his own head with hungry people', 'He is the fastest flyer', 'He never needs to eat'], answer: 0 },
+        },
+        {
+          title: 'Samurai and castles', pic: '🏯⚔️',
+          text: [
+            'Long ago, Japan was protected by [[samurai]]: warriors with curved swords who followed strict rules about being brave, honest and loyal.',
+            'They guarded tall wooden castles like Himeji Castle, which is so white that people call it the White Heron. You can still visit it today!',
+          ],
+          check: { q: 'A samurai has promised to protect his village. What would he do?', options: ['Keep his promise, even when it is hard', 'Run away if it gets scary', 'Forget about it'], answer: 0 },
+        },
+        {
+          title: 'Demons out, luck in!', pic: '👹🫘',
+          text: [
+            'Every February there is a festival called Setsubun. A grown-up puts on a scary oni (demon) mask, and the children throw roasted beans at them!',
+            'Everyone shouts "Oni wa soto! Fuku wa uchi!" – "Demons out! Good luck in!" Then they eat one bean for every year of their age.',
+          ],
+          check: { q: 'Why do children throw beans at Setsubun?', options: ['To chase away bad luck and bring in good luck', 'To feed the birds', 'To grow a bean plant'], answer: 0 },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'Let\'s Make Sushi', short: 'Video 2', minutes: 6,
+      video: { id: 't6psvVx3PVY', title: 'CBeebies Recipes | Japanese Sushi', channel: 'CBeebies', duration: '3:00' },
+      say: 'Watch how to roll sushi – you\'ll need these tricks in the Sushi Chef game next!',
+      clues: [
+        'What is the very first thing to do?',
+        'Which side of the seaweed goes down?',
+        'What do you put on your fingers before pressing the rice?',
+        'Who cuts the rolls?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'What is the very first thing to do before making sushi?', options: ['Wash your hands', 'Cut the cucumber', 'Turn on the TV'], answer: 0 },
+        { type: 'mcq', q: 'The nori seaweed goes onto the sushi mat…', options: ['shiny side down', 'shiny side up', 'folded in half'], answer: 0 },
+        { type: 'mcq', q: 'What do you put on your fingers before pressing the rice onto the seaweed?', options: ['a little water', 'butter', 'flour'], answer: 0, explain: 'Wet fingers stop the sticky rice from sticking to you!' },
+        { type: 'mcq', q: 'Where do you lay the fillings, like cucumber and tuna mayo?', options: ['across the middle of the rice', 'all around the edges', 'on top of the rolled sushi'], answer: 0 },
+        { type: 'mcq', q: 'Which of these is mixed in to make the rice dressing?', options: ['rice vinegar, sugar and salt', 'chocolate sauce', 'orange juice'], answer: 0 },
+        { type: 'mcq', q: 'Who cuts the sushi rolls into pieces?', options: ['a grown-up', 'the dog', 'nobody – you eat it whole'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Sushi Chef', short: 'Game 2', minutes: 10,
+      rounds: [
+        {
+          game: 'cook', title: 'Sushi Chef', yum: 'Oishii! (Delicious!)',
+          intro: 'Welcome to your sushi bar! Follow the recipe card: **drag** each ingredient onto the board, then roll, slice or squeeze it!',
+          say: 'Irasshaimase! (Welcome!) Your first customer is hungry!',
+          pantry: [
+            { add: 'chocolate', label: 'chocolate', emoji: '🍫', why: 'Chocolate sushi? Yuck! There\'s no chocolate in sushi.' },
+            { add: 'ketchup', label: 'ketchup', emoji: '🍅', why: 'No ketchup in sushi!' },
+          ],
+          recipes: [
+            {
+              name: 'Cucumber maki roll', emoji: MAKI, customer: '🧒',
+              fact: 'Cucumber maki is called kappa maki, after the kappa – a cheeky water creature from Japanese stories that LOVES cucumbers!',
+              steps: [
+                { add: 'nori', label: 'nori seaweed', emoji: NORI },
+                { add: 'rice', label: 'sushi rice', emoji: '🍚', makes: RICE_BED },
+                { add: 'cucumber', label: 'cucumber', emoji: '🥒' },
+                { do: 'roll', label: 'Roll it up', makes: MAKI_LOG },
+                { do: 'slice', label: 'Slice it', makes: MAKI },
+              ],
+            },
+            {
+              name: 'Salmon nigiri', emoji: NIGIRI, customer: '👵',
+              fact: 'Nigiri means "squeezed with the hands". Sushi chefs in Japan train for years to get it just right!',
+              steps: [
+                { add: 'rice', label: 'sushi rice', emoji: '🍚' },
+                { do: 'squeeze', label: 'Squeeze it into a pillow', makes: RICE_PILLOW },
+                { add: 'salmon', label: 'salmon slice', emoji: SALMON, makes: NIGIRI },
+              ],
+            },
+            {
+              name: 'Tuna mayo maki roll', emoji: MAKI, customer: '👦',
+              fact: 'Tuna mayo is one of the most popular fillings for children in Japan – just like in the CBeebies video!',
+              steps: [
+                { add: 'nori', label: 'nori seaweed', emoji: NORI },
+                { add: 'rice', label: 'sushi rice', emoji: '🍚', makes: RICE_BED },
+                { add: 'tuna', label: 'tuna mayo', emoji: '🐟' },
+                { do: 'roll', label: 'Roll it up', makes: MAKI_LOG },
+                { do: 'slice', label: 'Slice it', makes: MAKI },
+              ],
+            },
+            {
+              name: 'Onigiri rice ball', emoji: '🍙', customer: '👧',
+              fact: 'Onigiri are rice balls that Japanese children take to school in their lunch boxes – and Anpanman\'s friend Omusubiman is one!',
+              steps: [
+                { add: 'rice', label: 'sushi rice', emoji: '🍚' },
+                { add: 'tuna', label: 'tuna mayo', emoji: '🐟' },
+                { do: 'squeeze', label: 'Squeeze it into a triangle', makes: RICE_TRI },
+                { add: 'nori', label: 'nori seaweed', emoji: NORI, makes: '🍙' },
+              ],
+            },
+          ],
+        },
+        {
+          game: 'cook', title: 'Sushi Rush!', yum: 'Oishii!', memory: true, par: 150,
+          intro: 'The sushi bar is BUSY! Cook these orders **from memory** – press 💡 Peek if you forget. Finish in under 2½ minutes for a bonus gem!',
+          say: 'Here come the customers! Can you remember the recipes?',
+          pantry: [{ add: 'chocolate', label: 'chocolate', emoji: '🍫', why: 'No chocolate in sushi!' }],
+          recipes: [
+            { name: 'Salmon nigiri', emoji: NIGIRI, customer: '🧑', steps: [{ add: 'rice', label: 'sushi rice', emoji: '🍚' }, { do: 'squeeze', label: 'Squeeze it into a pillow', makes: RICE_PILLOW }, { add: 'salmon', label: 'salmon slice', emoji: SALMON, makes: NIGIRI }] },
+            { name: 'Cucumber maki roll', emoji: MAKI, customer: '👴', steps: [{ add: 'nori', label: 'nori seaweed', emoji: NORI }, { add: 'rice', label: 'sushi rice', emoji: '🍚', makes: RICE_BED }, { add: 'cucumber', label: 'cucumber', emoji: '🥒' }, { do: 'roll', label: 'Roll it up', makes: MAKI_LOG }, { do: 'slice', label: 'Slice it', makes: MAKI }] },
+            { name: 'Onigiri rice ball', emoji: '🍙', customer: '🧒', steps: [{ add: 'rice', label: 'sushi rice', emoji: '🍚' }, { add: 'tuna', label: 'tuna mayo', emoji: '🐟' }, { do: 'squeeze', label: 'Squeeze it into a triangle', makes: RICE_TRI }, { add: 'nori', label: 'nori seaweed', emoji: NORI, makes: '🍙' }] },
+          ],
+        },
+        {
+          game: 'crossword', title: 'Japan Crossword',
+          intro: 'Solve the crossword! Tap a clue, then type the answer with the letter keys.',
+          say: 'Crossword time! Stuck? Press 💡 Hint for a free letter.',
+          entries: [
+            { answer: 'TOKYO', clue: 'The capital city of Japan' },
+            { answer: 'SUSHI', clue: 'Rice with fish or vegetables, sometimes rolled in seaweed' },
+            { answer: 'NORI', clue: 'Dried seaweed used to wrap sushi' },
+            { answer: 'FUJI', clue: 'Japan\'s tallest mountain (Mount ____)' },
+            { answer: 'ISLAND', clue: 'Land with water all the way around it' },
+            { answer: 'SAMURAI', clue: 'A brave warrior from Japan long ago' },
+            { answer: 'BOW', clue: 'How people in Japan say hello without words' },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Japan Studio', short: 'Game 3', icon: '🎌', minutes: 10,
+      rounds: [
+        {
+          game: 'phrases', title: 'Say it in Japanese!', lang: 'ja-JP',
+          say: 'Let\'s learn some Japanese! Listen, then copy me out loud.',
+          phrases: [
+            { text: 'こんにちは', roman: 'konnichiwa', means: 'Hello', emoji: '👋', sound: 'kon-nee-chee-wah' },
+            { text: 'おはよう', roman: 'ohayō', means: 'Good morning', emoji: '☀️', sound: 'oh-HI-yoh' },
+            { text: 'ありがとう', roman: 'arigatō', means: 'Thank you', emoji: '🙏', sound: 'ah-ree-GAH-toh' },
+            { text: 'いただきます', roman: 'itadakimasu', means: 'Let\'s eat! (Thank you for the food)', emoji: '🍚', sound: 'ee-ta-da-kee-mass' },
+            { text: 'さようなら', roman: 'sayōnara', means: 'Goodbye', emoji: '🚪', sound: 'sa-YOH-na-ra' },
+          ],
+          quiz: [
+            { type: 'mcq', q: 'It is 7 o\'clock in the morning and you meet your teacher. What do you say?', options: ['ohayō', 'sayōnara', 'itadakimasu'], answer: 0 },
+            { type: 'mcq', q: 'Your friend\'s mum gives you a slice of cake. What do you say?', options: ['arigatō', 'ohayō', 'sayōnara'], answer: 0 },
+            { type: 'mcq', q: 'Dinner is on the table and everyone is about to eat. What do you all say?', options: ['itadakimasu', 'konnichiwa', 'sayōnara'], answer: 0 },
+            { type: 'mcq', q: 'School is over and you wave to your friends. What do you say?', options: ['sayōnara', 'ohayō', 'itadakimasu'], answer: 0 },
+          ],
+          gesture: { kind: 'bow', say: 'こんにちは', intro: 'Now say hello the Japanese way – with a bow!', text: '🙇 In Japan, people bow to say hello. Swipe DOWN on your character to bow – twice!', yes: 'A perfect bow! Konnichiwa!' },
+        },
+        Object.assign({
+          game: 'pixelcopy', title: 'Draw Anpanman', mirror: true,
+          intro: 'Copy Anpanman! The **🪞 Mirror** is ON – his face is the same on both sides, so you only need to paint one half.',
+          say: 'Draw the dark brown outline first, then use 🪣 Fill for his bread-brown face!',
+          tips: ['Draw the **dark brown outline** first.', 'Use **🪣 Fill** for the bread-brown face.', 'Add the **red** nose and cheeks.', 'Finish with **black** eyes, eyebrows and a smile.'],
+          done: 'ANPANMAN IS HERE! Your pixel hero looks ready to help!',
+        }, ANPANMAN),
+        {
+          game: 'invaders', title: 'Made in Japan',
+          intro: 'Read each mission at the top of the screen, then shoot only the right aliens!',
+          say: 'Tap above an alien to fly there and fire!',
+          waves: [
+            {
+              prompt: 'Shoot the things that come from JAPAN!',
+              items: [
+                { label: 'sushi', ok: true }, { label: 'Pokémon', ok: true }, { label: 'karaoke', ok: true }, { label: 'Anpanman', ok: true },
+                { label: 'pizza', ok: false, why: 'Pizza comes from Italy.' }, { label: 'kangaroos', ok: false, why: 'Kangaroos live in Australia.' }, { label: 'pyramids', ok: false, why: 'The pyramids are in Egypt.' },
+              ],
+            },
+            {
+              prompt: 'Shoot the things you would SEE in Japan!',
+              items: [
+                { label: 'Mount Fuji', ok: true }, { label: 'bullet train', ok: true }, { label: 'samurai castle', ok: true }, { label: 'chopsticks', ok: true },
+                { label: 'Big Ben', ok: false, why: 'Big Ben is in London, England.' }, { label: 'polar bears', ok: false, why: 'Polar bears live in the Arctic, not Japan.' }, { label: 'Eiffel Tower', ok: false, why: 'The Eiffel Tower is in Paris, France.' },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
+      say: 'Time to move like a samurai!',
+      wiggle: {
+        title: '🥋 Samurai Stretches!',
+        seconds: 60,
+        moves: [
+          '🙇 Bow to your screen – say "konnichiwa"!',
+          '⚔️ Samurai pose! Feet wide, arms out like you are holding a sword.',
+          '🚄 Bullet train! Run on the spot as FAST as you can!',
+          '🗻 Mount Fuji! Make a pointy mountain with your arms above your head.',
+          '🫨 Earthquake! Wobble your whole body… then freeze!',
+          '🥷 Ninja! Tiptoe on the spot without making a sound.',
+        ],
+      },
+      tryit: {
+        title: '🍙 Try it at home: Sticky Rice Test',
+        intro: 'Japanese children make onigiri rice balls. With a grown-up, cook some short, sticky rice (sushi rice works best) and let it cool until it is just warm.',
+        steps: [
+          'Before you test, tap the first box for each guess: what do you THINK will happen?',
+          'Try to squeeze a rice ball with DRY hands. Then wet your hands with a little water and try again.',
+          'Tap the second box: what did you SEE?',
+          'Add a filling in the middle, wrap a strip of nori around it – and eat your onigiri! Itadakimasu!',
+        ],
+        table: {
+          cols: ['I think…', 'I saw…'],
+          items: ['🖐️ dry hands get covered in sticky rice', '💧 wet hands stop the rice sticking', '🍙 the rice ball holds its shape'],
+        },
+        tip: 'Tap once for ✅ and twice for ❌. Sushi chefs dip their fingers in water for the same reason!',
+      },
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: Grumbly Oni', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      say: 'Oh no! GRUMBLY ONI has stolen the treasure of Japan! Every right answer is a hit. Oni wa soto, {name}!',
+      boss: {
+        name: 'Grumbly Oni', sprite: ONI, attack: '⚡',
+        lines: {
+          intro: 'GRAAAH! I am GRUMBLY ONI! I\'ve hidden all of Japan\'s treasure in my cave – and you\'ll never get it back!',
+          hurt: ['Ow! Oni-believable!', 'Oh no-ni!', 'My horns are wobbling!', 'Stop being so clever!'],
+          taunt: ['Ha! Wrong! Grumble grumble!', 'Oni-ly a beginner would pick that!', 'Too slow, like a sleepy tanuki!', 'Back to the airport with you!'],
+          angry: 'Now I\'m as grumpy as a volcano! RUMBLE RUMBLE!',
+          dodge: 'THUNDER STORM! Dodge my lightning!',
+          miss: 'Grr! You dodge like a ninja!',
+          last: 'Please… not the beans…',
+          defeat: 'Oni wa soto… I\'m… OUT of here!',
+          win: 'GRAAH HA HA! The treasure is mine! Come back when you know your sushi from your samurai!',
+          stunned: 'My horns are spinning… I can see cherry blossoms…',
+          beg: ['Wait! I\'ll give the treasure back!', 'I\'ll tidy my cave, I promise!', 'Gomen nasai! (That means sorry!)'],
+        },
+      },
+      bonus: {
+        title: '⭐ Bonus quest (for a grown-up to help with)',
+        text: 'Want more? Watch Learning Tail\'s "Japan for kids – an amazing and quick guide to Japan" (6 min) to discover kimonos, tanuki and floating lanterns.',
+        url: 'https://www.youtube.com/watch?v=S603E1utiwE',
+        button: 'Watch the bonus video ▶',
+      },
+      questions: [
+        { type: 'mcq', q: 'Which continent are both Thailand and Japan on?', options: ['Asia', 'Europe', 'Africa'], answer: 0 },
+        { type: 'mcq', q: 'Grumbly Oni says, "Japan is one giant island in the Atlantic!" What could you tell him?', options: ['No – it is lots of islands in the Pacific Ocean', 'Yes, that\'s right', 'No – it is in the middle of a desert'], answer: 0 },
+        { type: 'gap', q: 'The capital city of Japan is ___.', options: ['Tokyo', 'Bangkok', 'London'], answer: 0 },
+        { type: 'mcq', q: 'Why is Japan called the Land of the Rising Sun?', options: ['It is so far east that the sun seems to rise there first', 'The sun never sets there', 'It is the hottest country'], answer: 0 },
+        { type: 'mcq', q: 'The floor starts to shake at a school in Tokyo. What do the children do?', options: ['Hide under their desks', 'Run to the window', 'Keep writing'], answer: 0 },
+        { type: 'mcq', q: 'You arrive at a Japanese friend\'s house. What should you do?', options: ['Bow and take off your shoes', 'Run in with muddy boots', 'Shout very loudly'], answer: 0 },
+        { type: 'mcq', q: 'Your family is about to eat dinner in Japan. What do you all say?', options: ['itadakimasu', 'sayōnara', 'ohayō'], answer: 0 },
+        { type: 'order', q: 'Put the steps for a maki roll in order.', items: ['🟩 Put nori on the mat', '🍚 Press on the rice', '🥒 Lay the filling across the middle', '🌀 Roll it up', '🔪 Slice it'], hint: 'The seaweed goes on first, and the slicing comes last.' },
+        { type: 'mcq', q: 'Anpanman meets a hungry puppy. What will he probably do?', options: ['Let the puppy eat part of his bread head', 'Fly away', 'Eat the puppy\'s dinner'], answer: 0 },
+        { type: 'tf', q: 'Mount Fuji is a volcano.', answer: true, explain: 'It is! But it has been asleep for about 300 years.' },
+        { type: 'mcq', q: 'At Setsubun, children throw beans and shout "Oni wa soto!" What does it mean?', options: ['Demons out!', 'Let\'s eat!', 'Good morning!'], answer: 0 },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>

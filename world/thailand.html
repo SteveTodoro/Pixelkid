@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Thailand: Welcome Home!</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <script src="../shared/pixel.js"></script>
+  <script src="../shared/avatar.js"></script>
+  <script src="../shared/world-map.js"></script>
+  <script src="../shared/world.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// ---------- blocky pictures for this lesson ----------
+const K = '#1b1b1b', W = '#ffffff';
+const grid = (w, hh, f) => Array.from({ length: hh }, (_, y) => Array.from({ length: w }, (_, x) => f(x, y)).join(''));
+
+// Thailand's flag: red, white, a wide blue stripe, white, red
+const FLAG = Pixel.svg(grid(21, 13, (x, y) => (y < 2 || y > 10 ? 'r' : y < 4 || y > 8 ? 'w' : 'b')), { r: '#d32f2f', w: W, b: '#1f3c88' });
+
+// an elephant to copy – Thailand's national animal (symmetrical, so the mirror helps!)
+const ELEPHANT = {
+  colors: { g: '#9aa4ae', G: '#7b8590', k: K, w: W },
+  names: { '#9aa4ae': 'grey', '#7b8590': 'dark grey (ears)', [K]: 'black', [W]: 'white' },
+  target: [
+    '....gggggg....',
+    '.GG.gggggg.GG.',
+    'GGGggggggggGGG',
+    'GGGgkggggkgGGG',
+    'GGGggggggggGGG',
+    '.GGggggggggGG.',
+    '..GwggggggwG..',
+    '...w.gggg.w...',
+    '.....gggg.....',
+    '......gg......',
+    '......gg......',
+    '......gg......',
+  ],
+};
+
+// Thai kitchen
+const STICKY = Pixel.svg(['..wwwwww..', '.wwwwwwww.', 'wwwwwwwwww', '.bbbbbbbb.'], { w: '#f4f1e8', b: '#c9a76b' });
+const STICKY_COCO = Pixel.svg(['..wwwwww..', '.wcwwcwww.', 'wwwcwwwcww', '.bbbbbbbb.'], { w: '#fffdf4', c: '#f0e2b8', b: '#c9a76b' });
+const MANGO_RICE = Pixel.svg(['oooo......', 'oOooo.....', '.oooowwww.', '..wwcwwwww', 'wwwwwwcwww', '.bbbbbbbbb'], { o: '#ffb300', O: '#ffd54f', w: '#fffdf4', c: '#f0e2b8', b: '#c9a76b' });
+const NOODLES = Pixel.svg(['.yyyyyyyy.', 'yYyyYyyYyy', 'yyYyyYyyYy', '.yyyyyyyy.'], { y: '#f3d39b', Y: '#d9b06a' });
+const PAD_THAI = Pixel.svg(['...p....g.', '.yyyyyyyy.', 'yYpyYyyYgy', 'yyYyyeyyYy', '.kkkkkkkk.', '..kkkkkk..'], { y: '#e8a85a', Y: '#c9853a', p: '#ff7043', g: '#7cb342', e: '#ffe082', k: '#3a3a3a' });
+const GLASS_ICE = Pixel.svg(['k......k', 'kiwiiwik', 'kiiwiiik', 'kwiiiwik', 'kiiiiiik', '.kkkkkk.'], { k: '#90a4ae', i: '#e1f5fe', w: W });
+const GLASS_TEA = Pixel.svg(['k......k', 'koOooOok', 'koooOook', 'kOooooOk', 'koooooOk', '.kkkkkk.'], { k: '#90a4ae', o: '#f57c00', O: '#ffb74d' });
+const CHA_YEN = Pixel.svg(['k......k', 'kmmwmmmk', 'kmmmmwmk', 'kOooooOk', 'koooooOk', '.kkkkkk.'], { k: '#90a4ae', m: '#ffe0b2', w: W, o: '#f57c00', O: '#ffb74d' });
+
+// the boss: the Mango Bandit, a cheeky monkey in a mask
+const BANDIT = Pixel.svg([
+  '...bbbbbb...',
+  '..bbbbbbbb..',
+  '.pbkkkkkkbp.',
+  '.pbkwkkwkbp.',
+  '..bffffffb..',
+  '..bffkkffb..',
+  '..bbffffbb..',
+  '...bbbbbb..o',
+  '..bbbbbbbboo',
+  '.bb.bbbb.bo.',
+  '.b..bbbb....',
+  '...bb..bb...',
+], { b: '#8a5a32', p: '#e9a679', k: K, w: W, f: '#e9cfa6', o: '#ffb300' });
+
+// ---------- the lesson ----------
+window.LESSON = {
+  id: 'world-thailand',
+  subject: 'world',
+  title: 'Thailand: Welcome Home!',
+  emoji: '🇹🇭',
+  home: '../index.html',
+  finishAch: 'traveller',
+  stamp: { id: 'THA', name: 'Thailand', flag: '🇹🇭' },
+  mascot: {
+    name: 'Captain Bolt',
+    sprite: Pixel.sprites.robot,
+    praise: ['Geng mak! (Brilliant!)', 'Suay! (Beautiful!)', 'Critical hit!', 'Super traveller!', 'Bolt-tastic!', 'Amazing!', 'Aroi mak – that answer was delicious!'],
+    oops: ['Mai pen rai – have another go!', 'Not quite – read it again!', 'Hmm, think again!', 'So close! One more try.'],
+  },
+  glossary: {
+    neighbour: { emoji: '🏘️', def: 'A country that is right next to another country and shares a border with it.' },
+    border: { emoji: '🚧', def: 'The line where one country ends and the next country begins.' },
+    equator: { emoji: '🌐', def: 'An imaginary line around the middle of the Earth. Places near it are hot all year round.' },
+    monsoon: { emoji: '🌧️', def: 'A season of very heavy rain, with big storms almost every day.' },
+    capital: { emoji: '🏙️', def: 'The city where a country\'s government (its leaders) works.' },
+    wai: { emoji: '🙏', def: 'The Thai greeting: you press your palms together and bow your head a little.' },
+    respect: { emoji: '🤝', def: 'Showing that you think someone is important and treating them kindly and politely.' },
+    sanctuary: { emoji: '🌳', def: 'A safe place where animals can live freely and are looked after.' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'Thailand: Welcome Home!', short: 'Start', minutes: 1,
+      pic: FLAG,
+      hello: 'Sawasdee krap, {name}! After Japan and England, our plane is flying back HOME – to THAILAND! ✈️🏠',
+      question: 'You live here – but how much do you REALLY know about Thailand?',
+      intro: 'Find Thailand\'s neighbours, discover why it is hot all year, cook mango sticky rice, draw an elephant – then catch the Mango Bandit to earn your third 🛂 passport stamp!',
+      nameLabel: 'Traveller name:',
+    },
+
+    {
+      type: 'review', title: 'Last time…', short: 'Recap', minutes: 4,
+      from: { title: 'England: Castles, Kings & Cups of Tea', emoji: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', url: 'england.html' },
+      facts: [
+        'A compass shows north, east, south and west. On most maps, north is at the top. (Never Eat Soggy Weetabix!)',
+        'England, Scotland, Wales and Northern Ireland make the United Kingdom. England\'s capital is London.',
+        'England is in Europe, about 13 hours from Thailand by plane – much further away than Japan.',
+        'English people love tea with milk, and scones with jam and cream.',
+      ],
+      questions: [
+        { type: 'mcq', q: 'You are holding a map. Which way is at the top?', options: ['North', 'South', 'West'], answer: 0 },
+        { type: 'mcq', q: 'Which of these is NOT one of the four UK countries?', options: ['France', 'Wales', 'Scotland'], answer: 0 },
+        { type: 'mcq', q: 'In Devon, what goes on a scone first?', options: ['cream', 'jam', 'mango'], answer: 0 },
+        { type: 'mcq', q: 'What is the real name of the bell inside London\'s famous clock tower?', options: ['Big Ben', 'Little Lucy', 'Tower Bridge'], answer: 0 },
+      ],
+      game: {
+        game: 'worldmap', title: 'Compass check', view: 'ukfrance', colour: 'countries', compass: true,
+        colours: { ENG: '#e8584e', SCT: '#5c7cfa', WLS: '#3fae5a', NIR: '#f2b33d', IRL: '#9e9e9e', FXX: '#b65bd1' },
+        intro: 'Follow the arrow and use the compass!',
+        say: 'Remember the compass? North is up!',
+        tasks: [
+          { find: 'SCT', from: 'ENG', dir: 'N', ask: 'Start in England and go NORTH. Tap the country you reach!', yes: 'Scotland! Great compass skills!', hint: 'North is up.' },
+          { find: 'FXX', from: 'ENG', dir: 'S', ask: 'Now go SOUTH from England across the sea. Tap it!', yes: 'France! Bonjour!', hint: 'South is down.' },
+        ],
+      },
+    },
+
+    {
+      type: 'read', title: 'Thailand on the map', short: 'Read 1', minutes: 6,
+      say: 'You live here – but let\'s look at Thailand like a real geographer!',
+      cards: [
+        {
+          title: 'An elephant\'s head', pic: '🐘🗺️',
+          text: [
+            'Thailand is in South-East Asia. Lots of people say its shape looks like an elephant\'s head – with a long, thin trunk dangling down to the south.',
+            'That makes sense, because the elephant is Thailand\'s national animal!',
+          ],
+          check: { q: 'If Thailand is an elephant\'s head, which part is the trunk?', options: ['The long, thin part in the south', 'The big round part in the north', 'The islands far out at sea'], answer: 0 },
+        },
+        {
+          title: 'Next-door neighbours', pic: '🏘️🚧',
+          text: [
+            'Thailand has four [[neighbour]]s – countries that share a [[border]] with it. Myanmar is to the west, Laos to the north-east, Cambodia to the east and Malaysia to the south.',
+            'Some of these neighbours are less than an hour away by plane!',
+          ],
+          check: { q: 'Your family drives south from Bangkok for a very, very long way. Which country could you reach?', options: ['Malaysia', 'Laos', 'Japan'], answer: 0, hint: 'Which neighbour is to the SOUTH?' },
+        },
+        {
+          title: 'Close to the middle of the Earth', pic: '🌐☀️',
+          text: [
+            'The [[equator]] is an imaginary line around the middle of the Earth. The closer a place is to it, the hotter it is all year round.',
+            'Thailand is quite close to the equator, so it is hot even in "winter". England is far to the north, so it gets freezing winters and snow.',
+          ],
+          check: { q: 'Which of these places is hot all year round?', options: ['A beach right on the equator', 'A town in the north of England', 'The North Pole'], answer: 0 },
+        },
+        {
+          title: 'Hot, wet and cool', pic: '🥵🌧️😎',
+          text: [
+            'England has four seasons, but Thailand has three: the hot season (around March to May), the rainy season (around June to October) and the cool season (around November to February).',
+            'In the rainy season, the [[monsoon]] brings huge storms. Streets can flood – and farmers are happy, because rice needs lots of water.',
+          ],
+          check: { q: 'It is August in Bangkok and there is a thunderstorm every afternoon. Which season is it?', options: ['The rainy season', 'The cool season', 'Winter, with snow'], answer: 0 },
+        },
+        {
+          title: 'Bangkok, the City of Angels', pic: '🏙️🛺',
+          text: [
+            'Bangkok is the [[capital]] of Thailand. More than 10 million people live there, and tuk-tuks, boats and the Skytrain zoom them around.',
+            'Thai people call it Krung Thep, which means "City of Angels". Its full name is the longest place name in the world – it has more than 160 letters!',
+          ],
+          check: { q: 'Why is Bangkok\'s full name famous?', options: ['It is the longest city name in the world', 'It has only two letters', 'Nobody knows what it is'], answer: 0 },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'Thailand for Kids', short: 'Video 1', minutes: 11,
+      video: { id: '84j7dvY-6Uw', title: 'Thailand for kids – Facts and fun about Thailand', channel: "Professor Propeller's Planet", duration: '8:58' },
+      say: 'Professor Propeller is visiting YOUR country! Watch, then answer my questions.',
+      clues: [
+        'What is the tallest mountain in Thailand?',
+        'What is special about a floating market?',
+        'How many flavours do Thai chefs balance?',
+        'What is Thailand\'s number one sport?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'What does the video say is the tallest mountain in Thailand?', options: ['Doi Inthanon', 'Mount Fuji', 'Big Ben'], answer: 0 },
+        { type: 'mcq', q: 'What is special about a floating market?', options: ['The shops are on boats on the river', 'It floats up in the sky', 'Everything sold there is made of rubber'], answer: 0 },
+        { type: 'mcq', q: 'How many types of flavour do Thai chefs mix together?', options: ['five – sweet, sour, spicy, salty and bitter', 'one – just sweet', 'a hundred'], answer: 0 },
+        { type: 'mcq', q: 'What is extra special about the Buddha statue in the Bangkok temple?', options: ['It is made of solid gold', 'It is made of ice', 'It can talk'], answer: 0 },
+        { type: 'mcq', q: 'What does the video say is the number one sport in Thailand?', options: ['Thai boxing (Muay Thai)', 'ice hockey', 'cricket'], answer: 0 },
+        { type: 'mcq', q: 'Which giant, gentle animal swims in the seas around Thailand?', options: ['the whale shark – the biggest fish in the world', 'the polar bear', 'the blue whale\'s cousin, the pink whale'], answer: 0 },
+        { type: 'mcq', q: 'What does the video say elephants deserve?', options: ['more respect – they should not be chained or ridden', 'to carry lots of tourists', 'to live in tiny cages'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Map Explorer', short: 'Game 1', minutes: 9,
+      rounds: [
+        {
+          game: 'worldmap', title: 'Thailand and its neighbours', view: 'home', colour: 'countries', equator: true,
+          colours: { THA: '#e8584e', MMR: '#26a69a', LAO: '#3fae5a', KHM: '#5c7cfa', MYS: '#b65bd1', VNM: '#d9a066' },
+          intro: 'Zoom in on home! Find Thailand and its four neighbours.',
+          say: 'Tap your home country first!',
+          tasks: [
+            { find: 'THA', ask: 'Tap THAILAND – your home! (Look for the 🏠.)', yes: 'Home sweet home! Can you see the elephant\'s trunk?', hint: 'Look for the 🏠 – that is Bangkok.' },
+            { find: 'MMR', from: 'THA', dir: 'W', ask: 'Go WEST from Thailand. Tap the neighbour you reach!', yes: 'Myanmar – Thailand\'s neighbour to the west.', hint: 'West is to the left.' },
+            { find: 'LAO', from: 'THA', dir: 'NE', ask: 'Go NORTH-EAST. Tap the neighbour you reach!', yes: 'Laos! The great Mekong River runs along the border.', hint: 'North-east is up and to the right.' },
+            { find: 'KHM', from: 'THA', dir: 'SE', ask: 'Go SOUTH-EAST. Tap the neighbour you reach!', yes: 'Cambodia – home of the giant temple of Angkor Wat.', hint: 'South-east is down and to the right.' },
+            {
+              find: 'MYS', ask: 'Follow the elephant\'s trunk all the way SOUTH. Tap the neighbour at the end!', yes: 'Malaysia! You found all four neighbours!', hint: 'Go down the long thin trunk to the very bottom.',
+              then: [{ type: 'mcq', q: 'The red dashed line near the bottom of the map is the equator. Which country is closer to it?', options: ['Malaysia', 'Laos', 'Myanmar'], answer: 0, hint: 'Which country is nearest the red line?' }],
+            },
+          ],
+        },
+        {
+          game: 'worldmap', title: 'Around the world from home', view: 'world', equator: true, labels: ['JPN', 'ENG'],
+          intro: 'Now compare all three countries you have visited. Fly from home to each one!',
+          say: 'Grab the plane at your home 🏠!',
+          tasks: [
+            { fly: 'JPN', hours: 6, ask: 'Fly ✈️ from home to JAPAN again.', yes: 'Japan – about 6 hours!' },
+            {
+              fly: 'ENG', hours: 13, ask: 'Now fly ✈️ from home to ENGLAND.', yes: 'England – about 13 hours!',
+              then: [
+                { type: 'mcq', q: 'Look at the red equator line. Which of the three countries is closest to it?', options: ['Thailand', 'Japan', 'England'], answer: 0, explain: 'That\'s why Thailand is hot all year!' },
+                { type: 'mcq', q: 'Which of the three countries is furthest north – and coldest in winter?', options: ['England', 'Thailand', 'Japan'], answer: 0 },
+              ],
+            },
+            { find: 'africa', ask: 'The equator runs right through the middle of a continent with lions and giraffes. Tap it!', yes: 'Africa! It is hot there too.', hint: 'Follow the red line to the big continent on the left of Asia.' },
+          ],
+        },
+        {
+          game: 'wordsearch', title: 'Word Hunt',
+          intro: 'Find all the **Thailand words** hidden in the grid. They go across ➡ or down ⬇.',
+          say: 'Hunt for the hidden words! Drag across a word – or tap the first letter, then the last.',
+          size: 10,
+          words: ['BANGKOK', 'ELEPHANT', 'LAOS', 'MALAYSIA', 'MYANMAR', 'EQUATOR', 'MONSOON', 'HOME'],
+        },
+      ],
+    },
+
+    {
+      type: 'read', title: 'Thai life and traditions', short: 'Read 2', minutes: 7,
+      say: 'Now let\'s explore Thai traditions – some you might already know!',
+      cards: [
+        {
+          title: 'The wai', pic: '🙏',
+          text: [
+            'Thai people greet each other with a [[wai]]: palms pressed together and a small bow. The higher your hands, the more [[respect]] you show – so you wai teachers, grandparents and monks with your hands high.',
+            'Boys say "sawasdee krap" and girls say "sawasdee ka". Thailand is called the Land of Smiles, because people smile so much!',
+          ],
+          check: { q: 'You meet your friend\'s grandma for the first time. What is the most polite way to say hello?', options: ['A wai with your hands high and a small bow', 'A high five', 'A wave from far away'], answer: 0 },
+        },
+        {
+          title: 'Heads and feet', pic: '🙆🦶',
+          text: [
+            'In Thailand, the head is the most special part of the body, so you should never pat someone on the head.',
+            'The feet are the lowest part, so it is rude to point your feet at people or at a Buddha statue. Shoes come off before going into homes and temples – just like in Japan!',
+          ],
+          check: { q: 'You are sitting on the floor of a temple. How should you sit?', options: ['With your feet tucked away, not pointing at the Buddha', 'With your feet stretched out towards the Buddha', 'Standing on the table'], answer: 0 },
+        },
+        {
+          title: 'Kind to elephants', pic: '🐘💚',
+          text: [
+            'Elephants have helped Thai people for hundreds of years. Long ago, a rare white elephant was a sign of good luck for the King.',
+            'Today, people know that elephants are happiest roaming free. The kindest way to meet them is at a [[sanctuary]], where you can watch them play and bathe – not ride on them.',
+          ],
+          check: { q: 'Your family wants to see elephants. Which place is kindest to them?', options: ['A sanctuary where they roam free', 'A show where they do tricks', 'A camp where they carry tourists all day'], answer: 0 },
+        },
+        {
+          title: 'Spoon, fork and five flavours', pic: '🥄🍴🌶️',
+          text: [
+            'Thai chefs balance five flavours: sweet, sour, salty, spicy and bitter. Famous dishes include pad thai noodles, green curry and mango sticky rice.',
+            'Most Thai meals are eaten with a spoon and a fork. The spoon goes into your mouth, and the fork is used to push food onto the spoon! Chopsticks are mostly for noodle soup.',
+          ],
+          check: { q: 'You are eating rice and curry at a Thai restaurant. What is the fork for?', options: ['Pushing food onto your spoon', 'Putting straight into your mouth', 'Stirring your drink'], answer: 0 },
+        },
+        {
+          title: 'Songkran splash!', pic: '💦🔫',
+          text: [
+            'Songkran is the Thai New Year, from 13 to 15 April – the hottest time of the year. Everyone has giant water fights in the streets!',
+            'But Songkran is also about respect. Families gently pour water over the hands of their grandparents to say thank you and ask for blessings.',
+          ],
+          check: { q: 'At Songkran, Nong pours water gently over her grandma\'s hands. Why?', options: ['To show respect and ask for her blessing', 'Because grandma\'s hands are dirty', 'To start a water fight with grandma'], answer: 0 },
+        },
+        {
+          title: 'Loy Krathong', pic: '🌕🪷🕯️',
+          text: [
+            'On the full moon in November, people make a krathong: a little float of banana leaves, decorated with flowers, a candle and incense sticks.',
+            'They float it on a river or lake to say thank you to the water – and to let their worries drift away. The best krathongs are made of things fish can eat, like bread, so they don\'t pollute the water.',
+          ],
+          check: { q: 'Which krathong is kindest to the river?', options: ['One made of bread and banana leaves', 'One made of plastic foam', 'One made of old cans'], answer: 0 },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'The Songkran Festival', short: 'Video 2', minutes: 9,
+      video: { id: 'sUCt3YIJmuA', title: 'The Songkran Festival in Thailand | Pleasant Goat Fun Class', channel: 'Pleasant Goat and Big Big Wolf', duration: '7:13' },
+      say: 'Pleasant Goat and friends are celebrating Songkran! Watch, then answer my questions.',
+      clues: [
+        'What date is Songkran in the video?',
+        'What does splashing someone mean?',
+        'Which fruit is called the king of fruits?',
+        'What are the rules for visiting the Grand Palace?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'What date is it in the video when they celebrate Songkran?', options: ['13 April', '25 December', '1 January'], answer: 0 },
+        { type: 'mcq', q: 'At Songkran, what does splashing water on someone mean?', options: ['You are giving them blessings', 'You are angry with them', 'They need a bath'], answer: 0, explain: 'The more you get splashed, the more blessings you get!' },
+        { type: 'mcq', q: 'What do the yellow golden shower flowers stand for?', options: ['peace and good fortune', 'rain and storms', 'being hungry'], answer: 0 },
+        { type: 'mcq', q: 'Which fruit is called the "king of fruits" in the video?', options: ['durian', 'banana', 'apple'], answer: 0 },
+        { type: 'mcq', q: 'What is unusual about durian?', options: ['It has a very strong smell, but people love the taste', 'It is bright blue', 'It grows under the sea'], answer: 0 },
+        { type: 'mcq', q: 'What must visitors do before going into the Grand Palace?', options: ['Take off their shoes and hats and wear long clothes', 'Bring a water gun', 'Sing a song'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Thai Kitchen', short: 'Game 2', minutes: 10,
+      rounds: [
+        {
+          game: 'cook', title: 'Thai Kitchen', yum: 'Aroi mak! (Very delicious!)',
+          intro: 'Open your own Thai street-food stall! Follow the recipe card: **drag** the ingredients, then pour, slice, stir or squeeze.',
+          say: 'Your stall is open! Here comes your first hungry customer.',
+          pantry: [
+            { add: 'jam', label: 'strawberry jam', emoji: '🍓', why: 'Jam is for English scones – not Thai food!' },
+            { add: 'nori', label: 'nori seaweed', emoji: '🟩', why: 'Nori is for Japanese sushi!' },
+          ],
+          recipes: [
+            {
+              name: 'Mango sticky rice', emoji: MANGO_RICE, customer: '👧',
+              fact: 'Mango sticky rice (khao niao mamuang) is most popular in the hot season, when mangoes are at their sweetest.',
+              steps: [
+                { add: 'sticky', label: 'sticky rice', emoji: '🍚', makes: STICKY },
+                { do: 'pour', label: 'Pour on the coconut milk 🥥', makes: STICKY_COCO },
+                { add: 'mango', label: 'mango', emoji: '🥭' },
+                { do: 'slice', label: 'Slice the mango', makes: MANGO_RICE },
+              ],
+            },
+            {
+              name: 'Pad thai', emoji: PAD_THAI, customer: '👨',
+              fact: 'Pad thai is stir-fried in a wok over a very hot flame – it is cooked in just a couple of minutes!',
+              steps: [
+                { add: 'noodles', label: 'rice noodles', emoji: NOODLES },
+                { add: 'egg', label: 'egg', emoji: '🥚' },
+                { add: 'prawns', label: 'prawns', emoji: '🦐' },
+                { do: 'stir', label: 'Stir-fry it in the wok', makes: PAD_THAI },
+                { add: 'peanuts', label: 'crushed peanuts', emoji: '🥜' },
+                { add: 'lime', label: 'lime', emoji: '🍋' },
+                { do: 'squeeze', label: 'Squeeze the lime', makes: PAD_THAI },
+              ],
+            },
+            {
+              name: 'Cha yen (Thai iced tea)', emoji: CHA_YEN, customer: '👵',
+              fact: 'Cha yen is bright orange! On a hot day in Thailand, there is nothing better.',
+              steps: [
+                { add: 'ice', label: 'glass of ice', emoji: GLASS_ICE },
+                { do: 'pour', label: 'Pour in the Thai tea', makes: GLASS_TEA },
+                { add: 'milk', label: 'milk', emoji: '🥛', makes: CHA_YEN },
+                { do: 'stir', label: 'Stir it' },
+              ],
+            },
+          ],
+        },
+        {
+          game: 'cook', title: 'Night Market Rush!', yum: 'Aroi!', memory: true, par: 150,
+          intro: 'The night market is BUSY! Cook these orders **from memory** – press 💡 Peek if you forget. Finish in under 2½ minutes for a bonus gem!',
+          say: 'The night market is open! Can you remember the recipes?',
+          pantry: [{ add: 'scone', label: 'scone', emoji: '🧁', why: 'Scones are from England!' }],
+          recipes: [
+            { name: 'Cha yen (Thai iced tea)', emoji: CHA_YEN, customer: '🧑', steps: [{ add: 'ice', label: 'glass of ice', emoji: GLASS_ICE }, { do: 'pour', label: 'Pour in the Thai tea', makes: GLASS_TEA }, { add: 'milk', label: 'milk', emoji: '🥛', makes: CHA_YEN }, { do: 'stir', label: 'Stir it' }] },
+            { name: 'Mango sticky rice', emoji: MANGO_RICE, customer: '👴', steps: [{ add: 'sticky', label: 'sticky rice', emoji: '🍚', makes: STICKY }, { do: 'pour', label: 'Pour on the coconut milk 🥥', makes: STICKY_COCO }, { add: 'mango', label: 'mango', emoji: '🥭' }, { do: 'slice', label: 'Slice the mango', makes: MANGO_RICE }] },
+            { name: 'Pad thai', emoji: PAD_THAI, customer: '👦', steps: [{ add: 'noodles', label: 'rice noodles', emoji: NOODLES }, { add: 'egg', label: 'egg', emoji: '🥚' }, { add: 'prawns', label: 'prawns', emoji: '🦐' }, { do: 'stir', label: 'Stir-fry it in the wok', makes: PAD_THAI }, { add: 'peanuts', label: 'crushed peanuts', emoji: '🥜' }, { add: 'lime', label: 'lime', emoji: '🍋' }, { do: 'squeeze', label: 'Squeeze the lime', makes: PAD_THAI }] },
+          ],
+        },
+        {
+          game: 'crossword', title: 'Thailand Crossword',
+          intro: 'Solve the crossword! Tap a clue, then type the answer with the letter keys.',
+          say: 'Crossword time! Stuck? Press 💡 Hint for a free letter.',
+          entries: [
+            { answer: 'BANGKOK', clue: 'The capital city of Thailand' },
+            { answer: 'ELEPHANT', clue: 'Thailand\'s national animal' },
+            { answer: 'SONGKRAN', clue: 'The Thai New Year water festival' },
+            { answer: 'WAI', clue: 'The Thai greeting with palms pressed together' },
+            { answer: 'MANGO', clue: 'The fruit served with sticky rice' },
+            { answer: 'MONSOON', clue: 'The season of very heavy rain' },
+            { answer: 'LAOS', clue: 'Thailand\'s neighbour to the north-east' },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Thai Studio', short: 'Game 3', icon: '🐘', minutes: 9,
+      rounds: [
+        {
+          game: 'phrases', title: 'Say it in Thai!', lang: 'th-TH',
+          say: 'You probably know some Thai already! Listen, copy me, and show off.',
+          phrases: [
+            { text: 'สวัสดีครับ', roman: 'sawasdee krap', means: 'Hello (when a boy says it)', emoji: '🙏', sound: 'sa-wat-DEE krap' },
+            { text: 'สวัสดีค่ะ', roman: 'sawasdee ka', means: 'Hello (when a girl says it)', emoji: '🙏', sound: 'sa-wat-DEE kah' },
+            { text: 'ขอบคุณครับ', roman: 'khop khun krap', means: 'Thank you', emoji: '😊', sound: 'kop-KOON krap' },
+            { text: 'อร่อย', roman: 'aroi', means: 'Delicious!', emoji: '😋', sound: 'a-ROY' },
+            { text: 'ไม่เป็นไร', roman: 'mai pen rai', means: 'Never mind – it\'s OK!', emoji: '👌', sound: 'my-pen-RYE' },
+          ],
+          quiz: [
+            { type: 'mcq', q: 'A boy meets his teacher in the morning. What does he say?', options: ['sawasdee krap', 'aroi', 'mai pen rai'], answer: 0 },
+            { type: 'mcq', q: 'Your auntie gives you a birthday present. What do you say?', options: ['khop khun krap', 'mai pen rai', 'aroi'], answer: 0 },
+            { type: 'mcq', q: 'You taste your mum\'s green curry and it is yummy! What do you say?', options: ['aroi!', 'sawasdee krap', 'khop khun krap'], answer: 0 },
+            { type: 'mcq', q: 'Your friend bumps into you and says sorry. You\'re fine! What do you say?', options: ['mai pen rai', 'aroi', 'sayōnara'], answer: 0 },
+          ],
+          gesture: { kind: 'wai', say: 'สวัสดีครับ', intro: 'Now say hello the Thai way – with a wai!', text: '🙏 Slide the right hand across until your palms press together – a perfect wai! Do it twice.', yes: 'A beautiful wai! Sawasdee krap!' },
+        },
+        Object.assign({
+          game: 'pixelcopy', title: 'Draw a Thai elephant', mirror: true,
+          intro: 'Copy the elephant – Thailand\'s national animal! The **🪞 Mirror** is ON, so paint one half and the other half copies you.',
+          say: 'Start with the big dark-grey ears, then the head and trunk!',
+          tips: ['Paint the **dark grey** ears first.', 'Use **🪣 Fill** for the grey head.', 'Add **black** eyes and **white** tusks.', 'Don\'t forget the long trunk!'],
+          done: 'WHAT A BEAUTIFUL ELEPHANT! Chang (elephant) would be proud!',
+        }, ELEPHANT),
+        {
+          game: 'invaders', title: 'Songkran Splash',
+          intro: 'Read each mission at the top of the screen, then splash only the right aliens!',
+          say: 'Tap above an alien to fly there and splash!',
+          waves: [
+            {
+              prompt: 'Splash Thailand\'s four NEIGHBOURS!',
+              items: [
+                { label: 'Myanmar', ok: true }, { label: 'Laos', ok: true }, { label: 'Cambodia', ok: true }, { label: 'Malaysia', ok: true },
+                { label: 'Japan', ok: false, why: 'Japan is across the sea, about 6 hours away – not a neighbour.' }, { label: 'England', ok: false, why: 'England is in Europe, 13 hours away!' }, { label: 'Scotland', ok: false, why: 'Scotland is in the UK, far away in Europe.' },
+              ],
+            },
+            {
+              prompt: 'Splash the things that are THAI!',
+              items: [
+                { label: 'Songkran', ok: true }, { label: 'tuk-tuk', ok: true }, { label: 'pad thai', ok: true }, { label: 'Muay Thai', ok: true },
+                { label: 'sushi', ok: false, why: 'Sushi comes from Japan.' }, { label: 'scones', ok: false, why: 'Scones are English!' }, { label: 'Big Ben', ok: false, why: 'Big Ben is in London.' },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
+      say: 'Time for a Muay Thai workout!',
+      wiggle: {
+        title: '🥊 Muay Thai Moves!',
+        seconds: 60,
+        moves: [
+          '🙏 Start with a wai – fighters always show respect first!',
+          '🥊 Jab, jab! Punch the air – left, right, left, right!',
+          '🦵 Knee strike! Lift one knee up high, then the other!',
+          '🐘 Elephant walk! Swing one arm in front of you like a trunk and stomp slowly.',
+          '🛺 Tuk-tuk! Run on the spot and go "tuk-tuk-tuk"!',
+          '💦 Songkran! Pretend to splash water over your friends!',
+        ],
+      },
+      tryit: {
+        title: '🪷 Try it at home: Krathong Float Test',
+        intro: 'A good krathong floats – and doesn\'t harm the river. With a grown-up, find a slice of bread, a leaf, a piece of plastic foam and a small stone, and fill a sink or bowl with water.',
+        steps: [
+          'Before you test, tap the first box for each one: do you THINK it will float?',
+          'Gently place each thing on the water.',
+          'Tap the second box: did it FLOAT?',
+          'Which would make the best krathong: one that floats AND is safe for fish?',
+        ],
+        table: {
+          cols: ['I think it floats…', 'It floated…'],
+          items: ['🍞 bread', '🍃 leaf', '⬜ plastic foam', '🪨 stone'],
+        },
+        tip: 'Tap once for ✅ and twice for ❌. Plastic foam floats well – but it never rots away, so it is bad for rivers!',
+      },
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: The Mango Bandit', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      say: 'Oh no! The MANGO BANDIT has swiped every mango in Thailand – no mango sticky rice for anyone! Every right answer is a hit. Get them back, {name}!',
+      boss: {
+        name: 'Mango Bandit', sprite: BANDIT, attack: '🥭',
+        lines: {
+          intro: 'Ooh ooh aah aah! I\'m the MANGO BANDIT! I\'ve swiped every mango in Thailand – they\'re ALL mine!',
+          hurt: ['Ooh ooh OUCH!', 'My mangoes!', 'Not fair, not fair!', 'Eeek! Too clever!'],
+          taunt: ['Aah aah – wrong!', 'Cheeky monkey wins that one!', 'Swiped your answer!', 'Ha! Mai chai! (That means no!)'],
+          angry: 'Now I\'m going BANANAS!',
+          dodge: 'MANGO STORM! Catch these if you can!',
+          miss: 'Ooh! You move like a Muay Thai champion!',
+          last: 'Not… the… sticky rice…',
+          defeat: 'Okay, okay! I\'ll share the mangoes!',
+          win: 'Ooh ooh aah aah! All the mangoes are MINE! Come back when you know your own home!',
+          stunned: 'Ooh… I can see stars… and tuk-tuks…',
+          beg: ['Khor thot! Sorry, sorry!', 'I\'ll give the mangoes back, I promise!', 'I\'m just a hungry little monkey!'],
+        },
+      },
+      bonus: {
+        title: '⭐ Bonus quest (for a grown-up to help with)',
+        text: 'Want more? Watch Learning Tail\'s "Thailand for kids – an amazing and quick guide to Thailand" (8 min) to learn even more about your home.',
+        url: 'https://www.youtube.com/watch?v=c_1eSb5T1bE',
+        button: 'Watch the bonus video ▶',
+      },
+      questions: [
+        { type: 'mcq', q: 'Which neighbour is at the bottom of the elephant\'s trunk, south of Thailand?', options: ['Malaysia', 'Laos', 'Myanmar'], answer: 0 },
+        { type: 'mcq', q: 'The Mango Bandit says, "Thailand is in Europe, next to England!" What could you tell him?', options: ['No – Thailand is in South-East Asia', 'Yes, that\'s right', 'No – Thailand is in Africa'], answer: 0 },
+        { type: 'gap', q: 'The capital city of Thailand is ___.', options: ['Bangkok', 'Tokyo', 'London'], answer: 0 },
+        { type: 'mcq', q: 'Why is Thailand hot all year round?', options: ['It is quite close to the equator', 'It is close to the North Pole', 'It is on top of a volcano'], answer: 0 },
+        { type: 'mcq', q: 'It is September and the streets are flooded after a huge storm. Which season is it?', options: ['The rainy season', 'The cool season', 'The hot season'], answer: 0 },
+        { type: 'order', q: 'Put these flights from home in order, from SHORTEST to LONGEST.', items: ['🇰🇭 to Cambodia (about 1 hour)', '🇯🇵 to Japan (about 6 hours)', '🏴󠁧󠁢󠁥󠁮󠁧󠁿 to England (about 13 hours)'], hint: 'Neighbours are closest. England is furthest.' },
+        { type: 'mcq', q: 'You meet a monk. How do you greet him?', options: ['A wai with your hands held high', 'Pat him on the head', 'Point your feet at him'], answer: 0 },
+        { type: 'mcq', q: 'At Songkran, why do families pour water over their grandparents\' hands?', options: ['To show respect and ask for blessings', 'To wash off the mud', 'To make them laugh'], answer: 0 },
+        { type: 'tf', q: 'The elephant is Thailand\'s national animal.', answer: true, explain: 'It is! And the kindest way to see one is at a sanctuary.' },
+        { type: 'mcq', q: 'What do you need for mango sticky rice?', options: ['sticky rice, coconut milk and mango', 'bread, butter and jam', 'nori, rice and cucumber'], answer: 0, hint: 'The other two are from England and Japan!' },
+        { type: 'mcq', q: 'Which flag is Thailand\'s?', options: ['red, white and blue stripes', 'a red circle on white', 'a red cross on white'], answer: 0 },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>
