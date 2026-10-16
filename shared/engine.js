@@ -3274,7 +3274,9 @@
   //          { place: target, pin: '🇯🇵', ask, yes, hint } – drag the pin onto the place
   //          { fly: target, hours, ask, yes, hint } – drag the ✈️ from home to the place and see how far it is
   //   target = a continent ('asia'), an ocean ('pacific'), a map unit ('JPN', 'ENG'), 'GBR', or an array of them.
-  //   Any task can add from: 'ENG', dir: 'S' (draws a compass arrow from a place) and then: [questions] (asked after it).
+  //   Any task can add from: 'ENG', dir: 'S' (draws a compass arrow from a place), then: [questions] (asked after it)
+  //   and zoom: [lon, lat, 2] (starts zoomed in there).
+  // The map fills the screen width; children can zoom with ➕ / ➖ or a pinch, and drag to look around.
   GAMES.worldmap = function (r, key, done) {
     const WD = window.World;
     if (!WD) return h('p', null, 'This game needs shared/world-map.js and shared/world.js.');
@@ -3282,21 +3284,39 @@
     const view = r.view || 'world';
     const showHome = r.home !== false;
     const homeLL = WD.capitalOf(WD.HOME);
-    const lit = []; // places found so far that get painted gold (countries and oceans – continents keep their colours)
+    const lit = []; // countries found so far get painted gold
     let base = null, flashMap = null, flashUntil = 0, time = 0;
+    const SIZE = { width: 960, maxHeight: 720 }; // drawn sharp, then shown as big as the screen allows
     function repaint() {
       const own = r.colours || {};
-      base = WD.render(view, { colour: r.colour, paint: v => (lit.some(t => WD.matches(v, t)) ? (v < 10 ? '#7fd0ff' : '#ffd43b') : (v >= 10 && own[WD.info(v).id]) || null) });
+      base = WD.render(view, Object.assign({ colour: r.colour, paint: v => (lit.some(t => WD.matches(v, t)) ? (v < 10 ? '#7fd0ff' : '#ffd43b') : (v >= 10 && own[WD.info(v).id]) || null) }, SIZE));
     }
     repaint();
     const W = base.W, H = base.H;
     const { cv, ctx } = arcadeCanvas(W, H);
+    const dpr = cv.width / W;
     const labels = (r.labels || []).slice();
     let ti = -1, task = null, misses = 0, finished = false, locked = false;
-    let pin = null; // the draggable pin / plane: { x, y, homeX, homeY, emoji, dragging }
+    let pin = null; // the draggable pin / plane: { emoji, size, home() → [x, y], x, y, placed }
     let flight = null; // { from, to, t }
     let marks = []; // little name tags where the child tapped: { x, y, text, t, bad }
     let trail = []; // finished flight paths
+    // zoom: z = how much bigger, (ox, oy) = the map point at the top-left of the screen
+    let z = 1, ox = 0, oy = 0;
+    const kpx = () => W / (cv.clientWidth || W); // canvas pixels per screen pixel
+    const u = n => n * kpx() / z; // n screen pixels, in map units (so labels and pins stay the same size on any screen and zoom)
+    const clampView = () => { ox = Math.max(0, Math.min(W - W / z, ox)); oy = Math.max(0, Math.min(H - H / z, oy)); };
+    const zoomTo = (nz, sx = W / 2, sy = H / 2) => {
+      const mx = sx / z + ox, my = sy / z + oy;
+      z = Math.max(1, Math.min(4, nz)); ox = mx - sx / z; oy = my - sy / z; clampView(); paintZoom();
+    };
+    const zoomLbl = h('span', { class: 'map-zoom-lbl' });
+    const paintZoom = () => { zoomLbl.textContent = z > 1.01 ? `🔍 ×${z.toFixed(1)}` : '🔍 ×1'; };
+    const zbtn = (label, aria, fn) => h('button', { class: 'btn ghost map-zoom', type: 'button', 'aria-label': aria, onclick() { sfx.tap(); fn(); } }, label);
+    const zoomBar = h('div', { class: 'map-zoom-bar' },
+      zbtn('➖', 'Zoom out', () => zoomTo(z / 1.5)), zoomLbl, zbtn('➕', 'Zoom in', () => zoomTo(z * 1.5)), zbtn('⟲', 'Show the whole map', () => zoomTo(1)),
+      h('span', { class: 'map-zoom-tip' }, 'Pinch or ➕ to zoom · drag to move'));
+    paintZoom();
     const banner = h('div', { class: 'lab-mission' });
     const fb = h('div', { class: 'feedback', hidden: true });
     const askBox = h('div', { class: 'lab-ask' });
@@ -3314,8 +3334,11 @@
       task = tasks[ti];
       put(banner, h('span', { class: 'lab-mission-tag' }, `${task.fly ? '✈️' : task.place ? '📍' : '👆'} ${ti + 1}/${tasks.length}`), ' ',
         h('span', { html: fmt(task.ask || (task.fly ? `Fly the plane from home to ${WD.nameOf(task.fly)}!` : task.place ? `Drag the pin onto ${WD.nameOf(task.place)}!` : `Tap ${WD.nameOf(task.find)}!`), false) }));
-      if (task.place) pin = { emoji: task.pin || '📍', homeX: W - 34, homeY: H - 16, x: W - 34, y: H - 16, size: 40 };
-      else if (task.fly) { const [hx, hy] = base.toXY(homeLL); pin = { emoji: '✈️', homeX: hx, homeY: hy - 4, x: hx, y: hy - 4, size: 34, plane: true }; }
+      // task.zoom: [lon, lat, zoom] – starts the task zoomed in on that spot (handy for small countries)
+      if (task.zoom) { const [mx, my] = base.toXY(task.zoom); z = Math.max(1, Math.min(4, task.zoom[2] || 2)); ox = mx - W / (2 * z); oy = my - H / (2 * z); clampView(); paintZoom(); }
+      // the pin waits in the bottom-right corner of the screen; the plane waits at home
+      if (task.place) pin = { emoji: task.pin || '📍', size: 44, home: () => [ox + (W - 42 * kpx()) / z, oy + (H - 14 * kpx()) / z] };
+      else if (task.fly) pin = { emoji: '✈️', size: 38, plane: true, home: () => { const [hx, hy] = base.toXY(homeLL); return [hx, hy - u(4)]; } };
       else pin = null;
       if (ti > 0) say(task.say || (task.fly ? 'Drag the plane ✈️ from your home 🏠 to the right place!' : task.place ? 'Drag the pin onto the map!' : 'Tap the right place on the map!'));
     }
@@ -3323,14 +3346,15 @@
     function check(x, y) {
       const t = targetOf(task), v = base.at(x, y);
       // a little help for small islands: near enough (on the sea) still counts, and pins/planes are forgiving
-      return WD.matches(v, t) || base.near(x, y, v < 10 ? 22 : (task.find ? 6 : 14), t);
+      return WD.matches(v, t) || base.near(x, y, v < 10 ? u(24) : u(task.find ? 6 : 14), t);
     }
     function right(x, y) {
       const t = targetOf(task), name = WD.nameOf(t);
       locked = true;
       if (misses === 0) award(`${key}:${ti}`, cv);
       sfx.good(); confetti(30);
-      if (!WD.CONTINENTS[Array.isArray(t) ? t[0] : t]) { lit.push(t); repaint(); }
+      const t0 = Array.isArray(t) ? t[0] : t;
+      if (!WD.CONTINENTS[t0] && !WD.OCEANS[t0]) { lit.push(t); repaint(); } // countries turn gold; continents and oceans just get a label
       if (!labels.includes(t)) labels.push(t);
       flashMap = null;
       say(task.yes || `Yes! That's ${name}! ${praise()}`);
@@ -3339,7 +3363,7 @@
         else showNext();
       };
       if (task.fly) {
-        const to = base.toXY(WD.capitalOf(Array.isArray(t) ? t[0] : t)), from = [pin.homeX, pin.homeY + 4];
+        const to = base.toXY(WD.capitalOf(Array.isArray(t) ? t[0] : t)), hm = base.toXY(homeLL), from = [hm[0], hm[1]];
         flight = { from, to, t: 0, onLand() {
           const km = WD.distanceKm(homeLL, WD.capitalOf(Array.isArray(t) ? t[0] : t)), hrs = task.hours || WD.flightHours(km);
           trail.push({ from, to });
@@ -3365,112 +3389,158 @@
       fb.innerHTML = '💡 ' + esc(what + hint) + (misses >= 2 ? ' Look for the flashing place!' : '');
       if (misses >= 2) {
         const t = targetOf(task);
-        flashMap = WD.render(view, { mask: vv => (WD.matches(vv, t) ? '#ffffff' : null) });
+        flashMap = WD.render(view, Object.assign({ mask: vv => (WD.matches(vv, t) ? '#ffffff' : null) }, SIZE));
         flashUntil = time + 4;
       }
     }
-
-    // ---------- pointer: tap places, or drag the pin / plane ----------
-    let dragging = false;
-    cv.addEventListener('pointerdown', e => {
-      e.preventDefault();
-      const [x, y] = toGame(cv, W, H, e);
+    function tapAt(x, y) {
       if (finished) {
         const v = base.at(x, y);
         if (v >= 0) { const it = WD.info(v); marks.push({ x, y, text: it.kind === 'water' ? 'sea' : it.name, t: 2.2 }); sfx.tap(); }
         return;
       }
       if (!task || locked) return;
-      if (pin && !pin.placed) {
-        if (Math.hypot(x - pin.x, y - (pin.y - pin.size / 2)) < 44) { dragging = true; try { cv.setPointerCapture(e.pointerId); } catch (_) { /* ignore */ } sfx.tap(); }
-        else say(task.fly ? 'Grab the plane ✈️ at your home 🏠 and drag it!' : 'Grab the pin in the corner and drag it onto the map!');
+      if (pin && !pin.placed) { say(task.fly ? 'Grab the plane ✈️ at your home 🏠 and drag it!' : 'Grab the pin in the corner and drag it onto the map!'); return; }
+      if (check(x, y)) right(x, y); else wrong(x, y);
+    }
+
+    // ---------- pointer: tap places, drag the pin / plane, drag to pan, pinch to zoom ----------
+    const pts = new Map();
+    let gest = null; // { mode: 'pin' | 'pan' | 'pinch', sx, sy, moved }
+    const scr = e => toGame(cv, W, H, e); // screen position in canvas pixels
+    const toMap = ([sx, sy]) => [sx / z + ox, sy / z + oy];
+    cv.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      try { cv.setPointerCapture(e.pointerId); } catch (_) { /* ignore */ }
+      pts.set(e.pointerId, scr(e));
+      if (pts.size === 2) {
+        const [a, b] = [...pts.values()];
+        if (gest && gest.mode === 'pin' && pin) { const hm = pin.home(); pin.x = hm[0]; pin.y = hm[1]; }
+        gest = { mode: 'pinch', d0: Math.hypot(a[0] - b[0], a[1] - b[1]) || 1, z0: z, mid: toMap([(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]) };
         return;
       }
-      if (check(x, y)) right(x, y); else wrong(x, y);
+      if (pts.size > 2) return;
+      const s = scr(e), [mx, my] = toMap(s);
+      if (!finished && task && !locked && pin && !pin.placed) {
+        const [px, py] = pin.home();
+        if (Math.hypot(mx - px, my - (py - u(pin.size / 2))) < u(50)) { gest = { mode: 'pin' }; sfx.tap(); return; }
+      }
+      gest = { mode: 'pan', sx: s[0], sy: s[1], ox, oy, moved: false };
     });
-    cv.addEventListener('pointermove', e => { if (!dragging) return; const [x, y] = toGame(cv, W, H, e); pin.x = x; pin.y = y + pin.size / 3; });
-    const drop = e => {
-      if (!dragging) return;
-      dragging = false;
-      if (e.type !== 'pointerup') { pin.x = pin.homeX; pin.y = pin.homeY; return; }
-      const [x, y] = toGame(cv, W, H, e);
-      if (check(x, y)) right(x, y); else { wrong(x, y); pin.x = pin.homeX; pin.y = pin.homeY; }
+    cv.addEventListener('pointermove', e => {
+      if (!pts.has(e.pointerId)) return;
+      pts.set(e.pointerId, scr(e));
+      if (!gest) return;
+      if (gest.mode === 'pinch' && pts.size >= 2) {
+        const [a, b] = [...pts.values()];
+        const d = Math.hypot(a[0] - b[0], a[1] - b[1]), mid = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+        z = Math.max(1, Math.min(4, gest.z0 * d / gest.d0)); ox = gest.mid[0] - mid[0] / z; oy = gest.mid[1] - mid[1] / z; clampView(); paintZoom();
+      } else if (gest.mode === 'pin') {
+        const [mx, my] = toMap(scr(e)); pin.x = mx; pin.y = my + u(pin.size / 3); pin.dragging = true;
+      } else if (gest.mode === 'pan') {
+        const [sx, sy] = scr(e), dx = sx - gest.sx, dy = sy - gest.sy;
+        if (!gest.moved && Math.hypot(dx, dy) > 12 * kpx()) gest.moved = true;
+        if (gest.moved && z > 1) { ox = gest.ox - dx / z; oy = gest.oy - dy / z; clampView(); }
+      }
+    });
+    const up = e => {
+      if (!pts.has(e.pointerId)) return;
+      const s = scr(e);
+      pts.delete(e.pointerId);
+      if (!gest) return;
+      if (gest.mode === 'pinch') { if (!pts.size) gest = null; return; }
+      const g = gest; gest = null;
+      if (g.mode === 'pin') {
+        pin.dragging = false;
+        const hm = pin.home();
+        if (e.type !== 'pointerup' || !task || locked) { pin.x = hm[0]; pin.y = hm[1]; return; }
+        const [x, y] = toMap(s);
+        if (check(x, y)) right(x, y); else { wrong(x, y); pin.x = hm[0]; pin.y = hm[1]; }
+      } else if (g.mode === 'pan' && !g.moved && e.type === 'pointerup') { const [x, y] = toMap(s); tapAt(x, y); }
     };
-    cv.addEventListener('pointerup', drop); cv.addEventListener('pointercancel', drop);
+    cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
 
-    // ---------- drawing ----------
+    // ---------- drawing (in map units, through the zoom) ----------
     function arrow(from, dir) {
       const [x, y] = base.toXY(WD.labelAt(from));
       const d = { N: [0, -1], S: [0, 1], E: [1, 0], W: [-1, 0], NE: [0.7, -0.7], NW: [-0.7, -0.7], SE: [0.7, 0.7], SW: [-0.7, 0.7] }[dir] || [0, 1];
-      const L = Math.min(W, H) * 0.22, ex = x + d[0] * L, ey = y + d[1] * L, a = Math.atan2(d[1], d[0]);
+      const L = Math.min(W, H) * 0.22, ex = x + d[0] * L, ey = y + d[1] * L, a = Math.atan2(d[1], d[0]), hd = u(18);
       ctx.save(); ctx.lineCap = 'square';
-      ctx.strokeStyle = '#000'; ctx.lineWidth = 11; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(ex, ey); ctx.stroke();
-      ctx.strokeStyle = '#ffd43b'; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(ex, ey); ctx.stroke();
-      ctx.fillStyle = '#ffd43b'; ctx.strokeStyle = '#000'; ctx.lineWidth = 3;
-      ctx.beginPath(); ctx.moveTo(ex + Math.cos(a) * 16, ey + Math.sin(a) * 16);
-      ctx.lineTo(ex + Math.cos(a + 2.4) * 16, ey + Math.sin(a + 2.4) * 16); ctx.lineTo(ex + Math.cos(a - 2.4) * 16, ey + Math.sin(a - 2.4) * 16);
+      ctx.strokeStyle = '#000'; ctx.lineWidth = u(11); ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(ex, ey); ctx.stroke();
+      ctx.strokeStyle = '#ffd43b'; ctx.lineWidth = u(6); ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(ex, ey); ctx.stroke();
+      ctx.fillStyle = '#ffd43b'; ctx.strokeStyle = '#000'; ctx.lineWidth = u(3);
+      ctx.beginPath(); ctx.moveTo(ex + Math.cos(a) * hd, ey + Math.sin(a) * hd);
+      ctx.lineTo(ex + Math.cos(a + 2.4) * hd, ey + Math.sin(a + 2.4) * hd); ctx.lineTo(ex + Math.cos(a - 2.4) * hd, ey + Math.sin(a - 2.4) * hd);
       ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore();
-      pxText(ctx, dir, ex + Math.cos(a) * 30, ey + Math.sin(a) * 30, 18, '#ffd43b');
+      pxText(ctx, dir, ex + Math.cos(a) * u(34), ey + Math.sin(a) * u(34), u(20), '#ffd43b');
     }
-    function compass() {
-      const x = 46, y = H - 52;
-      ctx.fillStyle = 'rgba(0,0,0,.45)'; ctx.beginPath(); ctx.arc(x, y, 36, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = '#e53935'; ctx.beginPath(); ctx.moveTo(x, y - 26); ctx.lineTo(x - 7, y); ctx.lineTo(x + 7, y); ctx.fill();
-      ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.moveTo(x, y + 26); ctx.lineTo(x - 7, y); ctx.lineTo(x + 7, y); ctx.fill();
-      pxText(ctx, 'N', x, y - 44, 15, '#ffd43b'); pxText(ctx, 'S', x, y + 44, 13); pxText(ctx, 'E', x + 46, y, 13); pxText(ctx, 'W', x - 45, y, 13);
+    function compass() { // fixed in the bottom-left corner of the screen
+      const k = kpx(), R = 36 * k, x = R + 12 * k, y = H - R - 18 * k;
+      ctx.fillStyle = 'rgba(0,0,0,.45)'; ctx.beginPath(); ctx.arc(x, y, R, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#e53935'; ctx.beginPath(); ctx.moveTo(x, y - R * 0.72); ctx.lineTo(x - R * 0.2, y); ctx.lineTo(x + R * 0.2, y); ctx.fill();
+      ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.moveTo(x, y + R * 0.72); ctx.lineTo(x - R * 0.2, y); ctx.lineTo(x + R * 0.2, y); ctx.fill();
+      pxText(ctx, 'N', x, y - R - 9 * k, 16 * k, '#ffd43b'); pxText(ctx, 'S', x, y + R + 9 * k, 14 * k); pxText(ctx, 'E', x + R + 10 * k, y, 14 * k); pxText(ctx, 'W', x - R - 10 * k, y, 14 * k);
     }
     function step(dt) {
       time += dt;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, W, H);
+      ctx.setTransform(dpr * z, 0, 0, dpr * z, -ox * z * dpr, -oy * z * dpr);
       ctx.drawImage(base.canvas, 0, 0, W, H);
       if (flashMap && time < flashUntil) { ctx.globalAlpha = 0.25 + 0.45 * (0.5 + 0.5 * Math.sin(time * 9)); ctx.drawImage(flashMap.canvas, 0, 0, W, H); ctx.globalAlpha = 1; }
       if (r.equator) {
         const y = base.toXY([0, 0])[1];
         if (y > 0 && y < H) {
-          ctx.fillStyle = '#e53935'; for (let x = 0; x < W; x += 16) ctx.fillRect(x, y - 2, 9, 4);
-          pxText(ctx, 'EQUATOR', W - 60, y - 13, 14, '#ffd4d4');
+          ctx.fillStyle = '#e53935'; for (let x = 0; x < W; x += u(16)) ctx.fillRect(x, y - u(2), u(9), u(4));
+          pxText(ctx, 'EQUATOR', ox + W / z - u(62), y - u(14), u(15), '#ffd4d4');
         }
       }
-      trail.forEach(({ from, to }) => { ctx.fillStyle = '#fff'; for (let k = 0; k <= 1; k += 0.04) ctx.fillRect(from[0] + (to[0] - from[0]) * k - 2, from[1] + (to[1] - from[1]) * k - 2, 4, 4); });
-      labels.forEach(t => { const p = base.toXY(WD.labelAt(t)); if (inView(p)) pxText(ctx, WD.nameOf(t).replace(/^the /, ''), p[0], p[1], W < 500 ? 12 : 15, '#fff'); });
+      trail.forEach(({ from, to }) => { ctx.fillStyle = '#fff'; for (let k = 0; k <= 1; k += 0.04) ctx.fillRect(from[0] + (to[0] - from[0]) * k - u(2), from[1] + (to[1] - from[1]) * k - u(2), u(4), u(4)); });
+      labels.forEach(t => { const p = base.toXY(WD.labelAt(t)); if (inView(p)) pxText(ctx, WD.nameOf(t).replace(/^the /, ''), p[0], p[1], u(17), '#fff'); });
       if (task && task.from) arrow(task.from, task.dir);
       if (showHome) {
         const p = base.toXY(homeLL);
         if (inView(p)) {
-          const bob = Math.sin(time * 3) * 2;
-          ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.beginPath(); ctx.arc(p[0], p[1], 9 + 4 * (0.5 + 0.5 * Math.sin(time * 4)), 0, Math.PI * 2); ctx.fill();
-          emojiAt(ctx, '🏠', p[0], p[1] - 2 + bob, 24);
-          pxText(ctx, 'HOME', p[0], p[1] + 12, 11, '#ffd43b');
+          const bob = Math.sin(time * 3) * u(2);
+          ctx.fillStyle = 'rgba(255,255,255,.4)'; ctx.beginPath(); ctx.arc(p[0], p[1], u(10) + u(5) * (0.5 + 0.5 * Math.sin(time * 4)), 0, Math.PI * 2); ctx.fill();
+          emojiAt(ctx, '🏠', p[0], p[1] - u(2) + bob, u(28));
+          pxText(ctx, 'HOME', p[0], p[1] + u(13), u(12), '#ffd43b');
         }
       }
-      if (r.compass) compass();
       if (flight) {
         flight.t = Math.min(1, flight.t + dt / 1.6);
         const { from, to } = flight, k = flight.t;
-        ctx.fillStyle = '#fff'; for (let q = 0; q <= k; q += 0.04) ctx.fillRect(from[0] + (to[0] - from[0]) * q - 2, from[1] + (to[1] - from[1]) * q - 2, 4, 4);
-        const x = from[0] + (to[0] - from[0]) * k, y = from[1] + (to[1] - from[1]) * k - Math.sin(k * Math.PI) * 30;
-        emojiAt(ctx, '✈️', x, y + 12, 32, Math.atan2(to[1] - from[1], to[0] - from[0]) + Math.PI / 4);
+        ctx.fillStyle = '#fff'; for (let q = 0; q <= k; q += 0.04) ctx.fillRect(from[0] + (to[0] - from[0]) * q - u(2), from[1] + (to[1] - from[1]) * q - u(2), u(4), u(4));
+        const x = from[0] + (to[0] - from[0]) * k, y = from[1] + (to[1] - from[1]) * k - Math.sin(k * Math.PI) * u(32);
+        emojiAt(ctx, '✈️', x, y + u(12), u(36), Math.atan2(to[1] - from[1], to[0] - from[0]) + Math.PI / 4);
         if (k >= 1) { const f = flight; flight = null; sfx.ding(); f.onLand(); }
       }
       if (pin) {
-        if (!pin.placed && !dragging && task && task.place) { ctx.fillStyle = 'rgba(0,0,0,.5)'; ctx.fillRect(pin.homeX - 30, pin.homeY - 50, 60, 56); pxText(ctx, 'DRAG', pin.homeX, pin.homeY - 56, 11, '#ffd43b'); }
-        emojiAt(ctx, pin.emoji, pin.x, pin.y + (dragging || pin.placed ? 0 : Math.sin(time * 5) * 3), pin.size);
+        if (!pin.dragging && !pin.placed) { const hm = pin.home(); pin.x = hm[0]; pin.y = hm[1]; }
+        if (!pin.placed && !pin.dragging && task && task.place) {
+          ctx.fillStyle = 'rgba(0,0,0,.5)'; ctx.fillRect(pin.x - u(32), pin.y - u(54), u(64), u(60)); pxText(ctx, 'DRAG', pin.x, pin.y - u(60), u(12), '#ffd43b');
+        }
+        emojiAt(ctx, pin.emoji, pin.x, pin.y + (pin.dragging || pin.placed ? 0 : Math.sin(time * 5) * u(3)), u(pin.size));
       }
       marks = marks.filter(m => (m.t -= dt) > 0);
       marks.forEach(m => {
-        ctx.fillStyle = m.bad ? '#e53935' : '#ffd43b'; ctx.fillRect(m.x - 4, m.y - 4, 8, 8);
-        pxText(ctx, m.text, Math.max(50, Math.min(W - 50, m.x)), m.y - 16, 14, m.bad ? '#ffd4d4' : '#fff');
+        ctx.fillStyle = m.bad ? '#e53935' : '#ffd43b'; ctx.fillRect(m.x - u(4), m.y - u(4), u(8), u(8));
+        pxText(ctx, m.text, Math.max(ox + u(60), Math.min(ox + W / z - u(60), m.x)), m.y - u(18), u(16), m.bad ? '#ffd4d4' : '#fff');
       });
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      if (r.compass) compass();
     }
     const stopLoop = gameLoop(cv, step);
-    const root = h('div', { class: 'game arcade worldmap' }, banner, h('div', { class: 'arc-screen', style: `max-width:${W + 8}px` }, cv), fb, askBox, h('div', { class: 'btn-row' }, nextBtn));
-    const at = ll => base.toXY(ll);
+    // fill the width, but keep tall maps (like the UK) to about three quarters of the screen height
+    const screen = h('div', { class: 'arc-screen', style: `max-width:min(100%, calc(${(W / H).toFixed(3)} * 74vh))` }, cv);
+    const root = h('div', { class: 'game arcade worldmap' }, banner, screen, zoomBar, fb, askBox, h('div', { class: 'btn-row' }, nextBtn));
     root._test = {
       frames(n) { for (let i = 0; i < n; i++) step(1 / 60); },
       // tap (or drop the pin / plane) at a [lon, lat] or at the task's target
-      tap(ll) { const [x, y] = at(ll || WD.labelAt(targetOf(task))); if (pin && !pin.placed) { if (check(x, y)) right(x, y); else wrong(x, y); } else if (check(x, y)) right(x, y); else wrong(x, y); },
+      tap(ll) { const [x, y] = base.toXY(ll || WD.labelAt(targetOf(task))); if (check(x, y)) right(x, y); else wrong(x, y); },
+      zoom: n => zoomTo(n),
       next: () => nextBtn.click(),
-      get task() { return ti; }, get finished() { return finished; }, get flying() { return !!flight; }, get misses() { return misses; },
+      get task() { return ti; }, get finished() { return finished; }, get flying() { return !!flight; }, get misses() { return misses; }, get z() { return z; },
     };
     root._stop = stopLoop;
     next();
@@ -4387,7 +4457,9 @@
   function projectile(emoji, from, to, cls = '') {
     if (calm() || !from.isConnected || !to.isConnected) return;
     const a = from.getBoundingClientRect(), b = to.getBoundingClientRect();
-    const p = h('div', { class: 'projectile ' + cls, 'aria-hidden': 'true' }, emoji);
+    if (Array.isArray(emoji)) emoji = pick(emoji);
+    const isPic = String(emoji).trim().startsWith('<');
+    const p = h('div', { class: 'projectile ' + cls + (isPic ? ' pic-shot' : ''), 'aria-hidden': 'true', html: isPic ? emoji : null }, isPic ? null : emoji);
     document.body.append(p);
     const x0 = a.left + a.width / 2 - 20, y0 = a.top + a.height / 2 - 20, x1 = b.left + b.width / 2 - 20, y1 = b.top + b.height / 2 - 20;
     const anim = p.animate([
@@ -4448,37 +4520,83 @@
     // sprites: the avatar (or a heart) and the boss's attack, drawn once
     const me = AV ? AV.draw(AV.load().look, { scale: 2 }) : null;
     const pw = me ? me.width : 22, ph = me ? me.height : 22;
-    const shot = (() => {
+    // the boss's ammo: one or more emoji or Pixel.svg pictures (b.attack can be a list); b.spin makes them twirl
+    const shots = [].concat(b.attack || '💥').map(a => {
       const c = document.createElement('canvas'); c.width = c.height = 48;
-      const g = c.getContext('2d'); g.font = '36px serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
-      g.fillText(b.attack || '💥', 24, 27); return c;
-    })();
-    const p = { x: W / 2, y: H / 2 }, keys = {}, bullets = [];
-    let t = -1.5, last = 0, hitAt = -9, hit = false, over = false, raf = 0, spawnT = 0;
-    // two random patterns per round
+      const g = c.getContext('2d');
+      if (String(a).trim().startsWith('<')) {
+        const img = new Image();
+        img.onload = () => { g.imageSmoothingEnabled = false; g.drawImage(img, 6, 6, 36, 36); };
+        img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(String(a).replace('<svg ', '<svg width="36" height="36" '));
+      } else { g.font = '36px serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(a, 24, 27); }
+      return c;
+    });
+    const p = { x: W / 2, y: H / 2 }, keys = {}, bullets = [], walls = [];
+    let t = -1.5, last = 0, hitAt = -9, hit = false, over = false, raf = 0, spawnT = 0, lt = 0, S = {};
+    const fire = q => bullets.push(Object.assign({ s: pick(shots), a: Math.random() * 6.3, va: b.spin ? 7 : 0 }, q));
+    const PINK = '#ff4fa3';
+    // two random patterns per round (or the boss's own list in b.patterns). lt = seconds into this pattern, S = its own memory.
+    // Bullets are dodged; walls are pink zones that hurt while they are solid (they flash first as a warning).
     const PATTERNS = {
-      rain(dt) { if ((spawnT += dt) > 0.32 / speed) { spawnT = 0; bullets.push({ x: 10 + Math.random() * (W - 20), y: -12, vx: 0, vy: (80 + Math.random() * 50) * speed, r: 10 }); } },
+      rain(dt) { if ((spawnT += dt) > 0.32 / speed) { spawnT = 0; fire({ x: 10 + Math.random() * (W - 20), y: -12, vx: 0, vy: (80 + Math.random() * 50) * speed, r: 10 }); } },
       sweep(dt) {
         if ((spawnT += dt) > 0.9 / speed) {
           spawnT = 0; const left = Math.random() < 0.5, gap = 30 + Math.random() * (H - 100);
-          for (let y = 12; y < H; y += 26) if (y < gap || y > gap + 64) bullets.push({ x: left ? -12 : W + 12, y, vx: (left ? 1 : -1) * 95 * speed, vy: 0, r: 9 });
+          for (let y = 12; y < H; y += 26) if (y < gap || y > gap + 64) fire({ x: left ? -12 : W + 12, y, vx: (left ? 1 : -1) * 95 * speed, vy: 0, r: 9 });
         }
       },
       aimed(dt) {
         if ((spawnT += dt) > 0.5 / speed) {
           spawnT = 0; const a = Math.random() * Math.PI * 2, x = W / 2 + Math.cos(a) * 220, y = H / 2 + Math.sin(a) * 160;
           const d = Math.hypot(p.x - x, p.y - y) || 1, v = 110 * speed;
-          bullets.push({ x, y, vx: (p.x - x) / d * v, vy: (p.y - y) / d * v, r: 10 });
+          fire({ x, y, vx: (p.x - x) / d * v, vy: (p.y - y) / d * v, r: 10 });
         }
       },
       ring(dt) {
         if ((spawnT += dt) > 1.3 / speed) {
           spawnT = 0; const cx = 40 + Math.random() * (W - 80), n = 10, off = Math.random();
-          for (let k = 0; k < n; k++) { const a = (k + off) / n * Math.PI * 2; bullets.push({ x: cx, y: 20, vx: Math.cos(a) * 80 * speed, vy: Math.sin(a) * 80 * speed + 30, r: 9 }); }
+          for (let k = 0; k < n; k++) { const a = (k + off) / n * Math.PI * 2; fire({ x: cx, y: 20, vx: Math.cos(a) * 80 * speed, vy: Math.sin(a) * 80 * speed + 30, r: 9 }); }
+        }
+      },
+      // pink walls slide in from both sides and squeeze – hide in the gap! (flashes first, then closes, then opens)
+      crush() {
+        const cyc = 2.4 / Math.min(speed, 1.4), k = lt % cyc, n = Math.floor(lt / cyc);
+        if (S.n !== n) { S.n = n; S.gap = 50 + Math.random() * (W - 100); }
+        const half = 30, warn = 0.7, close = warn + 0.5, hold = close + 0.5;
+        const f = k < warn ? 0 : k < close ? (k - warn) / 0.5 : k < hold ? 1 : Math.max(0, 1 - (k - hold) / 0.4);
+        walls.length = 0;
+        if (k < warn) { walls.push({ x: 0, y: 0, w: S.gap - half, h: H, warn: true }, { x: S.gap + half, y: 0, w: W - S.gap - half, h: H, warn: true }); return; }
+        walls.push({ x: 0, y: 0, w: (S.gap - half) * f, h: H }, { x: W - (W - S.gap - half) * f, y: 0, w: (W - S.gap - half) * f, h: H });
+      },
+      // laser beams: a thin flashing line warns where a pink beam is about to blast across
+      laser() {
+        const cyc = 1.5 / speed, k = lt % cyc, n = Math.floor(lt / cyc);
+        if (S.n !== n) { S.n = n; S.v = Math.random() < 0.5; S.at = S.v ? 30 + Math.random() * (W - 60) : 25 + Math.random() * (H - 50); }
+        walls.length = 0;
+        const th = k < 0.75 ? 4 : 30, warn = k < 0.75;
+        if (k > 1.25) return;
+        walls.push(S.v ? { x: S.at - th / 2, y: 0, w: th, h: H, warn, beam: true } : { x: 0, y: S.at - th / 2, w: W, h: th, warn, beam: true });
+      },
+      // a twirling stream of shots from the top
+      spiral(dt) {
+        S.a = (S.a || 0) + dt * 3.2;
+        if ((spawnT += dt) > 0.11 / speed) { spawnT = 0; fire({ x: W / 2, y: 18, vx: Math.cos(S.a) * 85 * speed, vy: Math.abs(Math.sin(S.a)) * 70 * speed + 25, r: 9 }); }
+      },
+      // a handful of shots that bounce around the box
+      bounce() {
+        if (!S.done) {
+          S.done = true;
+          for (let k = 0; k < 3 + Math.min(3, round); k++) {
+            const a = Math.random() * Math.PI * 2;
+            fire({ x: 20 + Math.random() * 40, y: 20 + Math.random() * 30, vx: Math.cos(a) * 90 * speed, vy: Math.sin(a) * 90 * speed, r: 10, bounce: true });
+          }
         }
       },
     };
-    const plan = shuffle(Object.keys(PATTERNS)).slice(0, 2);
+    const pool = (b.patterns || Object.keys(PATTERNS)).filter(k => PATTERNS[k]);
+    // mix it up: one of the new wall/laser patterns in most rounds, plus a bullet pattern
+    const special = pool.filter(k => k === 'crush' || k === 'laser'), shooty = pool.filter(k => !special.includes(k));
+    const plan = special.length && shooty.length ? shuffle([pick(special), pick(shooty)]) : shuffle(pool).slice(0, 2);
 
     const KEYS = { ArrowLeft: 'l', a: 'l', A: 'l', ArrowRight: 'r', d: 'r', D: 'r', ArrowUp: 'u', w: 'u', W: 'u', ArrowDown: 'd', s: 'd', S: 'd' };
     const kd = e => { const k = KEYS[e.key]; if (k) { keys[k] = true; e.preventDefault(); } };
@@ -4512,18 +4630,32 @@
       else {
         status.textContent = hit ? 'Ouch! Keep dodging!' : 'Dodge!';
         const phase = t < DUR / 2 ? 0 : 1;
-        if (t < DUR - 0.6) PATTERNS[plan[phase]](dt);
+        if (phase !== S.phase) { S = { phase }; spawnT = 0; walls.length = 0; if (phase === 1) bullets.forEach(q => { q.bounce = false; }); }
+        lt = t - phase * DUR / 2;
+        if (t < DUR - 0.6) PATTERNS[plan[phase]](dt); else walls.length = 0;
         timer.firstChild.style.width = Math.max(0, 100 - t / DUR * 100) + '%';
       }
       const v = 150 * dt;
       p.x += ((keys.r ? 1 : 0) - (keys.l ? 1 : 0)) * v; p.y += ((keys.d ? 1 : 0) - (keys.u ? 1 : 0)) * v;
       p.x = Math.max(pw / 2, Math.min(W - pw / 2, p.x)); p.y = Math.max(ph / 2, Math.min(H - ph / 2, p.y));
-      for (const q of bullets) { q.x += q.vx * dt; q.y += q.vy * dt; }
+      for (const q of bullets) {
+        q.x += q.vx * dt; q.y += q.vy * dt; q.a += q.va * dt;
+        if (q.bounce) { if (q.x < q.r || q.x > W - q.r) q.vx *= -1; if (q.y < q.r || q.y > H - q.r) q.vy *= -1; }
+      }
       for (let k = bullets.length - 1; k >= 0; k--) { const q = bullets[k]; if (q.x < -30 || q.x > W + 30 || q.y < -30 || q.y > H + 30) bullets.splice(k, 1); }
       // a small, forgiving hitbox in the middle of the avatar
       const safe = t - hitAt < 1.2;
       if (!safe) for (const q of bullets) {
         if (Math.abs(q.x - p.x) < q.r * 0.7 + pw * 0.28 && Math.abs(q.y - p.y) < q.r * 0.7 + ph * 0.3) {
+          hitAt = t; sfx.hit(); shake(cvs); hit = true;
+          if (pot) { pot--; paintPot(); replay(potEl, 'shake'); popText(cvs.parentNode, '-1 💎', 'ouch'); }
+          break;
+        }
+      }
+      if (!(t - hitAt < 1.2)) for (const w of walls) {
+        if (w.warn || w.w <= 0) continue;
+        const hx = pw * 0.28, hy = ph * 0.3;
+        if (p.x + hx > w.x && p.x - hx < w.x + w.w && p.y + hy > w.y && p.y - hy < w.y + w.h) {
           hitAt = t; sfx.hit(); shake(cvs); hit = true;
           if (pot) { pot--; paintPot(); replay(potEl, 'shake'); popText(cvs.parentNode, '-1 💎', 'ouch'); }
           break;
@@ -4535,7 +4667,21 @@
         if (me) ctx.drawImage(me, Math.round(p.x - pw / 2), Math.round(p.y - ph / 2));
         else { ctx.font = '22px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('❤️', p.x, p.y); }
       }
-      for (const q of bullets) ctx.drawImage(shot, q.x - q.r * 1.2, q.y - q.r * 1.2, q.r * 2.4, q.r * 2.4);
+      for (const w of walls) {
+        if (w.warn) {
+          ctx.globalAlpha = Math.floor(t * 10) % 2 ? 0.35 : 0.15; ctx.fillStyle = PINK; ctx.fillRect(w.x, w.y, w.w, w.h); ctx.globalAlpha = 1;
+          if (!w.beam) { ctx.strokeStyle = '#fff'; ctx.setLineDash([4, 4]); ctx.strokeRect(w.x + 1, w.y + 1, w.w - 2, w.h - 2); ctx.setLineDash([]); }
+        } else if (w.w > 0) {
+          ctx.fillStyle = PINK; ctx.fillRect(w.x, w.y, w.w, w.h);
+          ctx.fillStyle = '#ffd1e8';
+          if (w.beam) ctx.fillRect(w.x + (w.w > w.h ? 0 : w.w / 2 - 3), w.y + (w.w > w.h ? w.h / 2 - 3 : 0), w.w > w.h ? w.w : 6, w.w > w.h ? 6 : w.h);
+          else for (let y = 4; y < H; y += 16) ctx.fillRect(w.x < 1 ? w.x + w.w - 6 : w.x + 2, y, 4, 8); // a bright inner edge on each wall
+        }
+      }
+      for (const q of bullets) {
+        ctx.save(); ctx.translate(q.x, q.y); if (q.va) ctx.rotate(q.a);
+        ctx.drawImage(q.s, -q.r * 1.2, -q.r * 1.2, q.r * 2.4, q.r * 2.4); ctx.restore();
+      }
       if (t >= DUR) return finish();
       raf = requestAnimationFrame(frame);
     }

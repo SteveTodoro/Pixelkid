@@ -123,8 +123,8 @@ window.LESSON = {
   finishAch: 'traveller',
   stamp: { id: 'ENG', name: 'England', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿' },
   mascot: {
-    name: 'Captain Bolt',
-    sprite: Pixel.sprites.robot,
+    name: 'Professor Bolt',
+    sprite: Pixel.sprites.boltEngland,
     praise: ['Brilliant!', 'Smashing!', 'Jolly good!', 'Top marks!', 'Spot on!', 'Bolt-tastic!', 'Splendid!'],
     oops: ['Oops! Have another go.', 'Not quite – read it again!', 'Hmm, think again!', 'So close! One more try.'],
   },
@@ -250,9 +250,9 @@ window.LESSON = {
           say: 'Where in the world is England?',
           tasks: [
             { find: 'europe', ask: 'Tap EUROPE – the continent England is in.', yes: 'Europe! England is on its north-west edge.', hint: 'Europe is above Africa, to the left of Asia.' },
-            { place: 'GBR', pin: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', ask: 'Drag the England flag onto the UK – the islands at the top-left of Europe.', yes: 'Spot on! The UK – England is its biggest country.', hint: 'Look for the islands to the left of Europe, above France.' },
+            { place: 'GBR', pin: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', zoom: [8, 50, 2.6], ask: 'Drag the England flag onto the UK – the islands at the top-left of Europe.', yes: 'Spot on! The UK – England is its biggest country.', hint: 'Look for the islands to the left of Europe, above France.' },
             {
-              fly: 'ENG', hours: 13, ask: 'Now fly ✈️ from your home 🏠 all the way to England!', yes: 'Touchdown in London!',
+              fly: 'ENG', hours: 13, zoom: [50, 32, 1.8], ask: 'Now fly ✈️ from your home 🏠 all the way to England!', yes: 'Touchdown in London!',
               then: [{ type: 'mcq', q: 'Japan was about 6 hours away. England is about 13 hours. Which country is further from home?', options: ['England', 'Japan', 'They are the same'], answer: 0 }],
             },
           ],
@@ -510,7 +510,7 @@ window.LESSON = {
       type: 'quiz', title: 'Boss Battle: Sir Soggy the Drizzle Dragon', short: 'Boss', kind: 'Boss battle', minutes: 6,
       say: 'Oh no! SIR SOGGY THE DRIZZLE DRAGON wants to rain on every picnic in England! Every right answer is a hit. Be as brave as St George, {name}!',
       boss: {
-        name: 'Sir Soggy', sprite: SOGGY, attack: '💧',
+        name: 'Sir Soggy', sprite: SOGGY, attack: ['💧', '💧', '☂️'],
         lines: {
           intro: 'Rrroar! I\'m SIR SOGGY, the Drizzle Dragon! I\'ll rain on every picnic, every football match AND every cup of tea in England!',
           hurt: ['Ouch! That was a royal hit!', 'Blimey! My scales are soggy!', 'Not my cloud!', 'Crumbs! You\'re clever!'],

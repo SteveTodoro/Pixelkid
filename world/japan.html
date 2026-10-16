@@ -16,23 +16,27 @@
 // ---------- blocky pictures for this lesson ----------
 const K = '#1b1b1b', W = '#ffffff';
 
-// Anpanman – copy him in the pixel studio (he's symmetrical, so the mirror tool helps!)
+// Anpanman – round bread face, oval eyes, round red nose and cheeks (symmetrical, so the mirror tool helps!)
 const ANPANMAN = {
   colors: { k: '#5a3214', b: '#f0a855', r: '#e53935', e: K },
   names: { '#5a3214': 'dark brown (outline)', '#f0a855': 'bread brown', '#e53935': 'red', [K]: 'black' },
   target: [
-    '...kkkkkk...',
-    '..kbbbbbbk..',
-    '.kbbbbbbbbk.',
-    'kbeebbbbeebk',
-    'kbbebbbbebbk',
-    'kbbebbbbebbk',
-    'krrbbrrbbrrk',
-    'krrbrrrrbrrk',
-    'kbbbbrrbbbbk',
-    '.kbebbbbebk.',
-    '..kbeeeebk..',
-    '...kkkkkk...',
+    '.....kkkkkk.....',
+    '...kkbbbbbbkk...',
+    '..kbbbbbbbbbbk..',
+    '.kbbbbbbbbbbbbk.',
+    '.kbbeebbbbeebbk.',
+    'kbbbbbbbbbbbbbbk',
+    'kbbbbebbbbebbbbk',
+    'kbbbbebbbbebbbbk',
+    'kbbbbbrrrrbbbbbk',
+    'kbrrbrrrrrrbrrbk',
+    'krrrbrrrrrrbrrrk',
+    'kbrrbbrrrrbbrrbk',
+    '.kbbbbbbbbbbbbk.',
+    '.kbbbebbbbebbbk.',
+    '..kbbbeeeebbbk..',
+    '...kkkkkkkkkk...',
   ],
 };
 
@@ -67,6 +71,19 @@ const SALMON = Pixel.svg(['.oooooooo.', 'owoooowooo', 'oooowoooow', '.oooooooo.'
 const NIGIRI = Pixel.svg(['..oooooooo..', '.owoooowoooo', 'oooowoooowoo', '.wwwwwwwwww.', 'wwwwwwwwwwww', '.wwwwwwwwww.'], { o: '#ff8a50', w: '#f4f1e8' });
 const RICE_TRI = Pixel.svg(['....ww....', '...wwww...', '..wwwwww..', '.wwwwwwww.', 'wwwwwwwwww'], { w: '#f4f1e8' });
 
+// a ninja star for the boss to throw
+const SHURIKEN = Pixel.svg([
+  '....k....',
+  '...kGk...',
+  '...kGk...',
+  '..kgggk..',
+  'kGGgkgGGk',
+  '..kgggk..',
+  '...kGk...',
+  '...kGk...',
+  '....k....',
+], { k: K, G: '#cfd8dc', g: '#90a4ae' });
+
 // the boss: Grumbly Oni, the grumpy demon from the Setsubun festival
 const ONI = Pixel.svg([
   '.y........y.',
@@ -94,8 +111,8 @@ window.LESSON = {
   finishAch: 'traveller',
   stamp: { id: 'JPN', name: 'Japan', flag: '🇯🇵' },
   mascot: {
-    name: 'Captain Bolt',
-    sprite: Pixel.sprites.robot,
+    name: 'Professor Bolt',
+    sprite: Pixel.sprites.boltJapan,
     praise: ['Sugoi! (Amazing!)', 'Subarashii! (Wonderful!)', 'Critical hit!', 'Brilliant!', 'Super traveller!', 'Bolt-tastic!', 'Yatta! (We did it!)'],
     oops: ['Oops! Have another go.', 'Not quite – read it again!', 'Hmm, think again!', 'So close! One more try.'],
   },
@@ -108,7 +125,7 @@ window.LESSON = {
     earthquake: { emoji: '🫨', def: 'When the ground suddenly shakes, because huge pieces of the Earth\'s crust are moving.' },
     nori: { emoji: '🟩', def: 'Thin, dark green sheets of dried seaweed. They are used to wrap sushi.' },
     anime: { emoji: '📺', def: 'Cartoons made in Japan, like Pokémon and Anpanman.' },
-    samurai: { emoji: '⚔️', def: 'Warriors in Japan long ago. They had curved swords and followed strict rules about being brave and honest.' },
+    manga: { emoji: '📚', def: 'Japanese comic books. Many anime cartoons start life as manga.' },
   },
   stages: [
     {
@@ -200,9 +217,9 @@ window.LESSON = {
             { find: 'europe', ask: 'Tap EUROPE – the continent where England is.', yes: 'Europe! We will fly there next lesson.', hint: 'Europe is above Africa, to the left of Asia.' },
             { find: 'africa', ask: 'Tap AFRICA.', yes: 'Africa – home of lions, giraffes and the pyramids!', hint: 'Africa is the big continent below Europe.' },
             { find: 'atlantic', ask: 'Tap the ATLANTIC OCEAN.', yes: 'The Atlantic – between the Americas and Europe and Africa.', hint: 'It is the ocean between America on the left and Europe and Africa.' },
-            { place: 'JPN', pin: '🇯🇵', ask: 'Drag the Japan flag onto JAPAN – the islands off the east coast of Asia!', yes: 'Perfect! Japan – a chain of islands in the Pacific!', hint: 'Japan is to the right of China and Korea, at the edge of Asia, in the sea.' },
+            { place: 'JPN', pin: '🇯🇵', zoom: [122, 30, 2.4], ask: 'Drag the Japan flag onto JAPAN – the islands off the east coast of Asia!', yes: 'Perfect! Japan – a chain of islands in the Pacific!', hint: 'Japan is to the right of China and Korea, at the edge of Asia, in the sea.' },
             {
-              fly: 'JPN', hours: 6, ask: 'Now fly ✈️ from your home 🏠 to Japan! Drag the plane all the way there.', yes: 'Touchdown in Tokyo! Welcome to Japan!',
+              fly: 'JPN', hours: 6, zoom: [118, 22, 2], ask: 'Now fly ✈️ from your home 🏠 to Japan! Drag the plane all the way there.', yes: 'Touchdown in Tokyo! Welcome to Japan!',
               then: [{ type: 'mcq', q: 'The flight took about 6 hours. Which takes about the same time?', options: ['a whole school day', 'brushing your teeth', 'a whole week'], answer: 0 }],
             },
           ],
@@ -222,44 +239,44 @@ window.LESSON = {
       say: 'Now let\'s meet the people of Japan – and learn their manners!',
       cards: [
         {
-          title: 'Bow and shoes off!', pic: '🙇🩴',
+          title: 'Bow, shoes off – and slurp!', pic: '🙇🍜',
           text: [
-            'In Japan, people say hello with a bow. The deeper you bow, the more respect you show.',
-            'Before going into a home, everyone takes their shoes off at the door and puts on slippers. That keeps the floors clean!',
-          ],
-          check: { q: 'You visit a friend\'s home in Japan. What do you do at the door?', options: ['Take off your shoes', 'Ring a big bell three times', 'Clap your hands'], answer: 0 },
-        },
-        {
-          title: 'Chopsticks and slurping', pic: '🥢🍜',
-          text: [
-            'Most meals have rice, soup, vegetables and fish, and people eat with chopsticks. Before eating, they say "itadakimasu" – a way of saying thank you for the food.',
+            'In Japan, people say hello with a bow, and everyone takes their shoes off at the door before going into a home.',
             'Here is a surprise: slurping your noodles loudly is polite in Japan! It shows the cook that you are enjoying them.',
           ],
           check: { q: 'Ken slurps his ramen noodles noisily in a Tokyo restaurant. What does the cook think?', options: ['He is enjoying the food – great!', 'He is being very rude', 'He has burnt his tongue'], answer: 0 },
         },
         {
-          title: 'Super sushi', pic: '🍣🍙',
+          title: 'Sushi on a conveyor belt', pic: '🍣🚄',
           text: [
-            'Sushi is rice mixed with a little vinegar, served with fish or vegetables. For maki sushi, the rice and fillings are rolled up in [[nori]] seaweed, then sliced.',
-            'For nigiri sushi, the chef squeezes the rice into a little pillow and lays a slice of fish on top. Sushi is a treat – most days people eat things like rice, miso soup, noodles or curry.',
+            'At a kaiten-zushi restaurant, little plates of sushi ride past your table on a moving belt. You grab the ones you like, and the colour of the plate shows the price!',
+            'You can also order on a touch screen – and in some places your sushi zooms to your table on a tiny bullet train. Maki sushi is rolled up in [[nori]] seaweed; nigiri is a slice of fish on a little pillow of rice.',
           ],
-          check: { q: 'Which of these is maki sushi?', options: ['Rice and cucumber rolled up in seaweed, then sliced', 'A slice of fish on a little pillow of rice', 'A bowl of noodle soup'], answer: 0, hint: 'Maki means "roll".' },
+          check: { q: 'You are hungry in a conveyor-belt sushi restaurant. How do you get your food?', options: ['Grab a plate as it goes past, or order on the screen', 'Wait for the cook to choose for you', 'Go into the kitchen and make it'], answer: 0 },
         },
         {
-          title: 'Anpanman to the rescue!', pic: Pixel.svg(ANPANMAN.target, ANPANMAN.colors),
+          title: 'Anime heroes', pic: Pixel.svg(ANPANMAN.target, ANPANMAN.colors),
           text: [
-            'Japan makes lots of cartoons, called [[anime]], and video games – Pokémon and Super Mario both come from Japan!',
-            'The favourite hero of little children is Anpanman. His head is a bun filled with sweet red bean paste. When someone is hungry, he lets them eat part of his head – then Uncle Jam bakes him a fresh one!',
+            'Japan makes tons of [[anime]] cartoons and [[manga]] comics. Goku from Dragon Ball, Luffy the rubbery pirate from One Piece and Pikachu from Pokémon are all from Japan!',
+            'Little children\'s favourite is Anpanman, whose head is a bun full of sweet bean paste. He lets hungry people eat part of it – then Uncle Jam bakes him a new one!',
           ],
-          check: { q: 'What makes Anpanman such a kind hero?', options: ['He shares his own head with hungry people', 'He is the fastest flyer', 'He never needs to eat'], answer: 0 },
+          check: { q: 'Which of these characters comes from a Japanese anime?', options: ['Goku from Dragon Ball', 'Peppa Pig', 'SpongeBob'], answer: 0, hint: 'Peppa Pig is from England and SpongeBob is from the USA.' },
         },
         {
-          title: 'Samurai and castles', pic: '🏯⚔️',
+          title: 'Game on!', pic: '🎮🍄',
           text: [
-            'Long ago, Japan was protected by [[samurai]]: warriors with curved swords who followed strict rules about being brave, honest and loyal.',
-            'They guarded tall wooden castles like Himeji Castle, which is so white that people call it the White Heron. You can still visit it today!',
+            'Lots of the world\'s most famous video game heroes were born in Japan. Nintendo, from the city of Kyoto, made Mario, Kirby, Zelda and Pokémon. Another Japanese company, Sega, made Sonic the Hedgehog!',
+            'Nintendo is more than 130 years old. It started by making playing cards – long before video games were invented.',
           ],
-          check: { q: 'A samurai has promised to protect his village. What would he do?', options: ['Keep his promise, even when it is hard', 'Run away if it gets scary', 'Forget about it'], answer: 0 },
+          check: { q: 'Your friend is playing a game with Mario and Kirby. Where do those characters come from?', options: ['Japan – they were made by Nintendo', 'England – they were made by the King', 'Thailand – they were made in Bangkok'], answer: 0 },
+        },
+        {
+          title: 'Super gadgets', pic: '🤖🥤🚽',
+          text: [
+            'Japan has millions of vending machines – about one for every 30 people! They sell hot soup, ice cream, umbrellas and even fresh eggs.',
+            'Some toilets have a control panel with buttons for a heated seat, a little shower – and a button that plays music or flushing sounds to cover up embarrassing noises!',
+          ],
+          check: { q: 'You press a button on a toilet in a Japanese hotel and it plays music. Why?', options: ['To cover up any embarrassing noises', 'Because it is a karaoke machine', 'To wake you up in the morning'], answer: 0 },
         },
         {
           title: 'Demons out, luck in!', pic: '👹🫘',
@@ -368,7 +385,7 @@ window.LESSON = {
             { answer: 'NORI', clue: 'Dried seaweed used to wrap sushi' },
             { answer: 'FUJI', clue: 'Japan\'s tallest mountain (Mount ____)' },
             { answer: 'ISLAND', clue: 'Land with water all the way around it' },
-            { answer: 'SAMURAI', clue: 'A brave warrior from Japan long ago' },
+            { answer: 'NINTENDO', clue: 'The Japanese company that made Mario and Kirby' },
             { answer: 'BOW', clue: 'How people in Japan say hello without words' },
           ],
         },
@@ -411,14 +428,14 @@ window.LESSON = {
             {
               prompt: 'Shoot the things that come from JAPAN!',
               items: [
-                { label: 'sushi', ok: true }, { label: 'Pokémon', ok: true }, { label: 'karaoke', ok: true }, { label: 'Anpanman', ok: true },
+                { label: 'Mario', ok: true }, { label: 'Pokémon', ok: true }, { label: 'Dragon Ball', ok: true }, { label: 'Sonic', ok: true }, { label: 'sushi', ok: true },
                 { label: 'pizza', ok: false, why: 'Pizza comes from Italy.' }, { label: 'kangaroos', ok: false, why: 'Kangaroos live in Australia.' }, { label: 'pyramids', ok: false, why: 'The pyramids are in Egypt.' },
               ],
             },
             {
               prompt: 'Shoot the things you would SEE in Japan!',
               items: [
-                { label: 'Mount Fuji', ok: true }, { label: 'bullet train', ok: true }, { label: 'samurai castle', ok: true }, { label: 'chopsticks', ok: true },
+                { label: 'Mount Fuji', ok: true }, { label: 'bullet train', ok: true }, { label: 'vending machines', ok: true }, { label: 'chopsticks', ok: true },
                 { label: 'Big Ben', ok: false, why: 'Big Ben is in London, England.' }, { label: 'polar bears', ok: false, why: 'Polar bears live in the Arctic, not Japan.' }, { label: 'Eiffel Tower', ok: false, why: 'The Eiffel Tower is in Paris, France.' },
               ],
             },
@@ -463,17 +480,17 @@ window.LESSON = {
       type: 'quiz', title: 'Boss Battle: Grumbly Oni', short: 'Boss', kind: 'Boss battle', minutes: 6,
       say: 'Oh no! GRUMBLY ONI has stolen the treasure of Japan! Every right answer is a hit. Oni wa soto, {name}!',
       boss: {
-        name: 'Grumbly Oni', sprite: ONI, attack: '⚡',
+        name: 'Grumbly Oni', sprite: ONI, attack: [SHURIKEN, SHURIKEN, '🍣'], spin: true,
         lines: {
           intro: 'GRAAAH! I am GRUMBLY ONI! I\'ve hidden all of Japan\'s treasure in my cave – and you\'ll never get it back!',
           hurt: ['Ow! Oni-believable!', 'Oh no-ni!', 'My horns are wobbling!', 'Stop being so clever!'],
           taunt: ['Ha! Wrong! Grumble grumble!', 'Oni-ly a beginner would pick that!', 'Too slow, like a sleepy tanuki!', 'Back to the airport with you!'],
           angry: 'Now I\'m as grumpy as a volcano! RUMBLE RUMBLE!',
-          dodge: 'THUNDER STORM! Dodge my lightning!',
+          dodge: 'NINJA STAR STORM! Dodge my shuriken – and my flying sushi!',
           miss: 'Grr! You dodge like a ninja!',
           last: 'Please… not the beans…',
           defeat: 'Oni wa soto… I\'m… OUT of here!',
-          win: 'GRAAH HA HA! The treasure is mine! Come back when you know your sushi from your samurai!',
+          win: 'GRAAH HA HA! The treasure is mine! Come back when you know your sushi from your Sonic!',
           stunned: 'My horns are spinning… I can see cherry blossoms…',
           beg: ['Wait! I\'ll give the treasure back!', 'I\'ll tidy my cave, I promise!', 'Gomen nasai! (That means sorry!)'],
         },
@@ -494,7 +511,7 @@ window.LESSON = {
         { type: 'mcq', q: 'Your family is about to eat dinner in Japan. What do you all say?', options: ['itadakimasu', 'sayōnara', 'ohayō'], answer: 0 },
         { type: 'order', q: 'Put the steps for a maki roll in order.', items: ['🟩 Put nori on the mat', '🍚 Press on the rice', '🥒 Lay the filling across the middle', '🌀 Roll it up', '🔪 Slice it'], hint: 'The seaweed goes on first, and the slicing comes last.' },
         { type: 'mcq', q: 'Anpanman meets a hungry puppy. What will he probably do?', options: ['Let the puppy eat part of his bread head', 'Fly away', 'Eat the puppy\'s dinner'], answer: 0 },
-        { type: 'tf', q: 'Mount Fuji is a volcano.', answer: true, explain: 'It is! But it has been asleep for about 300 years.' },
+        { type: 'mcq', q: 'Grumbly Oni says, "Mario, Pokémon and Sonic all come from England!" What could you tell him?', options: ['No – they were all made in Japan', 'Yes, that\'s right', 'No – they come from the Moon'], answer: 0 },
         { type: 'mcq', q: 'At Setsubun, children throw beans and shout "Oni wa soto!" What does it mean?', options: ['Demons out!', 'Let\'s eat!', 'Good morning!'], answer: 0 },
       ],
     },

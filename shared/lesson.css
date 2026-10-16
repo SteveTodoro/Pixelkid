@@ -510,6 +510,7 @@ a { color: var(--brand-dark); }
 .cs-prop { position: absolute; z-index: 2; font-size: clamp(5rem, 16vw, 8rem); line-height: 1; pointer-events: none; filter: drop-shadow(4px 4px 0 #000); }
 .cs-prop.twinkle { font-size: 3rem; }
 .projectile.cs-shot { font-size: 3.4rem; }
+.projectile.pic-shot svg { width: 100%; height: 100%; display: block; }
 .cs-parts { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
 .cs-text { position: absolute; z-index: 4; left: 16px; right: 16px; top: calc(12vh + 8px); text-align: center; font-family: var(--pixel); font-weight: 700; font-size: clamp(1.6rem, 6vw, 2.6rem); color: #fff; text-shadow: 3px 3px 0 #000, -2px -2px 0 #000; pointer-events: none; }
 .cs-text:empty { display: none; }
@@ -923,6 +924,10 @@ a { color: var(--brand-dark); }
 .worldmap .lab-mission { text-align: left; }
 .worldmap .arc-screen { background: #2f7cd6; }
 .worldmap .arcade-canvas { cursor: pointer; }
+.map-zoom-bar { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; margin: 10px auto 0; }
+.map-zoom { min-width: 54px; padding: 6px 12px; font-size: 1.2rem; }
+.map-zoom-lbl { font-family: var(--read); font-weight: 700; min-width: 70px; text-align: center; }
+.map-zoom-tip { font-size: .85rem; color: #444; width: 100%; text-align: center; }
 
 /* ---------- Around the World: Chef ---------- */
 .cook-ticket { display: flex; align-items: center; gap: 14px; max-width: 760px; margin: 0 auto 12px; padding: 10px 14px; background: #fff3a8; border: 4px solid #000; font-weight: 700; font-size: 1.1rem; }

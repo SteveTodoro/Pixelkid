@@ -76,8 +76,8 @@ window.LESSON = {
   finishAch: 'traveller',
   stamp: { id: 'THA', name: 'Thailand', flag: '🇹🇭' },
   mascot: {
-    name: 'Captain Bolt',
-    sprite: Pixel.sprites.robot,
+    name: 'Professor Bolt',
+    sprite: Pixel.sprites.boltThailand,
     praise: ['Geng mak! (Brilliant!)', 'Suay! (Beautiful!)', 'Critical hit!', 'Super traveller!', 'Bolt-tastic!', 'Amazing!', 'Aroi mak – that answer was delicious!'],
     oops: ['Mai pen rai – have another go!', 'Not quite – read it again!', 'Hmm, think again!', 'So close! One more try.'],
   },
@@ -220,9 +220,9 @@ window.LESSON = {
           intro: 'Now compare all three countries you have visited. Fly from home to each one!',
           say: 'Grab the plane at your home 🏠!',
           tasks: [
-            { fly: 'JPN', hours: 6, ask: 'Fly ✈️ from home to JAPAN again.', yes: 'Japan – about 6 hours!' },
+            { fly: 'JPN', hours: 6, zoom: [118, 22, 2], ask: 'Fly ✈️ from home to JAPAN again.', yes: 'Japan – about 6 hours!' },
             {
-              fly: 'ENG', hours: 13, ask: 'Now fly ✈️ from home to ENGLAND.', yes: 'England – about 13 hours!',
+              fly: 'ENG', hours: 13, zoom: [50, 32, 1.8], ask: 'Now fly ✈️ from home to ENGLAND.', yes: 'England – about 13 hours!',
               then: [
                 { type: 'mcq', q: 'Look at the red equator line. Which of the three countries is closest to it?', options: ['Thailand', 'Japan', 'England'], answer: 0, explain: 'That\'s why Thailand is hot all year!' },
                 { type: 'mcq', q: 'Which of the three countries is furthest north – and coldest in winter?', options: ['England', 'Thailand', 'Japan'], answer: 0 },
@@ -479,7 +479,7 @@ window.LESSON = {
       type: 'quiz', title: 'Boss Battle: The Mango Bandit', short: 'Boss', kind: 'Boss battle', minutes: 6,
       say: 'Oh no! The MANGO BANDIT has swiped every mango in Thailand – no mango sticky rice for anyone! Every right answer is a hit. Get them back, {name}!',
       boss: {
-        name: 'Mango Bandit', sprite: BANDIT, attack: '🥭',
+        name: 'Mango Bandit', sprite: BANDIT, attack: ['🥭', '🥭', '🍌'], spin: true,
         lines: {
           intro: 'Ooh ooh aah aah! I\'m the MANGO BANDIT! I\'ve swiped every mango in Thailand – they\'re ALL mine!',
           hurt: ['Ooh ooh OUCH!', 'My mangoes!', 'Not fair, not fair!', 'Eeek! Too clever!'],
