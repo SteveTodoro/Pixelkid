@@ -3516,7 +3516,7 @@
   };
 
   // ===== Map Explorer: find places on the pixel world map (needs shared/world-map.js + shared/world.js) =====
-  // r.view: world | europe | asia | eastasia | uk | ukfrance | japan | home | thailand (see World.VIEWS)
+  // r.view: world | europe | asia | eastasia | uk | ukfrance | japan | home | thailand | usa (see World.VIEWS)
   // r.colour: 'continents' (default) or 'countries' · r.colours: { ENG: '#e8584e', … } gives places their own colour · r.labels: places labelled from the start · r.equator: true draws the equator
   // r.compass: true shows a compass rose · r.home: false hides the 🏠 home pin
   // r.tasks: { find: target, ask, yes, hint } – tap the place

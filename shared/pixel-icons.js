@@ -5538,4 +5538,87 @@
   ]);
   def('🙃', vflip(ICONS[norm('🙂')]));
 
+  // ---------- the USA ----------
+  def('🌭', [
+    '................',
+    '................',
+    '................',
+    '................',
+    '..kkkkkkkkkkkk..',
+    '.krrrrrrrrrrrrk.',
+    'krryrrryrrryrrrk',
+    'kRrrryrrryrrrrRk',
+    'kkTTTTTTTTTTTTkk',
+    'kTttttttttttttTk',
+    'kTttttttttttttTk',
+    '.kTTTTTTTTTTTTk.',
+    '..kkkkkkkkkkkk..',
+    '................',
+    '................',
+    '................',
+  ]);
+  def('🗽', [
+    '..........kyk...',
+    '.........kyoyk..',
+    '..........kok...',
+    '..........kEk...',
+    '..k.k.k...kek...',
+    '..kekekk..kek...',
+    '..keeeeek.kek...',
+    '..keEeEekkek....',
+    '...keeeeeeek....',
+    '..keeeeeeek.....',
+    '.kEEkeeeeeek....',
+    '.kEEkeeeeeek....',
+    '..kkeeeeeeek....',
+    '..keeeeeeeeek...',
+    '.kgggggggggggk..',
+    '.kkkkkkkkkkkkk..',
+  ]);
+  def('⛲', [
+    '.....kkkkkk.....',
+    '....kiiwwiik....',
+    '...kiwwiiwwik...',
+    '....kiiwwiik....',
+    '.....kkcckk.....',
+    '......kcck......',
+    '......kcbk......',
+    '......kcbk......',
+    '.....kccbbk.....',
+    '.....kcbcbk.....',
+    '....kccbbcbk....',
+    '..kkkcbbccbkkk..',
+    '.kTTTkkkkkkTTTk.',
+    'kTtTtTTtTTtTtTTk',
+    'kTTTTTTTTTTTTTTk',
+    '.kkkkkkkkkkkkkk.',
+  ]);
+  def('🎆 🎇', [
+    '.......y........',
+    '...r...y...r....',
+    '....r..y..r.....',
+    '.....r.y.r......',
+    '......ryr.......',
+    'yyyyyyywyyyyyyy.',
+    '......ryr.......',
+    '.....r.y.r......',
+    '....r..y..r.....',
+    '...r...y...r....',
+    '.......y........',
+    '...........c....',
+    '..p.......cwc...',
+    '.pwp.......c....',
+    '..p.............',
+    '................',
+  ]);
+  def('🧑‍🚀', over(rec(BUST, { h: 'w', x: 'w' }), {
+    1: '    kkkkkkkk    ', 2: '   kwwwwwwwwk   ', 3: '  kwwwwwwwwwwk  ',
+    4: '  kw        wk  ', 5: '  kw        wk  ', 6: '  kw        wk  ', 7: '  kw        wk  ', 8: '  kw        wk  ',
+    9: '  kwk      kwk  ', 10: '   kwwk  kwwk   ', 13: '        rB      ',
+  }));
+  def('🦬', over(rec(CRITTER, { x: 'H', X: 'N', t: 'N' }), {
+    0: 'kk            kk', 1: 'kWk.kkk..kkk.kWk', 2: '.kWkhNhk.khNhkWk',
+    4: '..khhhhhhhhhhk..', 5: '.khhhhhhhhhhhhk.', 12: '..kHHHHhhHHHNk..', 13: '...kkhhhhhhkk...',
+  }));
+
 })();

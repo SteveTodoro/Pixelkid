@@ -71,6 +71,7 @@
     japan: { map: 'japan', box: [124, 24, 148, 46] },
     home: { map: 'sea', box: [90, -2, 114, 26] },
     thailand: { map: 'sea', box: [94, 4, 110, 22] },
+    usa: { map: 'world', box: [-130, 14, -58, 56] },
   };
 
   // ---------- decode the run-length rows once per map ----------

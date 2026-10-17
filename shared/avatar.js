@@ -83,6 +83,7 @@
     { id: 'undyne-top', cat: 'top', name: 'Undyne tank top', price: 50, special: true, y: 9, rows: ['..kkkkkkkk..', '..kkkkkkkk..', '..kkkkkkkk..', '..kkkkkkkk..', '...kkkkkk...'], pal: { k: '#1b1b1b' } },
     { id: 'happi-coat', cat: 'top', name: 'Happi festival coat', price: 30, y: 9, rows: ['.tWttttttWt.', '.ttWttttWtt.', '.tttWttWttt.', '.tttttttttt.', '...tWWWWt...'], pal: { t: '#1f3c88', W: '#ffffff' } },
     { id: 'anpan-suit', cat: 'top', name: 'Anpanman suit', price: 50, special: true, y: 9, rows: ['.tttttttttt.', '.ttttyytttt.', '.ttttyytttt.', '.tttttttttt.', '...yyyyyy...'], pal: { t: '#e53935', y: '#ffd43b' } },
+    { id: 'liberty-robe', cat: 'top', name: 'Lady Liberty robe', price: 40, special: true, y: 9, rows: ['.gggggGgggg.', '.ggggGggggg.', '.gggGgggggg.', '.ggGggggggg.', '...gggGgg...'], pal: { g: '#4fb39a', G: '#2e7d6b' } },
     { id: 'guard-tunic', cat: 'top', name: 'Royal Guard tunic', price: 50, special: true, y: 9, rows: ['.tttttttttt.', '.ttttyttttt.', '.ttttyttttt.', '.ttttyttttt.', '...wwwwww...'], pal: { t: '#d32f2f', y: '#ffd43b', w: '#ffffff' } },
     // ----- bottoms -----
     { id: 'jeans', cat: 'legs', name: 'Jeans', price: 0, y: 14, rows: ['...llllll...', '...ll..ll...', '...ll..ll...', '...ll..ll...'], pal: { l: '#2f5d9e' } },
@@ -94,6 +95,7 @@
     { id: 'chef-trousers', cat: 'legs', name: 'Chef check trousers', price: 40, special: true, y: 14, rows: ['...lLlLlL...', '...Ll..Ll...', '...lL..lL...', '...Ll..Ll...'], pal: { l: '#ffffff', L: '#1b1b1b' } },
     { id: 'sans-shorts', cat: 'legs', name: 'Sans shorts', price: 40, special: true, y: 14, rows: ['...kkkkkk...', '...wk..kw...'], pal: { k: '#1b1b1b', w: '#ffffff' } },
     { id: 'papyrus-shorts', cat: 'legs', name: 'Papyrus shorts', price: 40, special: true, y: 14, rows: ['...bbbbbb...', '...bb..bb...'], pal: { b: '#2f5fd0' } },
+    { id: 'liberty-legs', cat: 'legs', name: 'Lady Liberty robe (long)', price: 25, special: true, y: 14, rows: ['...gggggg...', '...gGgggg...', '...ggggGg...', '..gggggggg..'], pal: { g: '#4fb39a', G: '#2e7d6b' } },
     { id: 'elephant-pants', cat: 'legs', name: 'Thai elephant trousers', price: 25, y: 14, rows: ['...pPpPpP...', '...Pp..pP...', '...pP..Pp...', '...Pp..pP...'], pal: { p: '#6a1b9a', P: '#ffd43b' } },
     { id: 'anpan-legs', cat: 'legs', name: 'Anpanman trousers', price: 30, special: true, y: 14, rows: ['...llllll...', '...ll..ll...', '...ll..ll...', '...ll..ll...'], pal: { l: '#e53935' } },
     // ----- shoes -----
@@ -118,6 +120,8 @@
     { id: 'straw-hat', cat: 'hat', name: "Gardener's straw hat", price: 0, unlock: 'gardener', rows: ['...cCcCcc...', '..cCcCcCcc..', '..rrrrrrpy..', 'cCcCcCcCcCcC'], pal: { c: '#f2d16b', C: '#d9b24a', r: '#e53935', p: '#ff7eb6', y: '#ffcc33' } },
     { id: 'pilot-cap', cat: 'hat', name: 'Pilot cap & goggles', price: 0, unlock: 'traveller', rows: ['...cccccc...', '..cccccccc..', '.ckkcccckkc.', '.kgGkcckgGk.', '.ckkcccckkc.', '.cc......cc.', '.cc......cc.'], pal: { c: '#7a4b2a', k: '#1b1b1b', g: '#7fd0ff', G: '#ffffff' } },
     { id: 'anpan-head', cat: 'hat', name: 'Anpanman head', price: 70, special: true, hideHair: true, y: 1, rows: ['...kkkkkk...', '..kbbbbbbk..', '.kbkkbbkkbk.', '.kbbkbbkbbk.', 'kbrrbrrbrrbk', 'kbrrbrrbrrbk', '.kbbkkkkbbk.', '..kbbbbbbk..', '...kkkkkk...'], pal: { k: '#5a3214', b: '#eba45a', r: '#e53935' } },
+    { id: 'astro-helmet', cat: 'hat', name: 'Astronaut helmet', price: 60, special: true, hideHair: true, rows: ['...GGGGGG...', '..GwwwwwwG..', '.GwwwwwwwwG.', '.Gwgg....wG.', '.Gwg.....wG.', '.Gw......wG.', '.Gw......wG.', '.Gw......wG.', '.GwwwwwwwwG.', '..GGrwwbGG..'], pal: { w: '#f2f2f2', G: '#8e9aa8', g: '#bfe8ff', r: '#e53935', b: '#1f3c88' } },
+    { id: 'liberty-crown', cat: 'hat', name: 'Lady Liberty crown', price: 40, special: true, rows: ['.g..g..g..g.', '.gg.gggg.gg.', '..gggggggg..', '..gGgGGgGg..'], pal: { g: '#4fb39a', G: '#2e7d6b' } },
     { id: 'bearskin', cat: 'hat', name: 'Royal Guard bearskin', price: 50, special: true, hideHair: true, rows: ['..kkkkkkkk..', '..kkkKkkkk..', '..kkkkkkkk..', '..kkkkkkkk..', '..y......y..', '..y......y..', '...y....y...', '....yyyy....'], pal: { k: '#15171b', K: '#3a3a3a', y: '#ffd43b' } },
     // hideHair: covers the whole head, so the hair layer is skipped
     { id: 'ninja-mask', cat: 'hat', name: 'Ninja mask', price: 80, special: true, hideHair: true, y: 1, rows: ['...kkkkkk...', '..kkkkkkkk..', '..RRRRRRRRRR', '..kkkkkkkk.R', '..k......k..', '..kkkkkkkk..', '..kkkkkkkk..', '...kkkkkk...'], pal: { k: '#22252b', R: '#e53935' } },
@@ -138,6 +142,7 @@
     { id: 'papyrus-scarf', cat: 'extra', name: 'Papyrus scarf', price: 70, special: true, y: 8, rows: ['..cccccccc..', '..cccccccc..', '.......cc...', '.......cc...', '........cc..'], pal: { c: '#e53935' } },
     { id: 'undyne-patch', cat: 'extra', name: 'Eye patch & grin', price: 50, special: true, y: 4, rows: ['..kkkk......', '..kkk..y....', '............', '....wwww....'], pal: { k: '#1b1b1b', y: '#ffd43b', w: '#ffffff' } },
     { id: 'water-blaster', cat: 'extra', name: 'Songkran water blaster', price: 40, y: 11, rows: ['..........ww', '........bb.w', '.......bbbbb', '.......bcc..', '.......b....'], pal: { b: '#1e88e5', c: '#ffd43b', w: '#7fd0ff' } },
+    { id: 'liberty-torch', cat: 'extra', name: 'Liberty torch', price: 40, special: true, y: 1, rows: ['...........o', '..........oy', '..........yo', '..........gg', '...........g', '...........g', '...........g', '...........g'], pal: { o: '#ff8c1a', y: '#ffd43b', g: '#4fb39a' } },
     // ----- pets -----
     { id: 'pet-none', cat: 'pet', name: 'No pet', price: 0, rows: [] },
     { id: 'pet-cat', cat: 'pet', name: 'Pixel cat', price: 40, rows: ['.o....o.', '.oo..oo.', '.oooooo.', '.ogoogo.', '.oooooo.', '..oppo..', '.oooooo.', '.o.oo.o.'], pal: { o: '#ff8c1a', g: '#2e9e3e', p: '#ff7eb6' } },
@@ -154,6 +159,7 @@
     { id: 'pet-tardigrade', cat: 'pet', name: 'Water bear', price: 100, special: true, rows: ['.kkkkkk.', 'kppppppk', 'kpkppkpk', 'kppooppk', 'kpPppPpk', 'kppppppk', '.kkkkkk.', 'k.k..k.k'], pal: { k: '#4a3426', p: '#e9cfa6', P: '#c9a477', o: '#e57373' } },
     { id: 'pet-echo', cat: 'pet', name: 'Echo the ghost', price: 100, special: true, rows: ['..wwww..', '.wwwwww.', 'wwkwwkww', 'wwkwwkww', 'wwwbbwww', 'wwwwwwww', 'wwwwwwww', 'w.ww.ww.'], pal: { w: '#eef3ff', k: '#1b1b1b', b: '#7aa2ff' } },
     { id: 'pet-octopus', cat: 'pet', name: 'An octopus', price: 100, special: true, rows: ['..oooo..', '.oooooo.', 'owkoowko', 'oooooooo', '.oooooo.', 'o.o.o.o.', '.o.o.o.o', 'o.o.o.o.'], pal: { o: '#ff6f91', w: '#ffffff', k: '#1b1b1b' } },
+    { id: 'pet-eagle', cat: 'pet', name: 'Bald eagle', price: 80, special: true, rows: ['..wwww..', '.wwwwkw.', '.wwwwwyy', '..bbbbb.', '.bbbbbbb', 'bbbbbbb.', '.bbbbb..', '..y..y..'], pal: { w: '#ffffff', k: '#1b1b1b', y: '#ffb300', b: '#5a3214' } },
     { id: 'pet-bee', cat: 'pet', name: 'Busy bee', price: 60, rows: ['..cc.cc.', '..ccccc.', '.kkkkkk.', 'kwkyykyk', 'kkkyykyk', 'kkkyykyk', '.kkkkkk.', '.k....k.'], pal: { k: '#1b1b1b', y: '#ffd43b', c: '#cfefff', w: '#ffffff' } },
     // ----- level rewards: unlocked by reaching a player level (see LEVEL_REWARDS) -----
     { id: 'pet-bunny', cat: 'pet', name: 'Bouncy bunny', price: 0, unlock: 'lvl:3', rows: ['.w....w.', '.wp..pw.', '.wp..pw.', '.wwwwww.', 'wwkwwkww', 'wwwppwww', '.wwwwww.', '.ww..ww.'], pal: { w: '#f4f4f4', p: '#ffb3cf', k: '#1b1b1b' } },
@@ -248,6 +254,8 @@
     { id: 'set-undyne', name: 'Undyne', special: true, parts: { skin: 'skin-undyne', hair: 'undyne-ponytail', hat: 'hat-none', top: 'undyne-top', legs: 'jeans', shoes: 'boots', extra: 'undyne-patch' } },
     { id: 'set-anpan', name: 'Anpanman', special: true, parts: { hat: 'anpan-head', top: 'anpan-suit', legs: 'anpan-legs', shoes: 'boots', extra: 'cape-red' } },
     { id: 'set-guard', name: 'Royal Guard', special: true, parts: { hat: 'bearskin', top: 'guard-tunic', legs: 'trousers-black', shoes: 'boots', extra: 'extra-none' } },
+    { id: 'set-astronaut', name: 'Astronaut', special: true, parts: { hat: 'astro-helmet', top: 'space-top', legs: 'space-legs', shoes: 'boots', extra: 'extra-none' } },
+    { id: 'set-liberty', name: 'Lady Liberty', special: true, parts: { hat: 'liberty-crown', top: 'liberty-robe', legs: 'liberty-legs', shoes: 'boots', extra: 'liberty-torch' } },
     { id: 'set-frisk', name: 'Frisk', special: true, parts: { hair: 'hair-bob', hairColor: 'hc-brown', hat: 'hat-none', top: 'frisk-jumper', legs: 'jeans', shoes: 'boots', extra: 'extra-none' } },
     // level-reward costumes: every part unlocks at the same level
     { id: 'set-pirate', name: 'Pirate', unlock: 'lvl:7', parts: { hat: 'pirate-hat', top: 'pirate-coat', legs: 'pirate-trousers', extra: 'parrot' } },

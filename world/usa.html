@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The USA: Space Rockets & Hot Dogs</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <script src="../shared/pixel.js"></script>
+  <script src="../shared/pixel-icons.js"></script>
+  <script src="../shared/avatar.js"></script>
+  <script src="../shared/world-map.js"></script>
+  <script src="../shared/world.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// ---------- blocky pictures for this lesson ----------
+const K = '#1b1b1b', W = '#ffffff';
+const grid = (w, hh, f) => Array.from({ length: hh }, (_, y) => Array.from({ length: w }, (_, x) => f(x, y)).join(''));
+
+// the Stars and Stripes: 13 stripes and a blue corner full of stars
+const usFlag = (w, hh, cw, ch) => grid(w, hh, (x, y) => (x < cw && y < ch ? (x % 2 && y % 2 ? 'w' : 'b') : y % 2 ? 'w' : 'r'));
+const FLAG_PAL = { r: '#d32f2f', w: W, b: '#1f3c88' };
+const FLAG = Pixel.svg(usFlag(25, 13, 11, 7), FLAG_PAL);
+const DRAW_FLAG = usFlag(19, 13, 9, 7);
+
+// a space rocket to copy (symmetrical – the mirror helps!)
+const ROCKET = {
+  colors: { r: '#e53935', w: W, b: '#5c6bc0', c: '#7fd0ff', o: '#ff8c1a', y: '#ffd43b' },
+  names: { '#e53935': 'red', [W]: 'white', '#5c6bc0': 'blue', '#7fd0ff': 'light blue (window)', '#ff8c1a': 'orange', '#ffd43b': 'yellow' },
+  target: [
+    '....rr....',
+    '...rrrr...',
+    '...wwww...',
+    '..wwwwww..',
+    '..wwbbww..',
+    '..wbccbw..',
+    '..wwbbww..',
+    '..wwwwww..',
+    '..wwwwww..',
+    '.rwwwwwwr.',
+    'rrwwwwwwrr',
+    'rr.oooo.rr',
+    '....yy....',
+  ],
+};
+// Lady Liberty holding up her torch
+const LIBERTY = {
+  colors: { g: '#4fb39a', G: '#2e7d6b', y: '#ffd43b', o: '#ff8c1a', s: '#c9b99a' },
+  names: { '#4fb39a': 'green', '#2e7d6b': 'dark green', '#ffd43b': 'yellow', '#ff8c1a': 'orange', '#c9b99a': 'stone' },
+  target: [
+    '.........y..',
+    '........yoy.',
+    '.........G..',
+    '.........g..',
+    '.g.g.g...g..',
+    '.ggggg...g..',
+    '.gGgGg..g...',
+    '.ggggg.gg...',
+    '..ggggggg...',
+    '.gggggggg...',
+    'Ggggggg.....',
+    'Ggggggg.....',
+    '.gggggg.....',
+    '.ggggggg....',
+    'ssssssssss..',
+    'ssssssssss..',
+  ],
+};
+
+// the diner
+const BUN = Pixel.svg(['..yyyyyy..', '.yYyyyyYy.', 'yyyyyyyyyy', '.dddddddd.'], { y: '#e8b25c', Y: '#f6d28c', d: '#a8702c' });
+const HOTDOG = Pixel.svg(['..........', '.ssssssss.', 'yssssssssy', '.dddddddd.'], { y: '#e8b25c', s: '#c2452d', d: '#a8702c' });
+const HOTDOG_RED = Pixel.svg(['..........', '.srsrsrss.', 'yssssssssy', '.dddddddd.'], { y: '#e8b25c', s: '#c2452d', r: '#e53935', d: '#a8702c' });
+const HOTDOG_FULL = Pixel.svg(['..........', '.srmrmrms.', 'yssssssssy', '.dddddddd.'], { y: '#e8b25c', s: '#c2452d', r: '#e53935', m: '#ffd43b', d: '#a8702c' });
+const KETCHUP = Pixel.svg(['..kk..', '..rr..', '.rrrr.', '.rwwr.', '.rrrr.', '.rrrr.'], { k: '#1b1b1b', r: '#e53935', w: W });
+const MUSTARD = Pixel.svg(['..kk..', '..yy..', '.yyyy.', '.ywwy.', '.yyyy.', '.yyyy.'], { k: '#1b1b1b', y: '#ffc107', w: W });
+const PANCAKE = Pixel.svg(['.pppppppp.', 'PPPPPPPPPP', '..kkkkkk..'], { p: '#e8b25c', P: '#c98f3c', k: '#90a4ae' });
+const PANCAKES = Pixel.svg(['.pppppppp.', 'PPPPPPPPPP', '.pppppppp.', 'PPPPPPPPPP', '.pppppppp.', 'PPPPPPPPPP', '..kkkkkk..'], { p: '#e8b25c', P: '#c98f3c', k: '#90a4ae' });
+const PANCAKES_SYRUP = Pixel.svg(['.ssssssss.', 'PsPPsPPPsP', '.ppsppppp.', 'PPPsPPPPPP', '.pppppppp.', 'PPPPPPPPPP', '..kkkkkk..'], { p: '#e8b25c', P: '#c98f3c', s: '#8d4f1e', k: '#90a4ae' });
+const PANCAKES_FULL = Pixel.svg(['....yy....', '.ssssssss.', 'PsPPsPPPsP', '.ppsppppp.', 'PPPsPPPPPP', '.pppppppp.', 'PPPPPPPPPP', '..kkkkkk..'], { y: '#fff3a8', p: '#e8b25c', P: '#c98f3c', s: '#8d4f1e', k: '#90a4ae' });
+const BREAD = Pixel.svg(['.bbbbbbbb.', 'bwwwwwwwwb', 'bwwwwwwwwb', 'bwwwwwwwwb', 'bbbbbbbbbb'], { b: '#c98f3c', w: '#fff6dc' });
+const BREAD_PB = Pixel.svg(['.bbbbbbbb.', 'bnnnnnnnnb', 'bnnnnnnnnb', 'bnnnnnnnnb', 'bbbbbbbbbb'], { b: '#c98f3c', n: '#b9783a' });
+const BREAD_PBJ = Pixel.svg(['.bbbbbbbb.', 'bnjnnjnnjb', 'bjnjnnjnnb', 'bnnnjnnjnb', 'bbbbbbbbbb'], { b: '#c98f3c', n: '#b9783a', j: '#7b1fa2' });
+const PBJ = Pixel.svg(['b.........', 'bbb.......', 'bnjbb.....', 'bjnnjbb...', 'bnnjnnjbb.', 'bbbbbbbbbb'], { b: '#c98f3c', n: '#b9783a', j: '#7b1fa2' });
+
+// the boss: Bigfoot, the shy giant of the forests, holding the torch he swiped
+const BIGFOOT = Pixel.svg([
+  '...bbbbbb...',
+  '..bbbbbbbb..',
+  '..bffffffb..',
+  '..bfkffkfb..',
+  '..bffffffb.y',
+  '..bbfkkfbbyo',
+  '.bbbbbbbbbbG',
+  'bbbbbbbbbbbG',
+  'bb.bbbbbb.bG',
+  'bb.bbbbbb.b.',
+  '...bbbbbb...',
+  '..bbb..bbb..',
+  'kkkkk..kkkkk',
+], { b: '#7a4b2a', f: '#c9a477', k: K, y: '#ffd43b', o: '#ff8c1a', G: '#4fb39a' });
+
+// ---------- the lesson ----------
+window.LESSON = {
+  id: 'world-usa',
+  subject: 'world',
+  title: 'The USA: Space Rockets & Hot Dogs',
+  emoji: '🇺🇸',
+  home: '../index.html',
+  finishAch: 'traveller',
+  stamp: { id: 'USA', name: 'the USA', flag: '🇺🇸' },
+  mascot: {
+    name: 'Professor Bolt',
+    sprite: Pixel.sprites.boltUSA,
+    praise: ['Awesome!', 'Out of this world!', 'Home run!', 'Slam dunk!', 'Bolt-tastic!', 'Stellar!', 'Totally rad!'],
+    oops: ['Houston, we have a problem – try again!', 'Not quite – read it again!', 'Hmm, think again!', 'So close! One more try.'],
+  },
+  glossary: {
+    continent: { emoji: '🌍', def: 'One of the 7 huge areas of land on Earth, like Asia, Europe or North America.' },
+    state: { emoji: '🗺️', def: 'One of the 50 parts that the USA is split into. Each state has its own name, capital city and flag.' },
+    coast: { emoji: '🏖️', def: 'The land right next to the sea.' },
+    'time zone': { emoji: '🕒', word: 'time zone', def: 'An area of the world where all the clocks show the same time.' },
+    capital: { emoji: '🏙️', def: 'The city where a country\'s government (its leaders) works.' },
+    astronaut: { emoji: '🧑‍🚀', def: 'A person who is trained to travel into space.' },
+    canyon: { emoji: '🏜️', def: 'A deep valley with steep, rocky sides, often cut by a river.' },
+    geyser: { emoji: '⛲', def: 'A hole in the ground that shoots hot water and steam high into the air.' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'The USA: Space Rockets & Hot Dogs', short: 'Start', minutes: 1,
+      pic: FLAG,
+      hello: 'Howdy, {name}! Welcome back to AROUND THE WORLD! Today we take our longest flight yet – all the way to the USA! ✈️',
+      question: 'Which country sent the first people to walk on the Moon?',
+      intro: 'Fly to the other side of the world, find out why it is night there when it is day at home, cook in an American diner, paint a rocket – then get the Statue of Liberty\'s torch back from Bigfoot to earn your next 🛂 passport stamp!',
+      nameLabel: 'Traveller name:',
+    },
+
+    {
+      type: 'review', title: 'Last time…', short: 'Recap', minutes: 4,
+      from: { title: 'Thailand: Welcome Home!', emoji: '🇹🇭', url: 'thailand.html' },
+      facts: [
+        'Thailand is in South-East Asia. Its shape looks like an elephant\'s head, with a long trunk in the south.',
+        'Thailand has four neighbours: Myanmar, Laos, Cambodia and Malaysia.',
+        'Thailand is quite close to the equator, so it is hot all year. It has a hot, a rainy and a cool season.',
+        'Thai people greet each other with a wai. At Songkran, the Thai New Year, everyone has water fights!',
+      ],
+      questions: [
+        { type: 'mcq', q: 'Which of these countries is NOT one of Thailand\'s neighbours?', options: ['Japan', 'Laos', 'Cambodia'], answer: 0, hint: 'A neighbour shares a border. Japan is across the sea.' },
+        { type: 'mcq', q: 'Why is it hot in Thailand even in the cool season?', options: ['Thailand is quite close to the equator', 'Thailand is near the North Pole', 'The sun only shines on Thailand'], answer: 0 },
+        { type: 'mcq', q: 'It is 13 April and people are splashing water everywhere. What is happening?', options: ['Songkran – the Thai New Year', 'Loy Krathong', 'Christmas'], answer: 0 },
+        { type: 'mcq', q: 'You meet a monk. How do you show the most respect?', options: ['A wai with your hands held high', 'A high five', 'A wave from far away'], answer: 0 },
+      ],
+      game: {
+        game: 'worldmap', title: 'Neighbour check', view: 'home', colour: 'countries',
+        colours: { THA: '#e8584e', MMR: '#26a69a', LAO: '#3fae5a', KHM: '#5c7cfa', MYS: '#b65bd1', VNM: '#d9a066' },
+        intro: 'Can you still find Thailand\'s neighbours?',
+        say: 'Quick! Where are the neighbours?',
+        tasks: [
+          { find: 'KHM', from: 'THA', dir: 'SE', ask: 'Go SOUTH-EAST from Thailand. Tap the neighbour you reach!', yes: 'Cambodia! Great memory!', hint: 'South-east is down and to the right.' },
+          { find: 'MMR', from: 'THA', dir: 'W', ask: 'Now go WEST. Tap the neighbour you reach!', yes: 'Myanmar! You still know your neighbours!', hint: 'West is to the left.' },
+        ],
+      },
+    },
+
+    {
+      type: 'read', title: 'The other side of the world', short: 'Read 1', minutes: 6,
+      say: 'The USA is a LONG way from home. Let\'s find out where it is!',
+      cards: [
+        {
+          title: 'Across the biggest ocean', pic: '🌍✈️',
+          text: [
+            'The USA is short for the United States of America. It is in the [[continent]] of North America, almost on the opposite side of the world from Thailand.',
+            'To get there, you fly right across the Pacific Ocean. With no stops, the flight would take about 17 hours – even longer than flying to England!',
+          ],
+          check: { q: 'Your cousin is flying from Bangkok to the USA. Which ocean will they fly over?', options: ['The Pacific Ocean', 'The Indian Ocean', 'No ocean – they drive there'], answer: 0, hint: 'It is the biggest ocean, between Asia and America.' },
+        },
+        {
+          title: 'Two neighbours and two coasts', pic: '🇨🇦🇺🇸🇲🇽',
+          text: [
+            'The USA has only two neighbours: Canada to the north and Mexico to the south.',
+            'It stretches all the way from one ocean to another. The west [[coast]] is on the Pacific Ocean and the east coast is on the Atlantic Ocean.',
+          ],
+          check: { q: 'A family drives north from the USA and crosses the border. Which country are they in now?', options: ['Canada', 'Mexico', 'Thailand'], answer: 0, hint: 'Which neighbour is to the NORTH?' },
+        },
+        {
+          title: '50 states', pic: '🗺️⭐',
+          text: [
+            'The USA is split into 50 parts called [[state]]s. Each one has its own name and flag – like Texas, California and Florida.',
+            'The biggest state, Alaska, is near the North Pole and has snowy mountains and polar bears. Hawaii is made of islands far out in the Pacific Ocean, with beaches and volcanoes.',
+          ],
+          check: { q: 'Mia wants to see a volcano AND swim at a warm beach on her trip to the USA. Which state should she visit?', options: ['Hawaii', 'Alaska', 'Any state – they are all the same'], answer: 0 },
+        },
+        {
+          title: 'Not the biggest city', pic: '🏛️🏙️',
+          text: [
+            'The [[capital]] of the USA is Washington, D.C. The President – the leader of the country – lives and works there, in the White House.',
+            'But the biggest city is New York, with about 8 million people and giant skyscrapers. In England, London is the capital AND the biggest city – but in the USA they are different cities.',
+          ],
+          check: { q: 'Leo says, "New York is the biggest city, so it must be the capital!" Is he right?', options: ['No – the capital is Washington, D.C.', 'Yes, he is right', 'No – the capital is London'], answer: 0 },
+        },
+        {
+          title: 'Breakfast here, bedtime there', pic: '🌞🌙',
+          text: [
+            'As the Earth spins, the Sun lights up one half of the world while the other half has night. So different places have different times – each area that shares one time is a [[time zone]].',
+            'The USA is so far from Thailand that when you are eating breakfast, children in New York are getting ready for bed! The USA is so wide that it has six time zones of its own.',
+          ],
+          check: { q: 'It is lunchtime and sunny in Bangkok. What is it probably like in New York?', options: ['Dark – it is night-time there', 'Lunchtime as well', 'Sunny – it is midday there too'], answer: 0, hint: 'New York is on the other side of the world from Thailand.' },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'USA Facts for Kids', short: 'Video 1', minutes: 7,
+      video: { id: 'atZvLpk2NgM', title: 'USA Facts for Kids | American Culture in 5 minutes', channel: 'Happy Okapi', duration: '5:54' },
+      say: 'Let\'s take a whistle-stop tour of the USA! Watch, then answer my questions.',
+      clues: [
+        'How many stripes and stars are on the flag?',
+        'What is the national bird?',
+        'Who gave the Statue of Liberty to the USA?',
+        'What is carved into Mount Rushmore?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'How many stripes are on the flag of the USA?', options: ['13', '50', '4'], answer: 0, explain: 'And there are 50 stars – one for each state!' },
+        { type: 'mcq', q: 'What is the name of the President\'s house?', options: ['the White House', 'Buckingham Palace', 'the Grand Palace'], answer: 0 },
+        { type: 'mcq', q: 'Which bird is the national bird of the USA?', options: ['the bald eagle', 'the parrot', 'the penguin'], answer: 0 },
+        { type: 'mcq', q: 'Which country gave the Statue of Liberty to the USA as a gift?', options: ['France', 'England', 'Japan'], answer: 0 },
+        { type: 'mcq', q: 'What is carved into the side of Mount Rushmore?', options: ['the faces of four presidents', 'a giant eagle', 'the word HOLLYWOOD'], answer: 0 },
+        { type: 'mcq', q: 'Which food does the video say is popular on the 4th of July?', options: ['hot dogs and hamburgers', 'sushi', 'mango sticky rice'], answer: 0 },
+        { type: 'mcq', q: 'Who was the first person to step on the Moon?', options: ['Neil Armstrong', 'Michael Jordan', 'Uncle Sam'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Map Explorer', short: 'Game 1', minutes: 10,
+      rounds: [
+        {
+          game: 'worldmap', title: 'Fly to the USA', view: 'world', labels: ['JPN', 'ENG'],
+          intro: 'First, find the USA on the world map – then take your longest flight yet!',
+          say: 'Where in the world is the USA?',
+          tasks: [
+            { find: 'namerica', ask: 'Tap NORTH AMERICA – the continent the USA is in.', yes: 'North America! The USA is right in the middle of it.', hint: 'It is the big continent on the left of the map, at the top.' },
+            { place: 'USA', pin: '🇺🇸', ask: 'Drag the USA flag onto the USA – the big country under Canada.', yes: 'Spot on! The USA – even big, snowy Alaska in the top-left corner is part of it.', hint: 'Find North America, then look below the giant country at the top (Canada).' },
+            {
+              fly: 'USA', hours: 17, ask: 'Now fly ✈️ from your home 🏠 all the way to the USA!', yes: 'Touchdown in Washington, D.C.!',
+              then: [{ type: 'order', q: 'Put the flights from home in order, from SHORTEST to LONGEST.', items: ['🇯🇵 to Japan (about 6 hours)', '🏴󠁧󠁢󠁥󠁮󠁧󠁿 to England (about 13 hours)', '🇺🇸 to the USA (about 17 hours)'], hint: 'Japan is the closest. Which is the furthest of all?' }],
+            },
+          ],
+        },
+        {
+          game: 'worldmap', title: 'Neighbours and coasts', view: 'usa', colour: 'countries', compass: true,
+          colours: { USA: '#e8584e', CAN: '#b65bd1', MEX: '#3fae5a', CUB: '#f2b33d' },
+          intro: 'Zoom in on the USA! Follow the yellow arrows and use the **compass** – north is up.',
+          say: 'Follow the arrow! Where do you end up?',
+          tasks: [
+            { find: 'CAN', from: 'USA', dir: 'N', ask: 'Start in the USA and go NORTH. Tap the neighbour you reach!', yes: 'Canada – the USA\'s neighbour to the north.', hint: 'North is up.' },
+            { find: 'MEX', from: 'USA', dir: 'S', ask: 'Now go SOUTH. Tap the neighbour you reach!', yes: 'Mexico – the USA\'s neighbour to the south.', hint: 'South is down.' },
+            {
+              find: 'pacific', from: 'USA', dir: 'W', ask: 'Go WEST until you reach the sea. Which ocean is it? Tap it!', yes: 'The Pacific Ocean – on the west coast. Home is way over on the other side of it!', hint: 'West is to the left. Tap the water on the left.',
+              then: [{ type: 'mcq', q: 'Which ocean would you cross to fly from the USA to Thailand?', options: ['the Pacific Ocean', 'the Atlantic Ocean', 'the Arctic Ocean'], answer: 0 }],
+            },
+            { find: 'atlantic', from: 'USA', dir: 'E', ask: 'Now go EAST until you reach the sea. Tap that ocean!', yes: 'The Atlantic Ocean – on the east coast. England is on the other side of it!', hint: 'East is to the right. Tap the water on the right.' },
+          ],
+        },
+        {
+          game: 'wordsearch', title: 'Word Hunt',
+          intro: 'Find all the **USA words** hidden in the grid. They go across ➡ or down ⬇.',
+          say: 'Hunt for the hidden words! Drag across a word – or tap the first letter, then the last.',
+          size: 10,
+          words: ['CANADA', 'MEXICO', 'STATES', 'ALASKA', 'HAWAII', 'PACIFIC', 'EAGLE', 'COAST'],
+        },
+      ],
+    },
+
+    {
+      type: 'read', title: 'Rockets, wonders and hot dogs', short: 'Read 2', minutes: 7,
+      say: 'Now let\'s explore the amazing things the USA is famous for!',
+      cards: [
+        {
+          title: 'One small step', pic: '🚀🌕',
+          text: [
+            'In 1969, a giant rocket blasted off from Florida carrying three American [[astronaut]]s. Four days later, Neil Armstrong became the first person ever to walk on the Moon.',
+            'His footprints are still there today, because there is no wind or rain on the Moon to blow them away!',
+          ],
+          check: { q: 'Why would a footprint on the beach disappear, but a footprint on the Moon stay for years and years?', options: ['The Moon has no wind or rain to wipe it away', 'Moon dust is made of glue', 'Astronauts guard the footprints'], answer: 0 },
+        },
+        {
+          title: 'A green giant', pic: '🗽',
+          text: [
+            'The Statue of Liberty stands in New York. She is as tall as about 30 people standing on each other\'s heads – and that is without her stone base!',
+            'She is made of copper, the same metal as a shiny new coin. Over many years, rain and sea air slowly turned her green.',
+          ],
+          check: { q: 'If the Statue of Liberty were brand new today, what colour would she be?', options: ['Shiny orange-brown, like a new coin', 'Green, just like now', 'Bright white'], answer: 0, hint: 'What made her change colour?' },
+        },
+        {
+          title: 'Natural wonders', pic: '🏜️⛲',
+          text: [
+            'The Grand [[canyon]] is a giant crack in the ground, more than 1.5 km deep. The Colorado River dug it out, little by little, over millions of years.',
+            'In Yellowstone, the world\'s very first national park, a [[geyser]] called Old Faithful shoots boiling water high into the sky about every hour and a half!',
+          ],
+          check: { q: 'How did the Grand Canyon get so deep?', options: ['A river slowly wore the rock away for millions of years', 'People dug it with spades', 'A giant dropped a rock there'], answer: 0 },
+        },
+        {
+          title: 'Eagles and bison', pic: '🦅🦬',
+          text: [
+            'The national bird of the USA is the bald eagle. It isn\'t really bald – it has bright white feathers on its head!',
+            'The national animal is the bison: a huge, shaggy cousin of the cow. Long ago, millions of bison roamed across the grassy plains.',
+          ],
+          check: { q: 'Why do you think the bald eagle got its name?', options: ['From far away, its white head looks bare', 'It has no feathers at all', 'It lives on a mountain called Bald'], answer: 0 },
+        },
+        {
+          title: 'Mickey, Woody and Spider-Man', pic: '🐭🎬🕷️',
+          text: [
+            'Lots of cartoon heroes come from the USA. Mickey Mouse first appeared almost 100 years ago, in 1928!',
+            'Toy Story was the first full-length film made completely on computers. And Spider-Man\'s home is New York – he swings between the skyscrapers.',
+          ],
+          check: { q: 'Which of these heroes would you be most likely to spot swinging past a skyscraper?', options: ['Spider-Man', 'Anpanman', 'Peppa Pig'], answer: 0 },
+        },
+        {
+          title: 'Slam dunk!', pic: '🏀🍑',
+          text: [
+            'Basketball was invented in the USA in 1891 by a PE teacher who wanted a game his class could play indoors in winter.',
+            'The first hoops were peach baskets with the bottoms still in – so every time someone scored, a person had to climb a ladder to get the ball out!',
+          ],
+          check: { q: 'Why did they stop using baskets with bottoms in them?', options: ['Getting the ball out after every goal was too slow', 'The peaches kept falling out', 'The ball was too small'], answer: 0 },
+        },
+        {
+          title: 'Hot dogs and fireworks', pic: '🌭🎆',
+          text: [
+            'Americans love hot dogs, burgers and stacks of pancakes. A peanut butter and jelly sandwich is a lunchbox favourite – and "jelly" is the American word for jam!',
+            'On the 4th of July, the USA has its birthday party, with fireworks, parades and picnics. In November, families share a big turkey dinner called Thanksgiving to say thank you for what they have.',
+          ],
+          check: { q: 'Your American friend asks for a "jelly sandwich". What should you spread on the bread?', options: ['Jam', 'Wobbly jelly from a party', 'Ketchup'], answer: 0 },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'The First Moon Walk', short: 'Video 2', minutes: 5,
+      video: { id: 'CbTaDOuSePk', title: 'Apollo 11 – The First Moon Walk', channel: 'Nat Geo Kids', duration: '2:46' },
+      say: '3… 2… 1… BLAST OFF! Watch how the astronauts got to the Moon, then answer my questions.',
+      clues: [
+        'How long did it take to get to the Moon?',
+        'What were the names of the three astronauts?',
+        'Which astronaut stayed in the spacecraft?',
+        'How did Buzz Aldrin save the day?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'About how long did it take to get to the Moon?', options: ['about three days', 'about three minutes', 'about three years'], answer: 0, explain: 'Like a three-day road trip!' },
+        { type: 'mcq', q: 'Which state did Apollo 11 blast off from?', options: ['Florida', 'Alaska', 'Hawaii'], answer: 0 },
+        { type: 'mcq', q: 'Which astronaut stayed behind, flying around the Moon?', options: ['Michael Collins', 'Neil Armstrong', 'Buzz Aldrin'], answer: 0 },
+        { type: 'mcq', q: 'What was the name of the little spacecraft that landed on the Moon?', options: ['the Eagle', 'the Rocket', 'the Moonbug'], answer: 0 },
+        { type: 'mcq', q: 'What did the astronauts carry on their backs?', options: ['oxygen to breathe', 'their lunch', 'a parachute'], answer: 0 },
+        { type: 'mcq', q: 'What did Buzz Aldrin use to fix the broken switch?', options: ['a pen', 'a spoon', 'a moon rock'], answer: 0 },
+        { type: 'mcq', q: 'Where did the astronauts land when they came back to Earth?', options: ['in the Pacific Ocean', 'on a beach in Thailand', 'on top of a skyscraper'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'game', title: 'American Diner', short: 'Game 2', minutes: 10,
+      rounds: [
+        {
+          game: 'cook', title: 'American Diner', yum: 'Awesome!',
+          intro: 'Open your own American diner! Follow the recipe card: **drag** the ingredients, then pour, slice or squeeze.',
+          say: 'Your diner is open! Here comes your first hungry customer.',
+          pantry: [
+            { add: 'nori', label: 'nori seaweed', emoji: '🟩', why: 'Nori is for Japanese sushi!' },
+            { add: 'mango', label: 'mango', emoji: '🥭', why: 'Mango sticky rice is Thai – not on this menu!' },
+          ],
+          recipes: [
+            {
+              name: 'Hot dog', emoji: HOTDOG_FULL, customer: '👦',
+              fact: 'Americans eat millions of hot dogs at baseball games every year!',
+              steps: [
+                { add: 'bun', label: 'hot dog bun', emoji: BUN },
+                { add: 'sausage', label: 'sausage', emoji: '🌭', makes: HOTDOG },
+                { add: 'ketchup', label: 'ketchup', emoji: KETCHUP },
+                { do: 'squeeze', label: 'Squeeze on the ketchup', makes: HOTDOG_RED },
+                { add: 'mustard', label: 'mustard', emoji: MUSTARD },
+                { do: 'squeeze', label: 'Squeeze on the mustard', makes: HOTDOG_FULL },
+              ],
+            },
+            {
+              name: 'Stack of pancakes', emoji: PANCAKES_FULL, customer: '👧',
+              fact: 'American pancakes are thick and fluffy. People pile them up in a tall stack!',
+              steps: [
+                { add: 'pancake', label: 'pancake', emoji: PANCAKE },
+                { add: 'pancake', label: 'pancake', emoji: PANCAKE },
+                { add: 'pancake', label: 'pancake', emoji: PANCAKE, makes: PANCAKES },
+                { do: 'pour', label: 'Pour on the syrup 🍯', makes: PANCAKES_SYRUP },
+                { add: 'butter', label: 'butter', emoji: '🧈', makes: PANCAKES_FULL },
+              ],
+            },
+            {
+              name: 'Peanut butter and jelly sandwich', emoji: PBJ, customer: '👴',
+              fact: 'A "PB&J" is a lunchbox classic. Remember: in American English, jelly means jam!',
+              steps: [
+                { add: 'bread', label: 'bread', emoji: BREAD },
+                { add: 'peanut', label: 'peanut butter', emoji: '🥜', makes: BREAD_PB },
+                { add: 'jelly', label: 'grape jelly (jam)', emoji: '🫙', makes: BREAD_PBJ },
+                { add: 'bread', label: 'bread', emoji: BREAD },
+                { do: 'slice', label: 'Cut it in half', makes: PBJ },
+              ],
+            },
+          ],
+        },
+        {
+          game: 'match', title: 'Say it the American way',
+          intro: 'People in the USA speak English – but some words are different! Match each American word to the word you would say.',
+          say: 'Tap an American word, then tap the word we use.',
+          pairs: [
+            { a: 'cookie', b: '🍪 biscuit' },
+            { a: 'fries', b: '🍟 chips' },
+            { a: 'candy', b: '🍬 sweets' },
+            { a: 'soccer', b: '⚽ football' },
+            { a: 'trash', b: '🗑️ rubbish' },
+            { a: 'vacation', b: '🏖️ holiday' },
+          ],
+        },
+        {
+          game: 'crossword', title: 'USA Crossword',
+          intro: 'Solve the crossword! Tap a clue, then type the answer with the letter keys.',
+          say: 'Crossword time! Stuck? Press 💡 Hint for a free letter.',
+          entries: [
+            { answer: 'MOON', clue: 'Neil Armstrong was the first person to walk on it' },
+            { answer: 'CANADA', clue: 'The USA\'s neighbour to the north' },
+            { answer: 'EAGLE', clue: 'The bald ____ is the national bird of the USA' },
+            { answer: 'STATES', clue: 'The USA is split into 50 of these' },
+            { answer: 'PANCAKES', clue: 'Fluffy breakfast stack, served with syrup' },
+            { answer: 'BISON', clue: 'The USA\'s huge, shaggy national animal' },
+            { answer: 'ROCKET', clue: 'It blasts astronauts into space' },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Space Studio', short: 'Game 3', icon: '🚀', minutes: 9,
+      rounds: [
+        {
+          game: 'pixelcopy', title: 'USA Art Studio',
+          intro: 'Pick a picture to paint! Tap **✅ I\'m finished!** when you are happy – you get a score, and you can keep fixing it for 100%.',
+          say: 'Will you paint a rocket, the flag, or the Statue of Liberty?',
+          pickTitle: '🎨 What will you paint?',
+          choices: [
+            Object.assign({
+              label: 'Space rocket', level: 1, mirror: true,
+              say: 'The 🪞 Mirror is ON – paint one half and the other half copies you!',
+              tips: ['Paint the **red** nose cone at the top.', 'Use **🪣 Fill** for the big **white** body.', 'Add a round **blue** window.', 'Finish with **red** fins and **orange** and **yellow** flames!'],
+              done: '3… 2… 1… BLAST OFF! What a rocket!',
+            }, ROCKET),
+            {
+              label: 'Stars and Stripes', level: 2, target: DRAW_FLAG, colors: FLAG_PAL, names: { '#d32f2f': 'red', [W]: 'white', '#1f3c88': 'blue' },
+              say: 'Red and white stripes, then a blue corner full of white stars!',
+              tips: ['Paint the stripes: **red**, **white**, **red**, **white**… starting with red at the top.', 'Paint the top-left corner **blue**.', 'Dot the **white** stars into the blue corner.', 'The real flag has 13 stripes and 50 stars!'],
+              done: 'The Stars and Stripes – the flag of the USA!',
+            },
+            Object.assign({
+              label: 'Statue of Liberty', level: 3,
+              say: 'Start with her torch, then her spiky crown and green robe!',
+              tips: ['Paint the **yellow** and **orange** flame at the top.', 'Her arm, crown and robe are **green**.', 'Use **dark green** for her eyes and the book she holds.', 'Finish with the **stone** base at the bottom.'],
+              done: 'Lady Liberty is lighting the way! Beautiful!',
+            }, LIBERTY),
+          ],
+        },
+        {
+          game: 'invaders', title: 'Moon Mission',
+          intro: 'Read each mission at the top of the screen, then zap only the right space rocks!',
+          say: 'Tap above a target to fly there and zap!',
+          waves: [
+            {
+              prompt: 'Zap the USA\'s two NEIGHBOURS!',
+              items: [
+                { label: 'Canada', ok: true }, { label: 'Mexico', ok: true },
+                { label: 'Japan', ok: false, why: 'Japan is across the Pacific Ocean, in Asia.' }, { label: 'England', ok: false, why: 'England is across the Atlantic Ocean, in Europe.' }, { label: 'Thailand', ok: false, why: 'Thailand is on the other side of the world!' }, { label: 'Brazil', ok: false, why: 'Brazil is far away in South America – it doesn\'t touch the USA.' },
+              ],
+            },
+            {
+              prompt: 'Zap the things that come from the USA!',
+              items: [
+                { label: 'Mickey Mouse', ok: true }, { label: 'basketball', ok: true }, { label: 'Grand Canyon', ok: true }, { label: 'Statue of Liberty', ok: true },
+                { label: 'Peppa Pig', ok: false, why: 'Peppa Pig was made in England.' }, { label: 'Songkran', ok: false, why: 'Songkran is the Thai New Year!' }, { label: 'Anpanman', ok: false, why: 'Anpanman comes from Japan.' },
+              ],
+            },
+            {
+              prompt: 'Zap the AMERICAN words!',
+              items: [
+                { label: 'cookie', ok: true }, { label: 'fries', ok: true }, { label: 'vacation', ok: true }, { label: 'candy', ok: true },
+                { label: 'biscuit', ok: false, why: 'Biscuit is what we say. Americans say cookie.' }, { label: 'holiday', ok: false, why: 'Americans say vacation.' }, { label: 'sweets', ok: false, why: 'Americans say candy.' },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
+      say: 'Astronaut training starts NOW!',
+      wiggle: {
+        title: '🚀 Astronaut Training!',
+        seconds: 60,
+        moves: [
+          '🚀 Countdown! Crouch down low… 3… 2… 1… BLAST OFF – jump as high as you can!',
+          '🌕 Moon walk! Take big, slow, bouncy steps – there\'s hardly any gravity!',
+          '🏀 Slam dunk! Dribble the ball, then leap up and dunk it!',
+          '🦅 Be a bald eagle! Stretch your wings wide and soar around the room.',
+          '🗽 Be the Statue of Liberty! Hold your torch up high and stand very still.',
+          '🎆 4th of July fireworks! Crouch down, then burst up with your arms out – BOOM!',
+        ],
+      },
+      tryit: {
+        title: '🎈 Try it at home: Balloon Rocket',
+        intro: 'Rockets push hot gas DOWN so they shoot UP. A balloon works the same way! With a grown-up, thread a long string through a straw and tie it tight across a room. Tape a balloon to the straw.',
+        steps: [
+          'Before you test, tap the first box for each one: do you THINK it will reach the end of the string?',
+          'Blow up the balloon, pinch the end, tape it to the straw – then let go!',
+          'Tap the second box: did it REACH the end?',
+          'Which balloon flew furthest? Why do you think so?',
+        ],
+        table: {
+          cols: ['I think it reaches the end…', 'It reached the end…'],
+          items: ['🎈 one small puff of air', '🎈 half-full balloon', '🎈 big, full balloon'],
+        },
+        tip: 'Tap once for ✅ and twice for ❌. More air pushing out of the back = more push forwards – just like a real rocket!',
+      },
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: Bigfoot', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      say: 'Oh no! BIGFOOT has stomped out of the forest and swiped the Statue of Liberty\'s torch! Every right answer is a hit. Get it back, {name}!',
+      boss: {
+        name: 'Bigfoot', sprite: BIGFOOT, attack: ['🌲', '🪨', '🍂'], spin: true,
+        lines: {
+          intro: 'STOMP! STOMP! I\'m BIGFOOT! Nobody ever gets a clear photo of me – and now I\'ve swiped Lady Liberty\'s torch!',
+          hurt: ['OUCH! Right on my big toe!', 'Hey! I\'m meant to be hard to find!', 'Ow! That ruffled my fur!', 'Yikes! You\'ve got big brains!'],
+          taunt: ['Wrong! Your answer is as blurry as my photos!', 'Ha! You put your foot in it!', 'Missed! I\'m hiding behind a tree!', 'Nope! Back to the woods with you!'],
+          angry: 'GRRR! Now I\'m going to put my BIG foot DOWN!',
+          dodge: 'FOREST STORM! Dodge the trees and rocks!',
+          miss: 'Not one hit?! You\'re faster than a bald eagle!',
+          last: 'My feet… are… SO tired…',
+          defeat: 'Okay, okay… the torch goes back to Lady Liberty…',
+          win: 'Ha! The torch is mine! Come back when you know your Grand Canyon from your Golden Gate!',
+          stunned: 'I can see stars… and stripes…',
+          beg: ['Please don\'t take my photo – I\'m SHY!', 'I only wanted a night light for the forest!', 'I\'ll tidy up all my giant footprints, I promise!'],
+        },
+      },
+      bonus: {
+        title: '⭐ Bonus quest (for a grown-up to help with)',
+        text: 'Want more? Watch Twinkl\'s "Fun Facts About the United States for Kids" (4 min) to find out which state has more cows than people!',
+        url: 'https://www.youtube.com/watch?v=FWCmxZdgG70',
+        button: 'Watch the bonus video ▶',
+      },
+      questions: [
+        { type: 'mcq', q: 'You fly from the USA to Thailand without stopping. Which ocean do you cross?', options: ['the Pacific Ocean', 'the Indian Ocean', 'no ocean at all'], answer: 0 },
+        { type: 'mcq', q: 'Bigfoot says, "The USA is in Europe, next to England!" What could you tell him?', options: ['No – the USA is in North America', 'Yes, that\'s right', 'No – the USA is in Asia'], answer: 0 },
+        { type: 'gap', q: 'The capital city of the USA is ___.', options: ['Washington, D.C.', 'New York', 'London'], answer: 0 },
+        { type: 'mcq', q: 'You walk south from the USA and cross the border. Where are you?', options: ['Mexico', 'Canada', 'Alaska'], answer: 0 },
+        { type: 'mcq', q: 'You wake up in Bangkok and the sun is rising. What are children in New York doing?', options: ['Going to bed – it is evening there', 'Waking up too', 'Eating lunch at school'], answer: 0, hint: 'New York is on the other side of the world.' },
+        { type: 'order', q: 'Put the flights from home in order, from SHORTEST to LONGEST.', items: ['🇰🇭 to Cambodia (about 1 hour)', '🇯🇵 to Japan (about 6 hours)', '🇺🇸 to the USA (about 17 hours)'], hint: 'A neighbour is closest. The USA is on the other side of the world.' },
+        { type: 'mcq', q: 'Which state is made up of islands in the Pacific Ocean?', options: ['Hawaii', 'Alaska', 'Texas'], answer: 0 },
+        { type: 'mcq', q: 'Why is the Statue of Liberty green?', options: ['Her copper slowly changed colour in the rain and sea air', 'She was painted green', 'She is covered in grass'], answer: 0 },
+        { type: 'tf', q: 'The footprints from the first Moon landing have already been washed away by rain.', answer: false, explain: 'There is no rain or wind on the Moon, so the footprints are still there!' },
+        { type: 'mcq', q: 'An American boy asks for "fries and a cookie". What does he want?', options: ['chips and a biscuit', 'crisps and a cake', 'rice and a sweet'], answer: 0 },
+        { type: 'mcq', q: 'Which flag belongs to the USA?', options: ['red and white stripes with stars on blue', 'a red circle on white', 'a red cross on white'], answer: 0, hint: 'The red circle is Japan and the red cross is England!' },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>

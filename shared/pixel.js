@@ -96,6 +96,25 @@
       '..kkk..kkk..',
     ], { k: K, l: '#d9dde3', c: '#2ee6d6', g: '#8e9aa8', y: '#ffcc33', Y: '#e53935', p: '#8e24aa' }),
 
+    boltUSA: svg([ // the Statue of Liberty: a spiky green crown and a green robe
+      '.g..g..g..g.',
+      '.gg.gggg.gg.',
+      '..gggggggg..',
+      '..gGgGGgGg..',
+      '.kllllllllk.',
+      '.klccllcclk.',
+      '.klccllcclk.',
+      '.kllkkkkllk.',
+      '.kllllllllk.',
+      '..kkkkkkkk..',
+      '.kkggggggkk.',
+      'kgkgggGggkgk',
+      'kgkggGgggkgk',
+      '..kggggggk..',
+      '..kgk..kgk..',
+      '..kkk..kkk..',
+    ], { k: K, l: '#d9dde3', c: '#2ee6d6', g: '#4fb39a', G: '#2e7d6b' }),
+
     magnet: svg([
       'kkkk....kkkk',
       'kwwk....kwwk',
