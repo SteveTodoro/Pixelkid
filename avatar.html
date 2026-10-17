@@ -27,8 +27,9 @@
         <div class="panel-inner wd-left">
           <div class="wd-stage"><img id="preview" alt="Your avatar"></div>
           <div class="wd-name" id="who"></div>
+          <div class="xp-level wd-level" id="lvl"></div>
           <div id="action" class="wd-action"></div>
-          <p class="wd-earn">Earn more 💎 gems by playing lessons – every right answer counts!</p>
+          <p class="wd-earn">Earn more 💎 gems by playing lessons – every right answer counts! Gems also level you up, and new levels unlock secret costumes, pets and scenes.</p>
         </div>
         <div class="wd-right">
           <div class="wd-tabs" id="tabs"></div>
@@ -77,6 +78,8 @@
     A.applyScene(look.scene); // previewing a scene changes the whole page
     $('bal').textContent = A.wallet().balance;
     $('who').textContent = name ? `${name}'s hero` : 'Your hero';
+    const p = A.levelInfo();
+    $('lvl').textContent = `LEVEL ${p.level} · ${p.title.toUpperCase()}`;
   }
   function drawTabs() {
     const tabs = $('tabs'); tabs.replaceChildren();
@@ -90,7 +93,7 @@
   function status(it) {
     if (isWearing(it)) return ['✔ Wearing', 'wearing'];
     if (A.owns(it, saved)) return ['Owned', 'owned'];
-    if (it.unlock) return ['🔒 Secret', 'locked'];
+    if (it.unlock) return [A.levelOfUnlock(it.unlock) ? '🔒 Level ' + A.levelOfUnlock(it.unlock) : '🔒 Secret', 'locked'];
     return ['💎 ' + priceOf(it), A.wallet().balance >= priceOf(it) ? 'buy' : 'pricey'];
   }
   function drawGrid() {
@@ -120,7 +123,7 @@
     if (A.owns(it, saved)) {
       btn('👕 Wear it!', 'green', () => { A.wear(it.id); saved = A.load(); sfx.buy(); toast('LOOKING GOOD!', `You put on: ${it.name}`, '😎'); render(); });
     } else if (it.unlock) {
-      msg('🔒 ' + (A.UNLOCK_TEXT[it.unlock] || 'Keep playing to unlock!'));
+      msg('🔒 ' + A.unlockText(it.unlock));
     } else if (A.wallet().balance >= priceOf(it)) {
       btn(`🛒 Buy for 💎 ${priceOf(it)}`, 'gold', () => {
         if (!A.buy(it.id)) return;

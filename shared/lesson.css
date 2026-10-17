@@ -1,5 +1,7 @@
 /* Year 3 Lesson Library — blocky video-game theme */
 @font-face { font-family: "Pixelify Sans"; src: url("fonts/pixelify-sans.woff2") format("woff2"); font-weight: 400 700; font-display: swap; }
+/* Pixelify's 2 and 5 look like 8 and S at small sizes, so the pixel font borrows Lexend's digits (everywhere it is used, canvas and SVG too) */
+@font-face { font-family: "Pixelify Sans"; src: url("fonts/lexend.woff2") format("woff2"); font-weight: 400 700; font-display: swap; unicode-range: U+0030-0039; }
 @font-face { font-family: "Lexend"; src: url("fonts/lexend.woff2") format("woff2"); font-weight: 300 700; font-display: swap; }
 
 :root {
@@ -1022,3 +1024,4 @@ a { color: var(--brand-dark); }
 .px-stars { font-size: 1.8rem; color: #e0a800; letter-spacing: 4px; }
 .px-result p { margin: 6px 0 0; }
 .px-result-tip { font-size: .95rem; color: #555; }
+.wd-level { margin: 0 0 8px; }

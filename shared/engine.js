@@ -208,11 +208,15 @@
   document.body.append(topbar, path, main, overlay, certOverlay, toasts, cvs);
 
   // ---------- gems, XP levels, achievements ----------
+  // The level belongs to the player, not the lesson: it comes from every gem ever earned (shared/avatar.js),
+  // so it carries on from lesson to lesson. Without avatar.js it falls back to this lesson's gems.
   const levelOf = n => Math.floor(n / PER_LEVEL) + 1;
+  const player = () => AV ? AV.levelInfo() : { level: levelOf(state.stars), into: state.stars % PER_LEVEL, need: PER_LEVEL, title: '' };
   function updateStars(bump) {
+    const p = player();
     starCount.textContent = state.stars;
-    xpLevel.textContent = 'LEVEL ' + levelOf(state.stars);
-    xpFill.style.width = (state.stars % PER_LEVEL) / PER_LEVEL * 100 + '%';
+    xpLevel.textContent = 'LEVEL ' + p.level + (p.title ? ' · ' + p.title.toUpperCase() : '');
+    xpFill.style.width = p.into / p.need * 100 + '%';
     if (bump) { starBox.classList.remove('bump'); void starBox.offsetWidth; starBox.classList.add('bump'); }
   }
   updateStars();
@@ -260,7 +264,7 @@
   // Each gem key can only be earned once, so replaying never inflates the total.
   function award(key, fromEl) {
     if (state.awarded[key]) return false;
-    const before = levelOf(state.stars);
+    const before = player().level;
     state.awarded[key] = true; state.stars++;
     if (AV) {
       const total = AV.earn(1); // add to the wallet first, so a brand-new wallet never counts this gem twice
@@ -269,11 +273,15 @@
     save(); saveRecord({});
     flyStar(fromEl); sfx.star();
     setTimeout(() => updateStars(true), 650);
-    const lvl = levelOf(state.stars);
+    const lvl = player().level;
     if (lvl > before) setTimeout(() => {
       sfx.levelup(); confetti(60);
       toast('LEVEL UP!', `You reached level ${lvl}!`, '⬆️', 'level');
       if (lvl >= 5) achieve('level5');
+      if (AV) {
+        AV.newRewards(lvl).forEach((r, k) => setTimeout(() => { sfx.achieve(); toast('NEW REWARD UNLOCKED!', r.label + ' – wear it in the Wardrobe', '🎁', 'level'); }, 1200 + k * 900));
+        AV.markSeen(lvl);
+      }
     }, 700);
     return true;
   }
@@ -5134,6 +5142,10 @@
       const total = qs.length, pct = score / total;
       const livesLeft = boss ? boss.lives() : 0;
       complete(i);
+      // first finish of a lesson: 3 bonus gems towards the next level
+      let bonus = 0;
+      for (let k = 0; k < 3; k++) if (award('finish:' + k, area)) bonus++;
+      if (bonus) setTimeout(() => toast('QUEST BONUS!', `+${bonus} ${CUR.icon} for finishing the lesson`, '🎁'), 1000);
       const prev = (store.get(RKEY, {})[L.id] || {}).best || 0;
       saveRecord({ best: Math.max(prev, score), total, done: true });
       if (s.boss) achieve('boss');
@@ -5160,7 +5172,7 @@
         !s.boss && h('div', { class: 'trophy' }, pct >= 0.75 ? '🏆' : '🎖️'),
         h('div', { class: 'score' }, `${score} / ${total}`),
         h('p', { class: 'lead' }, msg),
-        h('p', { class: 'stars-earned' }, `You collected ${state.stars} ${CUR.icon} and reached LEVEL ${levelOf(state.stars)}!`),
+        h('p', { class: 'stars-earned' }, `You collected ${state.stars} ${CUR.icon} in this lesson. You are LEVEL ${player().level}${player().title ? ' – ' + player().title : ''}!`),
         h('div', { class: 'btn-row' },
           h('button', { class: 'btn gold big', type: 'button', onclick() { sfx.good(); showCert(score, total); } }, '📜 Get my certificate'),
           h('button', { class: 'btn ghost', type: 'button', onclick: begin }, s.boss ? '↺ Rematch' : '↺ Try again'),
@@ -5189,7 +5201,7 @@
         h('div', { class: 'cert-name' }, settings.name || 'A Super Learner'),
         h('p', null, 'for completing the lesson'),
         h('div', { class: 'cert-lesson' }, (L.emoji || '') + ' ' + L.title),
-        h('p', { class: 'cert-score' }, `Quiz: ${score} / ${total}   •   ${CUR.icon} ${state.stars} ${CUR.name}   •   Level ${levelOf(state.stars)}`),
+        h('p', { class: 'cert-score' }, `Quiz: ${score} / ${total}   •   ${CUR.icon} ${state.stars} ${CUR.name}   •   Level ${player().level}`),
         h('div', { class: 'cert-foot' },
           h('div', null, h('div', { class: 'sig' }, M.name), h('div', { class: 'line' }, 'Teacher')),
           h('div', null, h('div', { class: 'sig' }, date), h('div', { class: 'line' }, 'Date')))),
