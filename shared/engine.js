@@ -2,6 +2,7 @@
  * Renders an interactive lesson from the data in window.LESSON.
  * Stage types: welcome, review, read, video, game, break, quiz (optionally a boss battle).
  * Brain breaks also get mini games (boss tic-tac-toe, steady hand, maze, hangman) unless the stage sets games: false.
+ * A quick 'Games' break is added after the first game stage automatically (L.midBreak: false turns it off).
  * Game types: sort, match, label, order, truefalse, questions, wordsearch, crossword, trainai, pixelcopy, pixelstudio, poster,
  *   spelltest (spelling test: listen / look-cover-write-check / fix the mistake),
  *   and arcade games: invaders, platformer, blocks.
@@ -56,7 +57,30 @@
   };
   const PKEY = 'y3:progress:' + L.id, RKEY = 'y3:records', SKEY = 'y3:settings';
   const fresh = () => ({ stage: 0, maxStage: 0, stars: 0, awarded: {}, complete: {}, ach: {} });
+  // A quick brain break (the pick-a-game menu) goes in after the first game stage, so the games aren't only near the end.
+  // A lesson can turn it off with midBreak: false, or pass an object to change its title / say / games.
+  const MID = (() => {
+    if (L.midBreak === false) return -1;
+    const firstGame = L.stages.findIndex(st => st.type === 'game');
+    const firstBreak = L.stages.findIndex(st => st.type === 'break');
+    if (firstGame < 0 || firstGame >= L.stages.length - 2 || (firstBreak >= 0 && firstBreak <= firstGame + 1)) return -1;
+    L.stages.splice(firstGame + 1, 0, Object.assign({
+      type: 'break', title: 'Quick Break: Brain Games', short: 'Games', icon: '🕹️', minutes: 3,
+      say: 'Quick break! Pick a brain game – win it to earn a 💎. Then back to the adventure!',
+    }, typeof L.midBreak === 'object' ? L.midBreak : null));
+    return firstGame + 1;
+  })();
   let state = Object.assign(fresh(), store.get(PKEY, {}));
+  // progress saved before the quick break existed: move stage numbers after it up by one
+  if (MID >= 0 && !state.mid) {
+    const shift = n => (n >= MID ? n + 1 : n);
+    if (store.get(PKEY, null)) {
+      state.complete = Object.fromEntries(Object.entries(state.complete).map(([k, v]) => [shift(+k), v]));
+      state.stage = shift(state.stage); state.maxStage = shift(state.maxStage);
+      state.mid = 1; store.set(PKEY, state);
+    }
+    state.mid = 1;
+  }
   state.stage = Math.min(state.stage, L.stages.length - 1);
   const settings = Object.assign({ muted: false, name: '' }, store.get(SKEY, {}));
   const save = () => store.set(PKEY, state);
@@ -1378,8 +1402,40 @@
   }
   const GKEY = 'y3:gallery';
 
-  // Copy the picture: paint the grid until it matches the target sprite.
+  // Copy the picture. The live meter shows the match; tapping "I'm finished!" scores it as a percentage and unlocks the
+  // next round, so a perfect copy is a bonus, not a wall. A perfect copy celebrates on its own.
+  // r.choices: [{ label, level (1–3), target, colors, names, tips, intro, say, mirror, done }] lets the player pick what to draw.
   GAMES.pixelcopy = function (r, key, done) {
+    if (!r.choices) return h('div', { class: 'game pixelcopy' }, pixelCopy(r, key, done));
+    let finished = false;
+    const finish = () => { if (!finished) { finished = true; done(); } };
+    const box = h('div', { class: 'game pixelcopy' });
+    const stars = n => '★'.repeat(n) + '☆'.repeat(3 - n);
+    const levelOfPic = c => c.level || (c.target.join('').replace(/\./g, '').length > 140 ? 3 : new Set(c.target.join('').replace(/\./g, '')).size > 3 ? 2 : 1);
+    function menu() {
+      say(r.pick || 'Pick a picture to draw! The more stars, the trickier it is.');
+      put(box, h('h3', { class: 'px-pick-title' }, r.pickTitle || '🎨 What would you like to draw?'),
+        h('div', { class: 'px-choices' }, r.choices.map((c, ci) => {
+          const lv = levelOfPic(c);
+          return h('button', { class: 'px-choice', type: 'button', onclick() { sfx.tap(); play(ci); } },
+            pic(Pixel.svg(c.target, c.colors), 'px-choice-pic'),
+            h('span', { class: 'px-choice-name' }, c.label),
+            h('span', { class: 'px-choice-level', 'aria-label': `difficulty ${lv} of 3` }, stars(lv), ' ', ['', 'Easy', 'Medium', 'Tricky'][lv]),
+            state.awarded[`${key}:${ci}:perfect`] ? h('span', { class: 'px-choice-done' }, '💯') : state.awarded[`${key}:${ci}:done`] && h('span', { class: 'px-choice-done' }, '✔'));
+        })));
+    }
+    function play(ci) {
+      const c = Object.assign({}, r, r.choices[ci]);
+      delete c.choices;
+      if (c.say) say(c.say);
+      put(box, h('div', { class: 'btn-row px-back' }, h('button', { class: 'btn', type: 'button', onclick() { sfx.tap(); menu(); } }, '↩ Pick a different picture')),
+        c.intro && h('p', { class: 'instr', html: fmt(c.intro) }),
+        pixelCopy(c, `${key}:${ci}`, finish));
+    }
+    menu();
+    return box;
+  };
+  function pixelCopy(r, key, done) {
     const rowsT = r.target, w = Math.max(...rowsT.map(x => x.length)), rows = rowsT.length;
     const want = [];
     rowsT.forEach(row => { for (let x = 0; x < w; x++) want.push(r.colors[row[x]] || null); });
@@ -1387,24 +1443,63 @@
     const names = r.names || {};
     const palette = used.map(c => [c, names[c] || 'colour']);
     const meter = h('div', { class: 'px-meter' });
-    let finished = false;
+    const result = h('div', { class: 'px-result', hidden: true });
+    let submitted = false, perfect = false;
     const wrongIdx = () => want.map((c, i) => (ed.cells[i] || null) === c ? -1 : i).filter(i => i >= 0);
+    // accuracy: of all the squares that are painted in the picture OR on your grid, how many are right?
+    const accuracy = () => {
+      let both = 0, right = 0;
+      want.forEach((c, i) => { const mine = ed.cells[i] || null; if (c || mine) { both++; if (mine === c) right++; } });
+      return both ? Math.round(right / both * 100) : 0;
+    };
+    const showMeter = () => {
+      const pct = accuracy();
+      put(meter, h('div', { class: 'px-meter-bar' }, h('div', { style: `width:${pct}%` })), `Match: ${pct}%`);
+      return pct;
+    };
+    const celebratePerfect = () => {
+      if (perfect) return;
+      perfect = true; sfx.win(); confetti(80);
+      award(key + ':done', meter); award(key + ':perfect', meter);
+      showResult(100);
+      say(r.done || 'PERFECT COPY! You are a real pixel artist!');
+      if (!submitted) { submitted = true; done(); }
+    };
+    function showResult(pct) {
+      const [stars, msg] = pct === 100 ? [3, 'PERFECT! Every square is right!']
+        : pct >= 85 ? [3, 'Amazing! Nearly perfect.'] : pct >= 65 ? [2, 'Great job – it really looks like it!']
+        : pct >= 40 ? [1, 'Good start! Keep painting to make it match.'] : [0, 'Keep going – paint more of the picture!'];
+      result.hidden = false;
+      put(result, h('div', { class: 'px-score' }, `${pct}%`),
+        h('div', { class: 'px-stars' }, '★'.repeat(stars) + '☆'.repeat(3 - stars)),
+        h('p', null, msg),
+        pct < 100 && h('p', { class: 'px-result-tip' }, 'You can keep fixing it to reach 100% – or carry on to the next round. Your choice!'));
+    }
     const check = () => {
-      const wrong = wrongIdx();
-      const ok = want.length - wrong.length;
-      put(meter, h('div', { class: 'px-meter-bar' }, h('div', { style: `width:${ok / want.length * 100}%` })), `${ok} of ${want.length} squares match`);
-      if (!wrong.length && !finished) { finished = true; sfx.good(); award(key + ':done', meter); confetti(60); say(r.done || 'PERFECT COPY! You are a real pixel artist!'); done(); }
+      const pct = showMeter();
+      if (pct === 100) celebratePerfect();
+      else if (!result.hidden && submitted) result.classList.add('stale');
     };
     const ed = pixelEditor({ w, h: rows, palette, mirror: !!r.mirror, mirrorToggle: true, onStroke: check });
     const hintBtn = h('button', { class: 'btn gold', type: 'button', onclick() { const wr = wrongIdx(); ed.flash(wr); sfx.tap(); const empties = wr.filter(i => !ed.cells[i] || !want[i]).length;
       say(!wr.length ? 'Everything matches!' : `${wr.length} square${wr.length > 1 ? 's need' : ' needs'} fixing – look for the flashing red!` + (empties ? ' Blue-checked squares are empty – they are not white!' : '')); } }, '🔍 Show mistakes');
-    check();
-    return h('div', { class: 'game pixelcopy' },
+    const submitBtn = h('button', { class: 'btn', type: 'button', onclick() {
+      const pct = showMeter();
+      if (!ed.cells.some(Boolean)) { sfx.bad(); say('Paint something first!'); return; }
+      result.classList.remove('stale');
+      if (pct === 100) { celebratePerfect(); return; }
+      showResult(pct);
+      if (pct >= 40) { sfx.good(); award(key + ':done', submitBtn); } else sfx.tap();
+      say(pct >= 85 ? `${pct}%! Brilliant copying!` : pct >= 40 ? `${pct}% – nice work! Fix the rest for 100%, or move on.` : `${pct}% so far. Want to keep going? You can still move on if you like.`);
+      if (!submitted) { submitted = true; done(); }
+    } }, "✅ I'm finished!");
+    showMeter();
+    return h('div', { class: 'px-copy' },
       h('div', { class: 'px-wrap' },
         h('div', { class: 'panel-inner px-target' }, h('h3', null, '🎯 Copy this'), pic(Pixel.svg(rowsT, r.colors), 'px-target-pic'),
           r.tips && h('ul', { class: 'px-tips' }, r.tips.map(t => h('li', { html: fmt(t, false) })))),
-        h('div', null, ed.el, meter, h('div', { class: 'btn-row' }, hintBtn))));
-  };
+        h('div', null, ed.el, meter, h('div', { class: 'btn-row' }, submitBtn, hintBtn), result)));
+  }
 
   // Free studio: draw anything; save to the gallery, download as a picture.
   GAMES.pixelstudio = function (r, key, done) {

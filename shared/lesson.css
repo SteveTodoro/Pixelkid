@@ -1002,3 +1002,23 @@ a { color: var(--brand-dark); }
 /* ---------- pixel icons (shared/pixel-icons.js swaps emoji for these) ---------- */
 .pxi { display: inline-block; width: 1.15em; height: 1.15em; vertical-align: -0.2em; line-height: 0; }
 .pxi svg { width: 100%; height: 100%; display: block; image-rendering: pixelated; }
+
+/* ---------- pixel copy: pick a picture + score card ---------- */
+.px-pick-title { text-align: center; color: var(--brand-dark); font-size: 1.3rem; margin: 0 0 12px; }
+.px-choices { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+.px-choice { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 10px; cursor: pointer;
+  background: #fff8e6; border: 3px solid #000; box-shadow: var(--bevel), 0 4px 0 #000; font: inherit; }
+.px-choice:hover, .px-choice:focus-visible { background: #fff1c4; transform: translateY(-2px); }
+.px-choice-pic { width: 100%; max-width: 120px; padding: 6px; background: #cddcec; border: 2px solid #000; }
+.px-choice-pic svg { display: block; width: 100%; height: auto; }
+.px-choice-name { font-family: var(--pixel); font-weight: 700; font-size: 1.1rem; text-align: center; }
+.px-choice-level { font-family: var(--pixel); font-size: .95rem; color: #b36b00; }
+.px-choice-done { position: absolute; top: 6px; right: 8px; font-size: 1.3rem; }
+.px-back { justify-content: flex-start; margin-bottom: 6px; }
+.px-result { margin: 12px auto 0; max-width: 560px; padding: 12px; text-align: center; background: #fff8e6; border: 3px solid #000; box-shadow: var(--bevel); }
+.px-result.stale { opacity: .6; }
+.px-result.stale::after { content: "You changed it – tap I'm finished! again for a new score."; display: block; font-size: .9rem; margin-top: 4px; }
+.px-score { font-family: var(--pixel); font-weight: 700; font-size: 2.6rem; color: var(--brand-dark); line-height: 1; }
+.px-stars { font-size: 1.8rem; color: #e0a800; letter-spacing: 4px; }
+.px-result p { margin: 6px 0 0; }
+.px-result-tip { font-size: .95rem; color: #555; }

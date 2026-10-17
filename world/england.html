@@ -18,7 +18,7 @@
 const K = '#1b1b1b', W = '#ffffff';
 const grid = (w, hh, f) => Array.from({ length: hh }, (_, y) => Array.from({ length: w }, (_, x) => f(x, y)).join(''));
 
-// Flags, built layer by layer (for the Flag Factory)
+// The Union Jack, built layer by layer (stage 3 = the full flag)
 const FW = 31, FH = 19;
 const diag = (x, y) => Math.min(Math.abs(y / (FH - 1) - x / (FW - 1)), Math.abs(y / (FH - 1) - (1 - x / (FW - 1))));
 const crossD = (x, y) => Math.min(Math.abs(x - 15), Math.abs(y - 9));
@@ -31,20 +31,31 @@ function ukFlag(stage) { // 0 blue cloth · 1 + white X (Scotland) · 2 + red X 
     return 'b';
   }), { b: '#1f3c88', w: W, r: '#d32f2f' });
 }
-const FLAG_WHITE = Pixel.svg(grid(FW, FH, () => 'w'), { w: W });
-const FLAG_ENGLAND = Pixel.svg(grid(FW, FH, (x, y) => (crossD(x, y) <= 2 ? 'r' : 'w')), { w: W, r: '#d32f2f' });
-const FLAG_WALES_BG = Pixel.svg(grid(FW, FH, (x, y) => (y < 9 ? 'w' : 'g')), { w: W, g: '#2e9e3e' });
-const DRAGON_SMALL = [
-  '......................',
-  '.........rr...........',
-  '........rrrr..r.......',
-  '..r....rrrrrrrr.......',
-  '.rrr..rrrrrrr.........',
-  '..rrrrrrrrrr..........',
-  '....rrrrrrrrr.........',
-  '....rr...rr.rr........',
+// Flags to paint in the Flag Studio – small enough to paint square by square
+const sDiag = (x, y, w, hh) => Math.min(Math.abs(y / (hh - 1) - x / (w - 1)), Math.abs(y / (hh - 1) - (1 - x / (w - 1))));
+const FLAG_COLORS = { r: '#d32f2f', w: W, b: '#1f3c88', g: '#2e9e3e' };
+const FLAG_NAMES = { '#d32f2f': 'red', [W]: 'white', '#1f3c88': 'blue', '#2e9e3e': 'green' };
+const DRAW_ENGLAND = grid(15, 9, (x, y) => (Math.abs(x - 7) <= 1 || Math.abs(y - 4) <= 1 ? 'r' : 'w'));
+const DRAW_SCOTLAND = grid(15, 9, (x, y) => (sDiag(x, y, 15, 9) < 0.09 ? 'w' : 'b'));
+const DRAW_UNION = grid(19, 11, (x, y) => {
+  const c = Math.min(Math.abs(x - 9), Math.abs(y - 5));
+  if (c === 0) return 'r';
+  if (c === 1) return 'w';
+  const d = sDiag(x, y, 19, 11);
+  return d < 0.035 ? 'r' : d < 0.1 ? 'w' : 'b';
+});
+const DRAW_WALES = [
+  'wwwwwwwwwwwwwwww',
+  'wwwwwwwwrrwwwwww',
+  'wwrwwwwrrrrwwrww',
+  'wwrrwwrrrrrrrrww',
+  'wwwrrrrrrrrrwwww',
+  'gggrrrrrrrrggggg',
+  'ggggrrrrrrrrgggg',
+  'ggggrrggrrgrrggg',
+  'ggggrgggrggggggg',
+  'gggggggggggggggg',
 ];
-const FLAG_WALES = Pixel.svg(grid(FW, FH, (x, y) => (DRAGON_SMALL[y - 5] && DRAGON_SMALL[y - 5][x - 5] === 'r' ? 'r' : (y < 9 ? 'w' : 'g'))), { w: W, g: '#2e9e3e', r: '#d32f2f' });
 
 // Tea time
 function cup(fill) {
@@ -372,30 +383,34 @@ window.LESSON = {
       type: 'game', title: 'Flags & Afternoon Tea', short: 'Game 2', minutes: 10,
       rounds: [
         {
-          game: 'cook', title: 'Flag Factory', yum: 'Flag-tastic!',
-          intro: 'The UK flag is made by putting flags on top of each other! Follow the plan: **drag** each layer onto the table.',
-          say: 'Welcome to the Flag Factory! Let\'s build some flags.',
-          pantry: [{ add: 'sun', label: 'red sun', emoji: '🔴', why: 'A red sun is on Japan\'s flag, not the UK\'s!' }],
-          recipes: [
+          game: 'pixelcopy', title: 'Flag Studio',
+          intro: 'Pick a flag of the UK and paint it! Tap **✅ I\'m finished!** when you are happy – you get a score, and you can keep fixing it for 100%.',
+          say: 'Which flag will you paint? The Union Jack is the trickiest!',
+          pickTitle: '🎨 Which flag will you paint?',
+          choices: [
             {
-              name: 'Flag of England', emoji: FLAG_ENGLAND, customer: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', order: 'Make the flag of England!',
-              fact: 'The red cross on white is the cross of St George, England\'s patron saint.',
-              steps: [{ add: 'white', label: 'white cloth', emoji: FLAG_WHITE, makes: FLAG_WHITE }, { add: 'cross', label: 'red cross of St George', emoji: '➕', makes: FLAG_ENGLAND }],
+              label: 'England', level: 1, target: DRAW_ENGLAND, colors: FLAG_COLORS, names: FLAG_NAMES,
+              say: 'Fill the whole flag white, then paint the red cross!',
+              tips: ['Use **🪣 Fill** to make the whole flag **white**.', 'Paint the **red** cross: a line across and a line down the middle.', 'The red cross is the cross of **St George**.'],
+              done: 'The cross of St George – England\'s flag!',
             },
             {
-              name: 'Union Jack', emoji: ukFlag(3), customer: '💂', order: 'Make the flag of the whole UK – the Union Jack!',
-              fact: 'The Union Jack mixes the crosses of England, Scotland and Ireland. Wales isn\'t on it – so its dragon flies on its own flag!',
-              steps: [
-                { add: 'blue', label: 'blue cloth', emoji: ukFlag(0), makes: ukFlag(0) },
-                { add: 'saltire', label: 'white X of St Andrew (Scotland)', emoji: '✖️', makes: ukFlag(1) },
-                { add: 'patrick', label: 'red X of St Patrick (Ireland)', emoji: '❌', makes: ukFlag(2) },
-                { add: 'cross', label: 'red cross of St George', emoji: '➕', makes: ukFlag(3) },
-              ],
+              label: 'Scotland', level: 2, target: DRAW_SCOTLAND, colors: FLAG_COLORS, names: FLAG_NAMES,
+              say: 'Fill it blue, then paint a big white X from corner to corner!',
+              tips: ['Use **🪣 Fill** to make the flag **blue**.', 'Paint a **white** X from corner to corner.', 'This X is the cross of **St Andrew**.'],
+              done: 'The Saltire – Scotland\'s flag!',
             },
             {
-              name: 'Flag of Wales', emoji: FLAG_WALES, customer: '🐉', order: 'Make the flag of Wales!',
-              fact: 'The red dragon of Wales is one of the oldest flag pictures in the world.',
-              steps: [{ add: 'whitegreen', label: 'white and green cloth', emoji: FLAG_WALES_BG, makes: FLAG_WALES_BG }, { add: 'dragon', label: 'red dragon', emoji: '🐉', makes: FLAG_WALES }],
+              label: 'Wales', level: 2, target: DRAW_WALES, colors: FLAG_COLORS, names: FLAG_NAMES,
+              say: 'White on top, green on the bottom – then the red dragon!',
+              tips: ['Paint the top half **white** and the bottom half **green**.', 'Add the **red** dragon in the middle.', 'Wales is the only UK country not on the Union Jack!'],
+              done: 'Y Ddraig Goch – the red dragon of Wales!',
+            },
+            {
+              label: 'Union Jack', level: 3, target: DRAW_UNION, colors: FLAG_COLORS, names: FLAG_NAMES,
+              say: 'The Union Jack mixes England, Scotland and Ireland. Blue first, then the white X!',
+              tips: ['Fill the flag **blue**.', 'Paint the **white** X (Scotland), then the thin **red** X (Ireland) inside it.', 'Last, the big **red** cross with a **white** edge (England).'],
+              done: 'THE UNION JACK! Three flags in one – brilliant painting!',
             },
           ],
         },

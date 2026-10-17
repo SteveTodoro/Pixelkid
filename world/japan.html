@@ -41,6 +41,32 @@ const ANPANMAN = {
   ],
 };
 
+// Squirtle (a Pokémon – made in Japan) to paint
+const SQUIRTLE = {
+  colors: { k: K, b: '#5fb8e8', s: '#f3dfa0', n: '#a0522d', w: W },
+  names: { [K]: 'black', '#5fb8e8': 'blue', '#f3dfa0': 'cream', '#a0522d': 'brown (shell)', [W]: 'white' },
+  target: [
+    '....kkkkkkkk....',
+    '...kbbbbbbbbk...',
+    '..kbbbbbbbbbbk..',
+    '..kbwkbbbbkwbk..',
+    '..kbkkbbbbkkbk..',
+    '..kbbbbbbbbbbk..',
+    '...kbbkkkkbbk...',
+    '....kkbbbbkk....',
+    '.kbbknssssnkbbk.',
+    'kbbbknssssnkbbbk',
+    '.kkknssssssnkkk.',
+    '...knssssssnk...',
+    '...knnssssnnk...',
+    '..kbbknnnnkbbk..',
+    '..kbbk....kbbk..',
+    '..kkkk....kkkk..',
+  ],
+};
+// the flag of Japan to paint
+const DRAW_JAPAN_FLAG = Array.from({ length: 10 }, (_, y) => Array.from({ length: 15 }, (_, x) => (Math.hypot(x - 7, y - 4.5) < 3.2 ? 'r' : 'w')).join(''));
+
 // Japan's flag: a red sun on white (drawn as a pixel circle)
 const FLAG = Pixel.svg(Array.from({ length: 14 }, (_, y) => Array.from({ length: 21 }, (_, x) =>
   (x === 0 || y === 0 || x === 20 || y === 13) ? 'k' : (Math.hypot(x - 10, y - 6.5) < 4.3 ? 'r' : 'w')).join('')), { k: K, w: W, r: '#d32f2f' });
@@ -414,13 +440,34 @@ window.LESSON = {
           ],
           gesture: { kind: 'bow', say: 'こんにちは', intro: 'Now say hello the Japanese way – with a bow!', text: '🙇 In Japan, people bow to say hello. Swipe DOWN on your character to bow – twice!', yes: 'A perfect bow! Konnichiwa!' },
         },
-        Object.assign({
-          game: 'pixelcopy', title: 'Draw Anpanman', mirror: true,
-          intro: 'Copy Anpanman! The **🪞 Mirror** is ON – his face is the same on both sides, so you only need to paint one half.',
-          say: 'Draw the dark brown outline first, then use 🪣 Fill for his bread-brown face!',
-          tips: ['Draw the **dark brown outline** first.', 'Use **🪣 Fill** for the bread-brown face.', 'Add the **red** nose and cheeks.', 'Finish with **black** eyes, eyebrows and a smile.'],
-          done: 'ANPANMAN IS HERE! Your pixel hero looks ready to help!',
-        }, ANPANMAN),
+        {
+          game: 'pixelcopy', title: 'Japan Art Studio',
+          intro: 'Pick a picture to paint! Tap **✅ I\'m finished!** when you are happy – you get a score, and you can keep fixing it for 100%.',
+          say: 'Choose your picture! The more stars, the trickier it is.',
+          pickTitle: '🎨 What will you paint?',
+          choices: [
+            {
+              label: 'Flag of Japan', level: 1, target: DRAW_JAPAN_FLAG, colors: { w: W, r: '#d32f2f' }, names: { [W]: 'white', '#d32f2f': 'red' },
+              say: 'Fill it white, then paint the red sun in the middle!',
+              tips: ['Use **🪣 Fill** to make the flag **white**.', 'Paint a round **red** sun in the middle.', 'Japan\'s flag is called **Hinomaru** – "circle of the sun".'],
+              done: 'Hinomaru – the circle of the sun!',
+            },
+            Object.assign({
+              label: 'Anpanman', level: 2, mirror: true,
+              intro: 'Copy Anpanman! The **🪞 Mirror** is ON – his face is the same on both sides, so you only need to paint one half.',
+              say: 'Draw the dark brown outline first, then use 🪣 Fill for his bread-brown face!',
+              tips: ['Draw the **dark brown outline** first.', 'Use **🪣 Fill** for the bread-brown face.', 'Add the **red** nose and cheeks.', 'Finish with **black** eyes, eyebrows and a smile.'],
+              done: 'ANPANMAN IS HERE! Your pixel hero looks ready to help!',
+            }, ANPANMAN),
+            Object.assign({
+              label: 'Squirtle', level: 3, mirror: true,
+              intro: 'Copy Squirtle – a Pokémon from Japan! The **🪞 Mirror** is ON, so paint one half and the other half copies you.',
+              say: 'Outline first, then fill his blue head and arms!',
+              tips: ['Draw the **black outline** first.', 'Use **🪣 Fill** for the **blue** head, arms and feet.', 'Paint his **cream** tummy and **brown** shell edge.', 'Add the **white** shine in his eyes.'],
+              done: 'SQUIRTLE, I CHOOSE YOU! Pokémon were invented in Japan!',
+            }, SQUIRTLE),
+          ],
+        },
         {
           game: 'invaders', title: 'Made in Japan',
           intro: 'Read each mission at the top of the screen, then shoot only the right aliens!',

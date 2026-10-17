@@ -41,6 +41,9 @@ const ELEPHANT = {
   ],
 };
 
+// the Thai flag to paint: red, white, a fat blue stripe, white, red
+const DRAW_THAI_FLAG = ['r', 'r', 'w', 'w', 'b', 'b', 'b', 'b', 'w', 'w', 'r', 'r'].map(c => c.repeat(18));
+
 // Thai kitchen
 const STICKY = Pixel.svg(['..wwwwww..', '.wwwwwwww.', 'wwwwwwwwww', '.bbbbbbbb.'], { w: '#f4f1e8', b: '#c9a76b' });
 const STICKY_COCO = Pixel.svg(['..wwwwww..', '.wcwwcwww.', 'wwwcwwwcww', '.bbbbbbbb.'], { w: '#fffdf4', c: '#f0e2b8', b: '#c9a76b' });
@@ -413,13 +416,27 @@ window.LESSON = {
           ],
           gesture: { kind: 'wai', say: 'สวัสดีครับ', intro: 'Now say hello the Thai way – with a wai!', text: '🙏 Slide the right hand across until your palms press together – a perfect wai! Do it twice.', yes: 'A beautiful wai! Sawasdee krap!' },
         },
-        Object.assign({
-          game: 'pixelcopy', title: 'Draw a Thai elephant', mirror: true,
-          intro: 'Copy the elephant – Thailand\'s national animal! The **🪞 Mirror** is ON, so paint one half and the other half copies you.',
-          say: 'Start with the big dark-grey ears, then the head and trunk!',
-          tips: ['Paint the **dark grey** ears first.', 'Use **🪣 Fill** for the grey head.', 'Add **black** eyes and **white** tusks.', 'Don\'t forget the long trunk!'],
-          done: 'WHAT A BEAUTIFUL ELEPHANT! Chang (elephant) would be proud!',
-        }, ELEPHANT),
+        {
+          game: 'pixelcopy', title: 'Thai Art Studio',
+          intro: 'Pick a picture to paint! Tap **✅ I\'m finished!** when you are happy – you get a score, and you can keep fixing it for 100%.',
+          say: 'Will you paint the Thai flag or a Thai elephant?',
+          pickTitle: '🎨 What will you paint?',
+          choices: [
+            {
+              label: 'Thai flag', level: 1, target: DRAW_THAI_FLAG, colors: { r: '#d32f2f', w: W, b: '#1f3c88' }, names: { '#d32f2f': 'red', [W]: 'white', '#1f3c88': 'blue' },
+              say: 'Five stripes: red, white, a fat blue one, white, red!',
+              tips: ['Paint the top and bottom stripes **red**.', 'Next come two **white** stripes.', 'The fat stripe in the middle is **blue** – it stands for the King.'],
+              done: 'The Thai flag – the Trairanga, or "three colours"!',
+            },
+            Object.assign({
+              label: 'Thai elephant', level: 3, mirror: true,
+              intro: 'Copy the elephant – Thailand\'s national animal! The **🪞 Mirror** is ON, so paint one half and the other half copies you.',
+              say: 'Start with the big dark-grey ears, then the head and trunk!',
+              tips: ['Paint the **dark grey** ears first.', 'Use **🪣 Fill** for the grey head.', 'Add **black** eyes and **white** tusks.', 'Don\'t forget the long trunk!'],
+              done: 'WHAT A BEAUTIFUL ELEPHANT! Chang (elephant) would be proud!',
+            }, ELEPHANT),
+          ],
+        },
         {
           game: 'invaders', title: 'Songkran Splash',
           intro: 'Read each mission at the top of the screen, then splash only the right aliens!',
