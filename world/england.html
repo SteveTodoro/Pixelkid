@@ -80,8 +80,7 @@ function sconeHalf(top, under) {
 }
 const SCONE = Pixel.svg(['..yyyyyy..', '.yYyyYyyy.', 'yyyyyyyyyy', 'yYyyyYyyYy', 'dddddddddd'], { y: '#e8b25c', Y: '#c98f3c', d: '#a8702c' });
 const SCONE_OPEN = sconeHalf(null, null);
-const SCONE_JAM = sconeHalf(null, 'r'), SCONE_CORNISH = sconeHalf('c', 'r');
-const SCONE_CREAM = sconeHalf(null, 'c'), SCONE_DEVON = sconeHalf('r', 'c');
+const SCONE_JAM = sconeHalf(null, 'r'), SCONE_FULL = sconeHalf('c', 'r');
 
 // a Royal Guard to copy (symmetrical – the mirror tool helps!)
 const GUARD = {
@@ -108,11 +107,10 @@ const GUARD = {
   ],
 };
 
-// the boss: Sir Soggy the Drizzle Dragon, with his own little rain cloud
-const SOGGY = Pixel.svg([
-  '.cccccc.....',
-  'cccccccc....',
-  '.b..b..b....',
+// the boss: Sir Scorch, the dragon from St George's legend, wearing the crown he swiped from the Tower
+const SCORCH = Pixel.svg([
+  '.........cjc',
+  '.........ccc',
   '..........gg',
   '.......ggggg',
   '......ggwkgg',
@@ -123,7 +121,7 @@ const SOGGY = Pixel.svg([
   '..gggyyygg..',
   '..gg.gg.gg..',
   '..kk.kk.kk..',
-], { c: '#b0bec5', b: '#4fc3f7', g: '#43a047', w: W, k: K, y: '#ffd43b', r: '#e53935' });
+], { c: '#ffb300', j: '#e53935', g: '#43a047', w: W, k: K, y: '#ffd43b', r: '#e53935' });
 
 // ---------- the lesson ----------
 window.LESSON = {
@@ -155,8 +153,8 @@ window.LESSON = {
       type: 'welcome', title: 'England: Castles, Kings & Cups of Tea', short: 'Start', minutes: 1,
       pic: ukFlag(3),
       hello: 'Hello, {name}! Welcome back to AROUND THE WORLD! Fasten your seatbelt – today we fly to ENGLAND! ✈️',
-      question: 'Which country has a King, red buses, fish and chips – and LOTS of rain?',
-      intro: 'Learn to read a compass, find the four countries of the UK, build a flag, make afternoon tea – then stop Sir Soggy the Drizzle Dragon to earn your next 🛂 passport stamp!',
+      question: 'Which country has a King, red buses, fish and chips – and Peppa Pig?',
+      intro: 'Learn to read a compass, find the four countries of the UK, build a flag, make afternoon tea – then win back the Crown Jewels from Sir Scorch the Dragon to earn your next 🛂 passport stamp!',
       nameLabel: 'Traveller name:',
     },
 
@@ -223,12 +221,12 @@ window.LESSON = {
           check: { q: 'A family moves from Cardiff to London. Which countries are they moving between?', options: ['From Wales to England', 'From Scotland to Wales', 'From England to Scotland'], answer: 0, hint: 'Cardiff is the capital of Wales.' },
         },
         {
-          title: 'Four seasons in one day', pic: '🌦️☂️',
+          title: 'Four seasons', pic: '🌸☀️🍂❄️',
           text: [
-            'The weather in England changes all the time. It can be sunny in the morning and pouring with rain by lunchtime!',
-            'That is why English people love to talk about the weather – and why lots of them carry an umbrella, just in case.',
+            'England has four seasons. In spring, flowers bloom and lambs are born. Summer is warm, with long, light evenings – it can stay light until 10 o\'clock at night!',
+            'In autumn, the leaves turn orange and fall off the trees. Winter is cold and the days are short.',
           ],
-          check: { q: 'It is sunny when you leave your hotel in London. What is a good idea?', options: ['Take an umbrella anyway', 'Leave your coat behind – it will stay sunny', 'Wear a swimming costume'], answer: 0 },
+          check: { q: 'It is October in London. Crunchy orange leaves are falling off the trees. Which season is it?', options: ['Autumn', 'Spring', 'Summer'], answer: 0, hint: 'Which season do leaves fall in?' },
         },
       ],
     },
@@ -336,9 +334,9 @@ window.LESSON = {
           title: 'Time for tea!', pic: '☕🍰',
           text: [
             'People in the UK drink about 100 million cups of tea every day – usually with milk. Afternoon tea is a treat with little sandwiches, cakes and scones.',
-            'People argue about scones! In Cornwall, they put the jam on first, then the cream. In Devon, it is cream first, then jam on top.',
+            'A scone is a little round cake. You slice it in half and spread on strawberry jam and thick, creamy clotted cream. Yum!',
           ],
-          check: { q: 'Your friend from Devon is making a scone. What will she spread on first?', options: ['the cream', 'the jam', 'ketchup'], answer: 0, hint: 'Devon and Cornwall do it in opposite orders.' },
+          check: { q: 'Your English friend asks, "Fancy a cuppa?" What would you like to drink?', options: ['A cup of tea', 'A bowl of soup', 'A glass of mango juice'], answer: 0, hint: 'A "cuppa" is a cup of something hot that people in the UK love.' },
         },
         {
           title: 'Football and fish and chips', pic: '⚽🐟🍟',
@@ -355,6 +353,14 @@ window.LESSON = {
             'He was found at Paddington station in London, and he loves marmalade sandwiches – he keeps one under his hat for emergencies!',
           ],
           check: { q: 'What would Paddington most like for his lunch?', options: ['A marmalade sandwich', 'A bowl of sushi', 'A plate of carrots'], answer: 0 },
+        },
+        {
+          title: 'Peppa Pig', pic: '🐷',
+          text: [
+            'Peppa Pig is a cartoon made in England. Children in more than 180 countries watch it – maybe you have too!',
+            'Peppa lives with Mummy Pig, Daddy Pig and her little brother George, who loves his toy dinosaur. Her favourite thing of all? Jumping up and down in muddy puddles!',
+          ],
+          check: { q: 'Peppa\'s little brother George has lost his favourite toy. What is he looking for?', options: ['His toy dinosaur', 'His teddy bear', 'His football'], answer: 0, hint: 'George shouts "Dine-saw!"' },
         },
       ],
     },
@@ -426,14 +432,9 @@ window.LESSON = {
               steps: [{ add: 'cup', label: 'teacup', emoji: CUP }, { do: 'pour', label: 'Pour the tea from the teapot 🫖', makes: TEA }, { add: 'milk', label: 'milk', emoji: '🥛', makes: MILKY_TEA }, { do: 'stir', label: 'Stir it' }],
             },
             {
-              name: 'Scone – the Cornish way', emoji: SCONE_CORNISH, customer: '🧑',
-              fact: 'In Cornwall, the jam goes on first, then the clotted cream on top.',
-              steps: [{ add: 'scone', label: 'scone', emoji: SCONE }, { do: 'slice', label: 'Slice it in half', makes: SCONE_OPEN }, { add: 'jam', label: 'strawberry jam', emoji: '🍓', makes: SCONE_JAM }, { add: 'cream', label: 'clotted cream', emoji: '🍦', makes: SCONE_CORNISH }],
-            },
-            {
-              name: 'Scone – the Devon way', emoji: SCONE_DEVON, customer: '👴',
-              fact: 'In Devon, it\'s cream first, then jam. Which way would YOU choose?',
-              steps: [{ add: 'scone', label: 'scone', emoji: SCONE }, { do: 'slice', label: 'Slice it in half', makes: SCONE_OPEN }, { add: 'cream', label: 'clotted cream', emoji: '🍦', makes: SCONE_CREAM }, { add: 'jam', label: 'strawberry jam', emoji: '🍓', makes: SCONE_DEVON }],
+              name: 'Scone with jam and cream', emoji: SCONE_FULL, customer: '🧑',
+              fact: 'Scones are a favourite at afternoon tea – warm, with strawberry jam and a big dollop of clotted cream.',
+              steps: [{ add: 'scone', label: 'scone', emoji: SCONE }, { do: 'slice', label: 'Slice it in half', makes: SCONE_OPEN }, { add: 'jam', label: 'strawberry jam', emoji: '🍓', makes: SCONE_JAM }, { add: 'cream', label: 'clotted cream', emoji: '🍦', makes: SCONE_FULL }],
             },
             {
               name: 'Cucumber sandwiches', emoji: '🥪', customer: '💂',
@@ -501,13 +502,13 @@ window.LESSON = {
           '🥾 March on the spot! Knees up high – left, right, left, right!',
           '🧭 Point NORTH (up)… SOUTH (down)… EAST (right)… WEST (left)! Faster!',
           '🐉 Be St George! Lunge forward and fight the dragon!',
-          '☂️ It\'s raining! Open your umbrella and jump over the puddles!',
+          '🐷 Be Peppa Pig! Jump up and down in muddy puddles – SPLASH!',
           '👑 Walk like a king or queen – slowly, with your nose in the air!',
         ],
       },
       tryit: {
         title: '☂️ Try it at home: Best Umbrella Test',
-        intro: 'It rains a LOT in England, so a good umbrella matters! Find a paper towel, a piece of plastic bag, a scrap of cotton cloth and some kitchen foil.',
+        intro: 'Every country gets rain – Bangkok actually gets more rain in a year than London! So which material makes the best umbrella? Find a paper towel, a piece of plastic bag, a scrap of cotton cloth and some kitchen foil.',
         steps: [
           'Before you test, tap the first box for each one: do you THINK water will get through?',
           'Hold each material over a cup and drip a spoonful of water on top.',
@@ -523,22 +524,22 @@ window.LESSON = {
     },
 
     {
-      type: 'quiz', title: 'Boss Battle: Sir Soggy the Drizzle Dragon', short: 'Boss', kind: 'Boss battle', minutes: 6,
-      say: 'Oh no! SIR SOGGY THE DRIZZLE DRAGON wants to rain on every picnic in England! Every right answer is a hit. Be as brave as St George, {name}!',
+      type: 'quiz', title: 'Boss Battle: Sir Scorch the Dragon', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      say: 'Oh no! SIR SCORCH THE DRAGON has snatched the Crown Jewels from the Tower of London! Every right answer is a hit. Be as brave as St George, {name}!',
       boss: {
-        name: 'Sir Soggy', sprite: SOGGY, attack: ['💧', '💧', '☂️'],
+        name: 'Sir Scorch', sprite: SCORCH, attack: ['🔥', '🔥', '💨'],
         lines: {
-          intro: 'Rrroar! I\'m SIR SOGGY, the Drizzle Dragon! I\'ll rain on every picnic, every football match AND every cup of tea in England!',
-          hurt: ['Ouch! That was a royal hit!', 'Blimey! My scales are soggy!', 'Not my cloud!', 'Crumbs! You\'re clever!'],
-          taunt: ['Wrong! Better bring an umbrella!', 'Splish splash, you missed!', 'Ha! Wet as a rainy Monday!', 'Rubbish, old bean!'],
-          angry: 'Now I\'m in a proper STORM of a mood!',
-          dodge: 'A DOWNPOUR! Dodge the drizzle!',
-          miss: 'Crikey! You stayed as dry as a biscuit!',
-          last: 'Please… just a tiny little drizzle?',
-          defeat: 'Fizzle… drizzle… I\'m just… a puddle…',
-          win: 'Rain wins again! Come back when you know your scones from your castles!',
+          intro: 'Rrroar! I\'m SIR SCORCH! I swiped the Crown Jewels from the Tower of London – and this shiny crown is MINE!',
+          hurt: ['Ouch! That was a royal hit!', 'Blimey! You singed my scales!', 'Oi! Not my crown!', 'Crumbs! You\'re clever!'],
+          taunt: ['Wrong! The jewels stay with me!', 'Ha! Missed by a mile, old bean!', 'Even the Tower ravens knew that one!', 'Rubbish! Hot, hot, NOT!'],
+          angry: 'Now I\'m FUMING! Smoke is coming out of my ears!',
+          dodge: 'FIREBALLS! Dodge the flames!',
+          miss: 'Crikey! Not one scorch mark on you!',
+          last: 'Please… can I keep just ONE little jewel?',
+          defeat: 'Fizzle… sizzle… my fire\'s gone out…',
+          win: 'The jewels are mine! Come back when you know your castles from your crumpets!',
           stunned: 'Everything\'s spinning like a teacup ride…',
-          beg: ['Mercy! I\'ll only rain at night!', 'I\'ll make you a nice cup of tea!', 'St George beat me once already – have pity!'],
+          beg: ['Mercy! I\'ll give the jewels back to the King!', 'I\'ll boil the kettle for your tea – I\'m great at that!', 'St George beat my great-great-grandad – have pity!'],
         },
       },
       bonus: {
@@ -549,12 +550,12 @@ window.LESSON = {
       },
       questions: [
         { type: 'mcq', q: 'You walk from England to Scotland. Which direction are you walking?', options: ['North', 'South', 'East'], answer: 0, hint: 'Scotland is above England on the map.' },
-        { type: 'mcq', q: 'Sir Soggy says, "England is in Asia, right next to Japan!" What could you tell him?', options: ['No – England is in Europe', 'Yes, that\'s right', 'No – England is in Africa'], answer: 0 },
+        { type: 'mcq', q: 'Sir Scorch says, "England is in Asia, right next to Japan!" What could you tell him?', options: ['No – England is in Europe', 'Yes, that\'s right', 'No – England is in Africa'], answer: 0 },
         { type: 'gap', q: 'The capital city of Scotland is ___.', options: ['Edinburgh', 'Cardiff', 'Belfast'], answer: 0 },
         { type: 'mcq', q: 'Which four countries make up the UK?', options: ['England, Scotland, Wales and Northern Ireland', 'England, France, Spain and Wales', 'England, Japan, Thailand and Scotland'], answer: 0 },
         { type: 'mcq', q: 'You are on a ferry from England to France. Which way are you sailing?', options: ['South', 'North', 'West'], answer: 0 },
         { type: 'mcq', q: 'A flight to Japan takes about 6 hours, and a flight to England about 13 hours. What does that tell you?', options: ['England is further from Thailand than Japan is', 'Japan is further away', 'They are next to each other'], answer: 0 },
-        { type: 'mcq', q: 'Your Cornish friend is making a scone. What goes on first?', options: ['the jam', 'the cream', 'the butter and sushi'], answer: 0, hint: 'Cornwall and Devon do it in opposite orders. Devon is cream first!' },
+        { type: 'mcq', q: 'Your friend says Peppa Pig is a cartoon from Japan. What could you tell them?', options: ['No – Peppa Pig was made in England', 'Yes, that\'s right', 'No – Peppa Pig was made in Thailand'], answer: 0 },
         { type: 'mcq', q: 'A tall ship needs to sail under Tower Bridge. What happens?', options: ['The bridge lifts up in two parts', 'The ship has to turn back', 'The bridge sinks'], answer: 0 },
         { type: 'order', q: 'Put the steps for an English cup of tea in order.', items: ['☕ Get a teacup', '🫖 Pour the tea', '🥛 Add a splash of milk', '🥄 Stir it'], hint: 'The milk goes into the tea, so the tea goes in first.' },
         { type: 'tf', q: 'The Union Jack has a dragon on it for Wales.', answer: false, explain: 'Wales isn\'t on the Union Jack – its dragon has its own flag!' },
