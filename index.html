@@ -12,19 +12,28 @@
     .lib-head { position: relative; z-index: 1; text-align: center; padding: 30px 16px 6px; }
     .lib-head h1 { font-size: 3rem; color: #fff; margin: 0; text-shadow: 4px 4px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000; }
     .lib-head p { font-family: var(--pixel); font-size: 1.3rem; font-weight: 700; color: #fff; text-shadow: 2px 2px 0 #000; margin: 6px 0 0; }
-    .me-card { display: inline-flex; align-items: center; gap: 16px; margin-top: 14px; padding: 10px 18px; background: var(--stone); border: 4px solid #000; box-shadow: var(--bevel), 0 6px 0 rgba(0,0,0,.25); text-align: left; }
-    .me-card .me-avatar { height: 110px; padding: 6px 8px 0; border: 3px solid #000; }
-    .me-card .btn { margin-top: 8px; }
-    .me-level { margin: 0 0 6px; }
-    .me-level .xp-level { font-size: 1.1rem; }
-    .me-level .xp-bar { margin: 4px 0; min-width: 180px; }
-    .me-next { font-weight: 700; font-size: .9rem; color: #333; max-width: 420px; }
-    .me-card { max-width: 100%; box-sizing: border-box; }
-    .total { display: inline-block; padding: 6px 18px; background: #000; border: 3px solid #3a3a3a; color: #6ff5e8; font-family: var(--pixel); font-weight: 700; font-size: 1.3rem; text-shadow: 2px 2px 0 #0b4a44; }
-    .tabs { position: relative; z-index: 1; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 22px 16px 6px; }
-    .tab { cursor: pointer; padding: 12px 20px; font-family: var(--pixel); font-weight: 700; font-size: 1.25rem; color: #fff; text-shadow: 2px 2px 0 rgba(0,0,0,.5);
-      background: #6f6f6f; border: 3px solid #000; box-shadow: var(--bevel), 0 4px 0 #000; }
-    .tab[aria-selected="true"] { background: var(--brand); outline: 4px solid #fff; outline-offset: -1px; }
+    .me-card { display: inline-flex; align-items: center; gap: 16px; max-width: 100%; box-sizing: border-box; margin-top: 14px; padding: 10px 18px 10px 10px; background: var(--stone); border: 4px solid #000; box-shadow: var(--bevel), 0 6px 0 rgba(0,0,0,.25); text-align: left; }
+    /* the avatar is the way into the Wardrobe */
+    .me-link { position: relative; display: block; flex: none; text-decoration: none; }
+    .me-link:hover .me-avatar { outline: 3px solid #fff; outline-offset: -3px; }
+    .me-avatar { display: block; height: 100px; padding: 6px 8px 0; border: 3px solid #000; }
+    .me-dress { position: absolute; left: 50%; bottom: -10px; transform: translateX(-50%); white-space: nowrap; padding: 1px 8px; font-family: var(--pixel); font-weight: 700; font-size: .8rem; color: #000; background: var(--gold); border: 2px solid #000; }
+    .me-info { min-width: 0; width: 300px; max-width: 100%; }
+    .me-row { display: flex; align-items: center; gap: 10px; }
+    .me-row .xp-bar { flex: 1; min-width: 80px; }
+    .me-info .xp-level { color: #1d5c00; text-shadow: none; font-size: 1.05rem; }
+    .me-meta { display: flex; flex-wrap: wrap; column-gap: 14px; margin-top: 6px; font-weight: 700; font-size: .95rem; color: #333; }
+    .me-meta b { color: #0b6e64; }
+    .me-meta span { white-space: nowrap; }
+    /* one row of worlds; scrolls sideways on a phone */
+    .tabs { position: relative; z-index: 1; display: flex; gap: 8px; max-width: 1040px; margin: 22px auto 0; padding: 4px 16px 8px; overflow-x: auto; scrollbar-width: none; }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tabs > :first-child { margin-left: auto; }
+    .tabs > :last-child { margin-right: auto; }
+    .tab { flex: none; cursor: pointer; padding: 8px 14px; font-family: var(--pixel); font-weight: 700; font-size: 1.1rem; color: #fff; text-shadow: 2px 2px 0 rgba(0,0,0,.5);
+      background: rgba(0,0,0,.35); border: 3px solid #000; }
+    .tab:hover { background: rgba(0,0,0,.5); }
+    .tab[aria-selected="true"] { background: var(--brand); box-shadow: var(--bevel), 0 4px 0 #000; outline: 3px solid #fff; outline-offset: -1px; }
     .tab.science[aria-selected="true"] { background: #19b3a3; }
     .tab.maths[aria-selected="true"] { background: #e09a00; }
     .tab.english[aria-selected="true"] { background: #d9433b; }
@@ -42,17 +51,22 @@
     .stamp.empty .sf { filter: grayscale(1); opacity: .45; }
     .shelf { position: relative; z-index: 1; max-width: 1040px; margin: 0 auto; padding: 16px 16px 90px; display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); }
     .lesson-card {
-      position: relative; display: flex; flex-direction: column; gap: 4px; padding: 16px; min-height: 190px;
+      position: relative; display: flex; flex-direction: column; gap: 4px; padding: 16px; min-height: 150px;
       background: var(--stone); border: 4px solid #000; box-shadow: var(--bevel), 0 6px 0 rgba(0,0,0,.25); color: var(--ink); text-decoration: none;
     }
     a.lesson-card:hover { transform: translateY(-4px); outline: 4px solid #fff; outline-offset: -2px; }
     .lesson-card .le { width: 64px; height: 64px; display: grid; place-items: center; font-size: 2.4rem; background: var(--slot); border: 3px solid #000; box-shadow: var(--bevel-in); }
     .lesson-card h2 { font-size: 1.25rem; margin: 8px 0 0; }
     .lesson-card .unit { color: #444; font-weight: 600; font-size: .85rem; }
-    .lesson-card .badge { margin-top: auto; align-self: flex-start; padding: 4px 10px; font-family: var(--pixel); font-weight: 700; font-size: .9rem; color: #fff; background: var(--good); border: 2px solid #000; text-shadow: 1px 1px 0 #000; }
-    .lesson-card.soon { filter: grayscale(.8); opacity: .8; }
-    .lesson-card.soon .badge { background: #555; }
-    .lesson-card.done .badge { background: var(--gold); }
+    /* corner badge: ▶ new · ⭐ in progress · 🏆 done */
+    .lesson-card .badge { position: absolute; top: 12px; right: 12px; padding: 2px 8px; font-family: var(--pixel); font-weight: 700; font-size: .85rem; color: #fff; background: var(--good); border: 2px solid #000; text-shadow: 1px 1px 0 #000; }
+    .lesson-card.going .badge { background: #e09a00; }
+    .lesson-card.done .badge { background: var(--gold); color: #000; text-shadow: none; }
+    .soon { grid-column: 1 / -1; margin-top: 8px; padding: 12px 14px; background: rgba(255,255,255,.55); border: 3px solid #000; }
+    .soon h2 { margin: 0 0 10px; font-size: 1.05rem; color: #333; }
+    .soon-row { display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); }
+    .soon-chip { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; font-weight: 600; font-size: .8rem; line-height: 1.2; color: #555; }
+    .soon-chip .se { width: 44px; height: 44px; display: grid; place-items: center; font-size: 1.6rem; background: var(--slot); border: 2px solid #000; filter: grayscale(.9); opacity: .6; }
   </style>
 </head>
 <body class="science">
@@ -60,15 +74,16 @@
     <h1>PIXELKID</h1>
     <p id="hello">Choose your world, then pick a quest!</p>
     <div class="me-card">
-      <img class="me-avatar" id="me" alt="Your avatar">
-      <div>
-        <div class="me-level" id="level" hidden>
-          <div class="xp-level" id="lvl"></div>
+      <a class="me-link" href="avatar.html" aria-label="Wardrobe and Shop: dress up your hero">
+        <img class="me-avatar" id="me" alt="">
+        <span class="me-dress">👕 Dress up</span>
+      </a>
+      <div class="me-info">
+        <div class="me-row" id="level" hidden>
+          <span class="xp-level" id="lvl"></span>
           <div class="xp-bar" aria-hidden="true"><div class="xp-fill" id="lvlfill"></div></div>
-          <div class="me-next" id="lvlnext"></div>
         </div>
-        <div class="total" id="total">💎 0 gems to spend</div><br>
-        <a class="btn gold" href="avatar.html">👕 Wardrobe & Shop</a>
+        <div class="me-meta" id="meta"></div>
       </div>
     </div>
   </header>
@@ -81,7 +96,7 @@
 // Add a lesson by giving it a `file`. Lessons without one show as "Coming soon".
 const LIBRARY = {
   science: {
-    label: '🔬 Science Lab',
+    label: '🔬 Science Lab', tab: '🔬 Science',
     lessons: [
       { id: 'science-magnets', title: 'Magnet Magic!', emoji: '🧲', unit: 'Forces & Magnets', file: 'science/magnets.html' },
       { id: 'science-friction', title: 'Pushes, Pulls & Friction', emoji: '🛷', unit: 'Forces & Magnets', file: 'science/friction.html' },
@@ -98,7 +113,7 @@ const LIBRARY = {
     ],
   },
   maths: {
-    label: '🔢 Maths Mine',
+    label: '🔢 Maths Mine', tab: '🔢 Maths',
     lessons: [
       { id: 'maths-time', title: 'Tick Tock Time', emoji: '⏰', unit: 'Time', file: 'maths/time.html' },
       { id: 'maths-clock-quest', title: 'Clock Quest: To the Minute', emoji: '🕰️', unit: 'Time', file: 'maths/clock-quest.html' },
@@ -115,7 +130,7 @@ const LIBRARY = {
     ],
   },
   english: {
-    label: '📚 Word Kingdom',
+    label: '📚 Word Kingdom', tab: '📚 English',
     lessons: [
       { id: 'english-prefixes', title: 'Prefix Power', emoji: '🦸', unit: 'Spelling & Vocabulary', file: 'english/prefixes.html' },
       { id: 'english-suffixes', title: 'Suffix Squad', emoji: '🧩', unit: 'Spelling & Vocabulary', file: 'english/suffixes.html' },
@@ -131,7 +146,7 @@ const LIBRARY = {
     ],
   },
   future: {
-    label: '🚀 Future Skills',
+    label: '🚀 Future Skills', tab: '🚀 Future',
     lessons: [
       { id: 'future-ai', title: 'How Does AI Work?', emoji: '🤖', unit: 'AI & Computers', file: 'future/ai.html' },
       { id: 'future-pixel-art', title: 'Pixel Art Studio', emoji: '🎨', unit: 'Creative Tech', file: 'future/pixel-art.html' },
@@ -147,7 +162,7 @@ const LIBRARY = {
     ],
   },
   wonders: {
-    label: '🌍 Wonders of the World',
+    label: '🌍 Wonders of the World', tab: '🌍 Wonders',
     lessons: [
       { id: 'wonders-tardigrades', title: 'Tardigrades: The Unkillable Water Bear?', emoji: '🐻', unit: 'Amazing Animals', file: 'wonders/tardigrades.html' },
       { id: 'wonders-jellyfish', title: 'The Immortal Jellyfish: Can It Live Forever?', emoji: '🪼', unit: 'Amazing Animals', file: 'wonders/jellyfish.html' },
@@ -167,7 +182,7 @@ const LIBRARY = {
     ],
   },
   world: {
-    label: '🗺️ Around the World',
+    label: '🗺️ Around the World', tab: '🗺️ World',
     lessons: [
       { id: 'world-japan', title: 'Japan: Land of the Rising Sun', emoji: '🇯🇵', unit: 'Asia', file: 'world/japan.html', stamp: 'JPN' },
       { id: 'world-england', title: 'England: Castles, Kings & Cups of Tea', emoji: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', unit: 'Europe', file: 'world/england.html', stamp: 'ENG' },
@@ -196,18 +211,15 @@ if (!LIBRARY[current]) current = 'science';
 
 const total = Object.values(records).reduce((n, r) => n + (r.stars || 0), 0);
 const wal = window.Avatar ? Avatar.wallet() : { balance: total };
-document.getElementById('total').textContent = `💎 ${wal.balance} gem${wal.balance === 1 ? '' : 's'} to spend`;
 if (window.Avatar) { const me = document.getElementById('me'); me.src = Avatar.dataURL(Avatar.load().look, { scale: 6, pet: true }); me.style.background = Avatar.sceneBox(Avatar.load().look.scene); }
 if (settings.name) document.getElementById('hello').textContent = `Welcome back, ${settings.name}! Pick a quest.`;
 // the player level carries on across every lesson; new level rewards pop up once
 if (window.Avatar) {
   const p = Avatar.levelInfo();
   document.getElementById('level').hidden = false;
-  document.getElementById('lvl').textContent = `LEVEL ${p.level} · ${p.title.toUpperCase()}`;
+  document.getElementById('lvl').textContent = `LV ${p.level} · ${p.title.toUpperCase()}`;
   document.getElementById('lvlfill').style.width = p.into / p.need * 100 + '%';
-  document.getElementById('lvlnext').textContent = p.next
-    ? `💎 ${p.toNext} more to level ${p.level + 1} · next reward at level ${p.next.level}: ${p.next.label}`
-    : `💎 ${p.toNext} more to level ${p.level + 1} · every reward unlocked!`;
+  document.getElementById('level').title = `${p.toNext} more gems to level ${p.level + 1}`;
   Avatar.newRewards(p.level).forEach((r, k) => setTimeout(() => {
     const t = document.createElement('div'); t.className = 'toast level';
     t.innerHTML = '<div class="toast-icon">🎁</div><div><div class="toast-title">NEW REWARD UNLOCKED!</div><div class="toast-sub"></div></div>';
@@ -217,6 +229,13 @@ if (window.Avatar) {
   }, 600 + k * 900));
   Avatar.markSeen(p.level);
 }
+
+// one short line under the level: gems to spend and the next level prize
+const meta = document.getElementById('meta'), next = window.Avatar && Avatar.levelInfo().next;
+meta.innerHTML = '<span>💎 <b></b> to spend</span><span class="nx"></span>';
+meta.querySelector('b').textContent = wal.balance;
+meta.querySelector('.nx').textContent = next ? `🎁 Next prize ${next.label.split(' ')[0]} at Lv ${next.level}` : '';
+if (next) meta.title = `Level ${next.level}: ${next.label}`;
 
 const tabs = document.getElementById('tabs'), shelf = document.getElementById('shelf');
 // Around the World: the passport shows a stamp for every country lesson finished
@@ -246,25 +265,43 @@ function render() {
   tabs.replaceChildren(...Object.entries(LIBRARY).map(([key, s]) => {
     const b = document.createElement('button');
     b.className = 'tab ' + key; b.type = 'button'; b.setAttribute('role', 'tab');
-    b.setAttribute('aria-selected', String(key === current)); b.textContent = s.label;
+    b.setAttribute('aria-selected', String(key === current)); b.textContent = s.tab; b.title = s.label;
     b.onclick = () => { current = key; try { localStorage.setItem('y3:tab', key); } catch (e) { /* ignore */ } render(); };
     return b;
   }));
-  shelf.replaceChildren(...LIBRARY[current].lessons.map(l => {
-    const rec = l.id && records[l.id];
-    const card = document.createElement(l.file ? 'a' : 'div');
-    card.className = 'lesson-card' + (l.file ? '' : ' soon') + (rec && rec.done ? ' done' : '');
-    if (l.file) card.href = l.file;
-    const badge = !l.file ? '🔒 Coming soon'
-      : rec && rec.done ? `🏆 ${rec.stars || 0} 💎 · Boss ${rec.best}/${rec.total}`
-        : rec && rec.stars ? `▶ Continue · ${rec.stars} 💎` : '▶ PLAY';
+  const sel = tabs.querySelector('[aria-selected="true"]');
+  tabs.scrollLeft = sel.offsetLeft - (tabs.clientWidth - sel.offsetWidth) / 2; // keep the chosen world in view on a phone
+  const all = LIBRARY[current].lessons, ready = all.filter(l => l.file), later = all.filter(l => !l.file);
+  const cards = ready.map(l => {
+    const rec = records[l.id];
+    const state = rec && rec.done ? 'done' : rec && rec.stars ? 'going' : 'new';
+    const card = document.createElement('a');
+    card.className = 'lesson-card ' + state; card.href = l.file;
     card.innerHTML = `<div class="le"></div><h2></h2><div class="unit"></div><span class="badge"></span>`;
     card.querySelector('.le').textContent = l.emoji;
     card.querySelector('h2').textContent = l.title;
     card.querySelector('.unit').textContent = l.unit;
-    card.querySelector('.badge').textContent = badge;
+    const badge = card.querySelector('.badge');
+    badge.textContent = state === 'done' ? `🏆 ${rec.best}/${rec.total}` : state === 'going' ? `⭐ ${rec.stars} 💎` : '▶ NEW';
+    badge.title = state === 'done' ? `Finished! ${rec.stars || 0} gems · boss score ${rec.best}/${rec.total}` : state === 'going' ? 'Keep going!' : 'Not started yet';
     return card;
-  }));
+  });
+  // topics still being made: one small strip instead of full-size locked cards
+  if (later.length) {
+    const soon = document.createElement('section');
+    soon.className = 'soon';
+    soon.innerHTML = '<h2>🔒 Coming soon</h2><div class="soon-row"></div>';
+    soon.querySelector('.soon-row').replaceChildren(...later.map(l => {
+      const c = document.createElement('div');
+      c.className = 'soon-chip'; c.title = l.unit;
+      c.innerHTML = '<span class="se"></span><span class="sn"></span>';
+      c.querySelector('.se').textContent = l.emoji;
+      c.querySelector('.sn').textContent = l.title;
+      return c;
+    }));
+    cards.push(soon);
+  }
+  shelf.replaceChildren(...cards);
 }
 render();
 </script>
