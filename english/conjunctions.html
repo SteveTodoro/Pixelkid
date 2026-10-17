@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Conjunction Junction</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <script src="../shared/pixel.js"></script>
+  <script src="../shared/pixel-icons.js"></script>
+  <script src="../shared/avatar.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// ---------- blocky pictures for this lesson ----------
+// two sentence carriages coupled together by a conjunction
+const COUPLED = Pixel.svg([
+  '...............................kk.',
+  '...............................kk.',
+  'kkkkkkkkkk...kkkkkkkkkk...kkkk.kk.',
+  'kbbbbbbbbk...kggggggggk...kwwk.kk.',
+  'kbwwbbwwbk...kgwwggwwgk...kwwkkkkk',
+  'kbbbbbbbbk...kggggggggk...krrrrrrk',
+  'kbbbbbbbbkyyykggggggggkyyykrrrrrrk',
+  'kkkkkkkkkk...kkkkkkkkkk...kkkkkkkk',
+  '.kyk..kyk.....kyk..kyk.....kyk.kyk',
+  '..k....k.......k....k.......k...k.',
+], { k: '#1b1b1b', b: '#2b6fd6', g: '#2e9e3e', w: '#e8eef5', r: '#e53935', y: '#ffd43b' });
+
+// the boss: Stopsy, a gremlin made out of a giant full stop
+const STOPSY = Pixel.svg([
+  '....kkkkkk....',
+  '..kkkkkkkkkk..',
+  '.kkhhkkkkkkkk.',
+  '.khkwwkkkwwkk.',
+  'kkkkwrkkkwrkkk',
+  'kkkkkkkkkkkkkk',
+  'kkkkwwwwwwkkkk',
+  'kkkkwkwkwkkkkk',
+  '.kkkkkkkkkkkk.',
+  '..kkkkkkkkkk..',
+  '....kkkkkk....',
+  '...gg....gg...',
+  '..ggg....ggg..',
+], { k: '#1b1b1b', h: '#5a5f6b', w: '#ffffff', r: '#e53935', g: '#4caf2a' });
+
+// ---------- the lesson ----------
+window.LESSON = {
+  id: 'english-conjunctions',
+  subject: 'english',
+  title: 'Conjunction Junction',
+  emoji: '🚂',
+  home: '../index.html',
+  finishAch: 'speller',
+  mascot: {
+    name: 'Quill the Wizard',
+    sprite: Pixel.sprites.wizard,
+    praise: ['Spell-tastic!', 'All aboard!', 'Word wizardry!', 'Critical hit!', 'Full steam ahead!', 'Nailed it!', 'Perfectly joined!'],
+    oops: ['Oops! Read the whole sentence.', 'Not quite – does it make sense?', 'Hmm, think again!', 'So close! One more try.'],
+  },
+  glossary: {
+    conjunction: { emoji: '🔗', def: 'A joining word, like and, but, so or because. It joins two ideas into one sentence.' },
+    reason: { emoji: '🤔', def: 'Why something happens. Because tells you the reason.' },
+    choice: { emoji: '🔀', def: 'When you can pick one thing or another.' },
+    clause: { emoji: '🧩', def: 'A chunk of a sentence with a doing word in it, like "the dog barked".' },
+    comma: { emoji: '✏️', def: 'A little mark like this , that tells you to take a tiny pause.' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'Conjunction Junction', short: 'Start', minutes: 1,
+      pic: COUPLED,
+      hello: 'Welcome back to the WORD KINGDOM! Stopsy the Full-Stop Gremlin is chopping every sentence into teeny, choppy bits. Like this. See? It is. Very. Annoying.',
+      question: 'How could you turn "I was hungry." and "I ate a sandwich." into ONE sentence?',
+      intro: 'Recap, read, watch, build sentences, fill up the **word train** with your spelling – then stop Stopsy the Full-Stop Gremlin!',
+      nameLabel: 'Player name:',
+    },
+
+    {
+      type: 'review', title: 'Last time…', short: 'Recap', minutes: 3,
+      from: { title: 'A or An?', emoji: '🍎', url: 'a-or-an.html' },
+      facts: [
+        'a and an both mean one. They go before a noun: a banana, an apple.',
+        'Use an before a vowel SOUND: an egg, an hour (the h is silent).',
+        'Use a before a consonant sound: a dog, a unicorn ("you-nicorn").',
+        'Only the word straight after a or an counts: an apple, but a red apple.',
+      ],
+      questions: [
+        { type: 'gap', q: 'We waited for ___ hour.', options: ['an', 'a'], answer: 0, hint: 'Can you hear the h in hour?' },
+        { type: 'gap', q: 'She has ___ new umbrella.', options: ['a', 'an'], answer: 0, hint: 'Look at the word straight after the gap.' },
+        { type: 'mcq', q: 'Which one is right?', options: ['a unicorn', 'an unicorn'], answer: 0 },
+        { type: 'tf', q: 'We say "an elephant" because elephant starts with a vowel sound.', answer: true },
+      ],
+      game: {
+        game: 'fixit', title: 'Quick proofread',
+        intro: 'Snatchit the magpie left two last notes. Tap the wrong word, then drag the right one onto it!',
+        noOk: true,
+        sentences: [
+          { text: 'I ate a orange.', wrong: 'a', fix: 'an', options: ['and'], why: 'orange starts with a vowel sound: an orange.' },
+          { text: 'There was an huge dragon.', wrong: 'an', fix: 'a', options: ['and'], why: 'You can hear the h in huge: a huge dragon.' },
+        ],
+      },
+    },
+
+    {
+      type: 'read', title: 'Joining words', short: 'Read 1', minutes: 5,
+      say: 'Read each page carefully – the checks test if you really understood. Tap the yellow words for a 💎.',
+      cards: [
+        {
+          title: 'Couple the carriages', pic: COUPLED,
+          text: [
+            'A [[conjunction]] is a joining word. It links two ideas into one longer sentence, like a coupling joins two train carriages.',
+            'I was hungry. I ate a sandwich. → I was hungry so I ate a sandwich.',
+          ],
+          check: { q: 'Which word is doing the joining in "Mum sang and Dad danced"?', options: ['and', 'Mum', 'danced'], answer: 0 },
+        },
+        {
+          title: 'and · or', pic: '➕ 🔀',
+          text: [
+            'and adds another idea: I fed the cat and I walked the dog.',
+            'or gives a [[choice]]: Do you want pizza or pasta?',
+          ],
+          check: { q: 'The waiter asks if you would like juice ___ milk. You can only have one. Which word fits?', options: ['or', 'and', 'so'], answer: 0, hint: 'You have to pick one.' },
+        },
+        {
+          title: 'but', pic: '👍↔️👎',
+          text: [
+            'but joins two ideas that don\'t match, or adds a surprise: I ran fast but I missed the bus.',
+          ],
+          check: { q: 'Which sentence uses but correctly?', options: ['I like cake but I don\'t like jelly.', 'I like cake but I like it a lot.', 'I like cake but cake is a food I like.'], answer: 0, hint: 'but joins two ideas that are different.' },
+        },
+        {
+          title: 'so', pic: '🌧️➡️☂️',
+          text: [
+            'so tells you what happened next, as a result: It was raining so I took an umbrella.',
+          ],
+          check: { q: 'The baby was very tired ___ she fell asleep.', options: ['so', 'but', 'or'], answer: 0, hint: 'What happened BECAUSE she was tired?' },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'What are Conjunctions?', short: 'Video 1', minutes: 7,
+      video: { id: 'hLV_aqzcfrc', title: 'What are Conjunctions? | Grammar for Kids | Treetopix! Quick Learns', channel: 'Twinkl Kids TV', duration: '4:32' },
+      say: 'Owl the deep thinker is learning about conjunctions from Twinklebot. Watch, then answer my questions.',
+      clues: [
+        'What does Owl like to think about?',
+        'Which two things does Owl like doing?',
+        'Why does Owl like the summer?',
+        'Is there only one right conjunction?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'Twinklebot says conjunctions are words that…', options: ['join two sentences or ideas together', 'name people and places', 'describe how something looks'], answer: 0 },
+        { type: 'mcq', q: 'Owl joins "I like playing football" and "watching television" with which word?', options: ['and', 'but', 'or'], answer: 0 },
+        { type: 'mcq', q: 'Owl says, "I like the summer ___ it is sunny." Which conjunction gives the reason?', options: ['because', 'or', 'and'], answer: 0 },
+        { type: 'tf', q: 'Twinklebot says there is only ever ONE right conjunction for a sentence.', answer: false, explain: 'There are lots of conjunctions that could work – but they change the meaning!' },
+        { type: 'mcq', q: '"I like the summer although it is sunny." What does although do to the meaning?', options: ['It sounds like Owl likes summer even though he doesn\'t like the sun', 'It means exactly the same as because', 'It makes the sentence a question'], answer: 0 },
+        { type: 'mcq', q: 'What does Owl say he needs to do at the very end?', options: ['lie down', 'have a sandwich', 'play football'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Sentence Builder', short: 'Game 1', minutes: 9,
+      rounds: [
+        {
+          game: 'sort', title: 'Which joining word?',
+          intro: 'Read each sentence with a gap. Which joining word fits best? Drag it to the right station.',
+          say: 'Read it aloud with each word. Which one makes sense?',
+          tapHint: 'Now tap the station it belongs in!',
+          buckets: [
+            { id: 'and', label: 'and', emoji: '➕' },
+            { id: 'but', label: 'but', emoji: '↔️' },
+            { id: 'or', label: 'or', emoji: '🔀' },
+            { id: 'so', label: 'so', emoji: '➡️' },
+          ],
+          items: [
+            { label: 'I brushed my teeth ___ I washed my face.', emoji: '🪥', bucket: 'and', hint: 'Both things happened – you are adding one more.' },
+            { label: 'We went to the beach ___ we built a sandcastle.', emoji: '🏖️', bucket: 'and', hint: 'You are adding another thing you did.' },
+            { label: 'I wanted to play out ___ it was dark.', emoji: '🌙', bucket: 'but', hint: 'The two ideas don\'t match – a surprise!' },
+            { label: 'Tom is small ___ he is very strong.', emoji: '💪', bucket: 'but', hint: 'Small… yet strong. That\'s a surprise!' },
+            { label: 'Shall we walk ___ take the bus?', emoji: '🚌', bucket: 'or', hint: 'You pick one: a choice.' },
+            { label: 'Would you like red ___ blue?', emoji: '🎨', bucket: 'or', hint: 'Which one? It\'s a choice.' },
+            { label: 'It was cold ___ I wore my gloves.', emoji: '🧤', bucket: 'so', hint: 'What happened as a result of the cold?' },
+            { label: 'The shop was shut ___ we went home.', emoji: '🏪', bucket: 'so', hint: 'What happened next, because the shop was shut?' },
+          ],
+        },
+        {
+          game: 'match', title: 'Couple the carriages',
+          intro: 'Each sentence has lost its back carriage! Tap the front half, then tap the back half that makes the best sense.',
+          say: 'Read them together. Does it make sense?',
+          hint: 'Read the two halves aloud together. Does the joining word make sense?',
+          pairs: [
+            { a: '🧥 I put on my coat', b: 'because it was freezing.' },
+            { a: '🍕 We can have pizza', b: 'or we can have pasta.' },
+            { a: '⚽ I kicked the ball', b: 'and it flew into the net.' },
+            { a: '🐌 The snail was slow', b: 'but it won the race.' },
+            { a: '🔦 It was very dark', b: 'so I turned on my torch.' },
+            { a: '🛁 Wash your hands', b: 'before you eat your tea.' },
+          ],
+        },
+        {
+          game: 'wordsearch', title: 'Junction word hunt', size: 9,
+          intro: 'Find the hidden joining words. They go across ➡ or down ⬇.',
+          say: 'Drag across each word you spot.',
+          words: ['AND', 'BUT', 'OR', 'SO', 'BECAUSE', 'WHEN', 'IF', 'UNTIL', 'AFTER'],
+        },
+        {
+          game: 'platformer', title: 'Junction Run',
+          intro: 'Run and jump along the railway! Collect only the **joining words** – leave the other words behind.',
+          say: '◀ ▶ to run, ⬆ to jump. Collect the CONJUNCTIONS!',
+          prompt: 'Collect the joining words!',
+          items: [
+            { label: 'and', ok: true },
+            { label: 'but', ok: true },
+            { label: 'because', ok: true },
+            { label: 'so', ok: true },
+            { label: 'when', ok: true },
+            { label: 'train', ok: false, why: 'train is a noun – a naming word.' },
+            { label: 'jump', ok: false, why: 'jump is a verb – a doing word.' },
+            { label: 'happy', ok: false, why: 'happy is an adjective – a describing word.' },
+          ],
+          done: 'JUNCTION RUN COMPLETE! You know your joining words!',
+        },
+      ],
+    },
+
+    {
+      type: 'read', title: 'Why and when', short: 'Read 2', minutes: 5,
+      say: 'More joining words! These ones tell you WHY something happened, or WHEN.',
+      cards: [
+        {
+          title: 'because gives a reason', pic: '🤔💬',
+          text: [
+            'because tells you the [[reason]] why: I wore a coat because it was cold.',
+            'so and because are opposite ends of the same train: It was cold so I wore a coat.',
+          ],
+          check: { q: 'The dog barked ___ it heard the postman.', options: ['because', 'or', 'but'], answer: 0, hint: 'Is it giving a reason, or a choice?' },
+        },
+        {
+          title: 'Time joiners', pic: '⏰🔗',
+          text: [
+            'when, before, after, while and until join ideas by telling you when things happen.',
+            'Brush your teeth before you go to bed. I read my book while Dad cooked.',
+          ],
+          check: { q: 'You and your friend sang at the same time as you painted. Which joining word fits? "We sang ___ we painted."', options: ['while', 'before', 'or'], answer: 0, hint: 'Which word means "at the same time"?' },
+        },
+        {
+          title: 'if – it might happen', pic: '❄️⛄',
+          text: [
+            'if joins an idea that might happen: If it snows, we will build a snowman.',
+          ],
+          check: { q: 'Which sentence uses if correctly?', options: ['If you are thirsty, have some water.', 'If I ate my dinner yesterday.', 'I like if cats.'], answer: 0 },
+        },
+        {
+          title: 'Myth-buster: never start with because?', pic: '❌🚫 ✅',
+          text: [
+            'Some people say you must never start a sentence with because. Busted! You can – as long as the sentence has two parts.',
+            'Because it was raining, we played inside. ✅ Because it was raining. ❌ (Something is missing!) When the joining word comes first, add a [[comma]] between the two parts.',
+          ],
+          check: { q: 'Which sentence is complete?', options: ['Because I was late, I ran to school.', 'Because I was late.', 'Because running to school.'], answer: 0, hint: 'A complete sentence needs both parts.' },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'Subordinating Conjunctions', short: 'Video 2', minutes: 6,
+      video: { id: 'e8oYbgH3AZU', title: 'What Is a Subordinating Conjunction? | KS2 English Concept for Kids', channel: 'Twinkl Educational Publishing', duration: '2:50' },
+      say: 'A big name for some very useful joining words – and a funny trick to remember them! Watch, then answer my questions.',
+      clues: [
+        'What is the memory trick?',
+        'Where did the escaped hamster end up?',
+        'Why couldn\'t they go to school?',
+        'Which word means "at the same time"?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'Which silly phrase helps you remember these joining words?', options: ['I SAW A WABUB', 'I SAW A BUS', 'A BIG RED TRAIN'], answer: 0 },
+        { type: 'mcq', q: 'In the video, where was the escaped hamster found?', options: ['eating birdseed in the cupboard', 'asleep in a shoe', 'on top of the fridge'], answer: 0 },
+        { type: 'mcq', q: '"I always count 120 seconds while brushing my teeth." Which word is the joining word?', options: ['while', 'count', 'teeth'], answer: 0 },
+        { type: 'mcq', q: '"Since it\'s been snowing all week, we\'ve been unable to go to school." Which word is the joining word?', options: ['since', 'snowing', 'school'], answer: 0 },
+        { type: 'tf', q: 'The video says these joining words can go at the start OR in the middle of a sentence.', answer: true },
+        { type: 'mcq', q: 'They played cards and waited for the cakes at the same time. Which joining word did the video use?', options: ['while', 'until', 'before'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Stopsy\'s Chop Shop', short: 'Game 2', minutes: 8,
+      rounds: [
+        {
+          game: 'fixit', title: 'Wrong turn!',
+          intro: 'Stopsy has switched the joining words onto the wrong tracks! Tap the joining word that doesn\'t make sense, then drag the right one onto it. Some sentences are already perfect…',
+          say: 'Read each sentence aloud. Does it make sense?',
+          sentences: [
+            { text: 'I was hungry but I ate a sandwich.', wrong: 'but', fix: 'so', options: ['or'], why: 'Eating was the result of being hungry: so.' },
+            { text: 'Do you want a banana and an apple? You can only have one.', wrong: 'and', fix: 'or', options: ['so'], why: 'Only one – it is a choice: or.' },
+            { text: 'We stayed inside because it was raining.', ok: true, why: 'because gives the reason – perfect!' },
+            { text: 'Wash your hands so you eat.', wrong: 'so', fix: 'before', options: ['or'], why: 'Wash first, then eat: before.' },
+            { text: 'I like swimming because I don\'t like diving.', wrong: 'because', fix: 'but', options: ['so'], why: 'The two ideas don\'t match: but.' },
+            { text: 'Wait here until the bell rings.', ok: true, why: 'until tells you how long to wait – perfect!' },
+            { text: 'The cat ran off or the dog barked.', wrong: 'or', fix: 'when', options: ['but'], why: 'The cat ran off at the moment the dog barked: when.' },
+          ],
+        },
+        {
+          game: 'crossword', title: 'Conjunction Crossword',
+          intro: 'Every answer is a joining word! Read the sentence clue and find the word that fits the gap.',
+          say: 'Crossword time! Stuck? Press 💡 Hint for a free letter.',
+          entries: [
+            { answer: 'BECAUSE', clue: 'I smiled ___ I got a present. (gives the reason)' },
+            { answer: 'BUT', clue: 'I ran fast ___ I still missed the bus.' },
+            { answer: 'WHILE', clue: 'I hummed ___ I painted. (at the same time)' },
+            { answer: 'BEFORE', clue: 'Put your shoes on ___ you go out.' },
+            { answer: 'AFTER', clue: 'We had pudding ___ our dinner.' },
+            { answer: 'UNTIL', clue: 'Keep stirring ___ the sauce bubbles.' },
+            { answer: 'OR', clue: 'Heads ___ tails?' },
+            { answer: 'IF', clue: '___ you shout, the baby will wake up.' },
+          ],
+        },
+        {
+          game: 'invaders', title: 'Junction Blaster',
+          intro: 'Arcade round! Read the sentence at the top and **shoot the joining word that fits** the gap.',
+          say: 'Read it aloud – then blast the word that makes sense!',
+          waves: [
+            { prompt: 'I fell over ___ I hurt my knee.', items: [{ label: 'and', ok: true }, { label: 'or', ok: false, why: 'Both things happened – and.' }, { label: 'until', ok: false, why: 'Both things happened – you are adding another idea: and.' }] },
+            { prompt: 'Shall we play tag ___ hide and seek?', items: [{ label: 'or', ok: true }, { label: 'so', ok: false, why: 'It\'s a choice: or.' }, { label: 'because', ok: false, why: 'It\'s a choice: or.' }] },
+            { prompt: 'I got wet ___ I forgot my umbrella.', items: [{ label: 'because', ok: true }, { label: 'or', ok: false, why: 'It gives the reason: because.' }, { label: 'until', ok: false, why: 'It gives the reason: because.' }] },
+            { prompt: 'Shoot every JOINING word!', items: [{ label: 'but', ok: true }, { label: 'when', ok: true }, { label: 'if', ok: true }, { label: 'after', ok: true }, { label: 'cat', ok: false, why: 'cat is a noun.' }, { label: 'run', ok: false, why: 'run is a verb.' }, { label: 'red', ok: false, why: 'red is an adjective.' }] },
+          ],
+          done: 'JUNCTION BLASTER CLEAR! Stopsy is running out of full stops…',
+        },
+      ],
+    },
+
+    {
+      type: 'game', title: 'The Spell Test: All Aboard!', short: 'Spell test', icon: '🪄', kind: 'Spelling test', minutes: 10,
+      rounds: [
+        {
+          game: 'spelltest', mode: 'fix', title: 'Derailed Words', scene: 'train', prize: 'the test train',
+          intro: 'Stopsy has knocked some letters off the tracks! Write each red word correctly. Every word couples a carriage onto the train.',
+          say: 'Uh-oh, a gremlin got here! Write the red word correctly.',
+          words: [
+            { word: 'because', wrong: 'becuase', sentence: 'I smiled ___ I was happy.', hint: 'Big Elephants Can Always Understand Small Elephants!' },
+            { word: 'before', wrong: 'befor', sentence: 'Wash your hands ___ you eat.', hint: 'It ends with a silent e: be-fore.' },
+            { word: 'until', wrong: 'untill', sentence: 'Wait ___ the bell rings.', hint: 'Only ONE l at the end.' },
+            { word: 'while', wrong: 'wile', sentence: 'I sang ___ I painted.', hint: 'It starts with wh.' },
+            { word: 'although', wrong: 'althogh', sentence: 'I went out ___ it was cold.', hint: 'al + though' },
+          ],
+        },
+        {
+          game: 'spelltest', mode: 'listen', title: 'The Real Spell Test', scene: 'train', prize: 'your word train',
+          intro: 'The real test! Press 🔊 to hear each word in a sentence, then spell it. Every word couples a carriage – fill the train and it steams away!',
+          say: 'Listen carefully… then type the word!',
+          words: [
+            { word: 'because', sentence: 'We stayed in ___ it was raining.', clue: 'gives a reason', hint: 'Big Elephants Can Always Understand Small Elephants.' },
+            { word: 'when', sentence: 'I cheered ___ we scored a goal.', clue: 'at the time that', hint: 'It starts with wh.' },
+            { word: 'after', sentence: 'We had ice cream ___ lunch.', clue: 'later than', hint: 'af + ter' },
+            { word: 'before', sentence: 'Put your coat on ___ you go out.', clue: 'earlier than', hint: 'be + fore' },
+            { word: 'while', sentence: 'Dad sang ___ he cooked.', clue: 'at the same time as', hint: 'wh + ile' },
+            { word: 'until', sentence: 'Stir it ___ it bubbles.', clue: 'up to the time that', hint: 'un + til – only one l!' },
+            { word: 'although', sentence: 'I ate it ___ it was cold.', clue: 'even though', hint: 'al + though' },
+            { word: 'since', sentence: 'I have grown ___ last year.', clue: 'from that time', hint: 'It ends in ce, not se.' },
+            { word: 'sentence', sentence: 'A capital letter starts a ___.', clue: 'a group of words that makes sense', hint: 'sen + ten + ce' },
+            { word: 'together', sentence: 'Conjunctions join ideas ___.', clue: 'joined up with each other', hint: 'to + get + her' },
+          ],
+        },
+        {
+          game: 'invaders', title: 'Letter Blaster',
+          intro: 'Bonus arcade round! Read the clue at the top, then **shoot the letters in order** to spell the word. Press 🔊 to hear it.',
+          say: 'Shoot the letters IN ORDER!',
+          waves: [
+            { spell: 'but', clue: 'A joining word for two ideas that don\'t match', decoys: 'ae' },
+            { spell: 'until', clue: 'Wait ___ I get there (only one l!)', decoys: 'le' },
+            { spell: 'because', clue: 'A joining word that gives a reason', decoys: 'kw' },
+          ],
+          done: 'LETTER BLASTER CLEAR! Your spelling is full steam ahead!',
+        },
+      ],
+    },
+
+    {
+      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
+      say: 'All aboard the joining-word train! Do each move, joined to the next one.',
+      wiggle: {
+        title: '🚂 Choo-Choo Moves!',
+        seconds: 60,
+        moves: [
+          '🚂 Chug your arms like train wheels AND stamp your feet!',
+          '🔀 Jump left OR jump right – you choose!',
+          '⏰ Touch your toes BEFORE you reach for the sky!',
+          '🐸 Hop like a frog UNTIL I say stop… STOP!',
+          '🌀 Spin round WHILE you clap your hands!',
+          '😴 Yawn and stretch BECAUSE you worked so hard!',
+        ],
+      },
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: Stopsy the Full-Stop Gremlin', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      say: 'STOPSY THE FULL-STOP GREMLIN has chopped every sentence in the Kingdom into tiny bits! Every right answer joins one back together. Go, {name}!',
+      boss: {
+        name: 'Stopsy', sprite: STOPSY, attack: '⚫',
+        lines: {
+          intro: 'Hehehe. I am. STOPSY. Short sentences. Are. The. Best. Joining words. Are. BANNED.',
+          hurt: ['Ow. That. Hurt.', 'No! You joined. Two ideas!', 'Stop. Linking. Things!', 'My dots. Are. Wobbling.'],
+          taunt: ['Wrong. Ha. Ha. Ha.', 'Choppy. Choppy. Choppy.', 'Full stop. For you.', 'The. End. Hehehe.'],
+          angry: 'Now I am. VERY. CROSS. Full stops. EVERYWHERE!',
+          dodge: 'Dot. Dot. DOT! Dodge my full stops!',
+          miss: 'Missed? All. Of. Them?!',
+          last: 'Please… no more… and… but… so…',
+          defeat: 'Nooo! You joined the sentences together and now I can\'t stop talking because everything is linked and… oh no…',
+          win: 'Hehehe. Every sentence. Is choppy. For ever. The end.',
+          stunned: 'Dot… dot… dot… I see… commas…',
+          beg: ['Wait! I\'ll only go at the end of sentences!', 'Mercy! I\'ll let you use "and"… just once!', 'I\'ll be a nice, polite full stop – promise!'],
+        },
+      },
+      bonus: {
+        title: '⭐ Bonus quest (for a grown-up to help with)',
+        text: 'Want more? Watch CENTURY Tech\'s "Conjunctions Explained" (3 min) for more practice spotting joining words in sentences.',
+        url: 'https://www.youtube.com/watch?v=I-_IuR22gbQ',
+        button: 'Watch the bonus video ▶',
+      },
+      questions: [
+        { type: 'mcq', q: 'A conjunction is…', options: ['a joining word', 'a naming word', 'a describing word'], answer: 0 },
+        { type: 'gap', q: 'I wanted a biscuit ___ the tin was empty.', options: ['but', 'or', 'so'], answer: 0 },
+        { type: 'gap', q: 'Would you like a story ___ a song?', options: ['or', 'because', 'so'], answer: 0 },
+        { type: 'gap', q: 'It was sunny ___ we went to the park.', options: ['so', 'or', 'until'], answer: 0 },
+        { type: 'gap', q: 'I wore my wellies ___ it was muddy.', options: ['because', 'or', 'but'], answer: 0, hint: 'Is it giving the reason?' },
+        { type: 'gap', q: 'Look both ways ___ you cross the road.', options: ['before', 'after', 'or'], answer: 0 },
+        { type: 'mcq', q: 'Which joining word means "at the same time"?', options: ['while', 'after', 'or'], answer: 0 },
+        { type: 'mcq', q: 'Stopsy writes: "I was sleepy. I went to bed." What is the best way to join them?', options: ['I was sleepy so I went to bed.', 'I was sleepy or I went to bed.', 'I was sleepy but I went to bed.'], answer: 0 },
+        { type: 'mcq', q: 'Which sentence is complete?', options: ['When the bell rang, we went out to play.', 'When the bell rang.', 'When ringing the bell.'], answer: 0 },
+        { type: 'tf', q: 'You are allowed to start a sentence with because, as long as it has two parts.', answer: true, explain: 'Because it was late, we went home. ✅' },
+        { type: 'order', q: 'Build the sentence in order.', items: ['🌧️ It started to rain', '🔗 so', '🏃 we ran', '🏠 inside.'], hint: 'What happened first? Then join it with so.' },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>

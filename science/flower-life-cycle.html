@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Flower Power Life Cycle</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <script src="../shared/pixel.js"></script>
+  <script src="../shared/pixel-icons.js"></script>
+  <script src="../shared/avatar.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// ---------- blocky pictures for this lesson ----------
+const svg = (vb, inner) => `<svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" role="img">${inner}</svg>`;
+const R = (x, y, w, hh, fill) => `<rect x="${x}" y="${y}" width="${w}" height="${hh}" fill="${fill}"/>`;
+const LINE = (x1, y1, x2, y2) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#000" stroke-width="2" stroke-dasharray="4 3"/>`;
+
+// a flower cut in half, to label: petals, stamens (pollen makers), the sticky stigma and the ovary (seed maker)
+const FLOWER_LABEL = svg('0 0 300 260', `
+  ${R(146, 170, 8, 90, '#2e9e3e')}${R(118, 166, 28, 8, '#5bbf3a')}${R(154, 166, 28, 8, '#5bbf3a')}${R(112, 210, 34, 10, '#5bbf3a')}
+  ${R(96, 112, 36, 34, '#ff7eb6')}${R(104, 104, 20, 8, '#ff7eb6')}${R(104, 146, 20, 8, '#ff7eb6')}
+  ${R(168, 112, 36, 34, '#ff7eb6')}${R(176, 104, 20, 8, '#ff7eb6')}${R(176, 146, 20, 8, '#ff7eb6')}
+  ${R(132, 140, 36, 30, '#7cc96a')}${R(138, 146, 24, 18, '#5fae4f')}${R(142, 150, 6, 6, '#ffffff')}${R(152, 154, 6, 6, '#ffffff')}
+  ${R(147, 78, 6, 62, '#9bd46a')}${R(138, 66, 24, 12, '#c6ec9b')}${R(142, 64, 4, 4, '#9bd46a')}${R(154, 64, 4, 4, '#9bd46a')}
+  ${R(119, 90, 4, 50, '#e9cfa6')}${R(112, 78, 18, 12, '#ffcc33')}${R(114, 74, 4, 4, '#ffe066')}${R(124, 74, 4, 4, '#ffe066')}
+  ${R(177, 90, 4, 50, '#e9cfa6')}${R(170, 78, 18, 12, '#ffcc33')}${R(172, 74, 4, 4, '#ffe066')}${R(182, 74, 4, 4, '#ffe066')}
+  ${LINE(150, 64, 150, 30)}${LINE(188, 84, 226, 80)}${LINE(96, 129, 76, 130)}${LINE(132, 158, 76, 206)}`);
+
+// welcome picture: a flower with a bee on the way
+const BLOOM = Pixel.svg([
+  '.....pp..pp.......',
+  '....pppppppp......',
+  '...ppPyyyyPpp.....',
+  '..pppyyyyyyppp....',
+  '..ppyyykyyyypp.yk.',
+  '..ppyyyyyyyypp.kyk',
+  '...ppyyyyyypp..yk.',
+  '....pppppppp..ww..',
+  '.....pp.gpp.......',
+  '........g.........',
+  '....lll.g.........',
+  '.....llgg..lll....',
+  '.......gg.lll.....',
+  '.......ggl........',
+  '.......gg.........',
+  '..bbbbbbbbbbbbb...',
+], { p: '#ff7eb6', P: '#ffb3d9', y: '#ffd43b', k: '#1b1b1b', g: '#2e9e3e', l: '#5bbf3a', w: '#cfefff', b: '#8a5a32' });
+
+// the boss: Mowbot 3000, a grumpy robot lawnmower who wants a "tidy" lawn with no flowers at all
+const MOWBOT = Pixel.svg([
+  '...........kk.',
+  '..........kk..',
+  '.........kk...',
+  '.kkkkkkkkkk...',
+  'krrrrrrrrrrk..',
+  'krkkrrrrkkrk..',
+  'krwkkrrkkwrk..',
+  'krrrrrrrrrrk..',
+  'krrkkkkkkrrk..',
+  'kkkkkkkkkkkk..',
+  'ksgsgsgsgsgk..',
+  '.kk......kk...',
+  'kyyk....kyyk..',
+  '.kk......kk...',
+], { k: '#1b1b1b', r: '#e53935', w: '#ffffff', s: '#c9d1da', g: '#5bbf3a', y: '#ffd43b' });
+
+// ---------- the lesson ----------
+window.LESSON = {
+  id: 'science-flower-life-cycle',
+  subject: 'science',
+  title: 'Flower Power Life Cycle',
+  emoji: '🌸',
+  home: '../index.html',
+  finishAch: 'gardener',
+  mascot: {
+    name: 'Professor Bolt',
+    sprite: Pixel.sprites.robot,
+    praise: ['Blooming brilliant!', 'Bee-autiful!', 'Critical hit!', 'You\'re the bee\'s knees!', 'Super scientist!', 'Bolt-tastic!', 'Seed-sational!'],
+    oops: ['Oops! Try again, scientist.', 'Not quite – have another go!', 'Hmm, think again!', 'So close! One more try.'],
+  },
+  glossary: {
+    'life cycle': { emoji: '🔄', word: 'life cycle', def: 'All the stages of a living thing\'s life, going round and round in a circle.' },
+    germinate: { emoji: '🌱', def: 'When a seed wakes up and starts to grow a root and a shoot. Say "JER-min-ate".' },
+    seedling: { emoji: '🌿', def: 'A very young plant that has just grown out of its seed.' },
+    pollen: { emoji: '🟡', def: 'A yellow, dusty powder made by flowers. Plants need it to make seeds.' },
+    pollination: { emoji: '🐝', def: 'When pollen is carried from one flower to another, usually by insects or the wind.' },
+    nectar: { emoji: '🍯', def: 'A sweet, sugary juice inside flowers. Bees drink it and make honey from it.' },
+    stamen: { emoji: '🟨', def: 'The part of a flower that makes pollen. It looks like a thin stalk with a dusty tip.' },
+    stigma: { emoji: '🍭', def: 'The sticky top in the middle of a flower. It catches pollen.' },
+    ovary: { emoji: '🥚', def: 'The part at the bottom of a flower where the seeds grow.' },
+    'seed dispersal': { emoji: '🌬️', word: 'seed dispersal', def: 'All the ways seeds are spread out away from their parent plant.' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'Flower Power Life Cycle', short: 'Start', minutes: 1,
+      pic: BLOOM,
+      hello: 'Beep boop! Welcome back, scientist! Today we find out why flowers are so much more than just pretty.',
+      question: 'An apple tree can\'t walk. So how does it plant baby apple trees in new places?',
+      intro: 'Recap **What Do Plants Need?**, read, watch, fly a bee from flower to flower, send seeds flying – then stop Mowbot 3000 from mowing down every flower! A new 🐝 bee pet is waiting in the Wardrobe shop.',
+      nameLabel: 'Player name:',
+    },
+
+    {
+      type: 'review', title: 'Last time…', short: 'Recap', minutes: 3,
+      from: { title: 'What Do Plants Need?', emoji: '🌻', url: 'plant-needs.html' },
+      facts: [
+        'Plants need light, water, air, nutrients from the soil and space to grow. Most like warmth too.',
+        'A plant in the dark grows pale, tall and floppy. Too much water can make roots rot.',
+        'Water travels from the roots, up tiny tubes in the stem called xylem, to the leaves.',
+        'Leaves take in carbon dioxide and give out the oxygen that we breathe.',
+      ],
+      questions: [
+        { type: 'mcq', q: 'A pot of cress has been in a cupboard for a week. What will it look like?', options: ['tall, pale and floppy', 'short, dark green and strong', 'covered in flowers'], answer: 0 },
+        { type: 'mcq', q: 'A plant has droopy leaves and dusty, dry soil. What is the best fix?', options: ['give it a drink of water', 'move it into a dark cupboard', 'water it ten times a day'], answer: 0 },
+        { type: 'mcq', q: 'Celery stands in red water for a day. Why do its leaves turn red?', options: ['the red water travels up tubes in the stem', 'the leaves soak up red light', 'the celery is getting ripe'], answer: 0 },
+        { type: 'tf', q: 'Plants give out oxygen, the gas people need to breathe.', answer: true },
+      ],
+    },
+
+    {
+      type: 'read', title: 'From seed to flower', short: 'Read 1', minutes: 6,
+      say: 'Read each page carefully – the checks test if you really understood it! Tap the yellow words for a 💎.',
+      cards: [
+        {
+          title: 'Round and round', pic: '🫘➡️🌱➡️🌷➡️🍎',
+          text: [
+            'Every flowering plant goes through a [[life cycle]]. A seed grows into a plant, the plant grows flowers, and the flowers make new seeds.',
+            'Then those new seeds grow into new plants, and it all starts again – round and round, like a circle.',
+          ],
+          check: { q: 'You plant a sunflower seed. It grows, flowers and makes seeds. What happens if you plant one of those new seeds?', options: ['It starts a whole new sunflower life cycle', 'Nothing – seeds from flowers cannot grow', 'It grows into a different kind of plant'], answer: 0 },
+        },
+        {
+          title: 'Wake up, little seed!', pic: '🫘💧🌡️',
+          text: [
+            'A seed is a baby plant with a packed lunch inside, wrapped in a tough seed coat. It can wait, fast asleep, for months.',
+            'When it gets water, air and warmth, it starts to [[germinate]]. A root pokes out first and grows down. Then a shoot grows up towards the light.',
+          ],
+          check: { q: 'Ben plants a bean in dry soil in a warm room and never waters it. What will happen?', options: ['It stays asleep – it needs water to germinate', 'It germinates quickly in the warmth', 'It grows a shoot but no root'], answer: 0, hint: 'What three things does a seed need to wake up?' },
+        },
+        {
+          title: 'Growing up', pic: '🌱➡️🪴',
+          text: [
+            'The young plant is called a [[seedling]]. At first it lives on the food packed inside the seed.',
+            'Soon its leaves open up and start making food from sunlight. It grows bigger and stronger until it is an adult plant, ready to grow flowers.',
+          ],
+          check: { q: 'Why does a seedling not need sunlight on its very first day?', options: ['It is still using the food stored in its seed', 'Seedlings grow best in the dark for ever', 'Its roots make all of its food'], answer: 0 },
+        },
+        {
+          title: 'Inside a flower', pic: FLOWER_LABEL,
+          text: [
+            'Colourful petals and sweet [[nectar]] invite insects in. Around the middle are the [[stamen]]s, which make a yellow dust called [[pollen]].',
+            'In the very middle is the sticky [[stigma]], which catches pollen. Below it is the [[ovary]], where the seeds will grow.',
+          ],
+          check: { q: 'A bee crawls into a flower and comes out with yellow dust on its legs. Which part of the flower did the dust come from?', options: ['the stamens', 'the ovary', 'the roots'], answer: 0, hint: 'Which part makes pollen?' },
+        },
+        {
+          title: 'Busy bees', pic: '🌼🐝➡️🌼',
+          text: [
+            'A bee visits a flower to drink nectar, and pollen sticks to its fuzzy body. When it flies to the next flower, some pollen rubs off onto that flower\'s sticky stigma.',
+            'Moving pollen from flower to flower is called [[pollination]]. Insects, birds and even the wind can do it. Once a flower is pollinated, it can start making seeds.',
+          ],
+          check: { q: 'A farmer\'s apple trees have lots of blossom, but there are no bees this spring. What might happen?', options: ['Fewer apples grow, because the flowers are not pollinated', 'More apples grow, because the bees do not eat them', 'The apple trees grow taller instead'], answer: 0 },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'From Seed to Fruit', short: 'Video 1', minutes: 7,
+      video: { id: '2SBVz4MgeIE', title: 'Plant Life Cycle Stages From Seed To Fruit', channel: 'The Pique Lab', duration: '5:22' },
+      say: 'In this video, a tree tells the story of its own life! Watch, then answer my questions.',
+      clues: [
+        'What three things does a seed need to wake up?',
+        'Which part grows out of the seed first?',
+        'Where does the baby plant get its food at first?',
+        'What are the two ways the flowers get pollinated?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'The video says a seed needs three things to wake up. Which three?', options: ['water, oxygen and warmth', 'light, soil and wind', 'sugar, salt and water'], answer: 0, explain: 'W-O-W: water, oxygen, warmth!' },
+        { type: 'mcq', q: 'What protects the seed while it sleeps?', options: ['a seed coat', 'a petal', 'a leaf'], answer: 0 },
+        { type: 'mcq', q: 'Which part of the plant appears first?', options: ['the roots', 'the flowers', 'the fruit'], answer: 0 },
+        { type: 'tf', q: 'The video says roots always grow downwards, whichever way up the seed is lying.', answer: true },
+        { type: 'mcq', q: 'In the video, the two ways the flowers can be pollinated are by…', options: ['insects or the wind', 'rain or snow', 'people or cars'], answer: 0 },
+        { type: 'mcq', q: 'Ferns do not grow flowers. What does the video say they make instead?', options: ['spores', 'apples', 'nectar'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Pollination Lab', short: 'Game 1', minutes: 13,
+      rounds: [
+        {
+          game: 'questions', title: 'Life cycle line-up',
+          intro: 'Put the life cycle of a flowering plant in order, then answer Professor Bolt\'s questions.',
+          say: 'Think about what has to happen FIRST!',
+          questions: [
+            { type: 'order', q: 'Put the life cycle in order, starting with the seed.', items: ['🫘 a seed', '🌱 it germinates', '🌿 a seedling grows', '🌷 the adult plant flowers', '🐝 the flowers are pollinated', '🍎 seeds grow inside the fruit'], hint: 'Seed first. Seeds can only be made after pollination.' },
+            { type: 'mcq', q: 'What comes straight after the seeds are spread to a new place?', options: ['They germinate and the cycle starts again', 'The plant grows its first flower', 'The fruit turns back into a flower'], answer: 0 },
+          ],
+        },
+        {
+          game: 'label', title: 'Label the flower',
+          intro: 'Drag each label onto the right part of the flower. Two of the labels are fakes!',
+          say: 'Follow the dotted lines to see which part each box is pointing at.',
+          pic: FLOWER_LABEL,
+          hint: 'Petals are colourful. Stamens make pollen. The stigma is sticky. The ovary is where seeds grow.',
+          spots: [
+            { x: 50, y: 7, answer: 'stigma' },
+            { x: 88, y: 30, answer: 'stamen' },
+            { x: 12, y: 50, answer: 'petal' },
+            { x: 12, y: 82, answer: 'ovary' },
+          ],
+          extra: ['root', 'xylem'],
+        },
+        {
+          game: 'pollinate', title: 'Bee Flight',
+          intro: 'You are the bee! Touch or drag anywhere and the bee flies there. Hover on the middle of a flower to drink its nectar.',
+          say: 'Buzz buzz! Fly to a flower and hover on its middle.',
+          missions: [
+            {
+              text: 'Fly to an apple blossom and drink its nectar. Watch what sticks to you!', flowers: ['apple', 'apple', 'apple'], goal: 'collect',
+              yes: 'Look at the yellow dots on the bee – that is pollen!',
+            },
+            {
+              text: 'Pollinate ALL three apple blossoms. Carry pollen from one blossom to another.', flowers: ['apple', 'apple', 'apple'], goal: 'all',
+              yes: 'Every blossom is pollinated – and look, they are turning into apples!',
+              ask: [
+                { type: 'mcq', q: 'What happened to the petals after each blossom was pollinated?', options: ['They fell off, and the flower grew into a fruit', 'They grew bigger and brighter', 'They turned into bees'], answer: 0 },
+                { type: 'mcq', q: 'Why are there seeds inside an apple?', options: ['The fruit grew from the pollinated flower\'s ovary', 'The bee pushed them in', 'The apple tree pulled them up from the soil'], answer: 0 },
+              ],
+            },
+            {
+              text: 'A mixed meadow! Pollinate every flower. Careful – pollen only works on the SAME kind of flower.', flowers: ['poppy', 'sunflower', 'poppy', 'sunflower'], goal: 'all',
+              yes: 'Poppy pollen to poppies, sunflower pollen to sunflowers. Expert pollinating!',
+              ask: [
+                { type: 'mcq', q: 'The bee carries poppy pollen to a sunflower. What happens?', options: ['Nothing – poppy pollen only works on poppies', 'The sunflower grows poppy seeds', 'The sunflower turns red'], answer: 0 },
+              ],
+            },
+          ],
+        },
+        {
+          game: 'wordsearch', title: 'Word Hunt',
+          intro: 'Find all the **life cycle words** hidden in the grid. They go across ➡ or down ⬇.',
+          say: 'Hunt for the hidden words! Drag across a word – or tap the first letter, then the last.',
+          size: 10,
+          words: ['SEED', 'POLLEN', 'PETAL', 'NECTAR', 'BEE', 'FRUIT', 'STIGMA', 'OVARY'],
+        },
+      ],
+    },
+
+    {
+      type: 'read', title: 'Seeds on the move', short: 'Read 2', minutes: 6,
+      say: 'A plant can\'t walk – but its seeds are great travellers. Let\'s find out how!',
+      cards: [
+        {
+          title: 'From flower to fruit', pic: '🌸➡️🍏➡️🍎',
+          text: [
+            'After pollination, the petals dry up and fall off. They have done their job!',
+            'The ovary swells up into a fruit, with the seeds safe inside. Apples, tomatoes, peppers and even pea pods are all fruits holding seeds.',
+          ],
+          check: { q: 'You cut open a cucumber and find lots of little seeds. What does that tell you?', options: ['A cucumber grew from a pollinated flower', 'Someone put the seeds inside it', 'Cucumbers grow from roots'], answer: 0 },
+        },
+        {
+          title: 'Why seeds need to travel', pic: '🌳🌱🌱🌱',
+          text: [
+            'If every seed fell right under its parent plant, the seedlings would be squashed together, fighting for water, light and space. The big parent would block the sunlight too.',
+            'So plants send their seeds away. This is called [[seed dispersal]].',
+          ],
+          check: { q: 'An oak tree drops 100 acorns straight down onto the ground beneath it. Why might most of them struggle to grow?', options: ['The big tree shades them, and they all share the same water and space', 'Acorns can only grow in the sea', 'Acorns need to be planted by people'], answer: 0 },
+        },
+        {
+          title: 'Wind and water', pic: '🌬️🌼 🥥🌊',
+          text: [
+            'Some seeds fly. Dandelion seeds have fluffy parachutes, and sycamore seeds have wings that spin like helicopters.',
+            'Some seeds sail! A coconut is a giant seed that floats. It can drift across the sea and grow on a faraway beach.',
+          ],
+          check: { q: 'A seed is very light and has a fluffy top. How does it most likely travel?', options: ['It floats away on the wind', 'It rolls along the ground', 'Squirrels bury it'], answer: 0 },
+        },
+        {
+          title: 'Animal taxis', pic: '🐿️🌰 🐦🍓',
+          text: [
+            'Animals carry seeds too. Burrs have tiny hooks that stick to fur and socks. Squirrels bury acorns to eat later – and the ones they forget grow into new oak trees!',
+            'Birds and other animals eat tasty fruit, then the seeds come out in their poo, far away. Plus a free blob of fertiliser!',
+          ],
+          check: { q: 'After a walk in the woods, your dog has spiky little balls stuck in its fur. What are they doing?', options: ['Hitching a ride, so the seeds inside get carried somewhere new', 'Trying to eat the dog\'s fur', 'Keeping the dog warm'], answer: 0 },
+        },
+        {
+          title: 'Myth-buster: is a tomato a vegetable?', pic: '🍅❓',
+          text: [
+            'Lots of people say a tomato is a vegetable. Scientists say: busted! To a scientist, a fruit is the part that grows from the flower and holds the seeds.',
+            'Tomatoes have seeds inside, so they are fruits – and so are cucumbers, peppers and pumpkins!',
+          ],
+          check: { q: 'Using the scientist\'s rule, which of these is a fruit?', options: ['a pepper, full of seeds', 'a carrot, which is a root', 'a lettuce leaf'], answer: 0, hint: 'A fruit holds the seeds.' },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'How Do Seeds Travel?', short: 'Video 2', minutes: 7,
+      video: { id: 'WqgVks9NViQ', title: 'How Do Plant Seeds Travel?', channel: 'SciShow Kids', duration: '5:47' },
+      say: 'Jessi and Squeaks the robot mouse are finding out how seeds get around. Watch, then answer my questions.',
+      clues: [
+        'How do you help a dandelion when you make a wish?',
+        'Why can\'t all the seeds grow next to the parent plant?',
+        'How does a coconut travel?',
+        'Why do squirrels help oak trees?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'When you blow on a fluffy dandelion, you are…', options: ['helping its seeds travel somewhere new', 'stopping it from growing', 'giving it a drink'], answer: 0 },
+        { type: 'mcq', q: 'Why do seeds need to travel away from the parent plant?', options: ['There would not be enough space, soil, water and sunlight for them all', 'The parent plant does not like them', 'Seeds can only grow in water'], answer: 0 },
+        { type: 'mcq', q: 'What do maple (sycamore) seeds have to catch the wind?', options: ['wings', 'hooks', 'a hard shell'], answer: 0 },
+        { type: 'mcq', q: 'How does a coconut travel?', options: ['It floats on the water, like a boat', 'It flies on the wind', 'It sticks to animals\' fur'], answer: 0 },
+        { type: 'mcq', q: 'Why do lots of oak trees grow from acorns that squirrels buried?', options: ['The squirrels forgot where they put them', 'Squirrels plant them on purpose', 'Acorns fall out of squirrels\' nests'], answer: 0 },
+        { type: 'mcq', q: 'Why does an apple tree wrap its seeds in tasty fruit?', options: ['So animals eat it and carry the seeds away in their tummies', 'So the seeds stay warm', 'So nobody eats it'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Seed Scatter', short: 'Game 2', minutes: 10,
+      rounds: [
+        {
+          game: 'sort', title: 'How does it travel?',
+          intro: 'Look at each seed\'s clue. Sort it into the way it travels.',
+          say: 'Is it fluffy? Hooked? Tasty? Floaty? Or does it pop?',
+          buckets: [
+            { id: 'wind', label: 'Wind', emoji: '🌬️' },
+            { id: 'animal', label: 'Animals', emoji: '🐿️' },
+            { id: 'water', label: 'Water', emoji: '🌊' },
+            { id: 'pop', label: 'Pop!', emoji: '💥' },
+          ],
+          items: [
+            { label: 'dandelion with a fluffy parachute', emoji: '🌼', bucket: 'wind', hint: 'Fluffy and light – what could blow it away?' },
+            { label: 'sycamore seed with wings', emoji: '🍁', bucket: 'wind', hint: 'Wings spin like a helicopter in the…?' },
+            { label: 'burr covered in tiny hooks', emoji: '🌰', bucket: 'animal', hint: 'Hooks stick to fur.' },
+            { label: 'juicy strawberry', emoji: '🍓', bucket: 'animal', hint: 'Who eats strawberries?' },
+            { label: 'acorn that squirrels bury', emoji: '🐿️', bucket: 'animal', hint: 'Squirrels forget where they hide them.' },
+            { label: 'coconut that floats', emoji: '🥥', bucket: 'water', hint: 'It floats like a boat.' },
+            { label: 'water lily seed that drifts on a pond', emoji: '🪷', bucket: 'water', hint: 'It drifts along on…?' },
+            { label: 'pea pod that dries and bursts open', emoji: '🫛', bucket: 'pop', hint: 'It bursts and flings its seeds out!' },
+          ],
+        },
+        {
+          game: 'match', title: 'Seed super-powers',
+          intro: 'Every seed has a special trick for travelling. Match each seed to its super-power!',
+          say: 'Tap a seed, then tap its trick!',
+          hint: 'Think about its shape: wings, fluff, hooks, a tasty coat or a floaty shell?',
+          pairs: [
+            { a: '🍁 sycamore', b: '🚁 spins like a helicopter' },
+            { a: '🌼 dandelion', b: '🪂 floats on a parachute' },
+            { a: '🌰 burdock burr', b: '🪝 hooks onto fur' },
+            { a: '🍒 cherry', b: '🐦 eaten by birds' },
+            { a: '🥥 coconut', b: '⛵ sails across the sea' },
+            { a: '🫛 pea pod', b: '💥 bursts open and flings' },
+          ],
+        },
+        {
+          game: 'crossword', title: 'Life Cycle Crossword',
+          intro: 'Solve the crossword! Tap a clue, then type the answer with the letter keys.',
+          say: 'Crossword time! Stuck? Press 💡 Hint for a free letter.',
+          entries: [
+            { answer: 'SEED', clue: 'A baby plant with a packed lunch inside' },
+            { answer: 'POLLEN', clue: 'Yellow dust made by the stamens' },
+            { answer: 'BEE', clue: 'A busy insect that carries pollen' },
+            { answer: 'PETAL', clue: 'A colourful part of a flower that invites insects in' },
+            { answer: 'FRUIT', clue: 'It grows from the flower and holds the seeds' },
+            { answer: 'WIND', clue: 'It blows dandelion seeds far away' },
+            { answer: 'ROOT', clue: 'The first part to grow out of a seed' },
+            { answer: 'NECTAR', clue: 'Sweet juice that bees drink' },
+          ],
+        },
+        {
+          game: 'invaders', title: 'Seed Blaster',
+          intro: 'Mowbot has sent aliens to the meadow! Read each mission at the top – then shoot ONLY the right aliens.',
+          say: 'Tap above an alien to fly there and fire!',
+          waves: [
+            {
+              prompt: 'Shoot what a seed needs to GERMINATE!',
+              items: [
+                { label: '💧 water', ok: true }, { label: '🌡️ warmth', ok: true }, { label: '💨 air', ok: true },
+                { label: '🍫 chocolate', ok: false, why: 'Seeds carry their own packed lunch – no chocolate needed!' },
+                { label: '🌸 petals', ok: false, why: 'Petals come much later, on the adult plant.' },
+                { label: '🐝 a bee', ok: false, why: 'Bees help flowers, not sleeping seeds.' },
+              ],
+            },
+            {
+              prompt: 'Shoot the POLLINATORS!',
+              items: [
+                { label: '🐝 bee', ok: true }, { label: '🦋 butterfly', ok: true }, { label: '🐦 hummingbird', ok: true }, { label: '🌬️ wind', ok: true },
+                { label: '🐟 fish', ok: false, why: 'Fish live under water, far from flowers!' },
+                { label: '🪨 rock', ok: false, why: 'A rock cannot carry pollen anywhere.' },
+                { label: '🐌 snail', ok: false, why: 'Snails munch leaves – they are not good pollinators.' },
+              ],
+            },
+            {
+              prompt: 'Shoot the FRUITS (they hold seeds)!',
+              items: [
+                { label: '🍎 apple', ok: true }, { label: '🍅 tomato', ok: true }, { label: '🫑 pepper', ok: true }, { label: '🥒 cucumber', ok: true },
+                { label: '🥕 carrot', ok: false, why: 'A carrot is a root.' },
+                { label: '🥬 lettuce', ok: false, why: 'Lettuce is leaves.' },
+                { label: '🥔 potato', ok: false, why: 'A potato is a swollen underground stem.' },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
+      say: 'Time to grow, bloom and fly – the life cycle dance!',
+      wiggle: {
+        title: '🌸 Life Cycle Dance!',
+        seconds: 60,
+        moves: [
+          '🫘 Curl up small like a sleeping seed…',
+          '🌱 Germinate! Wiggle your feet like roots, then slowly push your arms up like a shoot.',
+          '🌷 Bloom! Open your arms wide like petals.',
+          '🐝 Buzz around the room from flower to flower!',
+          '🍁 Be a sycamore seed – spin round and round as you float down.',
+          '🌼 Be a dandelion seed – tiptoe away on the wind!',
+        ],
+      },
+      tryit: {
+        title: '🚁 Try it at home: Paper Helicopter Seeds',
+        intro: 'Sycamore seeds spin to fall slowly, so the wind can carry them further. You need a strip of paper, scissors, a paper clip and a grown-up. Cut the top of the strip down the middle and fold the two halves opposite ways, like wings. Put the paper clip on the bottom.',
+        steps: [
+          'Before you test, tap the first box for each one: do you THINK it will fall slowly?',
+          'Stand somewhere safe and drop each one from the same height. Count how long it takes to land.',
+          'Tap the second box: did it fall slowly?',
+          'Which one would a plant want for its seeds? Why?',
+        ],
+        table: {
+          cols: ['I think it falls slowly…', 'It fell slowly…'],
+          items: ['🚁 paper helicopter', '📄 flat strip of paper (no wings)', '⚪ paper scrunched into a ball'],
+        },
+        tip: 'Tap once for ✅ and twice for ❌. Extra challenge: make the wings longer or shorter – which spins best?',
+      },
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: Mowbot 3000', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      say: 'Oh no! MOWBOT 3000 wants to mow every flower before the bees can pollinate them! No flowers means no seeds. Every right answer is a hit. Stop it, {name}!',
+      boss: {
+        name: 'Mowbot 3000', sprite: MOWBOT, attack: ['✂️', '🌿'], spin: true,
+        lines: {
+          intro: 'BZZRRT! I am MOWBOT 3000! Flowers are MESSY! I will mow every single one – nice, neat, boring grass for ever!',
+          hurt: ['Bzzt! Blade malfunction!', 'Ow! A daisy in my gears!', 'Error! Too much flower power!', 'My engine is spluttering!'],
+          taunt: ['Wrong! Snip snip!', 'Mowed it! Ha!', 'Neat and tidy – just like your mistake!', 'Brrrm! Another one bites the dust!'],
+          angry: 'MAXIMUM MOWING MODE ACTIVATED!',
+          dodge: 'Grass clippings incoming! Dodge them!',
+          miss: 'Not one clipping hit you?! Recalculating…',
+          last: 'Battery… low… so many… flowers…',
+          defeat: 'BZZRRT… my blades… are full of… daisies… *clunk*',
+          win: 'Snip snip! The lawn is neat and flower-free! Come back when you know your life cycles!',
+          stunned: 'Bzzt… I see… spinning sycamore seeds…',
+          beg: ['Wait! I\'ll only mow the paths, I promise!', 'Let me be a bee hotel instead!', 'I\'ll leave a wild patch for the bees!'],
+        },
+      },
+      bonus: {
+        title: '⭐ Bonus quest (for a grown-up to help with)',
+        text: 'Want more? Watch Explore Planet English\'s "Life Cycle of Flowering Plants" (5 min) to find out about plants that grow from bulbs, wild flowers, and why strawberry seeds are on the outside.',
+        url: 'https://www.youtube.com/watch?v=74tODKTSHqE',
+        button: 'Watch the bonus video ▶',
+      },
+      questions: [
+        { type: 'mcq', q: 'Mowbot says, "Flowers are just for looking pretty!" What could you tell it?', options: ['Wrong – flowers make the seeds for new plants', 'Right – flowers have no job', 'Right – flowers only make nectar for fun'], answer: 0 },
+        { type: 'mcq', q: 'A seed needs three things to germinate. Which three?', options: ['water, air and warmth', 'light, soil and wind', 'petals, pollen and nectar'], answer: 0 },
+        { type: 'mcq', q: 'Which part grows out of a seed first?', options: ['the root', 'the flower', 'the fruit'], answer: 0 },
+        { type: 'mcq', q: 'Which part of a flower catches the pollen?', options: ['the sticky stigma', 'the petals', 'the roots'], answer: 0 },
+        { type: 'gap', q: 'Pollen is made by the ___.', options: ['stamens', 'ovary', 'seed coat'], answer: 0 },
+        { type: 'mcq', q: 'Mowbot mowed all the flowers in a field. Why will there be fewer new plants next year?', options: ['No flowers means no pollination, so no seeds', 'The grass will be too short', 'The bees will move in'], answer: 0 },
+        { type: 'mcq', q: 'Where do the seeds grow inside a flower?', options: ['in the ovary', 'in the petals', 'in the stem'], answer: 0 },
+        { type: 'tf', q: 'A tomato is a fruit, because it grows from the flower and holds seeds.', answer: true },
+        { type: 'mcq', q: 'A seed has tiny hooks all over it. How does it most likely travel?', options: ['It sticks to animals\' fur', 'It floats on the sea', 'It spins on the wind'], answer: 0 },
+        { type: 'mcq', q: 'Why do plants spread their seeds far away?', options: ['So the seedlings are not squashed together fighting for light, water and space', 'So the parent plant gets lonely', 'So the seeds can see the world'], answer: 0 },
+        { type: 'order', q: 'Put the life cycle in order.', items: ['🫘 seed', '🌱 germination', '🌷 the plant flowers', '🐝 pollination', '🍎 fruit with seeds', '🌬️ seed dispersal'], hint: 'Start with the seed – and seeds can only be made after pollination.' },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>

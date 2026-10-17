@@ -1829,11 +1829,25 @@
     return Pixel.svg(rows.concat(fire ? ['...oyyyyo...', '....oyyo....', '.....oo.....'] : ['............', '............', '............']),
       { k: '#1b1b1b', r: '#e53935', w: '#e8eef5', c: '#9fd8ff', b: '#2b6fd6', F: '#2b2f3a', L: '#7cfc3a', o: '#ff8c1a', y: '#ffd43b' });
   }
+  // train: each word couples another carriage onto the engine (uncoupled ones show as a faint outline); full = full steam ahead
+  const TRAIN_ENGINE = ['.........kkk.', '.........kok.', 'kkkkkk...kkk.', 'kwwwwk..kkkkk', 'kwccwkrrrrrrk', 'krrrrrrrrrrrk', 'krrrrrrrrrrrk', 'kkkkkkkkkkkkk', '.kyk..kyk.kyk', '..k....k...k.'];
+  const TRAIN_CAR = ['..........', '..........', '..........', 'kkkkkkkkkk', 'kXXXXXXXXk', 'kXwwXXwwXk', 'kXXXXXXXXk', 'kkkkkkkkkk', '.kyk..kyk.', '..k....k..'];
+  const TRAIN_COLS = ['B', 'G', 'P', 'O'];
+  function trainSVG(p, full) {
+    const coupled = Math.round(p * TRAIN_COLS.length); // the carriage next to the engine is coupled first
+    const cars = TRAIN_COLS.map((c, i) => TRAIN_CAR.map(r => (TRAIN_COLS.length - i <= coupled ? r.replace(/X/g, c) : r.replace(/[^.]/g, 'g'))));
+    const link = y => (y === 6 ? 'k' : '.');
+    const rows = TRAIN_ENGINE.map((r, y) => cars.map(car => car[y] + link(y)).join('') + r);
+    const w = rows[0].length, top = full ? ['.'.repeat(w - 6) + 'ss....', '.'.repeat(w - 4) + 'ss..'] : ['.'.repeat(w), '.'.repeat(w)];
+    return Pixel.svg(top.concat(rows), { k: '#1b1b1b', w: '#e8eef5', c: '#9fd8ff', r: '#e53935', o: '#ff8c1a', y: '#ffd43b', g: '#dfe3e8', s: '#c9ced6',
+      B: '#2b6fd6', G: '#2e9e3e', P: '#8e5cff', O: '#ff8c1a' });
+  }
   // r.scene → how the picture, caption and finish banner look
   const SP_SCENES = {
     potion: { prize: 'the magic potion', draw: (p, n, full) => (full ? POTION : cauldronSVG(p, n)), cap: (n, of, prize) => `🧪 ${n}/${of} ingredients in ${prize}`, made: prize => `🧪 ${prize} is ready!`, done: '🧪 POTION BREWED!', anim: 'bubbling' },
     egg: { prize: 'your baby dragon', draw: (p, n, full) => (full ? BABY_DRAGON : eggSVG(p)), cap: (n, of) => `🥚 ${n}/${of} words · each one cracks the egg`, made: prize => `🐲 ${prize} has hatched!`, done: '🐲 IT HATCHED!', anim: 'wobble' },
     castle: { prize: 'your word castle', draw: (p, n, full) => (full ? CASTLE_DONE : castleSVG(p)), cap: (n, of) => `🧱 ${n}/${of} words · each one builds a row of stones`, made: prize => `🏰 ${prize} is built!`, done: '🏰 CASTLE BUILT!' },
+    train: { prize: 'the word train', draw: (p, n, full) => trainSVG(p, full), cap: (n, of) => `🚃 ${n}/${of} words · each one couples a carriage`, made: prize => `🚂 ${prize} is full steam ahead!`, done: '🚂 ALL ABOARD!' },
     rocket: { prize: 'your rocket', draw: (p, n, full) => rocketSVG(p, full), cap: (n, of) => `⛽ ${n}/${of} words · each one adds fuel`, made: prize => `🚀 ${prize} has blasted off!`, done: '🚀 BLAST OFF!', anim: 'launch' },
   };
 
@@ -3210,6 +3224,130 @@
       frames(n) { for (let i = 0; i < n; i++) step(1 / 60); },
       plant(i) { pots[i].seed = true; syncControls(); }, move(i, x) { pots[i].x = x; }, water(i, w) { pots[i].water = w; syncControls(); },
       grow, get pots() { return pots; }, get phase() { return phase; }, get mission() { return missions.i; },
+    };
+    root._stop = stopLoop;
+    missions.next();
+    return root;
+  };
+
+  // ===== Bee Flight: fly a bee from flower to flower to carry pollen (pollination → fruit and seeds) =====
+  // r.missions: [{ text, flowers: ['apple', 'apple', 'poppy'], goal: 'collect' | 'all', yes, fix, ask: [questions] }]
+  // Touch or drag anywhere and the bee flies there. Hover on a flower's middle to drink nectar: the bee picks up
+  // that flower's pollen (dots in its colour), and leaves pollen on another flower of the SAME kind, which then
+  // drops its petals and grows a fruit or seed head.
+  const BLOOMS = {
+    apple: { name: 'apple blossom', petal: '#ffd6e7', mid: '#ffd43b', pollen: '#ffe066', fruit: 'apple', made: 'an apple' },
+    poppy: { name: 'poppy', petal: '#e53935', mid: '#2b2b2b', pollen: '#5b4a8a', fruit: 'pod', made: 'a seed pod' },
+    sunflower: { name: 'sunflower', petal: '#ffcc33', mid: '#8a5a32', pollen: '#ff9f1a', fruit: 'seeds', made: 'a head full of seeds' },
+    daisy: { name: 'daisy', petal: '#ffffff', mid: '#ffd43b', pollen: '#ffd43b', fruit: 'pod', made: 'tiny seeds' },
+  };
+  GAMES.pollinate = function (r, key, done) {
+    const W = 640, H = 400, GROUND = 330;
+    const { cv, ctx } = arcadeCanvas(W, H);
+    let flowers = [], bee = { x: 80, y: 80, tx: 80, ty: 80, pollen: {} }, hover = null, hoverT = 0, time = 0, puffs = [], warned = {}, checking = false;
+    const missions = missionRunner(r, key, done, m => setup(m.flowers || ['apple', 'apple', 'apple']));
+    function setup(kinds) {
+      const gap = W / (kinds.length + 1);
+      flowers = kinds.map((k, i) => ({ id: i, kind: k, x: gap * (i + 1), y: 170 + ((i * 53) % 70), state: 'open', t: 0 }));
+      bee = { x: 70, y: 70, tx: 70, ty: 70, pollen: {} }; hover = null; hoverT = 0; puffs = []; warned = {}; checking = false;
+    }
+    const pollinated = () => flowers.filter(f => f.state !== 'open').length;
+
+    // the bee follows your finger
+    const aim = e => { const [x, y] = toGame(cv, W, H, e); bee.tx = Math.max(20, Math.min(W - 20, x)); bee.ty = Math.max(30, Math.min(GROUND - 10, y)); };
+    cv.addEventListener('pointerdown', e => { e.preventDefault(); try { cv.setPointerCapture(e.pointerId); } catch (_) { /* ignore */ } aim(e); });
+    cv.addEventListener('pointermove', e => { if (e.buttons || e.pointerType === 'mouse') aim(e); });
+
+    function visit(f) {
+      const B = BLOOMS[f.kind];
+      if (f.state !== 'open') { say(`This ${B.name} is already pollinated – it is busy making ${B.made}!`); return; }
+      const src = bee.pollen[f.kind];
+      if (src != null && src !== f.id) {
+        f.state = 'pollinated'; f.t = 0; sfx.good();
+        for (let i = 0; i < 12; i++) puffs.push({ x: f.x, y: f.y, vx: (Math.random() - 0.5) * 120, vy: -Math.random() * 90, c: B.pollen, life: 0.8 });
+        say(`Pollen delivered! The ${B.name} can now make ${B.made}.`);
+      } else if (Object.keys(bee.pollen).some(k => k !== f.kind) && !warned[f.kind]) {
+        warned[f.kind] = true; sfx.bad();
+        const other = Object.keys(bee.pollen).find(k => k !== f.kind);
+        say(`That is ${BLOOMS[other].name} pollen – it only works on a ${BLOOMS[other].name}! But you picked up some ${B.name} pollen too.`);
+      } else if (src === f.id) say('Same flower! Fly to a DIFFERENT flower of this kind to drop the pollen off.');
+      else say(`Slurp! Nectar for the bee – and sticky ${B.name} pollen on its fuzzy body. Now visit another ${B.name}!`);
+      bee.pollen[f.kind] = f.id;
+      sfx.tap();
+      check();
+    }
+    function check() {
+      const m = missions.m;
+      if (!m || checking) return;
+      const ok = m.goal === 'collect' ? Object.keys(bee.pollen).length > 0 : flowers.every(f => f.state !== 'open');
+      if (ok) { checking = true; setTimeout(() => missions.win(cv), m.goal === 'collect' ? 300 : 1800); }
+    }
+
+    function step(dt) {
+      time += dt;
+      bee.x += (bee.tx - bee.x) * Math.min(1, dt * 5); bee.y += (bee.ty - bee.y) * Math.min(1, dt * 5);
+      const f = flowers.find(q => Math.hypot(q.x - bee.x, q.y - bee.y) < 30);
+      if (f !== hover) { hover = f; hoverT = 0; }
+      if (hover && hoverT >= 0) { hoverT += dt; if (hoverT > 0.35) { hoverT = -1; visit(hover); } }
+      flowers.forEach(q => { if (q.state === 'pollinated') { q.t += dt; if (q.t > 1.4) q.state = 'fruit'; } });
+      puffs.forEach(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 200 * dt; p.life -= dt; });
+      puffs = puffs.filter(p => p.life > 0);
+      draw();
+    }
+    function drawFlower(f) {
+      const B = BLOOMS[f.kind], s = 10;
+      ctx.fillStyle = '#2e9e3e'; ctx.fillRect(f.x - 3, f.y, 6, GROUND - f.y);
+      ctx.fillStyle = '#5bbf3a'; ctx.fillRect(f.x + 3, f.y + 60, 18, 8); ctx.fillRect(f.x - 21, f.y + 100, 18, 8);
+      if (f.state === 'fruit') {
+        if (B.fruit === 'apple') emojiAt(ctx, '🍎', f.x, f.y + 14, 34);
+        else if (B.fruit === 'seeds') {
+          ctx.fillStyle = '#000'; ctx.fillRect(f.x - 21, f.y - 21, 42, 42); ctx.fillStyle = '#6b4425'; ctx.fillRect(f.x - 19, f.y - 19, 38, 38);
+          ctx.fillStyle = '#e9cfa6'; for (let i = 0; i < 9; i++) ctx.fillRect(f.x - 15 + (i % 3) * 11, f.y - 15 + (i / 3 | 0) * 11, 6, 6);
+        } else {
+          ctx.fillStyle = '#000'; ctx.fillRect(f.x - 12, f.y - 16, 24, 30); ctx.fillStyle = '#9bb06a'; ctx.fillRect(f.x - 10, f.y - 14, 20, 26);
+          ctx.fillStyle = '#6f7f45'; ctx.fillRect(f.x - 10, f.y - 16, 20, 4);
+        }
+        return;
+      }
+      const drop = f.state === 'pollinated' ? f.t / 1.4 : 0; // petals fall off once it is pollinated
+      [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([dx, dy], i) => {
+        const far = i < 4 ? 2.2 : 1.6, px = f.x + dx * s * far - s, py = f.y + dy * s * far - s + drop * (40 + i * 12);
+        ctx.globalAlpha = 1 - drop * 0.9;
+        ctx.fillStyle = '#000'; ctx.fillRect(px - 1, py - 1, s * 2 + 2, s * 2 + 2);
+        ctx.fillStyle = B.petal; ctx.fillRect(px, py, s * 2, s * 2);
+        ctx.globalAlpha = 1;
+      });
+      ctx.fillStyle = '#000'; ctx.fillRect(f.x - 13, f.y - 13, 26, 26);
+      ctx.fillStyle = B.mid; ctx.fillRect(f.x - 11, f.y - 11, 22, 22);
+      ctx.fillStyle = B.pollen; [[-6, -6], [3, -5], [-4, 3], [4, 4]].forEach(([dx, dy]) => ctx.fillRect(f.x + dx, f.y + dy, 3, 3));
+      if (f.state === 'pollinated') pxText(ctx, '✓', f.x + 22, f.y - 24, 18, '#7cfc3a');
+    }
+    function draw() {
+      skyAndGround(ctx, W, H, GROUND);
+      flowers.forEach(drawFlower);
+      puffs.forEach(p => { ctx.fillStyle = p.c; ctx.fillRect(p.x, p.y, 4, 4); });
+      // the bee, with the pollen it is carrying stuck to it
+      const by = bee.y + Math.sin(time * 12) * 2;
+      Object.keys(bee.pollen).forEach((k, j) => {
+        ctx.fillStyle = BLOOMS[k].pollen;
+        [[-14, 8], [12, 10], [-6, 14], [6, -12]].forEach(([dx, dy], i) => ctx.fillRect(bee.x + dx + j * 3, by + dy - j * 2 + (i % 2), 4, 4));
+      });
+      emojiAt(ctx, '🐝', bee.x, by + 16, 46);
+      if (hover && hoverT > 0) { ctx.fillStyle = '#000'; ctx.fillRect(bee.x - 21, by - 32, 42, 8); ctx.fillStyle = '#ffd43b'; ctx.fillRect(bee.x - 19, by - 30, 38 * Math.min(1, hoverT / 0.35), 4); }
+      const n = pollinated();
+      pxText(ctx, `🌸 ${n}/${flowers.length} pollinated`, W - 12, 22, 16, n === flowers.length ? '#7cfc3a' : '#ffffff', 'right');
+    }
+
+    const stopLoop = gameLoop(cv, step);
+    const root = h('div', { class: 'game arcade lab pollinate' },
+      missions.box,
+      h('div', { class: 'arc-screen' }, cv),
+      h('p', { class: 'arc-tip' }, '🐝 Touch or drag anywhere and the bee flies there · hover on the middle of a flower to drink nectar'),
+      missions.ask);
+    root._test = {
+      frames(n) { for (let i = 0; i < n; i++) step(1 / 60); },
+      fly(i) { bee.x = bee.tx = flowers[i].x; bee.y = bee.ty = flowers[i].y; for (let k = 0; k < 30; k++) step(1 / 60); },
+      get flowers() { return flowers; }, get bee() { return bee; }, get mission() { return missions.i; },
     };
     root._stop = stopLoop;
     missions.next();

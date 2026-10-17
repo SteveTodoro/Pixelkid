@@ -633,6 +633,8 @@ a { color: var(--brand-dark); }
 .sp-scene-pic { width: 150px; margin: 0 auto; position: relative; }
 .sp-scene-pic svg { width: 100%; height: auto; display: block; }
 .sp-scene-pic.flash { animation: hurt .5s steps(3); }
+.sp-train .sp-scene-pic { width: 100%; max-width: 280px; }
+@media (max-width: 720px) { .sp-train .sp-scene { display: block; } .sp-train .sp-scene-pic { width: 100%; } }
 .sp-scene-pic.wobble svg { animation: wiggle 1.2s steps(4) infinite; transform-origin: 50% 90%; }
 .sp-scene-pic.launch svg { animation: sprocket .9s steps(4) infinite alternate; }
 @keyframes sprocket { from { transform: translateY(4px); } to { transform: translateY(-14px); } }

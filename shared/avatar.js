@@ -154,6 +154,7 @@
     { id: 'pet-tardigrade', cat: 'pet', name: 'Water bear', price: 100, special: true, rows: ['.kkkkkk.', 'kppppppk', 'kpkppkpk', 'kppooppk', 'kpPppPpk', 'kppppppk', '.kkkkkk.', 'k.k..k.k'], pal: { k: '#4a3426', p: '#e9cfa6', P: '#c9a477', o: '#e57373' } },
     { id: 'pet-echo', cat: 'pet', name: 'Echo the ghost', price: 100, special: true, rows: ['..wwww..', '.wwwwww.', 'wwkwwkww', 'wwkwwkww', 'wwwbbwww', 'wwwwwwww', 'wwwwwwww', 'w.ww.ww.'], pal: { w: '#eef3ff', k: '#1b1b1b', b: '#7aa2ff' } },
     { id: 'pet-octopus', cat: 'pet', name: 'An octopus', price: 100, special: true, rows: ['..oooo..', '.oooooo.', 'owkoowko', 'oooooooo', '.oooooo.', 'o.o.o.o.', '.o.o.o.o', 'o.o.o.o.'], pal: { o: '#ff6f91', w: '#ffffff', k: '#1b1b1b' } },
+    { id: 'pet-bee', cat: 'pet', name: 'Busy bee', price: 60, rows: ['..cc.cc.', '..ccccc.', '.kkkkkk.', 'kwkyykyk', 'kkkyykyk', 'kkkyykyk', '.kkkkkk.', '.k....k.'], pal: { k: '#1b1b1b', y: '#ffd43b', c: '#cfefff', w: '#ffffff' } },
     // ----- level rewards: unlocked by reaching a player level (see LEVEL_REWARDS) -----
     { id: 'pet-bunny', cat: 'pet', name: 'Bouncy bunny', price: 0, unlock: 'lvl:3', rows: ['.w....w.', '.wp..pw.', '.wp..pw.', '.wwwwww.', 'wwkwwkww', 'wwwppwww', '.wwwwww.', '.ww..ww.'], pal: { w: '#f4f4f4', p: '#ffb3cf', k: '#1b1b1b' } },
     { id: 'pirate-hat', cat: 'hat', name: 'Pirate hat', price: 0, unlock: 'lvl:7', rows: ['...kkkkkk...', '..kkkwwkkk..', '.kkkkkkkkkk.', 'kkyyyyyyyykk'], pal: { k: '#1b1b1b', w: '#ffffff', y: '#ffd43b' } },
