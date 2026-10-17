@@ -998,3 +998,7 @@ a { color: var(--brand-dark); }
 .read-aloud.on { background: var(--bad); color: #fff; }
 .rd-line { background: rgba(255, 212, 59, .18); }
 .rd-w.rd-now { background: #ffd43b; color: #000; box-shadow: 0 0 0 2px #ffd43b; border-radius: 2px; }
+
+/* ---------- pixel icons (shared/pixel-icons.js swaps emoji for these) ---------- */
+.pxi { display: inline-block; width: 1.15em; height: 1.15em; vertical-align: -0.2em; line-height: 0; }
+.pxi svg { width: 100%; height: 100%; display: block; image-rendering: pixelated; }

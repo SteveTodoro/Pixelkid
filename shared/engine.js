@@ -45,6 +45,8 @@
     if (!p) return null;
     return p.trim().startsWith('<') ? h('div', { class: cls, html: p }) : h('div', { class: cls + ' emoji' }, p);
   }
+  // draw an emoji on a canvas as its pixel icon (shared/pixel-icons.js); false if there isn't one, so callers fall back to fillText
+  const pxDraw = (ctx, e, x, y, size, opts) => !!(window.Pixel && Pixel.draw && Pixel.draw(ctx, e, x, y, size, opts));
   function shake(el) { if (!el) return; el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); }
 
   // ---------- storage (optional; everything works without it) ----------
@@ -1499,7 +1501,10 @@
         ctx.fillStyle = e.color || '#000';
         ctx.font = e.t === 'sticker' ? `${px}px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`
           : `700 ${px}px ${(POSTER_FONTS[e.font] || POSTER_FONTS.clean).css}`;
-        lines.forEach((ln, i) => ctx.fillText(ln, cx, cy + (i - (lines.length - 1) / 2) * px * 1.15));
+        lines.forEach((ln, i) => {
+          const ly = cy + (i - (lines.length - 1) / 2) * px * 1.15;
+          if (!(e.t === 'sticker' && pxDraw(ctx, ln.trim(), cx, ly, px, { baseline: 'middle' }))) ctx.fillText(ln, cx, ly);
+        });
       }
     });
     return c.toDataURL('image/png');
@@ -2644,8 +2649,10 @@
       ctx.drawImage(hero, 46, FLOOR - hero.height + 2);
       const EMOJI = n => `${n}px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`;
       if (r.hold) {
-        ctx.font = EMOJI(40); ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
-        ctx.fillText(r.hold, 104, FLOOR - 30);
+        if (!pxDraw(ctx, r.hold, 104, FLOOR - 30, 40)) {
+          ctx.font = EMOJI(40); ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+          ctx.fillText(r.hold, 104, FLOOR - 30);
+        }
         if (task && task.holdTag) pxText(ctx, task.holdTag, 104, FLOOR - 92, 22, '#ffffff');
       }
       if (task && phase !== 'done') {
@@ -2687,7 +2694,8 @@
   const FACES_LEFT = new Set(['🚗', '🚙', '🏎️', '🚌', '🚚']); // these emoji face left, so flip them to drive right
   function emojiAt(ctx, e, x, y, size, angle = 0) {
     ctx.save(); ctx.translate(x, y); if (angle) ctx.rotate(angle);
-    if (FACES_LEFT.has(e)) ctx.scale(-1, 1);
+    if (FACES_LEFT.has(e) && !(window.Pixel && Pixel.has && Pixel.has(e))) ctx.scale(-1, 1); // pixel vehicles already face right
+    if (pxDraw(ctx, e, 0, 0, size)) { ctx.restore(); return; }
     ctx.font = EMOJI_FONT(size); ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
     ctx.fillText(e, 0, 0); ctx.restore();
   }
@@ -4209,7 +4217,7 @@
       if (trail.length > 1) line(trail, '#1e6fd9', 6);
       const [sx, sy] = pts[0], [ex, ey] = pts[pts.length - 1];
       c.fillStyle = '#4caf2a'; c.beginPath(); c.arc(sx, sy, r() - 5, 0, 7); c.fill();
-      c.font = `${Math.round(r() * 1.5)}px sans-serif`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('🏁', ex, ey);
+      c.font = `${Math.round(r() * 1.5)}px sans-serif`; c.textAlign = 'center'; c.textBaseline = 'middle'; if (!pxDraw(c, '🏁', ex, ey, r() * 1.5, { baseline: 'middle' })) c.fillText('🏁', ex, ey);
     }
     const pos = e => { const b = cv.getBoundingClientRect(); return [(e.clientX - b.left) * W / b.width, (e.clientY - b.top) * H / b.height]; };
     function fail() {
@@ -4292,12 +4300,12 @@
       }
       c.stroke();
       c.font = `${Math.round(cs * 0.6)}px sans-serif`; c.textAlign = 'center'; c.textBaseline = 'middle';
-      c.fillText('💎', M + (n - 0.5) * cs, M + (n - 0.5) * cs);
+      if (!pxDraw(c, '💎', M + (n - 0.5) * cs, M + (n - 0.5) * cs, cs * 0.7, { baseline: 'middle' })) c.fillText('💎', M + (n - 0.5) * cs, M + (n - 0.5) * cs);
       const px = M + me[0] * cs, py = M + me[1] * cs;
       if (hero) {
         const hh = cs * 0.84, hw = hh * hero.width / hero.height;
         c.imageSmoothingEnabled = false; c.drawImage(hero, px + (cs - hw) / 2, py + (cs - hh) / 2, hw, hh);
-      } else c.fillText('🙂', px + cs / 2, py + cs / 2);
+      } else if (!pxDraw(c, '🙂', px + cs / 2, py + cs / 2, cs * 0.8, { baseline: 'middle' })) c.fillText('🙂', px + cs / 2, py + cs / 2);
     }
     function move(k) {
       if (won) return;
@@ -4528,7 +4536,7 @@
         const img = new Image();
         img.onload = () => { g.imageSmoothingEnabled = false; g.drawImage(img, 6, 6, 36, 36); };
         img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(String(a).replace('<svg ', '<svg width="36" height="36" '));
-      } else { g.font = '36px serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(a, 24, 27); }
+      } else if (!pxDraw(g, a, 24, 24, 36, { baseline: 'middle' })) { g.font = '36px serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(a, 24, 27); }
       return c;
     });
     const p = { x: W / 2, y: H / 2 }, keys = {}, bullets = [], walls = [];
@@ -4665,7 +4673,7 @@
       ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
       if (!(t - hitAt < 1.2 && Math.floor(t * 12) % 2)) {
         if (me) ctx.drawImage(me, Math.round(p.x - pw / 2), Math.round(p.y - ph / 2));
-        else { ctx.font = '22px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('❤️', p.x, p.y); }
+        else if (!pxDraw(ctx, '❤️', p.x, p.y, 22, { baseline: 'middle' })) { ctx.font = '22px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('❤️', p.x, p.y); }
       }
       for (const w of walls) {
         if (w.warn) {
