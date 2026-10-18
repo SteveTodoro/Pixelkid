@@ -11,7 +11,9 @@
   <style>
     /* header: the player stands in the world on a grass block (like a game's title screen), the title and HUD beside it */
     .lib-head { position: relative; z-index: 1; display: grid; grid-template-columns: auto auto; justify-content: center; align-items: end; gap: 40px; padding: 44px 16px 4px; }
-    .lib-title { text-align: center; padding-bottom: 46px; }
+    /* a dark see-through plate keeps the white title, greeting and HUD readable over the clouds */
+    .lib-title { text-align: center; margin-bottom: 46px; padding: 14px 26px 16px; background: rgba(10,16,32,.5); border: 4px solid #000;
+      box-shadow: inset 3px 3px 0 rgba(255,255,255,.18), inset -3px -3px 0 rgba(0,0,0,.3), 0 6px 0 rgba(0,0,0,.25); }
     .lib-head h1 { font-size: 3.4rem; color: #fff; margin: 0; text-shadow: 4px 4px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000; }
     .lib-head p { font-family: var(--pixel); font-size: 1.3rem; font-weight: 700; color: #fff; text-shadow: 2px 2px 0 #000; margin: 6px 0 0; }
     .pk-hero { position: relative; display: flex; flex-direction: column; align-items: center; }
@@ -45,7 +47,7 @@
     .hud-gems b { position: absolute; right: 4px; bottom: 0; font-family: Lexend, sans-serif; font-size: 1.05rem; color: #fff; text-shadow: 2px 2px 0 #3f3f3f; }
     @media (max-width: 640px) {
       .lib-head { gap: 16px; padding: 36px 12px 2px; align-items: center; }
-      .lib-title { padding-bottom: 0; }
+      .lib-title { margin-bottom: 0; padding: 10px 10px 12px; }
       .lib-head h1 { font-size: 2rem; }
       .lib-head p { font-size: 1rem; }
       .pk-link canvas { height: 110px; }
@@ -65,7 +67,7 @@
     .tabs::-webkit-scrollbar { display: none; }
     .tabs > :first-child { margin-left: auto; }
     .tabs > :last-child { margin-right: auto; }
-    .tab { flex: none; cursor: pointer; padding: 8px 14px; font-family: var(--pixel); font-weight: 700; font-size: 1.1rem; color: #fff; text-shadow: 2px 2px 0 rgba(0,0,0,.5);
+    .tab { flex: none; display: flex; flex-direction: column; align-items: stretch; gap: 5px; cursor: pointer; padding: 8px 14px 7px; font-family: var(--pixel); font-weight: 700; font-size: 1.1rem; color: #fff; text-shadow: 2px 2px 0 rgba(0,0,0,.5);
       background: rgba(0,0,0,.35); border: 3px solid #000; }
     .tab:hover { background: rgba(0,0,0,.5); }
     .tab[aria-selected="true"] { background: var(--brand); box-shadow: var(--bevel), 0 4px 0 #000; outline: 3px solid #fff; outline-offset: -1px; }
@@ -75,6 +77,11 @@
     .tab.future[aria-selected="true"] { background: #7c4dff; }
     .tab.wonders[aria-selected="true"] { background: #1e88e5; }
     .tab.world[aria-selected="true"] { background: #f4511e; }
+    /* each world's progress: a mini XP bar and "2/5" under the tab name */
+    .tab-prog { display: flex; align-items: center; gap: 6px; font-family: Lexend, sans-serif; font-size: .7rem; line-height: 1; }
+    .tab-bar { flex: 1; height: 8px; background: #1a1a1a; border: 2px solid #000; }
+    .tab-bar i { display: block; height: 100%; width: var(--p, 0%); background: #7cfc3a; }
+    .tab.all-done .tab-bar i { background: var(--gold); }
     .passport { position: relative; z-index: 1; max-width: 1040px; margin: 10px auto 0; padding: 0 16px; }
     .passport-book { padding: 12px 16px; background: #7a1f1f; border: 4px solid #000; box-shadow: var(--bevel), 0 6px 0 rgba(0,0,0,.25); color: #ffd43b; }
     .passport-book h2 { margin: 0 0 8px; font-size: 1.2rem; color: #ffd43b; text-shadow: 2px 2px 0 #000; }
@@ -85,18 +92,29 @@
     .stamp.empty { background: rgba(255,255,255,.15); color: #e8c9c9; border-color: #e8c9c9; transform: none; }
     .stamp.empty .sf { filter: grayscale(1); opacity: .45; }
     .shelf { position: relative; z-index: 1; max-width: 1040px; margin: 0 auto; padding: 16px 16px 90px; display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); }
+    /* the card's top strip is the world's colour, so each world's shelf looks different */
     .lesson-card {
-      position: relative; display: flex; flex-direction: column; gap: 4px; padding: 16px; min-height: 150px;
-      background: var(--stone); border: 4px solid #000; box-shadow: var(--bevel), 0 6px 0 rgba(0,0,0,.25); color: var(--ink); text-decoration: none;
+      position: relative; display: flex; flex-direction: column; gap: 4px; padding: 28px 16px 16px; min-height: 150px;
+      background: linear-gradient(var(--brand) 0 12px, #000 12px 15px, var(--stone) 15px); border: 4px solid #000; box-shadow: var(--bevel), 0 6px 0 rgba(0,0,0,.25); color: var(--ink); text-decoration: none;
     }
     a.lesson-card:hover { transform: translateY(-4px); outline: 4px solid #fff; outline-offset: -2px; }
     .lesson-card .le { width: 64px; height: 64px; display: grid; place-items: center; font-size: 2.4rem; background: var(--slot); border: 3px solid #000; box-shadow: var(--bevel-in); }
     .lesson-card h2 { font-size: 1.25rem; margin: 8px 0 0; }
     .lesson-card .unit { color: #444; font-weight: 600; font-size: .85rem; }
     /* corner badge: ▶ new · ⭐ in progress · 🏆 done */
-    .lesson-card .badge { position: absolute; top: 12px; right: 12px; padding: 2px 8px; font-family: var(--pixel); font-weight: 700; font-size: .85rem; color: #fff; background: var(--good); border: 2px solid #000; text-shadow: 1px 1px 0 #000; }
+    .lesson-card .badge { position: absolute; top: 24px; right: 12px; padding: 2px 8px; font-family: var(--pixel); font-weight: 700; font-size: .85rem; color: #fff; background: var(--good); border: 2px solid #000; text-shadow: 1px 1px 0 #000; }
     .lesson-card.going .badge { background: #e09a00; }
     .lesson-card.done .badge { background: var(--gold); color: #000; text-shadow: none; }
+    /* the next quest to play: a wide card with a big play button, first on the shelf */
+    .lesson-card.next { flex-direction: row; align-items: center; gap: 18px; }
+    @media (min-width: 480px) { .lesson-card.next { grid-column: span 2; } }
+    .lesson-card.next .le { flex: none; width: 96px; height: 96px; font-size: 3.6rem; }
+    .lesson-card.next .nx { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-width: 0; }
+    .lesson-card.next .nx-tag { padding: 2px 8px; background: #000; color: #ffd43b; font-family: var(--pixel); font-weight: 700; font-size: .8rem; }
+    .lesson-card.next h2 { margin: 2px 0 0; font-size: 1.45rem; }
+    .lesson-card.next .btn { margin-top: 8px; pointer-events: none; }
+    .lesson-card.next .badge { display: none; }
+    @media (max-width: 479px) { .lesson-card.next .le { width: 72px; height: 72px; font-size: 2.6rem; } .lesson-card.next h2 { font-size: 1.2rem; } }
     .soon { grid-column: 1 / -1; margin-top: 8px; padding: 12px 14px; background: rgba(255,255,255,.55); border: 3px solid #000; }
     .soon h2 { margin: 0 0 10px; font-size: 1.05rem; color: #333; }
     .soon-row { display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); }
@@ -354,19 +372,36 @@ function render() {
   tabs.replaceChildren(...Object.entries(LIBRARY).map(([key, s]) => {
     const b = document.createElement('button');
     b.className = 'tab ' + key; b.type = 'button'; b.setAttribute('role', 'tab');
-    b.setAttribute('aria-selected', String(key === current)); b.textContent = s.tab; b.title = s.label;
+    b.setAttribute('aria-selected', String(key === current)); b.title = s.label;
+    const ready = s.lessons.filter(l => l.file), done = ready.filter(l => records[l.id] && records[l.id].done).length;
+    b.innerHTML = '<span class="tab-name"></span><span class="tab-prog"><span class="tab-bar"><i></i></span><span class="tab-n"></span></span>';
+    b.querySelector('.tab-name').textContent = s.tab;
+    b.querySelector('.tab-n').textContent = `${done}/${ready.length}`;
+    b.querySelector('.tab-bar i').style.setProperty('--p', (ready.length ? done / ready.length * 100 : 0) + '%');
+    b.querySelector('.tab-prog').title = `${done} of ${ready.length} quests cleared`;
+    if (ready.length && done === ready.length) b.classList.add('all-done');
     b.onclick = () => { current = key; try { localStorage.setItem('y3:tab', key); } catch (e) { /* ignore */ } render(); };
     return b;
   }));
   const sel = tabs.querySelector('[aria-selected="true"]');
   tabs.scrollLeft = sel.offsetLeft - (tabs.clientWidth - sel.offsetWidth) / 2; // keep the chosen world in view on a phone
   const all = LIBRARY[current].lessons, ready = all.filter(l => l.file), later = all.filter(l => !l.file);
+  const stateOf = l => { const rec = records[l.id]; return rec && rec.done ? 'done' : rec && rec.stars ? 'going' : 'new'; };
+  // the next quest goes first as a wide card: one already started, else the first new one (none once the world is cleared)
+  const next = ready.find(l => stateOf(l) === 'going') || ready.find(l => stateOf(l) === 'new');
+  if (next) ready.splice(ready.indexOf(next), 1), ready.unshift(next);
   const cards = ready.map(l => {
     const rec = records[l.id];
-    const state = rec && rec.done ? 'done' : rec && rec.stars ? 'going' : 'new';
+    const state = stateOf(l);
     const card = document.createElement('a');
-    card.className = 'lesson-card ' + state; card.href = l.file;
-    card.innerHTML = `<div class="le"></div><h2></h2><div class="unit"></div><span class="badge"></span>`;
+    card.className = 'lesson-card ' + state + (l === next ? ' next' : ''); card.href = l.file;
+    card.innerHTML = l === next
+      ? `<div class="le"></div><div class="nx"><span class="nx-tag"></span><h2></h2><div class="unit"></div><span class="btn"></span></div><span class="badge"></span>`
+      : `<div class="le"></div><h2></h2><div class="unit"></div><span class="badge"></span>`;
+    if (l === next) {
+      card.querySelector('.nx-tag').textContent = state === 'going' ? 'KEEP GOING!' : 'NEXT QUEST';
+      card.querySelector('.btn').textContent = state === 'going' ? `▶ CONTINUE · ⭐ ${rec.stars} 💎` : '▶ PLAY';
+    }
     card.querySelector('.le').textContent = l.emoji;
     card.querySelector('h2').textContent = l.title;
     card.querySelector('.unit').textContent = l.unit;
