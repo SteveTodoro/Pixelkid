@@ -2820,39 +2820,70 @@
 
   // ===== Lane Runner: the avatar runs by itself; word signs come in pairs (top lane / bottom lane) – pick the lane with the right one =====
   // Same data as the platformer: r.prompt, r.items: [{ label, ok, why, yes }]. Right and wrong words are paired up (one of each per pair);
-  // a wrong pick shows why and that pair comes round again later. r.speed: pixels per second (default 105).
-  // Tap the top or bottom half (or the word), swipe, use the ⬆ / ⬇ buttons, or the arrow keys.
+  // a wrong pick shows why and that pair comes round again later. r.speed: base pixels per second (default 165).
+  // Between the signs: rocks to jump over (or dodge) and coins to grab. Hold DASH to rush the next sign once you've picked a lane,
+  // and every right pick in a row makes the run a little faster.
+  // Lanes: tap the top or bottom half, swipe, the ⬆ / ⬇ buttons, or the arrow keys. Jump: JUMP button or space. Dash: hold DASH or →.
   GAMES.runner = function (r, key, done) {
     const W = 640, H = 360, HX = 120, LANES = [158, 296]; // lane floor heights
+    const GAP = 400; // ground between one sign and the next (rock + coins live here)
     const { cv, ctx } = arcadeCanvas(W, H);
     const oks = shuffle(r.items.filter(i => i.ok)), bads = shuffle(r.items.filter(i => !i.ok));
     const n = Math.max(oks.length, bads.length);
     let queue = Array.from({ length: n }, (_, k) => ({ ok: oks[k % oks.length], bad: bads[k % bads.length] }));
-    const total = n, speed = r.speed || 105;
+    const total = n, base = r.speed || 165;
     const scene = AV ? AV.sceneDef() : { sky: ['#5fb8f5', '#c4e8ff'], ground: ['#5bbf3a', '#3d8a26', '#8a5a32', '#6b4425'] };
     const [g1, g2, g3, g4] = scene.ground;
     const heroImg = AV ? AV.draw(AV.load().look, { scale: 3 }) : spriteCanvas(SPR.robot, ROBOT_PAL, 3);
     const clouds = Array.from({ length: 6 }, (_, i) => ({ x: i * 140 + 30, y: 20 + (i * 37) % 70 }));
-    let lane = 1, heroY = LANES[1], gate = null, wait = 0.8, got = 0, time = 0, scroll = 0, started = false, finished = false, stumble = 0, sparks = [], banner = null;
+    let lane = 1, heroY = LANES[1], jumpY = 0, vy = 0, gates = [], things = [], got = 0, time = 0, scroll = 0, dist = 0, nextAt = Infinity,
+      started = false, finished = false, stumble = 0, slow = 0, dash = false, streak = 0, coins = 0, sparks = [], banner = null, bonk = null;
     const label = it => { const m = /^(\S+)\s+(.+)$/.exec(it.label); return m && window.Pixel && Pixel.has && Pixel.has(m[1]) ? { icon: m[1], text: m[2] } : { icon: null, text: it.label }; };
+    const speed = () => (base + Math.min(streak, 6) * 12) * (dash ? 1.9 : 1) * (slow > 0 ? 0.45 : 1);
     function nextGate() {
-      if (!queue.length) { finished = true; banner = { text: '🏁 FINISHED!', t: 0 }; sfx.win(); setTimeout(done, 900); return; }
+      if (!queue.length) return;
       const pair = queue.shift(), top = Math.random() < 0.5;
-      gate = { x: W + 40, pair, words: top ? [pair.ok, pair.bad] : [pair.bad, pair.ok], hit: false };
+      gates.push({ x: W + 40, pair, words: top ? [pair.ok, pair.bad] : [pair.bad, pair.ok], hit: false });
+      nextAt = Infinity; // the next sign waits until this one is passed
+    }
+    function finish() { if (finished) return; finished = true; dash = false; banner = { text: '🏁 FINISHED!', t: 0 }; sfx.win(); setTimeout(done, 900); }
+    // the stretch after a sign: a rock in one lane with a coin arc over it, and a coin trail in the other
+    function segment() {
+      const rl = Math.random() < 0.5 ? 0 : 1, rx = W + 90 + Math.random() * 60;
+      things.push({ kind: 'rock', lane: rl, x: rx });
+      [-60, -30, 0, 30, 60].forEach(d => things.push({ kind: 'coin', lane: rl, x: rx + d, up: 95 - Math.abs(d) * 0.75 }));
+      for (let k = 0; k < 3; k++) things.push({ kind: 'coin', lane: 1 - rl, x: rx + 150 + k * 34, up: 26 });
+      nextAt = dist + GAP;
     }
     function setLane(l) { if (!started) { start(); return; } if (l !== lane && !finished) { lane = l; sfx.tap(); } }
-    function start() { if (started) return; started = true; sfx.good(); say(r.say || 'Pick the lane with the right word!'); }
-    function judge() {
+    function jump() { if (!started) { start(); return; } if (jumpY === 0 && !finished) { vy = -560; sfx.tap(); } }
+    function setDash(on) { if (on && !started) { start(); return; } dash = on && !finished; }
+    function start() { if (started) return; started = true; segment(); sfx.good(); say(r.say || 'Pick the lane with the right word! Jump the rocks, grab the coins – hold DASH to go faster!'); }
+    function judge(gate) {
       const it = gate.words[lane], ok = it.ok;
       gate.hit = true;
       if (ok) {
-        got++; sfx.good(); award(`${key}:${it.label}`, cv);
-        for (let i = 0; i < 14; i++) sparks.push({ x: HX + 20, y: heroY - 40, vx: (Math.random() - 0.3) * 260, vy: -Math.random() * 220, life: 0.7 });
+        got++; streak++; sfx.good(); award(`${key}:${it.label}`, cv);
+        for (let i = 0; i < 14; i++) sparks.push({ x: HX + 20, y: heroY - jumpY - 40, vx: (Math.random() - 0.3) * 260, vy: -Math.random() * 220, life: 0.7, c: '#ffd43b' });
         say(it.yes || praise());
+        if (streak >= 2) banner = { text: `🔥 ${streak} IN A ROW!`, t: 0, small: true };
       } else {
-        stumble = 0.6; sfx.bad();
+        stumble = 0.6; slow = 0.5; streak = 0; sfx.bad();
         say('💡 ' + (it.why || `"${it.label}" is not one of them.`) + ' This one will come round again!');
         queue.splice(Math.min(queue.length, 1 + Math.floor(Math.random() * 2)), 0, gate.pair); // try it again soon
+      }
+      if (queue.length) segment(); else nextAt = Infinity;
+    }
+    function touch(t) {
+      if (Math.abs(t.x - HX) > 20 || t.lane !== lane || t.got) return;
+      if (t.kind === 'rock') {
+        if (jumpY < 34) { t.got = true; stumble = 0.5; slow = 0.6; sfx.bad(); bonk = { t: 0 }; }
+      } else {
+        const feet = jumpY, head = jumpY + heroImg.height - 6;
+        if (t.up >= feet - 6 && t.up <= head) {
+          t.got = true; coins++; sfx.tap();
+          for (let i = 0; i < 5; i++) sparks.push({ x: HX, y: LANES[lane] - t.up, vx: (Math.random() - 0.5) * 160, vy: -Math.random() * 160, life: 0.4, c: '#fff3a0' });
+        }
       }
     }
     // controls: tap a half (or the sign in it), swipe, buttons, keys
@@ -2866,19 +2897,23 @@
     function step(dt) {
       time += dt;
       if (started && !finished) {
-        scroll += speed * dt;
-        if (!gate) { wait -= dt; if (wait <= 0) nextGate(); }
-        else {
-          gate.x -= speed * dt;
-          if (!gate.hit && gate.x <= HX + 18) judge();
-          if (gate.x < -260) { gate = null; wait = 0.5; }
-        }
+        const v = speed() * dt;
+        scroll += v; dist += v;
+        if (dist >= nextAt) nextGate();
+        gates.forEach(g => { g.x -= v; if (!g.hit && g.x <= HX + 18) judge(g); });
+        gates = gates.filter(g => g.x > -300);
+        things.forEach(t => { t.x -= v; touch(t); });
+        things = things.filter(t => t.x > -40);
+        if (!queue.length && gates.every(g => g.hit && g.x < HX - 60)) finish(); // the last sign is behind us
       }
-      stumble = Math.max(0, stumble - dt);
-      heroY += (LANES[lane] - heroY) * Math.min(1, dt * 12);
+      // the jump: simple gravity, back to the lane floor
+      if (jumpY > 0 || vy < 0) { jumpY -= vy * dt; vy += 1700 * dt; if (jumpY <= 0) { jumpY = 0; vy = 0; } }
+      stumble = Math.max(0, stumble - dt); slow = Math.max(0, slow - dt);
+      heroY += (LANES[lane] - heroY) * Math.min(1, dt * 14);
       sparks.forEach(s => { s.x += s.vx * dt; s.y += s.vy * dt; s.vy += 500 * dt; s.life -= dt; });
       sparks = sparks.filter(s => s.life > 0);
-      if (banner) banner.t += dt;
+      if (banner) { banner.t += dt; if (banner.small && banner.t > 1.2) banner = null; }
+      if (bonk) { bonk.t += dt; if (bonk.t > 0.7) bonk = null; }
       draw();
     }
     function sign(it, x, floor, highlight) {
@@ -2893,6 +2928,18 @@
       if (icon) emojiAt(ctx, icon, x + 22, top + hgt / 2 + 11, 28);
       ctx.fillStyle = '#1b1b1b'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
       ctx.fillText(text, x + (icon ? 42 : 14), top + hgt / 2 + 1);
+    }
+    function rock(x, floor) {
+      ctx.fillStyle = '#000'; ctx.fillRect(x - 17, floor - 26, 34, 26); ctx.fillRect(x - 12, floor - 32, 24, 6);
+      ctx.fillStyle = '#8d8d8d'; ctx.fillRect(x - 14, floor - 24, 28, 24); ctx.fillRect(x - 10, floor - 29, 20, 5);
+      ctx.fillStyle = '#b8b8b8'; ctx.fillRect(x - 10, floor - 26, 8, 6);
+      ctx.fillStyle = '#5f5f5f'; ctx.fillRect(x + 4, floor - 12, 8, 6);
+    }
+    function coin(x, y) {
+      const w = [10, 7, 3, 7][Math.floor(time * 8) % 4]; // a little spin
+      ctx.fillStyle = '#000'; ctx.fillRect(x - w / 2 - 2, y - 9, w + 4, 18);
+      ctx.fillStyle = '#ffd43b'; ctx.fillRect(x - w / 2, y - 7, w, 14);
+      if (w > 4) { ctx.fillStyle = '#fff3a0'; ctx.fillRect(x - w / 2 + 1, y - 5, 2, 6); }
     }
     function draw() {
       const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, scene.sky[0]); g.addColorStop(1, scene.sky[1]);
@@ -2909,42 +2956,63 @@
       };
       blocks(LANES[0], 26); ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.fillRect(0, LANES[0] + 26, W, 4);
       blocks(LANES[1], H - LANES[1]);
-      // the signs
-      if (gate) gate.words.forEach((it, l) => sign(it, gate.x, LANES[l], gate.hit && l === lane ? (it.ok ? '#c8f7b0' : '#ffc9c9') : null));
-      // the hero: runs with a bob, stumbles on a wrong pick, glows on the lane it is in
-      const bobY = started && !finished ? (Math.floor(time * 10) % 2) * -3 : 0;
+      // the signs, rocks and coins
+      gates.forEach(gt => gt.words.forEach((it, l) => sign(it, gt.x, LANES[l], gt.hit && l === lane && gt.x > HX - 200 ? (it.ok ? '#c8f7b0' : '#ffc9c9') : null)));
+      things.forEach(t => { if (t.kind === 'rock') rock(t.x, LANES[t.lane]); else if (!t.got) coin(t.x, LANES[t.lane] - t.up); });
+      // speed lines while dashing
+      if (dash && started && !finished) {
+        ctx.fillStyle = 'rgba(255,255,255,.7)';
+        for (let i = 0; i < 7; i++) { const y = 50 + ((i * 47) % (H - 70)), x = W - ((time * 900 + i * 173) % (W + 120)); ctx.fillRect(x, y, 60, 3); }
+      }
+      // the hero: runs with a bob, stumbles on a wrong pick or a rock, leans forward on a dash
+      const bobY = started && !finished && jumpY === 0 ? (Math.floor(time * (dash ? 18 : 10)) % 2) * -3 : 0;
       ctx.save();
       if (stumble) { ctx.globalAlpha = Math.floor(time * 16) % 2 ? 0.4 : 1; }
-      ctx.drawImage(heroImg, HX - heroImg.width / 2 + (stumble ? -6 : 0), heroY - heroImg.height + bobY);
+      const hx = HX - heroImg.width / 2 + (stumble ? -6 : 0), hy = heroY - jumpY - heroImg.height + bobY;
+      if (jumpY > 0) { ctx.fillStyle = 'rgba(0,0,0,.25)'; ctx.fillRect(HX - 16, heroY - 4, 32, 4); }
+      if (dash && !stumble) { ctx.translate(hx + heroImg.width / 2, hy + heroImg.height); ctx.rotate(0.12); ctx.drawImage(heroImg, -heroImg.width / 2, -heroImg.height); }
+      else ctx.drawImage(heroImg, hx, hy);
       ctx.restore();
-      sparks.forEach(s => { ctx.fillStyle = '#ffd43b'; ctx.fillRect(s.x, s.y, 5, 5); });
+      sparks.forEach(s => { ctx.fillStyle = s.c; ctx.fillRect(s.x, s.y, 5, 5); });
+      if (bonk) pxText(ctx, 'BONK!', HX + 10, heroY - heroImg.height - 20 - bonk.t * 30, 18, '#ff6b6b');
       // lane arrows on the left edge show where you can go
       pxText(ctx, lane === 0 ? '▶' : '', 18, LANES[0] - 30, 22, '#ffd43b');
       pxText(ctx, lane === 1 ? '▶' : '', 18, LANES[1] - 30, 22, '#ffd43b');
       // HUD
       ctx.fillStyle = 'rgba(0,0,0,.55)'; ctx.fillRect(0, 0, W, 34);
       pxText(ctx, r.prompt || 'Pick the right lane!', 12, 18, 16, '#fff', 'left');
-      pxText(ctx, `✔ ${got}/${total}`, W - 12, 18, 16, got === total ? '#7cfc3a' : '#ffd43b', 'right');
+      pxText(ctx, `🪙 ${coins}   ✔ ${got}/${total}`, W - 12, 18, 16, got === total ? '#7cfc3a' : '#ffd43b', 'right');
       if (!started) {
         ctx.fillStyle = 'rgba(0,0,0,.55)'; ctx.fillRect(0, 0, W, H);
-        pxText(ctx, 'TAP TO START', W / 2, H / 2 - 20, 30, '#ffd43b');
-        pxText(ctx, 'Tap the top or bottom to pick the lane with the right word!', W / 2, H / 2 + 20, 14, '#fff');
+        pxText(ctx, 'TAP TO START', W / 2, H / 2 - 30, 30, '#ffd43b');
+        pxText(ctx, '⬆ ⬇ pick the lane with the right word', W / 2, H / 2 + 10, 14, '#fff');
+        pxText(ctx, 'JUMP the rocks  ·  hold DASH to go faster', W / 2, H / 2 + 34, 14, '#fff');
       }
-      if (banner) pxText(ctx, banner.text, W / 2, H / 2, 34, '#7cfc3a');
+      if (banner) pxText(ctx, banner.text, W / 2, banner.small ? 70 : H / 2, banner.small ? 22 : 34, banner.small ? '#ffd43b' : '#7cfc3a');
     }
-    keys(cv, { ArrowUp: [() => setLane(0)], w: [() => setLane(0)], ArrowDown: [() => setLane(1)], s: [() => setLane(1)], ' ': [() => start()], Enter: [() => start()] });
+    keys(cv, {
+      ArrowUp: [() => setLane(0)], w: [() => setLane(0)], ArrowDown: [() => setLane(1)], s: [() => setLane(1)],
+      ' ': [() => jump()], Enter: [() => start()],
+      ArrowRight: [() => setDash(true), () => setDash(false)], d: [() => setDash(true), () => setDash(false)],
+    });
     const stopLoop = gameLoop(cv, step);
     const root = h('div', { class: 'game arcade runner' },
       h('div', { class: 'arc-screen' }, cv),
       h('div', { class: 'arc-controls' },
-        holdButton('⬆ Top', 'runner-btn', () => setLane(0)),
-        holdButton('⬇ Bottom', 'runner-btn', () => setLane(1))),
-      h('p', { class: 'arc-tip' }, '🏃 Your hero runs by itself – just pick the lane with the right word!'));
+        h('div', { class: 'arc-pad runner-lanes' },
+          holdButton('⬆ Top', 'runner-btn', () => setLane(0)),
+          holdButton('⬇ Bottom', 'runner-btn', () => setLane(1))),
+        h('div', { class: 'arc-pad' },
+          holdButton('JUMP', 'arc-jump runner-jump', () => jump()),
+          holdButton('DASH ▶▶', 'runner-dash', () => setDash(true), () => setDash(false)))),
+      h('p', { class: 'arc-tip' }, '🏃 Pick the lane with the right word! JUMP the rocks, grab coins, and hold DASH ▶▶ to zoom to the next sign.'));
     root._test = {
       frames(k) { for (let i = 0; i < k; i++) step(1 / 30); },
-      start, lane: l => setLane(l),
-      get gate() { return gate && { x: gate.x, words: gate.words.map(w => w.label), ok: gate.words.findIndex(w => w.ok) }; },
+      start, lane: l => setLane(l), jump, dash: setDash,
+      get gate() { const gt = gates.find(x => !x.hit); return gt && { x: gt.x, words: gt.words.map(w => w.label), ok: gt.words.findIndex(w => w.ok) }; },
       get got() { return got; }, get finished() { return finished; }, get left() { return queue.length; },
+      get coins() { return coins; }, get things() { return things.map(t => ({ kind: t.kind, lane: t.lane, x: t.x, got: !!t.got })); },
+      get speed() { return speed(); }, get jumpY() { return jumpY; },
     };
     root._stop = stopLoop;
     return root;

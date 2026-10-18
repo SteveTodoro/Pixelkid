@@ -1094,7 +1094,11 @@ a { color: var(--brand-dark); }
 /* ---------- Lane Runner ---------- */
 .runner .arcade-canvas { touch-action: none; cursor: pointer; }
 .runner .arc-controls { justify-content: center; gap: 18px; }
-.runner .runner-btn { min-width: 150px; font-size: 1.15rem; padding: 12px 18px; }
+.runner .arc-controls { flex-wrap: wrap; }
+.runner .runner-btn { min-width: 130px; font-size: 1.1rem; padding: 12px 16px; }
+.runner .runner-jump { min-width: 110px; }
+.runner .runner-dash { background: #ffd43b; color: #1b1b1b; min-width: 120px; }
+@media (max-width: 520px) { .runner .runner-btn { min-width: 84px; font-size: .95rem; padding: 8px; } .runner .runner-jump, .runner .runner-dash { min-width: 84px; font-size: .95rem; } }
 
 /* ---------- starter picker: "Boy or girl?", then four looks (Avatar.showPicker) ---------- */
 .pick-card { width: min(560px, 100%); text-align: center; animation: pop .3s steps(3); }
