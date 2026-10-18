@@ -10,25 +10,25 @@
   <script src="shared/avatar.js"></script>
   <style>
     /* header: the player stands in the world on a grass block (like a game's title screen), the title and HUD beside it */
-    .lib-head { position: relative; z-index: 1; display: grid; grid-template-columns: auto auto; justify-content: center; align-items: end; gap: 40px; padding: 50px 16px 4px; }
-    .lib-title { text-align: center; padding-bottom: 54px; }
+    .lib-head { position: relative; z-index: 1; display: grid; grid-template-columns: auto auto; justify-content: center; align-items: end; gap: 40px; padding: 44px 16px 4px; }
+    .lib-title { text-align: center; padding-bottom: 46px; }
     .lib-head h1 { font-size: 3.4rem; color: #fff; margin: 0; text-shadow: 4px 4px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000; }
     .lib-head p { font-family: var(--pixel); font-size: 1.3rem; font-weight: 700; color: #fff; text-shadow: 2px 2px 0 #000; margin: 6px 0 0; }
     .pk-hero { position: relative; display: flex; flex-direction: column; align-items: center; }
     .pk-link { position: relative; display: block; text-decoration: none; }
-    .pk-link canvas { display: block; height: 220px; margin: 0 auto -6px; image-rendering: pixelated; position: relative; z-index: 1; }
+    .pk-link canvas { display: block; height: 160px; margin: 0 auto -5px; image-rendering: pixelated; position: relative; z-index: 1; }
     /* a name tag floating over the head, like in Minecraft */
-    .pk-tag { position: absolute; top: -34px; z-index: 2; transform: translateX(-50%); white-space: nowrap; padding: 2px 10px; background: rgba(0,0,0,.55); color: #fff; font-family: var(--pixel); font-weight: 700; font-size: 1.05rem; pointer-events: none; }
+    .pk-tag { position: absolute; top: -30px; z-index: 2; transform: translateX(-50%); white-space: nowrap; padding: 2px 10px; background: rgba(0,0,0,.55); color: #fff; font-family: var(--pixel); font-weight: 700; font-size: 1.05rem; pointer-events: none; }
     /* the grass block it stands on, with a soft shadow under its feet */
-    .pk-block { position: relative; height: 50px; margin: 0 -28px; border: 4px solid #000;
+    .pk-block { position: relative; height: 38px; margin: 0 -20px; border: 4px solid #000;
       background:
         linear-gradient(#5bbf3a 0 12px, #3d8a26 12px 16px, transparent 16px),
         repeating-linear-gradient(90deg, transparent 0 10px, rgba(0,0,0,.14) 10px 15px, transparent 15px 26px),
         repeating-linear-gradient(0deg, transparent 0 9px, rgba(255,255,255,.08) 9px 13px),
         #8a5a32;
       box-shadow: inset -6px -6px 0 rgba(0,0,0,.22), 0 6px 0 rgba(0,0,0,.25); }
-    .pk-block::before { content: ""; position: absolute; left: var(--feet, 50%); top: -1px; width: 92px; height: 8px; transform: translateX(-50%); background: rgba(0,0,0,.28); border-radius: 50%; }
-    .pk-room { margin-top: 12px; font-size: 1rem; padding: 8px 14px; white-space: nowrap; }
+    .pk-block::before { content: ""; position: absolute; left: var(--feet, 50%); top: -1px; width: 68px; height: 7px; transform: translateX(-50%); background: rgba(0,0,0,.28); border-radius: 50%; }
+    .pk-room { margin-top: 10px; font-size: .9rem; padding: 7px 12px; white-space: nowrap; }
     /* the HUD: a Minecraft-style XP bar with the level number on top, and a hotbar slot for gems */
     .hud { display: flex; align-items: flex-end; justify-content: center; gap: 14px; margin-top: 18px; }
     .hud-xp { position: relative; width: 260px; padding-top: 26px; }
@@ -43,10 +43,10 @@
       .lib-title { padding-bottom: 0; }
       .lib-head h1 { font-size: 2rem; }
       .lib-head p { font-size: 1rem; }
-      .pk-link canvas { height: 130px; }
+      .pk-link canvas { height: 110px; }
       .pk-tag { top: -28px; font-size: .85rem; }
-      .pk-block { height: 32px; margin: 0 -14px; }
-      .pk-block::before { width: 54px; }
+      .pk-block { height: 30px; margin: 0 -12px; }
+      .pk-block::before { width: 46px; }
       .pk-room { font-size: .75rem; padding: 6px 8px; }
       .hud-name { font-size: .7rem; }
       .hud { gap: 8px; margin-top: 10px; }
@@ -255,7 +255,7 @@ if (window.Avatar) {
   // the name tag and the foot shadow sit over the avatar, not the pet beside it (the avatar is the first 12 pixel columns)
   const mid = 6 / (me.width / 10) * 100 + '%';
   document.getElementById('pk-tag').style.left = mid;
-  document.getElementById('pk-block').style.setProperty('--feet', `calc(28px + (100% - 56px) * ${6 / (me.width / 10)})`);
+  document.getElementById('pk-block').style.setProperty('--feet', `calc(20px + (100% - 40px) * ${6 / (me.width / 10)})`);
   document.getElementById('pk-tag').textContent = settings.name || 'Player';
   let lastDir = 0;
   const follow = e => {
