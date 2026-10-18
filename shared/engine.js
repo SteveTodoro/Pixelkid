@@ -10,7 +10,11 @@
  *   daydial (24-hour Day Dial), timehops (durations on a time line), knuckles (days in each month).
  *   Around the World: worldmap (needs shared/world-map.js + shared/world.js), cook (Chef), phrases (Say it! greetings).
  * Questions can set optionsHtml: true to show pictures (HTML) as the answer buttons.
- * Question types (quiz, video, questions game): mcq, tf, gap, order (ends: ['FIRST', 'LAST'] labels, start: true pre-fills item 1).
+ * Question types (quiz, video, questions game): mcq, tf, gap, order (ends: ['FIRST', 'LAST'] labels, start: true pre-fills item 1),
+ *   and the hands-on types (QTYPES; these also work as reading checks): evidence (tap the sentence that proves it),
+ *   hotspot (tap the place on a picture), slider (number line), oddone (odd one out + why), build (tiles into a word
+ *   or sentence), type (write the answer), predict (guess, see the reveal, then explain). See QTYPES for each one's fields.
+ *   Run `node tools/activity-audit.js` after writing a lesson to check the activity mix.
  */
 (function () {
   'use strict';
@@ -546,8 +550,28 @@
       };
       const label = ci < s.cards.length - 1 ? 'Next page ▶' : nextLabel(i);
 
+      const titleEl = c.title && h('h2', { class: 'story-title' }, c.title);
+      // an evidence check makes the page's own sentences tappable
+      const evidence = c.check && c.check.type === 'evidence';
+      const paras = [].concat(c.text).map(p => (evidence ? h('p', null, splitSentences(p)) : h('p', { html: fmt(p) })));
+
       let check = null;
-      if (c.check) {
+      if (c.check && QTYPES[c.check.type]) {
+        // the newer question types: only a first-try answer earns the gem (no answer lock-out needed – there is nothing to guess between)
+        const fb = h('div', { class: 'feedback', hidden: true });
+        const onRight = (el, first) => {
+          sfx.good();
+          if (first) { award(key, el); say(c.check.yes || praise()); } else say('You got there! Next time, read carefully first to win the gem.');
+          fb.className = 'feedback good'; fb.hidden = false; fb.innerHTML = '✔ ' + fmt(c.check.explain || 'Correct!', false);
+          answered = true; nav.set(label, goNext);
+        };
+        const onMiss = () => say(c.check.hint || 'Not quite! Read the page again to find the answer.');
+        if (answered) { fb.className = 'feedback good'; fb.hidden = false; fb.innerHTML = '✔ ' + fmt(c.check.explain || 'Done!', false); }
+        check = h('div', { class: 'check' },
+          h('div', { class: 'check-q' }, h('b', null, '🔍 CHECK: '), c.check.q),
+          !answered && QTYPES[c.check.type](c.check, onRight, onMiss, evidence ? { sentences: paras.flatMap(p => [...p.querySelectorAll('.ev-sent')]) } : {}),
+          fb);
+      } else if (c.check) {
         // Answers are shuffled, and only a first-try answer earns the gem. A wrong guess hides the
         // answers for a few seconds ("read the page again") and shuffles them, so guessing never pays.
         const fb = h('div', { class: 'feedback', hidden: true });
@@ -591,8 +615,6 @@
           optsBox, fb);
       }
 
-      const titleEl = c.title && h('h2', { class: 'story-title' }, c.title);
-      const paras = [].concat(c.text).map(p => h('p', { html: fmt(p) }));
       const reader = readAloud([titleEl, ...paras]);
       const prevCleanup = cleanup;
       cleanup = () => { if (prevCleanup) prevCleanup(); reader.stop(); };
@@ -614,6 +636,7 @@
   // ---------- questions (shared by quiz, video quests and the "questions" game) ----------
   // Renders one question. onRight(el, firstTry) / onMiss(el) handle feedback; shaking + buzzer happen here.
   function questionWidget(q, onRight, onMiss) {
+    if (QTYPES[q.type]) return [h('p', { class: 'q-text', html: fmt(q.q, false) }), QTYPES[q.type](q, onRight, onMiss)];
     let wrong = false;
     if (q.type === 'order') {
       const text = h('p', { class: 'q-text', html: fmt(q.q, false) });
@@ -646,6 +669,166 @@
     }, q.optionsHtml ? null : o));
     return [text, h('div', { class: 'opts' }, btns)];
   }
+
+  // ---------- more question types: evidence, hotspot, slider, oddone, build, type, predict ----------
+  // Each one makes the child DO the thinking (find the proof, point at it, estimate, explain, build, recall, predict),
+  // not just pick from a list. They work everywhere questionWidget does: reading checks, video quests, the questions game
+  // and boss battles. QTYPES[type](q, onRight(el, firstTry), onMiss(el), ctx) returns the answer area (not the question text).
+  const QTYPES = {};
+  const checkBtn = (label, fn) => h('button', { class: 'btn q-check', type: 'button', onclick: fn }, label);
+  // a passage split into tappable sentences (for evidence questions)
+  const splitSentences = p => (String(p).match(/[^.!?…]+[.!?…]+["'”’)]*\s*|[^.!?…]+$/g) || [String(p)]).map(t => [h('span', { class: 'ev-sent', html: fmt(t.trim()) }), ' ']);
+
+  // evidence: tap the sentence that proves the answer. { q, answer: a few words from the right sentence, passage }
+  // In a reading check the page's own sentences are tapped (ctx.sentences); anywhere else q.passage is shown.
+  QTYPES.evidence = (q, onRight, onMiss, ctx = {}) => {
+    let wrong = false, done = false, panel = null, sents = ctx.sentences;
+    if (!sents) {
+      const ps = [].concat(q.passage || []).map(t => h('p', null, splitSentences(t)));
+      sents = ps.flatMap(el => [...el.querySelectorAll('.ev-sent')]);
+      panel = h('div', { class: 'ev-passage' }, ps);
+    }
+    const want = String(q.answer).toLowerCase();
+    if (!sents.some(el => el.textContent.toLowerCase().includes(want))) console.warn('evidence: no sentence contains', q.answer);
+    const tap = el => {
+      if (done) return;
+      if (el.textContent.toLowerCase().includes(want)) {
+        done = true; el.classList.add('right');
+        sents.forEach(x => { x.classList.remove('tap'); x.removeAttribute('role'); x.removeAttribute('tabindex'); });
+        onRight(el, !wrong);
+      } else { wrong = true; replay(el, 'wrong'); shake(el); sfx.bad(); onMiss(el); }
+    };
+    sents.forEach(el => {
+      el.classList.add('tap'); el.setAttribute('role', 'button'); el.tabIndex = 0;
+      el.addEventListener('click', e => { if (!e.target.closest('.gloss')) tap(el); });
+      el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tap(el); } });
+    });
+    return [h('div', { class: 'q-tag' }, ctx.sentences ? '👆 Tap the sentence on the page that proves it!' : '👆 Tap the sentence that proves it!'), panel];
+  };
+
+  // hotspot: tap the right place on a picture. { q, img (svg / emoji), spots: [{ x, y, r, label }] (% of the picture), answer: spot index }
+  QTYPES.hotspot = (q, onRight, onMiss) => {
+    let wrong = false, done = false;
+    const spots = q.spots.map((sp, k) => h('button', {
+      class: 'hs-spot', type: 'button', 'aria-label': sp.label || `spot ${k + 1}`,
+      style: `left:${sp.x}%;top:${sp.y}%;width:${(sp.r || 12) * 2}%`,
+      onclick(e) {
+        const b = e.currentTarget;
+        if (done) return;
+        if (k === q.answer) { done = true; b.classList.add('right'); onRight(b, !wrong); }
+        else {
+          wrong = true; b.classList.add('wrong'); shake(b); sfx.bad(); onMiss(b);
+          if (sp.label) popText(b, sp.label, 'hs-name');
+        }
+      },
+    }));
+    return [h('div', { class: 'q-tag' }, '👆 Tap the right place on the picture!'), h('div', { class: 'hs-pic' }, pic(q.img, 'hs-img'), spots)];
+  };
+
+  // slider: drag the marker along a number line, then lock it in.
+  // { q, min, max, step, answer, tolerance, unit, ticks (number of gaps, default 10), from, hideValue (for estimating), format(v) }
+  QTYPES.slider = (q, onRight, onMiss) => {
+    const min = q.min ?? 0, max = q.max ?? 100, step = q.step || 1, tol = q.tolerance || 0, unit = q.unit || '', n = q.ticks || 10;
+    let v = q.from ?? min, wrong = false, done = false, dragging = false;
+    const show = x => (q.format ? q.format(x) : x) + unit;
+    const snap = x => Number((Math.round((Math.max(min, Math.min(max, x)) - min) / step) * step + min).toFixed(6));
+    const knob = h('div', { class: 'sl-knob', role: 'slider', tabindex: 0, 'aria-valuemin': min, 'aria-valuemax': max, 'aria-label': 'Move the marker' }, h('span', { class: 'sl-val' }));
+    const ticks = Array.from({ length: n + 1 }, (_, k) => h('div', { class: 'sl-tick', style: `left:${k / n * 100}%` },
+      h('span', null, q.endsOnly && k && k < n ? '' : show(snap(min + (max - min) * k / n)))));
+    const track = h('div', { class: 'sl-track' }, h('div', { class: 'sl-line' }), ticks, knob);
+    const note = h('div', { class: 'sl-note', 'aria-live': 'polite' });
+    const set = x => { v = snap(x); knob.style.left = (v - min) / (max - min) * 100 + '%'; knob.setAttribute('aria-valuenow', v); knob.firstChild.textContent = q.hideValue ? '' : show(v); };
+    const fromX = cx => { const r = track.getBoundingClientRect(); set(min + (cx - r.left) / r.width * (max - min)); };
+    track.addEventListener('pointerdown', e => { if (done) return; e.preventDefault(); dragging = true; fromX(e.clientX); try { track.setPointerCapture(e.pointerId); } catch (_) { /* ignore */ } });
+    track.addEventListener('pointermove', e => { if (dragging && !done) fromX(e.clientX); });
+    const stop = () => { dragging = false; };
+    track.addEventListener('pointerup', stop); track.addEventListener('pointercancel', stop);
+    knob.addEventListener('keydown', e => {
+      const d = { ArrowLeft: -step, ArrowDown: -step, ArrowRight: step, ArrowUp: step }[e.key];
+      if (d && !done) { e.preventDefault(); set(v + d); }
+    });
+    const btn = checkBtn('📍 Lock it in!', () => {
+      if (done) return;
+      if (Math.abs(v - q.answer) <= tol + 1e-9) { done = true; btn.disabled = true; knob.classList.add('right'); note.textContent = ''; onRight(knob, !wrong); }
+      else { wrong = true; shake(knob); sfx.bad(); note.textContent = v > q.answer ? '⬅️ Too high – go lower!' : '➡️ Too low – go higher!'; onMiss(knob); }
+    });
+    set(v);
+    track._test = { set, get value() { return v; } };
+    return [h('div', { class: 'q-tag' }, '👆 Drag the marker, then lock it in!'), track, note, h('div', { class: 'btn-row' }, btn)];
+  };
+
+  // oddone: pick the odd one out, then pick WHY. { q, items, answer, why, reasons, reason }
+  QTYPES.oddone = (q, onRight, onMiss) => {
+    let wrong = false;
+    const why = h('div', { class: 'odd-why', hidden: true });
+    const items = shuffle(q.items.map((t, k) => [t, k])).map(([t, k]) => h('button', {
+      class: 'opt', type: 'button', html: fmt(t, false),
+      onclick(e) {
+        const b = e.currentTarget;
+        if (k === q.answer) {
+          b.classList.add('right'); items.forEach(x => { x.disabled = true; }); sfx.tap();
+          why.hidden = false;
+          put(why, questionWidget({ q: q.why || 'Why is it the odd one out?', options: q.reasons, answer: q.reason }, (el, first) => onRight(el, first && !wrong), el => { wrong = true; onMiss(el); }));
+        } else { wrong = true; b.classList.add('wrong'); b.disabled = true; shake(b); sfx.bad(); onMiss(b); }
+      },
+    }));
+    return [h('div', { class: 'q-tag' }, '🔎 Which one does NOT belong?'), h('div', { class: 'opts' }, items), why];
+  };
+
+  // build: tap tiles to build the answer – a word from letters or word parts, or a sentence from words.
+  // { q, answer: [tiles in the right order], extra: [decoy tiles], join: '' (word) or ' ' (sentence) }
+  QTYPES.build = (q, onRight, onMiss) => {
+    const join = q.join ?? '';
+    let wrong = false, done = false;
+    const row = h('div', { class: 'bld-row', 'aria-live': 'polite' });
+    const place = b => { if (done) return; sfx.tap(); (b.parentElement === row ? pool : row).append(b); empty.hidden = row.children.length > 1; };
+    const empty = h('span', { class: 'bld-empty' }, 'Tap the tiles to build it here');
+    row.append(empty);
+    const pool = h('div', { class: 'bld-pool' }, shuffle(q.answer.concat(q.extra || [])).map(t => h('button', { class: 'bld-tile', type: 'button', onclick: e => place(e.currentTarget) }, t)));
+    const btn = checkBtn('✔ Check', () => {
+      if (done) return;
+      const built = [...row.querySelectorAll('.bld-tile')].map(b => b.textContent);
+      if (!built.length) { shake(pool); return; }
+      if (built.join(join) === q.answer.join(join)) { done = true; btn.disabled = true; row.classList.add('right'); onRight(row, !wrong); }
+      else { wrong = true; shake(row); sfx.bad(); onMiss(row); }
+    });
+    return [row, pool, h('div', { class: 'btn-row' }, btn)];
+  };
+
+  // type: write the answer. { q, answer: 'word' or ['word', 'other spelling'], before, after, placeholder }
+  // Capitals, spaces and punctuation don't matter (so 'Half past 3' = 'half past 3.').
+  QTYPES.type = (q, onRight, onMiss) => {
+    const clean = t => String(t).toLowerCase().replace(/[^a-z0-9£:]+/g, ' ').trim();
+    const ok = [].concat(q.answer).map(clean);
+    let wrong = false;
+    const box = h('input', { class: 'q-type', type: 'text', autocomplete: 'off', autocapitalize: 'off', spellcheck: 'false', 'aria-label': 'Your answer', placeholder: q.placeholder || 'Type your answer' });
+    const go = () => {
+      const v = clean(box.value);
+      if (!v) { box.focus(); return; }
+      if (ok.includes(v)) { box.classList.add('right'); box.disabled = btn.disabled = true; onRight(box, !wrong); }
+      else { wrong = true; replay(box, 'wrong'); shake(box); sfx.bad(); onMiss(box); box.select(); }
+    };
+    const btn = checkBtn('✔ Check', go);
+    box.addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
+    return h('div', { class: 'q-type-row' }, q.before && h('span', null, q.before), box, q.after && h('span', null, q.after), btn);
+  };
+
+  // predict: guess what will happen first (never marked wrong), see what really happens, then explain why.
+  // { q, options, answer (optional: the real outcome), reveal, revealPic, then: { q, options, answer, explain } }
+  QTYPES.predict = (q, onRight, onMiss) => {
+    const after = h('div', { class: 'pred-after', hidden: true });
+    const opts = q.options.map((o, k) => h('button', {
+      class: 'opt', type: 'button', html: fmt(o, false),
+      onclick(e) {
+        opts.forEach(x => { x.disabled = true; }); e.currentTarget.classList.add('picked'); sfx.tap();
+        const lead = q.answer == null ? '' : k === q.answer ? '🎯 Great prediction! ' : '🤔 Surprise! ';
+        after.hidden = false;
+        put(after, h('div', { class: 'pred-reveal' }, pic(q.revealPic, 'pred-pic'), h('p', { html: lead + fmt(q.reveal, false) })),
+          questionWidget(q.then, onRight, onMiss));
+      },
+    }));
+    return [h('div', { class: 'q-tag' }, '🔮 Make a prediction – there is no wrong answer!'), h('div', { class: 'opts' }, opts), after];
+  };
 
   // Runs a list of questions one at a time inside `area`; calls done(firstTryScore) at the end.
   // In a boss battle, boss.zap(qi) returns true when the last heart is gone; then lost(score) is called.
@@ -1404,11 +1587,26 @@
     setTool('pencil');
     draw();
     return {
-      el: h('div', { class: 'px-editor' }, tools, h('div', { class: 'px-palette' }, swatches), h('div', { class: 'px-board' }, grid, mirrorLine)),
+      el: h('div', { class: 'px-editor' }, tools, h('div', { class: 'px-palette' }, swatches), pxAxes(h('div', { class: 'px-board' }, grid, mirrorLine), w, rows)),
       get cells() { return cells; },
       load(c) { undo.push(cells.slice()); cells = c.slice(); draw(); },
       flash(indexes) { indexes.forEach(i => cellEls[i].classList.add('px-wrong')); setTimeout(() => indexes.forEach(i => cellEls[i].classList.remove('px-wrong')), 1600); },
     };
+  }
+  // Map-style labels round a pixel board: letters along the top (A, B, C…) and numbers down the side (1, 2, 3…),
+  // on both the drawing grid and the example, so "row 3, column D" is easy to find on each.
+  function pxAxes(board, w, rows) {
+    return h('div', { class: 'px-axes', style: `--w:${w};--h:${rows}` },
+      h('span', { class: 'px-corner' }),
+      h('div', { class: 'px-ax-top', 'aria-hidden': 'true' }, Array.from({ length: w }, (_, i) => h('span', null, String.fromCharCode(65 + i)))),
+      h('div', { class: 'px-ax-left', 'aria-hidden': 'true' }, Array.from({ length: rows }, (_, i) => h('span', null, String(i + 1)))),
+      board);
+  }
+  // the example as a grid of squares that looks like the drawing grid (empty squares show the same blue checks)
+  function pxExample(rowsT, colors, w) {
+    const cells = [];
+    rowsT.forEach(row => { for (let x = 0; x < w; x++) { const c = colors[row[x]]; cells.push(h('div', { class: 'px-cell' + (c ? '' : ' empty'), style: c ? `background:${c}` : null })); } });
+    return h('div', { class: 'px-grid px-static', style: `--w:${w};--h:${rowsT.length}`, role: 'img', 'aria-label': 'The picture to copy' }, cells);
   }
   // Pixel art → PNG data URL (transparent background)
   function pixelPNG(cells, w, rows, scale = 24) {
@@ -1514,7 +1712,7 @@
     showMeter();
     return h('div', { class: 'px-copy' },
       h('div', { class: 'px-wrap' },
-        h('div', { class: 'panel-inner px-target' }, h('h3', null, '🎯 Copy this'), pic(Pixel.svg(rowsT, r.colors), 'px-target-pic'),
+        h('div', { class: 'panel-inner px-target' }, h('h3', null, '🎯 Copy this'), h('div', { class: 'px-target-pic' }, pxAxes(pxExample(rowsT, r.colors, w), w, rows)),
           r.tips && h('ul', { class: 'px-tips' }, r.tips.map(t => h('li', { html: fmt(t, false) })))),
         h('div', null, ed.el, meter, h('div', { class: 'btn-row' }, submitBtn, hintBtn), result)));
   }
@@ -5192,7 +5390,6 @@
   };
   // what pops up over the avatar for a streak of right answers in a row
   const COMBO_WORDS = ['NICE!', 'GREAT!', 'AWESOME!', 'SUPER!', 'AMAZING!', 'UNSTOPPABLE!'];
-  const HERO_MOVES = ['flip', 'spin', 'jump', 'dance'];
   const wait = ms => new Promise(r => setTimeout(r, ms));
   const calm = () => window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   const replay = (el, cls) => { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); };
@@ -5258,7 +5455,7 @@
   // end({ hit, dead }) is called when the round is over.
   // Hits never cost hearts: the player starts with a pot of gems, each hit knocks one out, and surviving banks the rest.
   function dodgeRound(area, b, round, { end }) {
-    const W = 360, H = 240, DUR = 7.5, speed = 1 + 0.15 * round, POT = 5;
+    const W = 360, H = 240, DUR = 12, speed = 1 + 0.15 * round, POT = 5;
     let pot = POT;
     const cvs = h('canvas', { class: 'dodge-box', width: W * 2, height: H * 2, 'aria-label': 'Dodge the attacks! Use the arrow keys or drag to move.' });
     const ctx = cvs.getContext('2d'); ctx.scale(2, 2); ctx.imageSmoothingEnabled = false;
@@ -5622,7 +5819,7 @@
         // intro: letterbox bars slide in, the boss wobbles and begs, the player charges the meter, the hero powers up
         await step(350);
         bubble.textContent = fill(pick(lines.beg)); bubble.classList.add('show'); replay(bubble, 'pop');
-        await step(1100);
+        await step(2200);
         bubble.classList.remove('show');
         await powerUp();
         hero.classList.add('cs-charge'); sfx.charge(); shout('FINAL BLOW!', 'big');
@@ -5634,7 +5831,7 @@
         await step(1100);
         // the boss's last words, then victory!
         bubble.textContent = fill(lines.defeat); bubble.classList.add('show', 'ghost'); replay(bubble, 'pop');
-        await step(1000);
+        await step(3000); // time to read the last words before the confetti
         sfx.win(); confetti(160);
         hero.getAnimations().forEach(x => { if (x.constructor === Animation) x.cancel(); }); // let the CSS cheer take over
         hero.classList.add('cs-cheer'); shout('VICTORY!', 'big gold');
@@ -5659,7 +5856,9 @@
     const avatar = heroImg('hero-sprite');
     const hearts = h('div', { class: 'hearts', role: 'img', 'aria-label': `Lives: ${lives} of ${LIVES}` }, heartsRow(lives));
     const heroTalk = speech('from-hero');
-    const hero = h('div', { class: 'hero' }, avatar,
+    // the aura wraps the avatar, so it can glow while the avatar itself lunges, bobs or says ouch
+    const aura = h('div', { class: 'hero-aura' }, avatar);
+    const hero = h('div', { class: 'hero' }, aura,
       h('div', { class: 'hero-info' },
         h('div', { class: 'hero-top' }, h('div', { class: 'hero-name' }, settings.name || 'You'), hearts,
           h('div', { class: 'boss-sub' }, `Lose all ${LIVES} hearts and ${b.name} wins!`)),
@@ -5667,11 +5866,12 @@
     // swaps the avatar's current move (attack, celebration, ouch) for a fresh one
     const avatarBase = avatar.className;
     function act(cls) { avatar.className = avatarBase; void avatar.offsetWidth; avatar.className = avatarBase + ' ' + cls; }
-    // the avatar celebrates a right answer; a longer streak = a bigger party
+    // the avatar celebrates a right answer by powering up its aura: every answer in a row makes it bigger, brighter and faster (up to 5)
     function celebrate() {
       const word = COMBO_WORDS[Math.min(streak, COMBO_WORDS.length) - 1];
       popText(hero, streak > 1 ? `${word} x${streak}` : word, 'combo' + (streak >= 3 ? ' mega' : ''));
-      act(streak >= 3 ? 'power' : pick(HERO_MOVES));
+      aura.dataset.aura = Math.min(streak, 5);
+      act('surge');
       replay(hero, 'glow');
       sparkle(hero, avatar, 8 + Math.min(streak, 5) * 4);
       if (streak >= 2) sfx.combo(streak);
@@ -5723,7 +5923,7 @@
       // returns true when the last heart is lost
       zap(qi) {
         replay(sprite, 'lunge-boss'); sfx.zap();
-        streak = 0; clearTimeout(moveT); hero.classList.remove('powered');
+        streak = 0; clearTimeout(moveT); hero.classList.remove('powered'); delete aura.dataset.aura;
         if (lostOn.has(qi)) { bossTalk.say(pick(lines.taunt), 1600); return false; } // one heart per question
         lostOn.add(qi); lives--;
         projectile(b.attack || '💥', sprite, avatar);

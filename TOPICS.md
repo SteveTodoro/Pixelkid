@@ -109,6 +109,21 @@ One country per lesson: find it on the map, then the history and culture childre
 **Pixel sprites:** `Pixel.sprites.robot / magnet / magnetron`, or draw your own with `Pixel.svg(rows, palette)`.
 **Video tip:** check a video exists and read its transcript before writing questions about it.
 
+**Hands-on question types (work in quizzes, video quests, the `questions` game, boss battles AND as reading-page `check`s):**
+- `evidence` — tap the sentence that proves it. `{ q, answer: 'a few words from the right sentence' }`. As a reading check the page's own sentences become tappable; anywhere else add `passage: 'text'` (or a list of paragraphs).
+- `hotspot` — tap the right place on a picture. `{ q, img: svg or emoji, spots: [{ x, y, r, label }] (% of the picture; r = radius, default 12), answer: spot index }`. A wrong tap shows that spot's `label`.
+- `slider` — drag a marker on a number line. `{ q, min, max, step, answer, tolerance, unit, ticks (gaps, default 10), from, endsOnly (label only the ends), hideValue (for estimating), format: v => … }`. A wrong answer says "too high" or "too low".
+- `oddone` — odd one out, then WHY. `{ q, items, answer, why, reasons, reason }`.
+- `build` — tap tiles into a word or sentence. `{ q, answer: ['un', 'happy'], extra: ['re'] (decoys), join: '' (word) or ' ' (sentence) }`.
+- `type` — write the answer. `{ q, answer: '12' or ['colour', 'color'], before, after, placeholder }`. Capitals, spaces and punctuation are ignored.
+- `predict` — guess first (never marked wrong), see the reveal, then explain. `{ q, options, answer (the real outcome, optional), reveal, revealPic, then: { q, options, answer, explain } }`.
+
+**Keep lessons varied (check with `node tools/activity-audit.js`):**
+- At most ONE word puzzle (`crossword` or `wordsearch`) per lesson, and none in about half of lessons. Never in two lessons in a row of the same world. Other vocabulary practice: `build`, picture↔word `match`, `type`.
+- Don't repeat an arcade game (`invaders`, `runner`, `platformer`, `blocks`) from the previous lesson of the same world.
+- Multiple choice should be at most 60% of a lesson's questions. Mix in `evidence` and `type` reading checks, `hotspot` for pictures and diagrams, `slider` for numbers, and `oddone` / `predict` for reasoning.
+- Every activity must make the child do the lesson's thinking (recall, apply, explain, predict, create). A game only wraps that thinking.
+
 **Question-writing rules (so children read rather than scan):**
 - Answers are shuffled automatically, so write the right answer anywhere. Use `keepOrder: true` only if the order matters.
 - Reading-page checks should test understanding, not word-matching. Ask about a **new example** or a **"what would happen if…"**, and word the right answer differently from the page. Avoid "X is called a…" questions where the answer is the highlighted word.
