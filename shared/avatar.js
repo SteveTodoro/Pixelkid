@@ -372,31 +372,61 @@
   }
 
   // ---------- drawing ----------
-  function paint(ctx, rows, pal, ox, oy, s) {
-    rows.forEach((r, y) => [...r].forEach((ch, x) => { const c = pal[ch]; if (c) { ctx.fillStyle = c; ctx.fillRect((ox + x) * s, (oy + y) * s, s, s); } }));
+  // shift(row) moves a row down by that many pixels (used for the breathing animation)
+  function paint(ctx, rows, pal, ox, oy, s, shift) {
+    rows.forEach((r, y) => { const dy = shift ? shift(oy + y) : 0; [...r].forEach((ch, x) => { const c = pal[ch]; if (c) { ctx.fillStyle = c; ctx.fillRect((ox + x) * s, (oy + y + dy) * s, s, s); } }); });
   }
-  // Draw the avatar onto a new canvas. opts: { scale, pet: true|false, bob: 0|1 }
+  // Draw the avatar onto a canvas. opts: { scale, pet: true|false, bob: 0|1, canvas (redraw into this one),
+  //   blink: true (eyes shut), breathe: 0|1 (head and body dip a pixel, feet stay put), petHop: 0–2 (pet jumps up) }
   function draw(look = load().look, opts = {}) {
     const s = opts.scale || 4, withPet = opts.pet && look.pet && look.pet !== 'pet-none';
-    const c = document.createElement('canvas');
+    const c = opts.canvas || document.createElement('canvas');
     c.width = (withPet ? W + 10 : W) * s; c.height = H * s;
     const ctx = c.getContext('2d');
     const skin = byId(look.skin) || SKINS[0], hc = byId(look.hairColor) || HAIR_COLOURS[0];
     const part = cat => byId(look[cat]);
-    const layer = it => { if (it && it.rows && it.rows.length) paint(ctx, it.rows, Object.assign({ h: hc.h, H: hc.H }, it.pal || {}), 0, (it.y || 0) + (opts.bob || 0), s); };
+    const shift = opts.breathe ? y => (y < 14 ? opts.breathe : 0) : null;
+    const layer = it => { if (it && it.rows && it.rows.length) paint(ctx, it.rows, Object.assign({ h: hc.h, H: hc.H }, it.pal || {}), 0, (it.y || 0) + (opts.bob || 0), s, shift); };
     const extra = part('extra');
     if (extra && extra.behind) layer(extra);
-    paint(ctx, BASE, { s: skin.s, S: skin.S, W: '#ffffff', K: '#1b1b1b', M: '#a0522d' }, 0, opts.bob || 0, s);
+    paint(ctx, BASE, { s: skin.s, S: skin.S, W: '#ffffff', K: '#1b1b1b', M: '#a0522d' }, 0, opts.bob || 0, s, shift);
+    // shut eyes go under the clothes, so glasses, eyepatches and helmets still cover them
+    if (opts.blink) paint(ctx, ['...SS..SS...'], { S: skin.S }, 0, 5 + (opts.bob || 0), s, shift);
     const hideHair = part('hat') && part('hat').hideHair;
     ['legs', 'shoes', 'top', 'hair', 'hat'].forEach(cat => { if (!(cat === 'hair' && hideHair)) layer(part(cat)); });
     if (extra && !extra.behind) layer(extra);
-    if (withPet) { const p = part('pet'); paint(ctx, p.rows, p.pal, W + 2, H - p.rows.length, s); }
+    if (withPet) { const p = part('pet'); paint(ctx, p.rows, p.pal, W + 2, H - p.rows.length - (opts.petHop || 0), s); }
     return c;
+  }
+  // Bring an avatar to life on a canvas: gentle breathing, random blinks and the odd pet hop (about 8 frames a second).
+  // Stays still for people who ask for reduced motion. Returns { blink(), step(seconds), stop() }.
+  function animate(cv, o = {}) {
+    const still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let t = 0, blinkAt = 1.5 + Math.random() * 2, blinkTo = -1, hopAt = 4 + Math.random() * 5, timer = null, stopped = false;
+    const FPS = 8;
+    function frame() {
+      const hop = t >= hopAt ? [1, 2, 2, 1][Math.floor((t - hopAt) * FPS)] || 0 : 0;
+      draw(o.look || load().look, { scale: o.scale || 10, pet: o.pet, canvas: cv, blink: t < blinkTo, breathe: still ? 0 : Math.floor(t / 0.75) % 2, petHop: still ? 0 : hop });
+    }
+    function step(dt) {
+      t += dt;
+      if (t >= blinkAt) { blinkTo = t + 0.15; blinkAt = t + (Math.random() < 0.2 ? 0.35 : 2.5 + Math.random() * 2.5); } // sometimes a double blink
+      if (t >= hopAt + 0.5) hopAt = t + 5 + Math.random() * 6;
+      frame();
+    }
+    const tick = () => { if (stopped || !cv.isConnected) return; step(1 / FPS); timer = setTimeout(tick, 1000 / FPS); };
+    frame();
+    if (!still) timer = setTimeout(tick, 1000 / FPS);
+    return {
+      blink() { blinkTo = t + 0.15; frame(); },
+      step,
+      stop() { stopped = true; clearTimeout(timer); },
+    };
   }
   const dataURL = (look, opts) => draw(look, opts).toDataURL();
 
   const sceneDef = () => SCENES.find(s => s.id === load().look.scene) || SCENES[0];
-  window.Avatar = { ITEMS, SKINS, HAIR_COLOURS, SCENES, COSTUMES, CATS, UNLOCK_TEXT, LEVEL_REWARDS, levelInfo, levelOfUnlock, unlockText, newRewards, markSeen, DEFAULT_LOOK, byId, load, save, wallet, earn, achievements, owns, priceOf, buy, wear, draw, dataURL, isFree, applyScene, sceneBox, sceneDef };
+  window.Avatar = { ITEMS, SKINS, HAIR_COLOURS, SCENES, COSTUMES, CATS, UNLOCK_TEXT, LEVEL_REWARDS, levelInfo, levelOfUnlock, unlockText, newRewards, markSeen, DEFAULT_LOOK, byId, load, save, wallet, earn, achievements, owns, priceOf, buy, wear, draw, animate, dataURL, isFree, applyScene, sceneBox, sceneDef };
   // every page that loads this file shows the player's chosen scene
   applyScene(load().look.scene);
 })();

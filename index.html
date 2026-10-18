@@ -9,22 +9,46 @@
   <script src="shared/pixel-icons.js"></script>
   <script src="shared/avatar.js"></script>
   <style>
-    .lib-head { position: relative; z-index: 1; text-align: center; padding: 30px 16px 6px; }
-    .lib-head h1 { font-size: 3rem; color: #fff; margin: 0; text-shadow: 4px 4px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000; }
+    /* header: the hero portrait fills the top-left corner, the title sits beside it */
+    .lib-head { position: relative; z-index: 1; display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 20px; padding: 16px 16px 4px; }
+    .lib-title { text-align: center; padding-right: 16px; }
+    .lib-head h1 { font-size: 3.4rem; color: #fff; margin: 0; text-shadow: 4px 4px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000; }
     .lib-head p { font-family: var(--pixel); font-size: 1.3rem; font-weight: 700; color: #fff; text-shadow: 2px 2px 0 #000; margin: 6px 0 0; }
-    .me-card { display: inline-flex; align-items: center; gap: 16px; max-width: 100%; box-sizing: border-box; margin-top: 14px; padding: 10px 18px 10px 10px; background: var(--stone); border: 4px solid #000; box-shadow: var(--bevel), 0 6px 0 rgba(0,0,0,.25); text-align: left; }
-    /* the avatar is the way into the Wardrobe */
-    .me-link { position: relative; display: block; flex: none; text-decoration: none; }
-    .me-link:hover .me-avatar { outline: 3px solid #fff; outline-offset: -3px; }
-    .me-avatar { display: block; height: 100px; padding: 6px 8px 0; border: 3px solid #000; }
-    .me-dress { position: absolute; left: 50%; bottom: -10px; transform: translateX(-50%); white-space: nowrap; padding: 1px 8px; font-family: var(--pixel); font-weight: 700; font-size: .8rem; color: #000; background: var(--gold); border: 2px solid #000; }
-    .me-info { min-width: 0; width: 300px; max-width: 100%; }
-    .me-row { display: flex; align-items: center; gap: 10px; }
-    .me-row .xp-bar { flex: 1; min-width: 80px; }
-    .me-info .xp-level { color: #1d5c00; text-shadow: none; font-size: 1.05rem; }
-    .me-meta { display: flex; flex-wrap: wrap; column-gap: 14px; margin-top: 6px; font-weight: 700; font-size: .95rem; color: #333; }
-    .me-meta b { color: #0b6e64; }
-    .me-meta span { white-space: nowrap; }
+    /* the hero portrait: a gold frame, on purpose nothing like the grey stone lesson cards */
+    .pk-hero { width: 250px; }
+    .pk-link { display: block; text-decoration: none; color: inherit; }
+    .pk-frame { position: relative; padding: 10px; background: #ffc928; border: 4px solid #000;
+      box-shadow: inset 4px 4px 0 #fff1a6, inset -4px -4px 0 #b37800, 0 6px 0 rgba(0,0,0,.3); transition: transform .12s steps(2); }
+    .pk-link:hover .pk-frame, .pk-link:focus-visible .pk-frame { transform: translateY(-3px); }
+    .pk-pic { position: relative; height: 250px; overflow: hidden; border: 3px solid #000; box-shadow: 0 0 0 3px #b37800; }
+    .pk-pic canvas { position: absolute; left: 50%; bottom: 20%; height: 74%; transform: translateX(-50%); image-rendering: pixelated; }
+    .rivet { position: absolute; width: 10px; height: 10px; background: #fff1a6; border: 2px solid #000; box-shadow: inset -2px -2px 0 #b37800; transform: rotate(45deg); z-index: 1; }
+    .rivet.tl { left: -1px; top: -1px; } .rivet.tr { right: -1px; top: -1px; } .rivet.bl { left: -1px; bottom: -1px; } .rivet.br { right: -1px; bottom: -1px; }
+    .me-dress { position: absolute; left: 50%; bottom: 5px; transform: translateX(-50%); white-space: nowrap; z-index: 1; padding: 1px 8px; font-family: var(--pixel); font-weight: 700; font-size: .85rem; color: #000; background: var(--gold); border: 2px solid #000; }
+    /* the nameplate under the portrait */
+    .pk-plate { position: relative; margin: 0 10px; padding: 8px 10px 9px; background: #1f1a12; border: 4px solid #000; border-top: 0; box-shadow: inset 0 0 0 2px #b37800; color: #eee; text-align: left; }
+    .pk-name { font-family: var(--pixel); font-weight: 700; font-size: 1.25rem; color: #ffd43b; text-shadow: 2px 2px 0 #000; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .me-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+    .me-row .xp-bar { flex: 1; min-width: 50px; }
+    .pk-plate .xp-level { color: #7cfc3a; font-size: .95rem; white-space: nowrap; }
+    .me-meta { display: flex; flex-direction: column; margin-top: 6px; font-weight: 700; font-size: .85rem; color: #ddd; }
+    .me-meta b { color: #ffd43b; }
+    @media (max-width: 640px) {
+      .lib-head { gap: 12px; padding: 12px 12px 2px; }
+      .lib-title { padding-right: 0; }
+      .lib-head h1 { font-size: 2rem; }
+      .lib-head p { font-size: 1rem; }
+      .pk-hero { width: 150px; }
+      .pk-frame { padding: 6px; }
+      .pk-pic { height: 150px; }
+      .pk-plate { margin: 0 6px; padding: 6px 7px; }
+      .pk-name { font-size: 1rem; }
+      .pk-plate .xp-level { font-size: .75rem; }
+      .me-meta { font-size: .72rem; }
+      .me-dress { font-size: .7rem; bottom: 3px; }
+      .me-row { flex-wrap: wrap; gap: 4px; }
+      .me-row .xp-bar { flex-basis: 100%; }
+    }
     /* one row of worlds; scrolls sideways on a phone */
     .tabs { position: relative; z-index: 1; display: flex; gap: 8px; max-width: 1040px; margin: 22px auto 0; padding: 4px 16px 8px; overflow-x: auto; scrollbar-width: none; }
     .tabs::-webkit-scrollbar { display: none; }
@@ -71,20 +95,25 @@
 </head>
 <body class="science">
   <header class="lib-head">
-    <h1>PIXELKID</h1>
-    <p id="hello">Choose your world, then pick a quest!</p>
-    <div class="me-card">
-      <a class="me-link" href="avatar.html" aria-label="Wardrobe and Shop: dress up your hero">
-        <img class="me-avatar" id="me" alt="">
-        <span class="me-dress">👕 Dress up</span>
+    <div class="pk-hero">
+      <a class="pk-link" id="pk-hero" href="avatar.html" aria-label="Wardrobe and Shop: dress up your hero">
+        <div class="pk-frame">
+          <i class="rivet tl"></i><i class="rivet tr"></i><i class="rivet bl"></i><i class="rivet br"></i>
+          <div class="pk-pic" id="pk-pic"><canvas id="me"></canvas><span class="me-dress">👕 Dress up</span></div>
+        </div>
       </a>
-      <div class="me-info">
+      <div class="pk-plate">
+        <div class="pk-name" id="pk-name">Hero</div>
         <div class="me-row" id="level" hidden>
           <span class="xp-level" id="lvl"></span>
           <div class="xp-bar" aria-hidden="true"><div class="xp-fill" id="lvlfill"></div></div>
         </div>
         <div class="me-meta" id="meta"></div>
       </div>
+    </div>
+    <div class="lib-title">
+      <h1>PIXELKID</h1>
+      <p id="hello">Choose your world, then pick a quest!</p>
     </div>
   </header>
   <nav class="tabs" role="tablist" id="tabs"></nav>
@@ -213,7 +242,14 @@ if (!LIBRARY[current]) current = 'science';
 
 const total = Object.values(records).reduce((n, r) => n + (r.stars || 0), 0);
 const wal = window.Avatar ? Avatar.wallet() : { balance: total };
-if (window.Avatar) { const me = document.getElementById('me'); me.src = Avatar.dataURL(Avatar.load().look, { scale: 6, pet: true }); me.style.background = Avatar.sceneBox(Avatar.load().look.scene); }
+// the hero portrait: the avatar breathes, blinks and blinks again when you point at it
+if (window.Avatar) {
+  document.getElementById('pk-pic').style.background = Avatar.sceneBox(Avatar.load().look.scene);
+  const heroAnim = Avatar.animate(document.getElementById('me'), { scale: 10, pet: true });
+  document.getElementById('pk-hero').addEventListener('pointerenter', () => heroAnim.blink());
+  window.heroAnim = heroAnim;
+}
+if (settings.name) document.getElementById('pk-name').textContent = settings.name;
 if (settings.name) document.getElementById('hello').textContent = `Welcome back, ${settings.name}! Pick a quest.`;
 // the player level carries on across every lesson; new level rewards pop up once
 if (window.Avatar) {
