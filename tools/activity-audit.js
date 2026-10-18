@@ -4,7 +4,8 @@
  *   node tools/activity-audit.js --warn   only the lessons that have warnings
  * Warnings (the rules are in TOPICS.md):
  *   - more than one word puzzle (crossword / wordsearch) in a lesson, or puzzles in two lessons in a row
- *   - the same arcade game as the lesson before it in the same world
+ *   - the same arcade game as the lesson before it in the same world (the Spell Test's own Letter Blaster doesn't count:
+ *     it is part of every spell test)
  *   - multiple choice is more than 60% of the lesson's questions (reading checks count too)
  *   - exactly the same stage order as the lesson before it in the same world
  */
@@ -34,11 +35,16 @@ function audit(file) {
   const types = [...src.matchAll(/type: '(\w+)'/g)].map(m => m[1]);
   const stages = types.filter(t => STAGES.includes(t));
   const games = [...src.matchAll(/game: '(\w+)'/g)].map(m => m[1]);
+  // arcade rounds inside a Spell Test stage (the Letter Blaster) are part of the test, not the lesson's arcade pick
+  const spellArcade = src.split(/\n\s*\{\s*\n\s*type: '/).filter(part => /kind: 'Spelling test'/.test(part))
+    .flatMap(part => [...part.matchAll(/game: '(\w+)'/g)].map(m => m[1])).filter(g => ARCADE.includes(g));
+  const arcade = games.filter(g => ARCADE.includes(g));
+  spellArcade.forEach(g => arcade.splice(arcade.indexOf(g), 1));
   // questions: every typed question, plus reading checks that don't set a type (those are multiple choice)
   const qs = types.filter(t => QUESTIONS.includes(t));
   const plainChecks = [...src.matchAll(/check: \{(?![^{}]*\btype:)/g)].length;
   for (let k = 0; k < plainChecks; k++) qs.push('mcq');
-  return { file, stages, games, qs };
+  return { file, stages, games, arcade, qs };
 }
 
 const warnOnly = process.argv.includes('--warn');
@@ -52,7 +58,7 @@ for (const w of worlds) {
     const puzzles = a.games.filter(g => PUZZLES.includes(g));
     if (puzzles.length > 1) warn.push(`${puzzles.length} word puzzles (max 1)`);
     if (puzzles.length && prev && prev.games.some(g => PUZZLES.includes(g))) warn.push('word puzzle again (the lesson before had one too)');
-    const repeat = [...new Set(a.games.filter(g => ARCADE.includes(g) && prev && prev.games.includes(g)))];
+    const repeat = [...new Set(a.arcade.filter(g => prev && prev.arcade.includes(g)))];
     if (repeat.length) warn.push(`same arcade game as the lesson before: ${repeat.join(', ')}`);
     const mcq = a.qs.filter(t => t === 'mcq').length;
     if (a.qs.length && mcq / a.qs.length > MCQ_LIMIT) warn.push(`multiple choice is ${Math.round(mcq / a.qs.length * 100)}% of questions (max ${MCQ_LIMIT * 100}%)`);

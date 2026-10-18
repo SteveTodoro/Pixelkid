@@ -114,7 +114,7 @@ window.LESSON = {
             'Things a magnet attracts are called [[magnetic]]. Magnetic things are always made of metal.',
             'The magnetic metals are [[iron]], [[nickel]] and cobalt. [[Steel|steel]] is magnetic too, because it is made mostly from iron. Paperclips, nails and food tins are made of steel.',
           ],
-          check: { q: "Which of these would a magnet pick up?", options: ["🔑 a steel key", "🧸 a teddy bear", "🥄 a wooden spoon"], answer: 0, hint: "What is steel mostly made from?" },
+          check: { type: 'type', q: "Name one of the three magnetic metals.", answer: ['iron', 'nickel', 'cobalt'], placeholder: 'a magnetic metal', hint: "Look at the second sentence: the magnetic metals are…", explain: "Iron, nickel and cobalt are the magnetic metals – and steel is mostly iron!" },
         },
         {
           title: 'A tricky fact!', pic: '🥤 💍 🎺',
@@ -122,7 +122,7 @@ window.LESSON = {
             'Not all metals are magnetic! Drinks cans and kitchen foil are made of aluminium. Gold, copper and brass are not magnetic either.',
             'Other [[materials]] like wood, plastic, glass, rubber and paper are never magnetic.',
           ],
-          check: { q: "Jack's magnet will not stick to his drinks can. Why?", options: ["Not every metal is magnetic", "His magnet is broken", "Drinks cans are made of wood"], answer: 0, hint: "What are drinks cans made of? Is that metal magnetic?" },
+          check: { type: 'evidence', q: "Jack's magnet will not stick to his drinks can. Which sentence tells you what the can is made of?", answer: 'Drinks cans and kitchen foil', hint: "Find the sentence that talks about drinks cans.", explain: "Drinks cans are aluminium – a metal that is NOT magnetic." },
         },
         {
           title: 'The magnetic field', pic: '🌀🧲🌀',
@@ -269,7 +269,7 @@ window.LESSON = {
             'Now put North next to North. The magnets push each other away! We say they [[repel]]. South and South repel too.',
             '**Like poles repel.** It feels like an invisible cushion!',
           ],
-          check: { q: "You try to push two magnets together, but they keep sliding apart. Which ends are facing each other?", options: ["two ends that are the same", "a North and a South", "nothing – magnets never do that"], answer: 0 },
+          check: { type: 'type', q: "When two magnets push each other away, what is the science word for it? They…", answer: ['repel', 'they repel'], placeholder: 'the science word', hint: "It is the yellow word on this page. It starts with r.", explain: "They repel – like poles push apart!" },
         },
         {
           title: 'Strong or weak?', pic: '🧲📎📎📎',
@@ -277,7 +277,7 @@ window.LESSON = {
             'Is a big magnet always stronger? No! A small magnet can be stronger than a big one. You have to test it.',
             'Scientists count how many paperclips each magnet can hold. To make it a [[fair test]], they only change the magnet and keep everything else the same.',
           ],
-          check: { q: "Sam has a big magnet and a tiny magnet. How can he find out which is stronger?", options: ["Test how many paperclips each one holds", "The big one must be stronger", "Look at their colours"], answer: 0 },
+          check: { type: 'evidence', q: "Sam says big magnets are always stronger. Tap the sentence that proves he is wrong.", answer: 'A small magnet can be stronger', hint: "Look for a sentence about a SMALL magnet.", explain: "Size doesn't tell you strength – you have to test it!" },
         },
         {
           title: 'Magnets at work', pic: '🧭♻️🌍',
@@ -347,7 +347,7 @@ window.LESSON = {
           html: LAB_TABLE,
           questions: [
             { type: 'mcq', q: 'Which magnet was the strongest?', options: ['A', 'B', 'C', 'D'], answer: 2, hint: 'Find the magnet that held the MOST paperclips.' },
-            { type: 'mcq', q: 'How many more paperclips did magnet B hold than magnet A?', options: ['3', '5', '6'], answer: 1, hint: 'Count on from 6 to 11.', explain: '11 − 6 = 5' },
+            { type: 'type', q: 'How many more paperclips did magnet B hold than magnet A?', answer: ['5', 'five'], after: 'more paperclips', placeholder: 'a number', hint: 'Count on from 6 to 11.', explain: '11 − 6 = 5' },
             { type: 'tf', q: 'The biggest magnets were the strongest.', answer: false, hint: 'Look at magnet D. It is big – how many did it hold?', explain: 'Magnet D is big but only held 2. Size does not tell you strength!' },
             { type: 'mcq', q: 'To make this a fair test, what must stay the same?', options: ['the type of paperclips', 'the magnet being tested', 'the number of paperclips held'], answer: 0, hint: 'We change the magnet – and keep everything else the same.' },
             { type: 'order', q: 'Put the steps of the investigation in order.', items: ['🤔 Predict which magnet is strongest.', '📎 Test each magnet with the same paperclips.', '📝 Record the results in a table.', '🏆 Compare the results and decide.'], ends: ['START', 'END'], hint: 'Scientists always predict before they test!' },
@@ -413,15 +413,15 @@ window.LESSON = {
       },
       questions: [
         { type: 'mcq', q: 'What do we call a push or a pull?', options: ['a force', 'a pole', 'a field'], answer: 0 },
-        { type: 'mcq', q: 'Which group has ONLY magnetic things in it?', options: ['iron nail, steel fork, paperclip', 'iron nail, gold ring, paperclip', 'steel fork, plastic ruler, nail'], answer: 0, hint: 'Check every item in the group. Gold and plastic are not magnetic.' },
+        { type: 'oddone', q: 'Which one would the magnet NOT pick up?', items: ['🔩 iron nail', '📎 paperclip', '🥫 steel tin', '🥤 drinks can'], answer: 3, why: 'Why does the drinks can not belong?', reasons: ['It is aluminium – a metal that is not magnetic', 'It is not made of metal at all', 'It is too heavy for the magnet'], reason: 0, hint: 'They are all metal – but not every metal is magnetic!' },
         { type: 'gap', q: 'The magnetic metals are iron, cobalt and ___.', options: ['nickel', 'gold', 'aluminium'], answer: 0 },
         { type: 'tf', q: 'A drinks can is made of metal, so it must be magnetic.', answer: false, hint: 'Remember the tricky fact – not all metals are magnetic!', explain: 'Drinks cans are aluminium, which is not magnetic.' },
-        { type: 'mcq', q: "Mia holds the North pole of her magnet next to the North pole of Sam's magnet. What happens?", options: ['They push apart', 'They snap together', 'Nothing happens'], answer: 0, hint: 'Like poles…' },
+        { type: 'predict', q: "Mia holds the North pole of her magnet next to the North pole of Sam's magnet. What will happen?", options: ['They push apart', 'They snap together', 'Nothing happens'], answer: 0, reveal: 'They push apart – it feels like an invisible cushion!', then: { q: 'Why do they push apart?', options: ['Like poles repel', 'Opposite poles attract', 'North poles are not magnetic'], answer: 0, hint: 'Both ends are North – they are the SAME.' } },
         { type: 'mcq', q: 'Two magnets push each other away. One of the facing ends is a South pole. What is the other one?', options: ['North', 'South'], answer: 1, hint: 'Pushing apart means the poles are the SAME.' },
         { type: 'tf', q: 'Magnetism is a non-contact force.', answer: true, explain: 'Magnets can pull without touching.' },
         { type: 'mcq', q: 'Why can a fridge magnet hold up your drawing?', options: ["Its pull works through paper", 'The paper becomes magnetic', 'The drawing is sticky'], answer: 0 },
         { type: 'mcq', q: 'At the recycling centre, the giant magnet picks up…', options: ['🥫 steel tins', '🥤 aluminium drinks cans', '🍾 glass bottles'], answer: 0 },
-        { type: 'mcq', q: 'Magnet X holds 9 paperclips. Magnet Y holds 4. Which is stronger, and by how many?', options: ['X, by 5', 'Y, by 5', 'X, by 4'], answer: 0, hint: 'Which number is bigger? Then find the difference.', explain: '9 − 4 = 5, so X is stronger by 5.' },
+        { type: 'slider', q: 'Magnet X holds 9 paperclips. Magnet Y holds 4. How many MORE does magnet X hold? Drag the marker.', min: 0, max: 10, step: 1, answer: 5, hint: 'Count on from 4 to 9.', explain: '9 − 4 = 5, so X is stronger by 5.' },
         { type: 'mcq', q: 'Why does a compass needle point North?', options: ['The Earth is like a giant magnet', 'The wind blows it', 'It is heavier at one end'], answer: 0 },
         { type: 'order', q: 'Put the recycling magnet steps in order.', items: ['🗑️ Rubbish moves along a belt.', '🥫 A giant magnet pulls the steel tins out.', '🔥 The tins are melted to make new things.'], hint: 'The rubbish has to arrive before the magnet can pick anything out.' },
       ],
