@@ -104,7 +104,7 @@ window.LESSON = {
             'Everything that happens has a [[start time]] and an [[end time]]. The time in between is called the [[duration]] – how long it takes.',
             'A swimming lesson might start at 4:00 and end at 4:30. It lasts 30 minutes.',
           ],
-          check: { q: 'Football practice starts at 5:00 and finishes at 6:00. How long does it last?', options: ['1 hour', '5 hours', '6 hours'], answer: 0 },
+          check: { type: 'type', q: 'Football practice starts at 5:00 and finishes at 6:00. How long does it last?', answer: ['1 hour', '1', 'one hour', 'an hour', '60 minutes', '60', '1 hr', '1h'], placeholder: 'like: 30 minutes', hint: 'From 5 o\'clock to 6 o\'clock…', explain: 'From 5:00 to 6:00 is 1 hour.' },
         },
         {
           title: 'Hop along a time line', pic: TXT('🐸<br>+10 +10 +5'),
@@ -112,7 +112,7 @@ window.LESSON = {
             'A [[time line]] is like a number line for time. Put the start time on the left, then hop along to the end time.',
             'Add up the sizes of all your hops – that is how long it took!',
           ],
-          check: { q: 'You hop 10 minutes, then 10 minutes, then 5 minutes. How long is that altogether?', options: ['25 minutes', '3 minutes', '20 minutes'], answer: 0, hint: '10 + 10 + 5 = ?' },
+          check: { type: 'slider', q: 'You hop 10 minutes, then 10 minutes, then 5 minutes. How long is that altogether? Drag the marker.', min: 0, max: 30, step: 5, ticks: 6, answer: 25, unit: ' min', hint: '10 + 10 + 5 = ?', explain: '10 + 10 + 5 = 25 minutes.' },
         },
         {
           title: 'Hop to the o\'clock first', pic: TXT('3:45<br>⬇ +15<br>4:00<br>⬇ +20<br>4:20'),
@@ -120,7 +120,7 @@ window.LESSON = {
             'From 3:45 to 4:20 is tricky in one go. So first hop to the next o\'clock: from 3:45 to 4:00 is 15 minutes.',
             'Then hop on from 4:00 to 4:20. That is 20 more minutes. 15 + 20 = 35 minutes altogether.',
           ],
-          check: { q: 'A film starts at 2:50 and ends at 3:30. How long is the film?', options: ['40 minutes', '80 minutes', '30 minutes'], answer: 0, hint: '2:50 to 3:00 is 10 minutes. Then 3:00 to 3:30 is…' },
+          check: { type: 'type', q: 'A film starts at 2:50 and ends at 3:30. How long is the film?', answer: ['40', '40 minutes', 'forty', '40 mins'], after: 'minutes', placeholder: 'a number', hint: '2:50 to 3:00 is 10 minutes. Then 3:00 to 3:30 is…', explain: '10 + 30 = 40 minutes.' },
         },
         {
           title: 'Don\'t take away like normal numbers!', pic: TXT('❌ 420 − 345 = 75<br>✅ 35 minutes'),
@@ -128,7 +128,7 @@ window.LESSON = {
             'Time is not like normal numbers. An hour has 60 minutes, not 100!',
             'If you do 420 − 345, you get 75. But from 3:45 to 4:20 is really 35 minutes. Hopping on a time line never gets tricked.',
           ],
-          check: { q: 'Why can\'t you work out how long by taking away times like normal numbers?', options: ['an hour has 60 minutes, not 100', 'clocks are round', 'the numbers are too big'], answer: 0 },
+          check: { type: 'evidence', q: 'Why can\'t you work out how long by taking away times like normal numbers? Tap the sentence that explains it.', answer: 'An hour has 60 minutes', hint: 'How many minutes are in an hour?', explain: 'An hour has 60 minutes, not 100 – so normal take-away gets tricked.' },
         },
       ],
     },
@@ -145,9 +145,9 @@ window.LESSON = {
       ],
       questions: [
         { type: 'mcq', q: 'Which mistake does the video warn you about?', options: ['adding or taking away times like normal numbers', 'counting in 5s', 'drawing a number line'], answer: 0 },
-        { type: 'mcq', q: 'The bus ride went from 8:07 to 8:15. How long was it?', options: ['8 minutes', '15 minutes', '7 minutes'], answer: 0, hint: '3 hops of 1 minute to 8:10, then 5 more.' },
+        { type: 'type', q: 'The bus ride went from 8:07 to 8:15. How long was it?', answer: ['8', 'eight', '8 minutes'], after: 'minutes', placeholder: 'a number', hint: '3 hops of 1 minute to 8:10, then 5 more.' },
         { type: 'mcq', q: 'Why did Miss Akilah hop from 8:07 to 8:10 first?', options: ['8:10 is a friendly time that is easy to count on from', '8:10 was the end time', 'the bus stopped at 8:10'], answer: 0 },
-        { type: 'mcq', q: 'The dolphin show went from 8:24 to 8:41. How long was it?', options: ['17 minutes', '24 minutes', '15 minutes'], answer: 0, hint: '1 + 5 + 5 + 5 + 1 = ?' },
+        { type: 'type', q: 'The dolphin show went from 8:24 to 8:41. How long was it?', answer: ['17', 'seventeen', '17 minutes'], after: 'minutes', placeholder: 'a number', hint: '1 + 5 + 5 + 5 + 1 = ?' },
         { type: 'mcq', q: 'The stingrays were from 8:57 to 9:11. Where did the first hops go?', options: ['to 9:00 – the top of the hour', 'straight to 9:11', 'back to 8:50'], answer: 0 },
         { type: 'mcq', q: 'So how long did the class pet the stingrays?', options: ['14 minutes', '54 minutes', '11 minutes'], answer: 0, hint: '3 minutes to 9:00, then 11 more.' },
       ],
@@ -199,7 +199,7 @@ window.LESSON = {
             'Sometimes you know the start time and how long something lasts. Hop forwards to find when it ends.',
             'A pizza goes in at 5:40 and cooks for 30 minutes. Hop 20 minutes to 6:00, then 10 more. It is ready at 6:10.',
           ],
-          check: { q: 'A bedtime story starts at 7:45 and lasts 20 minutes. When does it end?', options: ['8:05', '7:65', '8:20'], answer: 0, hint: '7:45 to 8:00 is 15 minutes. Then 5 more.' },
+          check: { type: 'type', q: 'A bedtime story starts at 7:45 and lasts 20 minutes. When does it end?', answer: ['8:05'], placeholder: 'like 6:10', hint: '7:45 to 8:00 is 15 minutes. Then 5 more.', explain: '15 minutes to 8:00, then 5 more: 8:05.' },
         },
         {
           title: 'When did it start?', pic: '⬅ 🐸',
@@ -207,7 +207,7 @@ window.LESSON = {
             'You can hop backwards too! A show ended at 4:15 and lasted 30 minutes.',
             'Hop back 15 minutes to 4:00, then back 15 more to 3:45. The show started at 3:45.',
           ],
-          check: { q: 'A walk ended at 11:10. It lasted 20 minutes. When did it start?', options: ['10:50', '11:30', '10:10'], answer: 0, hint: 'Hop back 10 minutes to 11:00, then 10 more.' },
+          check: { type: 'type', q: 'A walk ended at 11:10. It lasted 20 minutes. When did it start?', answer: ['10:50'], placeholder: 'like 3:45', hint: 'Hop back 10 minutes to 11:00, then 10 more.', explain: 'Back 10 to 11:00, back 10 more to 10:50.' },
         },
         {
           title: 'Hours and minutes', pic: TXT('60 minutes<br>=<br>1 hour'),
@@ -215,7 +215,7 @@ window.LESSON = {
             'When a time gets bigger than 60 minutes, turn it into hours and minutes.',
             '75 minutes is 1 hour and 15 minutes. 90 minutes is 1 and a half hours.',
           ],
-          check: { q: 'A film lasts 1 hour and 10 minutes. How many minutes is that?', options: ['70', '110', '61'], answer: 0, hint: '1 hour is 60 minutes. Add 10.' },
+          check: { type: 'slider', q: 'A film lasts 1 hour and 10 minutes. How many minutes is that? Drag the marker.', min: 0, max: 120, step: 10, ticks: 12, answer: 70, unit: '', hint: '1 hour is 60 minutes. Add 10.', explain: '60 + 10 = 70 minutes.' },
         },
         {
           title: 'Hopping a timetable', pic: TXT('🚆<br>09:15<br>⬇<br>10:45'),
@@ -223,7 +223,7 @@ window.LESSON = {
             'A [[timetable]] tells you when a train leaves and when it arrives. Hop from one to the other to find how long the journey is.',
             'Bangkok 09:15, Ayutthaya 10:45. Hop 45 minutes to 10:00, then 45 more. That is 1 hour and 30 minutes.',
           ],
-          check: { q: 'A bus leaves at 13:20 and arrives at 14:00. How long is the journey?', options: ['40 minutes', '80 minutes', '1 hour 20 minutes'], answer: 0, hint: 'How many minutes from 13:20 to the next o\'clock?' },
+          check: { type: 'type', q: 'A bus leaves at 13:20 and arrives at 14:00. How long is the journey?', answer: ['40', '40 minutes', 'forty', '40 mins'], after: 'minutes', placeholder: 'a number', hint: 'How many minutes from 13:20 to the next o\'clock?', explain: '13:20 to 14:00 is 40 minutes.' },
         },
       ],
     },
@@ -262,46 +262,21 @@ window.LESSON = {
           ],
         },
         {
-          game: 'invaders', title: 'Duration Invaders',
-          intro: 'Blast the aliens carrying the RIGHT answer! Watch out for the classic take-away trap.',
-          say: '◀ ▶ to move, tap FIRE! Think before you shoot!',
-          waves: [
-            {
-              prompt: '2:30 to 3:00 is…',
-              items: [
-                { label: '30 min', ok: true },
-                { label: '70 min', ok: false, why: '300 − 230 = 70 – but an hour has 60 minutes, not 100!' },
-                { label: '1 hour', ok: false, why: 'Half past to o\'clock is only half an hour.' },
-                { label: '3 min', ok: false, why: 'Count the hops: 2:30 to 3:00 is 30 minutes.' },
-              ],
-            },
-            {
-              prompt: '4:50 to 5:10 is…',
-              items: [
-                { label: '20 min', ok: true },
-                { label: '60 min', ok: false, why: 'Not a normal take-away! 4:50 to 5:00 is 10 minutes, then 10 more.' },
-                { label: '40 min', ok: false, why: 'Hop to 5:00 first: 10 minutes. Then 10 more makes 20.' },
-                { label: '1 h 10', ok: false, why: 'That is far too long – it does not even reach the next hour twice!' },
-              ],
-            },
-            {
-              prompt: 'Same as 90 minutes?',
-              items: [
-                { label: '1½ hours', ok: true },
-                { label: '9 hours', ok: false, why: '90 minutes is less than 2 hours.' },
-                { label: '1 h 9 min', ok: false, why: '1 hour is 60 minutes, so 90 minutes is 1 hour and 30 minutes.' },
-                { label: '90 hours', ok: false, why: 'Minutes, not hours! 90 minutes is 1 and a half hours.' },
-              ],
-            },
-            {
-              prompt: '10:45 + 30 min =',
-              items: [
-                { label: '11:15', ok: true },
-                { label: '10:75', ok: false, why: 'There is no 10:75! After 10:59 comes 11:00.' },
-                { label: '11:45', ok: false, why: 'That is 1 whole hour later. Hop 15 to 11:00, then 15 more.' },
-                { label: '10:15', ok: false, why: 'That is going backwards in time!' },
-              ],
-            },
+          game: 'runner', title: 'Real Time Run',
+          intro: 'Slowcoach has scribbled some **impossible times**! Remember: an hour has 60 minutes, so the minutes on a clock only go up to 59. Collect the REAL times.',
+          say: 'Pick the lane with the REAL time! Jump the rocks and hold DASH to go faster.',
+          prompt: 'Collect the REAL times – dodge the impossible ones!',
+          items: [
+            { label: '11:15', ok: true },
+            { label: '9:59', ok: true },
+            { label: '3:45', ok: true },
+            { label: '12:00', ok: true },
+            { label: '7:30', ok: true },
+            { label: '10:75', ok: false, why: 'There is no 10:75! After 10:59 comes 11:00.' },
+            { label: '2:61', ok: false, why: 'Minutes stop at 59. One more minute after 2:59 is 3:00.' },
+            { label: '8:90', ok: false, why: '90 minutes is more than an hour – it can never be on a clock.' },
+            { label: '4:60', ok: false, why: '60 minutes is a whole hour, so 4:60 is really 5:00.' },
+            { label: '6:85', ok: false, why: 'Minutes only go up to 59 – an hour has 60 minutes, not 100!' },
           ],
         },
         {
@@ -365,7 +340,7 @@ window.LESSON = {
       },
       questions: [
         { type: 'mcq', q: 'Swimming starts at 4:00 and ends at 4:45. How long is it?', options: ['45 minutes', '4 minutes', '1 hour 45 minutes'], answer: 0 },
-        { type: 'mcq', q: 'A film starts at 3:50 and ends at 4:30. How long is it?', options: ['40 minutes', '80 minutes', '20 minutes'], answer: 0, hint: 'Hop to 4:00 first: 10 minutes. Then 4:00 to 4:30.' },
+        { type: 'slider', q: 'A film starts at 3:50 and ends at 4:30. How long is it? Drag the marker.', min: 0, max: 60, step: 5, ticks: 12, answer: 40, unit: '', hint: 'Hop to 4:00 first: 10 minutes. Then 4:00 to 4:30.' },
         { type: 'mcq', q: 'Lunch starts at 12:15 and lasts 45 minutes. When does it end?', options: ['1:00', '12:60', '1:15'], answer: 0, hint: '12:15 + 45 minutes reaches the next o\'clock exactly.' },
         { type: 'mcq', q: 'This clock shows when a race starts. It lasts 20 minutes. Which clock shows when it ends?', pic: C('5:50'), optionsHtml: true, options: [C('6:10'), C('6:20'), C('5:30')], answer: 0, hint: '5:50 + 10 minutes = 6:00. Then 10 more.' },
         { type: 'gap', q: '1 hour and 20 minutes is ___ minutes.', options: ['80', '120', '70'], answer: 0, hint: '1 hour = 60 minutes.' },
@@ -373,7 +348,7 @@ window.LESSON = {
         { type: 'mcq', q: 'The train leaves at 14:10 and arrives at 15:00. How long is the journey?', options: ['50 minutes', '90 minutes', '1 hour 10 minutes'], answer: 0, hint: 'Don\'t take away like normal numbers! How many minutes from 14:10 to 15:00?' },
         { type: 'mcq', q: 'A show ended at 6:15. It lasted 30 minutes. When did it start?', options: ['5:45', '6:45', '5:15'], answer: 0, hint: 'Hop BACKWARDS: 15 minutes to 6:00, then 15 more.' },
         { type: 'tf', q: 'From 10:50 to 11:10 is 20 minutes.', answer: true },
-        { type: 'mcq', q: 'A cake needs 35 minutes. It goes in at 2:40. When is it ready?', options: ['3:15', '2:75', '3:05'], answer: 0, hint: 'There is no 2:75! Hop 20 minutes to 3:00, then 15 more.' },
+        { type: 'type', q: 'A cake needs 35 minutes. It goes in at 2:40. When is it ready?', answer: ['3:15'], placeholder: 'like 6:10', hint: 'There is no 2:75! Hop 20 minutes to 3:00, then 15 more.' },
         { type: 'order', q: 'Put these from SHORTEST to LONGEST.', items: ['30 seconds', '15 minutes', '1 hour', '90 minutes'], ends: ['SHORTEST', 'LONGEST'], hint: 'Change them all into minutes.' },
       ],
     },
