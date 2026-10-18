@@ -150,6 +150,7 @@
     { id: 'move-wave', cat: 'move', name: 'Wave', price: 25, rows: [] },
     { id: 'move-cheer', cat: 'move', name: 'Hands up!', price: 35, rows: [] },
     { id: 'move-peace', cat: 'move', name: 'Peace', price: 45, rows: [] },
+    { id: 'move-flex', cat: 'move', name: 'Muscle flex', price: 40, rows: [] },
     { id: 'move-dab', cat: 'move', name: 'Dab', price: 0, unlock: 'lvl:8', rows: [] },
     { id: 'move-jump', cat: 'move', name: 'Victory jump', price: 0, unlock: 'lvl:14', rows: [] },
     { id: 'pet-none', cat: 'pet', name: 'No pet', price: 0, rows: [] },
@@ -392,6 +393,9 @@
     up: { sl: [[0, 8], [1, 8], [-1, 7], [0, 7]], sk: [[-1, 6], [0, 6], [-1, 5], [0, 5]], h: [[-1, 4], [0, 4]] },
     diag: { sl: [[0, 8], [1, 8], [0, 7]], sk: [[-1, 7], [-1, 6]], h: [[-2, 6], [-2, 5]] },
     out: { sl: [[0, 9], [0, 10]], sk: [[-1, 9], [-1, 10]], h: [[-2, 9], [-2, 10]], keep10: true },
+    // double-biceps flex: upper arm out sideways, forearm straight up, a muscle bump that grows in flex2
+    flex: { sl: [[0, 9], [0, 10], [-1, 10]], sk: [[-2, 9], [-1, 9], [-2, 8], [-2, 7], [-2, 6], [0, 8]], h: [[-2, 5], [-1, 5], [-1, 6]], keep10: true },
+    flex2: { sl: [[0, 9], [0, 10], [-1, 10]], sk: [[-2, 9], [-1, 9], [-2, 8], [-2, 7], [-2, 6], [0, 8], [-1, 8], [0, 7]], h: [[-2, 5], [-1, 5], [-1, 6]], keep10: true },
     // right-arm only shapes, given in the right arm's own pixels (not mirrored)
     peace: { right: true, sl: [[11, 9], [11, 8], [12, 8]], sk: [[11, 7], [12, 7], [11, 6], [12, 6]], h: [[11, 5], [12, 5], [11, 4], [11, 3], [13, 4], [13, 3]] },
     dab: { right: true, sl: [[10, 8], [10, 7], [9, 6], [8, 6]], sk: [[7, 6], [6, 6]], h: [[5, 6], [5, 7]] },
@@ -401,6 +405,7 @@
     'move-wave': { key: { R: 'diag' }, frames: [].concat(...rep([].concat(rep({ R: 'up' }, 2), rep({ R: 'diag' }, 2)), 4)) },
     'move-cheer': { key: { L: 'up', R: 'up' }, frames: [].concat(...rep([].concat(rep({ L: 'up', R: 'up' }, 2), rep({ L: 'up', R: 'up', bob: -1 }, 2)), 4)) },
     'move-peace': { key: { R: 'peace', wink: true }, frames: [].concat(rep({ R: 'peace' }, 4), rep({ R: 'peace', wink: true }, 6), rep({ R: 'peace' }, 6)) },
+    'move-flex': { key: { L: 'flex2', R: 'flex2' }, frames: [].concat(rep({ L: 'flex', R: 'flex' }, 3), ...rep([].concat(rep({ L: 'flex2', R: 'flex2', bob: 1 }, 3), rep({ L: 'flex', R: 'flex' }, 2)), 3)) },
     'move-dab': { key: { L: 'diag', R: 'dab' }, frames: [].concat(rep({ L: 'out', R: 'out' }, 2), rep({ L: 'diag', R: 'dab' }, 14)) },
     'move-jump': {
       key: { L: 'up', R: 'up', bob: -1, spark: 1 },
