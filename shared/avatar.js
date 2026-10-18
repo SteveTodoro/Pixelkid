@@ -146,23 +146,23 @@
     { id: 'liberty-torch', cat: 'extra', name: 'Liberty torch', price: 40, special: true, y: 1, rows: ['...........o', '..........oy', '..........yo', '..........gg', '...........g', '...........g', '...........g', '...........g'], pal: { o: '#ff8c1a', y: '#ffd43b', g: '#4fb39a' } },
     // ----- pets -----
     { id: 'pet-none', cat: 'pet', name: 'No pet', price: 0, rows: [] },
-    { id: 'pet-cat', cat: 'pet', name: 'Pixel cat', price: 40, rows: ['.o....o.', '.oo..oo.', '.oooooo.', '.ogoogo.', '.oooooo.', '..oppo..', '.oooooo.', '.o.oo.o.'], pal: { o: '#ff8c1a', g: '#2e9e3e', p: '#ff7eb6' } },
+    { id: 'pet-cat', cat: 'pet', eyes: [[2, 3], [5, 3]], name: 'Pixel cat', price: 40, rows: ['.o....o.', '.oo..oo.', '.oooooo.', '.ogoogo.', '.oooooo.', '..oppo..', '.oooooo.', '.o.oo.o.'], pal: { o: '#ff8c1a', g: '#2e9e3e', p: '#ff7eb6' } },
     { id: 'pet-dog', cat: 'pet', name: 'Pixel dog', price: 40, rows: ['bb....bb', 'bbbbbbbb', '.bkbbkb.', '.bbbbbb.', '.bbkkbb.', '..bbbb..', '.bbbbbb.', '.b.bb.b.'], pal: { b: '#a86b3c', k: '#1b1b1b' } },
-    { id: 'pet-robot', cat: 'pet', name: 'Mini Bolt', price: 50, rows: ['...yy...', '.kkkkkk.', '.kcllck.', '.kllllk.', '.kkkkkk.', '.gggggg.', '.g.gg.g.', '.k.kk.k.'], pal: { y: '#ffcc33', k: '#1b1b1b', c: '#2ee6d6', l: '#d9dde3', g: '#8e9aa8' } },
+    { id: 'pet-robot', cat: 'pet', eyes: [[2, 2], [5, 2]], name: 'Mini Bolt', price: 50, rows: ['...yy...', '.kkkkkk.', '.kcllck.', '.kllllk.', '.kkkkkk.', '.gggggg.', '.g.gg.g.', '.k.kk.k.'], pal: { y: '#ffcc33', k: '#1b1b1b', c: '#2ee6d6', l: '#d9dde3', g: '#8e9aa8' } },
     { id: 'pet-owl', cat: 'pet', name: 'Spelling owl', price: 60, rows: ['b......b', 'bbbbbbbb', 'bwkbbkwb', 'bwwbbwwb', '.bbyybb.', '.bBBBBb.', '.bBBBBb.', '..y..y..'], pal: { b: '#8a5a32', w: '#ffffff', k: '#1b1b1b', y: '#ff8c1a', B: '#e9cfa6' } },
     { id: 'pet-dragon', cat: 'pet', name: 'Baby dragon', price: 100, rows: ['.p.gg.p.', '.pggggp.', 'pgkggkgp', '.gggggg.', '.gyyyyg.', '..gyyg..', '.gg..gg.', '.g....g.'], pal: { g: '#2e9e3e', p: '#8e5cff', k: '#1b1b1b', y: '#ffd43b' } },
     { id: 'pet-annoying-dog', cat: 'pet', name: 'Annoying Dog', price: 100, special: true, rows: ['ww....ww', 'wwwwwwww', '.wkwwkw.', '.wwwwww.', '.wwkkww.', '..wwww..', '.wwwwww.', '.w.ww.w.'], pal: { w: '#ffffff', k: '#1b1b1b' } },
-    { id: 'pet-jellyfish', cat: 'pet', name: 'Immortal jelly', price: 100, special: true, rows: ['..kkkk..', '.kPPPPk.', 'kPPrrPPk', 'kPrrrrPk', 'kPkPPkPk', 'kkkkkkkk', '.t.tt.t.', 't.t..t.t'], pal: { k: '#5b2a6e', P: '#ffd1ec', r: '#e53935', t: '#f7a8d8' } },
+    { id: 'pet-jellyfish', cat: 'pet', eyes: [[2, 4], [5, 4]], name: 'Immortal jelly', price: 100, special: true, rows: ['..kkkk..', '.kPPPPk.', 'kPPrrPPk', 'kPrrrrPk', 'kPkPPkPk', 'kkkkkkkk', '.t.tt.t.', 't.t..t.t'], pal: { k: '#5b2a6e', P: '#ffd1ec', r: '#e53935', t: '#f7a8d8' } },
     { id: 'pet-bear', cat: 'pet', name: 'Marmalade bear', price: 80, special: true, rows: ['.rrrrrr.', 'rrrrrrrr', '.bbbbbb.', '.bkbbkb.', '.bbnnbb.', '.CCCCCC.', '.CCyCCC.', '.bb..bb.'], pal: { r: '#d32f2f', b: '#a86b3c', k: '#1b1b1b', n: '#5a3214', C: '#1e5fbf', y: '#ffd43b' } },
     { id: 'pet-elephant', cat: 'pet', name: 'Baby elephant', price: 100, special: true, rows: ['...gggg.', '..gggggg', 'gGGkgggg', 'gGGggggg', 'g.gggggg', 'g.gggggg', '..gg.gg.', '..gg.gg.'], pal: { g: '#9aa4ae', G: '#7b8590', k: '#1b1b1b' } },
     { id: 'pet-clockcroc', cat: 'pet', name: 'Tick-Tock Croc', price: 100, special: true, rows: ['.kk.kk..', 'kggggggk', 'kgwkgggk', 'kggggggg', 'kgwwwwgk', 'kggywygk', '.kgkkgk.', 'kgk..kgk'], pal: { k: '#1b4d1b', g: '#4caf50', w: '#ffffff', y: '#ffd43b' } },
     { id: 'pet-sunflower', cat: 'pet', name: 'Sunny the sunflower', price: 100, special: true, rows: ['.y.yy.y.', 'yybbbbyy', 'ybkbbkby', 'ybbkkbby', 'yybbbbyy', '.y.gg.y.', '..lgg...', '...ggl..'], pal: { y: '#ffcc33', b: '#8a5a32', k: '#1b1b1b', g: '#2e9e3e', l: '#5bbf3a' } },
     { id: 'pet-tardigrade', cat: 'pet', name: 'Water bear', price: 100, special: true, rows: ['.kkkkkk.', 'kppppppk', 'kpkppkpk', 'kppooppk', 'kpPppPpk', 'kppppppk', '.kkkkkk.', 'k.k..k.k'], pal: { k: '#4a3426', p: '#e9cfa6', P: '#c9a477', o: '#e57373' } },
-    { id: 'pet-echo', cat: 'pet', name: 'Echo the ghost', price: 100, special: true, rows: ['..wwww..', '.wwwwww.', 'wwkwwkww', 'wwkwwkww', 'wwwbbwww', 'wwwwwwww', 'wwwwwwww', 'w.ww.ww.'], pal: { w: '#eef3ff', k: '#1b1b1b', b: '#7aa2ff' } },
+    { id: 'pet-echo', cat: 'pet', eyes: [[2, 2], [2, 3], [5, 2], [5, 3]], name: 'Echo the ghost', price: 100, special: true, rows: ['..wwww..', '.wwwwww.', 'wwkwwkww', 'wwkwwkww', 'wwwbbwww', 'wwwwwwww', 'wwwwwwww', 'w.ww.ww.'], pal: { w: '#eef3ff', k: '#1b1b1b', b: '#7aa2ff' } },
     { id: 'pet-octopus', cat: 'pet', name: 'An octopus', price: 100, special: true, rows: ['..oooo..', '.oooooo.', 'owkoowko', 'oooooooo', '.oooooo.', 'o.o.o.o.', '.o.o.o.o', 'o.o.o.o.'], pal: { o: '#ff6f91', w: '#ffffff', k: '#1b1b1b' } },
     { id: 'pet-eagle', cat: 'pet', name: 'Bald eagle', price: 80, special: true, rows: ['..wwww..', '.wwwwkw.', '.wwwwwyy', '..bbbbb.', '.bbbbbbb', 'bbbbbbb.', '.bbbbb..', '..y..y..'], pal: { w: '#ffffff', k: '#1b1b1b', y: '#ffb300', b: '#5a3214' } },
-    { id: 'pet-bee', cat: 'pet', name: 'Busy bee', price: 60, rows: ['..cc.cc.', '..ccccc.', '.kkkkkk.', 'kwkyykyk', 'kkkyykyk', 'kkkyykyk', '.kkkkkk.', '.k....k.'], pal: { k: '#1b1b1b', y: '#ffd43b', c: '#cfefff', w: '#ffffff' } },
-    { id: 'pet-snail', cat: 'pet', name: 'Speedy snail', price: 60, rows: ['.....k.k', '.....y.y', '.kkk.k.k', 'kOoOkkgk', 'kokOkggk', 'kOooOggk', '.kkkkggk', 'gggggggk'], pal: { k: '#1b1b1b', O: '#b85a00', o: '#ff8c1a', g: '#9be15d', y: '#ffd43b' } },
+    { id: 'pet-bee', cat: 'pet', eyes: [[1, 3]], name: 'Busy bee', price: 60, rows: ['..cc.cc.', '..ccccc.', '.kkkkkk.', 'kwkyykyk', 'kkkyykyk', 'kkkyykyk', '.kkkkkk.', '.k....k.'], pal: { k: '#1b1b1b', y: '#ffd43b', c: '#cfefff', w: '#ffffff' } },
+    { id: 'pet-snail', cat: 'pet', eyes: [[5, 1], [7, 1]], name: 'Speedy snail', price: 60, rows: ['.....k.k', '.....y.y', '.kkk.k.k', 'kOoOkkgk', 'kokOkggk', 'kOooOggk', '.kkkkggk', 'gggggggk'], pal: { k: '#1b1b1b', O: '#b85a00', o: '#ff8c1a', g: '#9be15d', y: '#ffd43b' } },
     // ----- level rewards: unlocked by reaching a player level (see LEVEL_REWARDS) -----
     { id: 'pet-bunny', cat: 'pet', name: 'Bouncy bunny', price: 0, unlock: 'lvl:3', rows: ['.w....w.', '.wp..pw.', '.wp..pw.', '.wwwwww.', 'wwkwwkww', 'wwwppwww', '.wwwwww.', '.ww..ww.'], pal: { w: '#f4f4f4', p: '#ffb3cf', k: '#1b1b1b' } },
     { id: 'pirate-hat', cat: 'hat', name: 'Pirate hat', price: 0, unlock: 'lvl:7', rows: ['...kkkkkk...', '..kkkwwkkk..', '.kkkkkkkkkk.', 'kkyyyyyyyykk'], pal: { k: '#1b1b1b', w: '#ffffff', y: '#ffd43b' } },
@@ -376,8 +376,32 @@
   function paint(ctx, rows, pal, ox, oy, s, shift) {
     rows.forEach((r, y) => { const dy = shift ? shift(oy + y) : 0; [...r].forEach((ch, x) => { const c = pal[ch]; if (c) { ctx.fillStyle = c; ctx.fillRect((ox + x) * s, (oy + y + dy) * s, s, s); } }); });
   }
+  // A pet's eyes: its own `eyes` list, or else any dark pixel with a coloured (non-dark) pixel on all four sides.
+  const isDark = c => { if (!c || c[0] !== '#') return false; const n = parseInt(c.slice(1), 16); return ((n >> 16) + (n >> 8 & 255) + (n & 255)) / 3 < 60; };
+  const petEyeCache = {};
+  function petEyes(p) {
+    if (petEyeCache[p.id]) return petEyeCache[p.id];
+    const at = (x, y) => (p.rows[y] || '')[x];
+    const found = p.eyes || [];
+    if (!p.eyes) p.rows.forEach((r, y) => [...r].forEach((ch, x) => {
+      if (isDark(p.pal[ch]) && [[x - 1, y], [x + 1, y], [x, y - 1], [x, y + 1]].every(([a, b]) => { const c = at(a, b); return c && c !== '.' && !isDark(p.pal[c]); })) found.push([x, y]);
+    }));
+    return (petEyeCache[p.id] = found);
+  }
+  // shut eyes: each eye pixel takes the colour just above it (its eyelid), or beside it if there's nothing above
+  function petBlinkRows(p) {
+    const eyes = petEyes(p), isEye = (x, y) => eyes.some(([a, b]) => a === x && b === y);
+    const rows = p.rows.map(r => [...r]);
+    eyes.forEach(([x, y]) => {
+      let ly = y - 1; while (ly >= 0 && isEye(x, ly)) ly--;
+      const up = ly >= 0 ? p.rows[ly][x] : '.';
+      rows[y][x] = up && up !== '.' ? up : (p.rows[y][x - 1] || '.');
+    });
+    return rows.map(r => r.join(''));
+  }
   // Draw the avatar onto a canvas. opts: { scale, pet: true|false, bob: 0|1, canvas (redraw into this one),
-  //   blink: true (eyes shut), gaze: -1|0|1 (look left / right), breathe: 0|1 (head and body dip a pixel, feet stay put), petHop: 0–2 (pet jumps up) }
+  //   blink: true (eyes shut), gaze: -1|0|1 (look left / right), breathe: 0|1 (head and body dip a pixel, feet stay put),
+//   petHop: 0–2 (pet lifts up), petBlink: true, petFlip: true (pet faces the other way) }
   function draw(look = load().look, opts = {}) {
     const s = opts.scale || 4, withPet = opts.pet && look.pet && look.pet !== 'pet-none';
     const c = opts.canvas || document.createElement('canvas');
@@ -396,7 +420,12 @@
     const hideHair = part('hat') && part('hat').hideHair;
     ['legs', 'shoes', 'top', 'hair', 'hat'].forEach(cat => { if (!(cat === 'hair' && hideHair)) layer(part(cat)); });
     if (extra && !extra.behind) layer(extra);
-    if (withPet) { const p = part('pet'); paint(ctx, p.rows, p.pal, W + 2, H - p.rows.length - (opts.petHop || 0), s); }
+    if (withPet) {
+      const p = part('pet');
+      let rows = opts.petBlink ? petBlinkRows(p) : p.rows;
+      if (opts.petFlip) rows = rows.map(r => [...r].reverse().join(''));
+      paint(ctx, rows, p.pal, W + 2, H - p.rows.length - (opts.petHop || 0), s);
+    }
     return c;
   }
   // Bring an avatar to life on a canvas: gentle breathing, random blinks and the odd pet hop (about 8 frames a second).
@@ -406,15 +435,23 @@
     const still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
     let t = 0, blinkAt = 1.5 + Math.random() * 2, blinkTo = -1, hopAt = 4 + Math.random() * 5, timer = null, stopped = false;
     let gaze = 0, gazeTo = -1, glanceAt = 5 + Math.random() * 4; // gazeTo: until when a pointer-led look lasts
+    let petBlinkAt = 2.5 + Math.random() * 3, petBlinkTo = -1, petTurnTo = -1, petTurnAt = 8 + Math.random() * 8;
     const FPS = 8;
     function frame() {
       const hop = t >= hopAt ? [1, 2, 2, 1][Math.floor((t - hopAt) * FPS)] || 0 : 0;
-      draw((typeof o.look === 'function' ? o.look() : o.look) || load().look, { scale: o.scale || 10, pet: o.pet, canvas: cv, blink: t < blinkTo, gaze: t < gazeTo ? gaze : 0, breathe: still ? 0 : Math.floor(t / 0.75) % 2, petHop: still ? 0 : hop });
+      const breathe = still ? 0 : Math.floor(t / 0.75) % 2, g = t < gazeTo ? gaze : 0;
+      draw((typeof o.look === 'function' ? o.look() : o.look) || load().look, {
+        scale: o.scale || 10, pet: o.pet, canvas: cv, blink: t < blinkTo, gaze: g, breathe,
+        // the pet bounces on the other beat to the avatar's breathing, blinks on its own, and turns to look where you look
+        petHop: still ? 0 : hop || 1 - breathe, petBlink: t < petBlinkTo, petFlip: g < 0 || t < petTurnTo,
+      });
     }
     function step(dt) {
       t += dt;
       if (t >= blinkAt) { blinkTo = t + 0.15; blinkAt = t + (Math.random() < 0.2 ? 0.35 : 2.5 + Math.random() * 2.5); } // sometimes a double blink
       if (t >= hopAt + 0.5) hopAt = t + 5 + Math.random() * 6;
+      if (t >= petBlinkAt) { petBlinkTo = t + 0.15; petBlinkAt = t + 2 + Math.random() * 3.5; }
+      if (t >= petTurnAt) { petTurnTo = t + 1.5; petTurnAt = t + 9 + Math.random() * 8; } // a quick look the other way
       if (t >= glanceAt && t >= gazeTo) { gaze = Math.random() < 0.5 ? -1 : 1; gazeTo = t + 1.2; glanceAt = t + 6 + Math.random() * 6; } // an idle look around
       frame();
     }
