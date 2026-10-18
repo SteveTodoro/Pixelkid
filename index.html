@@ -15,7 +15,7 @@
     .lib-head h1 { font-size: 3.4rem; color: #fff; margin: 0; text-shadow: 4px 4px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000; }
     .lib-head p { font-family: var(--pixel); font-size: 1.3rem; font-weight: 700; color: #fff; text-shadow: 2px 2px 0 #000; margin: 6px 0 0; }
     .pk-hero { position: relative; display: flex; flex-direction: column; align-items: center; }
-    .pk-link { position: relative; display: block; text-decoration: none; }
+    .pk-link { position: relative; display: block; text-decoration: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
     .pk-link canvas { display: block; height: 160px; margin: 0 auto -5px; image-rendering: pixelated; position: relative; z-index: 1; }
     /* a name tag floating over the head, like in Minecraft */
     .pk-stand { position: relative; }
@@ -109,10 +109,10 @@
     <div class="pk-hero">
       <div class="pk-stand">
         <button class="pk-tag" id="pk-tag" type="button" aria-label="Change your name"><span id="pk-name">Player</span> ✏️</button>
-        <a class="pk-link" id="pk-hero" href="avatar.html" aria-label="Dressing Room: dress up your hero">
+        <div class="pk-link" id="pk-hero" role="button" tabindex="0" aria-label="Your hero: tap to do your move">
           <canvas id="me"></canvas>
           <div class="pk-block" id="pk-block"></div>
-        </a>
+        </div>
       </div>
       <a class="btn pk-room" href="avatar.html">👕 Dressing Room</a>
     </div>
@@ -258,11 +258,11 @@ const wal = window.Avatar ? Avatar.wallet() : { balance: total };
 // the hero stands on its grass block: it breathes, blinks, looks around and follows your finger with its eyes
 if (window.Avatar) {
   const me = document.getElementById('me'), hero = document.getElementById('pk-hero');
-  const heroAnim = Avatar.animate(me, { scale: 10, pet: true });
+  const heroAnim = Avatar.animate(me, { scale: 10, pet: true, pad: 2 }); // pad: room for the arms in a move
   // the name tag and the foot shadow sit over the avatar, not the pet beside it (the avatar is the first 12 pixel columns)
-  const mid = 6 / (me.width / 10) * 100 + '%';
+  const mid = 8 / (me.width / 10) * 100 + '%'; // 2 spare columns + half of 12
   document.getElementById('pk-tag').style.left = mid;
-  document.getElementById('pk-block').style.setProperty('--feet', `calc(20px + (100% - 40px) * ${6 / (me.width / 10)})`);
+  document.getElementById('pk-block').style.setProperty('--feet', `calc(20px + (100% - 40px) * ${8 / (me.width / 10)})`);
   document.getElementById('pk-name').textContent = settings.name || 'Player';
   let lastDir = 0;
   const follow = e => {
@@ -273,6 +273,10 @@ if (window.Avatar) {
   document.addEventListener('pointermove', follow);
   document.addEventListener('pointerdown', follow);
   hero.addEventListener('pointerenter', () => heroAnim.blink());
+  // tap the hero to do its move (the Dressing Room button is below)
+  const doMove = () => { if (!heroAnim.play()) heroAnim.blink(); };
+  hero.addEventListener('click', doMove);
+  hero.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); doMove(); } });
   window.heroAnim = heroAnim;
 }
 const greet = () => { document.getElementById('hello').textContent = settings.name ? `Welcome back, ${settings.name}! Pick a quest.` : 'Choose your world, then pick a quest!'; };

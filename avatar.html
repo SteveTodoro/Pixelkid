@@ -75,8 +75,8 @@
   let previewAnim = null;
   function drawPreview() {
     // the preview is alive: it breathes and blinks, and blinks when you try something on
-    if (!previewAnim) previewAnim = A.animate($('preview'), { scale: 12, pet: true, look: () => look });
-    previewAnim.blink();
+    if (!previewAnim) previewAnim = A.animate($('preview'), { scale: 12, pet: true, pad: 2, look: () => look });
+    if (!previewAnim.play()) previewAnim.blink(); // show off the move (if the outfit has one)
     $('preview').parentElement.style.background = A.sceneBox(look.scene);
     A.applyScene(look.scene); // previewing a scene changes the whole page
     $('bal').textContent = A.wallet().balance;
@@ -106,7 +106,7 @@
       const b = document.createElement('button');
       b.type = 'button'; b.className = `wd-item ${cls}` + (it.special ? ' special' : '') + (selected === it ? ' sel' : '');
       const img = document.createElement('img');
-      img.src = A.dataURL(lookWith(cat, it.id), { scale: 4, pet: cat === 'pet' }); img.alt = '';
+      img.src = A.dataURL(lookWith(cat, it.id), { scale: 4, pet: cat === 'pet', pad: cat === 'move' ? 2 : 0, pose: cat === 'move' ? A.movePose(it.id) : null }); img.alt = '';
       if (cat === 'scene') { img.style.background = A.sceneBox(it.id); img.classList.add('wd-scene'); }
       const n = document.createElement('span'); n.className = 'wd-iname'; n.textContent = it.name;
       const s = document.createElement('span'); s.className = 'wd-badge'; s.textContent = label;

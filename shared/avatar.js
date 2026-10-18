@@ -145,6 +145,13 @@
     { id: 'water-blaster', cat: 'extra', name: 'Songkran water blaster', price: 40, y: 11, rows: ['..........ww', '........bb.w', '.......bbbbb', '.......bcc..', '.......b....'], pal: { b: '#1e88e5', c: '#ffd43b', w: '#7fd0ff' } },
     { id: 'liberty-torch', cat: 'extra', name: 'Liberty torch', price: 40, special: true, y: 1, rows: ['...........o', '..........oy', '..........yo', '..........gg', '...........g', '...........g', '...........g', '...........g'], pal: { o: '#ff8c1a', y: '#ffd43b', g: '#4fb39a' } },
     // ----- pets -----
+    // ----- moves: gestures the avatar does now and then (drawn by the pose code below, so they work with every outfit) -----
+    { id: 'move-none', cat: 'move', name: 'No move', price: 0, rows: [] },
+    { id: 'move-wave', cat: 'move', name: 'Wave', price: 25, rows: [] },
+    { id: 'move-cheer', cat: 'move', name: 'Hands up!', price: 35, rows: [] },
+    { id: 'move-peace', cat: 'move', name: 'Peace', price: 45, rows: [] },
+    { id: 'move-dab', cat: 'move', name: 'Dab', price: 0, unlock: 'lvl:8', rows: [] },
+    { id: 'move-jump', cat: 'move', name: 'Victory jump', price: 0, unlock: 'lvl:14', rows: [] },
     { id: 'pet-none', cat: 'pet', name: 'No pet', price: 0, rows: [] },
     { id: 'pet-cat', cat: 'pet', eyes: [[2, 3], [5, 3]], name: 'Pixel cat', price: 40, rows: ['.o....o.', '.oo..oo.', '.oooooo.', '.ogoogo.', '.oooooo.', '..oppo..', '.oooooo.', '.o.oo.o.'], pal: { o: '#ff8c1a', g: '#2e9e3e', p: '#ff7eb6' } },
     { id: 'pet-dog', cat: 'pet', name: 'Pixel dog', price: 40, rows: ['bb....bb', 'bbbbbbbb', '.bkbbkb.', '.bbbbbb.', '.bbkkbb.', '..bbbb..', '.bbbbbb.', '.b.bb.b.'], pal: { b: '#a86b3c', k: '#1b1b1b' } },
@@ -273,8 +280,10 @@
     { level: 3, id: 'pet-bunny', label: '🐾 Bouncy bunny pet' },
     { level: 5, id: 'scene-rainbow', label: '🌄 Rainbow land scene' },
     { level: 7, id: 'set-pirate', label: '🎭 Pirate costume' },
+    { level: 8, id: 'move-dab', label: '🕺 Dab move' },
     { level: 10, id: 'scene-volcano', label: '🌄 Volcano island scene' },
     { level: 12, id: 'set-robot', label: '🎭 Robot costume' },
+    { level: 14, id: 'move-jump', label: '🕺 Victory jump move' },
     { level: 15, id: 'scene-castle', label: '🌄 Castle at dusk scene' },
     { level: 18, id: 'pet-phoenix', label: '🐾 Fire phoenix pet' },
     { level: 20, id: 'set-legend', label: '🎭 Legend costume' },
@@ -313,9 +322,9 @@
   };
   const CATS = [
     ['costume', '🎭 Costumes'], ['skin', '🙂 Skin'], ['hair', '💇 Hair'], ['hairColor', '🎨 Hair colour'], ['top', '👕 Tops'], ['legs', '👖 Bottoms'],
-    ['shoes', '👟 Shoes'], ['hat', '🎩 Hats'], ['extra', '✨ Extras'], ['pet', '🐾 Pets'], ['scene', '🌄 Scenes'],
+    ['shoes', '👟 Shoes'], ['hat', '🎩 Hats'], ['extra', '✨ Extras'], ['pet', '🐾 Pets'], ['move', '🕺 Moves'], ['scene', '🌄 Scenes'],
   ];
-  const DEFAULT_LOOK = { skin: 'skin1', hairColor: 'hc-brown', hair: 'hair-short', top: 'tee-grey', legs: 'jeans', shoes: 'trainers', hat: 'hat-none', extra: 'extra-none', pet: 'pet-none', scene: 'scene-sunny' };
+  const DEFAULT_LOOK = { skin: 'skin1', hairColor: 'hc-brown', hair: 'hair-short', top: 'tee-grey', legs: 'jeans', shoes: 'trainers', hat: 'hat-none', extra: 'extra-none', pet: 'pet-none', move: 'move-none', scene: 'scene-sunny' };
   const byId = id => ITEMS.find(i => i.id === id) || SKINS.find(i => i.id === id) || HAIR_COLOURS.find(i => i.id === id) || SCENES.find(i => i.id === id) || COSTUMES.find(i => i.id === id);
 
   // ---------- saved state + wallet ----------
@@ -376,6 +385,43 @@
   function paint(ctx, rows, pal, ox, oy, s, shift) {
     rows.forEach((r, y) => { const dy = shift ? shift(oy + y) : 0; [...r].forEach((ch, x) => { const c = pal[ch]; if (c) { ctx.fillStyle = c; ctx.fillRect((ox + x) * s, (oy + y + dy) * s, s, s); } }); });
   }
+  // ---------- moves ----------
+  // Arm shapes in avatar pixels, for the LEFT arm (the right arm is mirrored: x → 11 − x). sl = sleeve, sk = skin, h = hand.
+  // Negative x and x ≥ 12 land in the spare columns that animated canvases get (opts.pad).
+  const ARMS = {
+    up: { sl: [[0, 8], [1, 8], [-1, 7], [0, 7]], sk: [[-1, 6], [0, 6], [-1, 5], [0, 5]], h: [[-1, 4], [0, 4]] },
+    diag: { sl: [[0, 8], [1, 8], [0, 7]], sk: [[-1, 7], [-1, 6]], h: [[-2, 6], [-2, 5]] },
+    out: { sl: [[0, 9], [0, 10]], sk: [[-1, 9], [-1, 10]], h: [[-2, 9], [-2, 10]], keep10: true },
+    // right-arm only shapes, given in the right arm's own pixels (not mirrored)
+    peace: { right: true, sl: [[11, 9], [11, 8], [12, 8]], sk: [[11, 7], [12, 7], [11, 6], [12, 6]], h: [[11, 5], [12, 5], [11, 4], [11, 3], [13, 4], [13, 3]] },
+    dab: { right: true, sl: [[10, 8], [10, 7], [9, 6], [8, 6]], sk: [[7, 6], [6, 6]], h: [[5, 6], [5, 7]] },
+  };
+  const rep = (f, n) => Array(n).fill(f);
+  const MOVES = {
+    'move-wave': { key: { R: 'diag' }, frames: [].concat(...rep([].concat(rep({ R: 'up' }, 2), rep({ R: 'diag' }, 2)), 4)) },
+    'move-cheer': { key: { L: 'up', R: 'up' }, frames: [].concat(...rep([].concat(rep({ L: 'up', R: 'up' }, 2), rep({ L: 'up', R: 'up', bob: -1 }, 2)), 4)) },
+    'move-peace': { key: { R: 'peace', wink: true }, frames: [].concat(rep({ R: 'peace' }, 4), rep({ R: 'peace', wink: true }, 6), rep({ R: 'peace' }, 6)) },
+    'move-dab': { key: { L: 'diag', R: 'dab' }, frames: [].concat(rep({ L: 'out', R: 'out' }, 2), rep({ L: 'diag', R: 'dab' }, 14)) },
+    'move-jump': {
+      key: { L: 'up', R: 'up', bob: -1, spark: 1 },
+      frames: [].concat(...rep([].concat(rep({ bob: 1 }, 2), rep({ L: 'up', R: 'up', bob: -1, spark: 1 }, 3), rep({ L: 'up', R: 'up', bob: -1, spark: 2 }, 2), rep({ L: 'up', R: 'up' }, 3)), 2)),
+    },
+  };
+  const movePose = id => (MOVES[id] ? MOVES[id].key : null);
+  // Repaint the arms for a pose. The colours come from what is already drawn (sleeve, arm, hand), so any outfit works.
+  function drawPose(ctx, pose, ox, Y, s, skin) {
+    const get = (x, y) => { const d = ctx.getImageData((ox + x) * s + (s >> 1), Y(y) * s + (s >> 1), 1, 1).data; return d[3] ? `rgb(${d[0]},${d[1]},${d[2]})` : null; };
+    const dot = (x, y, c) => { ctx.fillStyle = c; ctx.fillRect((ox + x) * s, Y(y) * s, s, s); };
+    [['L', 1, x => x], ['R', 10, x => 11 - x]].forEach(([side, ax, mx]) => {
+      const shape = ARMS[pose[side]];
+      if (!shape) return;
+      const col = { sl: get(ax, 9) || skin.s, sk: get(ax, 11) || skin.s, h: get(ax, 13) || skin.S };
+      for (let y = shape.keep10 ? 11 : 10; y <= 13; y++) [ax, ax + (side === 'L' ? 1 : -1)].forEach(x => ctx.clearRect((ox + x) * s, Y(y) * s, s, s));
+      ['sl', 'sk', 'h'].forEach(k => shape[k].forEach(([x, y]) => dot(shape.right ? x : mx(x), y, col[k])));
+    });
+    if (pose.spark) [[-2, 1], [13, 2], [-1, 9], [12, 8], [6, -1]].forEach(([x, y], i) => { if ((i + pose.spark) % 2) dot(x, y, '#ffd43b'); });
+  }
+
   // A pet's eyes: its own `eyes` list, or else any dark pixel with a coloured (non-dark) pixel on all four sides.
   const isDark = c => { if (!c || c[0] !== '#') return false; const n = parseInt(c.slice(1), 16); return ((n >> 16) + (n >> 8 & 255) + (n & 255)) / 3 < 60; };
   const petEyeCache = {};
@@ -401,47 +447,55 @@
   }
   // Draw the avatar onto a canvas. opts: { scale, pet: true|false, bob: 0|1, canvas (redraw into this one),
   //   blink: true (eyes shut), gaze: -1|0|1 (look left / right), breathe: 0|1 (head and body dip a pixel, feet stay put),
-//   petHop: 0–2 (pet lifts up), petBlink: true, petFlip: true (pet faces the other way) }
+//   petHop: 0–2 (pet lifts up), petBlink: true, petFlip: true (pet faces the other way),
+//   pad: spare columns each side (room for arms), pose: one frame of a move, e.g. { L: 'up', R: 'diag', bob, wink, spark } }
   function draw(look = load().look, opts = {}) {
-    const s = opts.scale || 4, withPet = opts.pet && look.pet && look.pet !== 'pet-none';
+    const s = opts.scale || 4, withPet = opts.pet && look.pet && look.pet !== 'pet-none', pad = opts.pad || 0, pose = opts.pose || null;
     const c = opts.canvas || document.createElement('canvas');
-    c.width = (withPet ? W + 10 : W) * s; c.height = H * s;
+    c.width = (pad + W + (withPet ? 10 : pad)) * s; c.height = H * s; // pad: spare columns at the sides for arms in a move
     const ctx = c.getContext('2d');
     const skin = byId(look.skin) || SKINS[0], hc = byId(look.hairColor) || HAIR_COLOURS[0];
     const part = cat => byId(look[cat]);
+    const bob = (opts.bob || 0) + (pose && pose.bob || 0);
     const shift = opts.breathe ? y => (y < 14 ? opts.breathe : 0) : null;
-    const layer = it => { if (it && it.rows && it.rows.length) paint(ctx, it.rows, Object.assign({ h: hc.h, H: hc.H }, it.pal || {}), 0, (it.y || 0) + (opts.bob || 0), s, shift); };
+    const layer = it => { if (it && it.rows && it.rows.length) paint(ctx, it.rows, Object.assign({ h: hc.h, H: hc.H }, it.pal || {}), pad, (it.y || 0) + bob, s, shift); };
     const extra = part('extra');
     if (extra && extra.behind) layer(extra);
-    paint(ctx, BASE, { s: skin.s, S: skin.S, W: '#ffffff', K: '#1b1b1b', M: '#a0522d' }, 0, opts.bob || 0, s, shift);
+    paint(ctx, BASE, { s: skin.s, S: skin.S, W: '#ffffff', K: '#1b1b1b', M: '#a0522d' }, pad, bob, s, shift);
     // eyes (drawn under the clothes, so glasses, eyepatches and helmets still cover them): gaze -1 looks left, 1 looks right
-    if (opts.gaze && !opts.blink) paint(ctx, [opts.gaze < 0 ? '...KW..KW...' : '...WK..WK...'], { W: '#ffffff', K: '#1b1b1b' }, 0, 5 + (opts.bob || 0), s, shift);
-    if (opts.blink) paint(ctx, ['...SS..SS...'], { S: skin.S }, 0, 5 + (opts.bob || 0), s, shift);
+    if (opts.gaze && !opts.blink) paint(ctx, [opts.gaze < 0 ? '...KW..KW...' : '...WK..WK...'], { W: '#ffffff', K: '#1b1b1b' }, pad, 5 + bob, s, shift);
+    if (opts.blink) paint(ctx, ['...SS..SS...'], { S: skin.S }, pad, 5 + bob, s, shift);
+    else if (pose && pose.wink) paint(ctx, ['.......SS...'], { S: skin.S }, pad, 5 + bob, s, shift); // a wink, also under the clothes
     const hideHair = part('hat') && part('hat').hideHair;
     ['legs', 'shoes', 'top', 'hair', 'hat'].forEach(cat => { if (!(cat === 'hair' && hideHair)) layer(part(cat)); });
     if (extra && !extra.behind) layer(extra);
+    if (pose) drawPose(ctx, pose, pad, y => y + bob + (shift ? shift(y) : 0), s, skin);
     if (withPet) {
       const p = part('pet');
       let rows = opts.petBlink ? petBlinkRows(p) : p.rows;
       if (opts.petFlip) rows = rows.map(r => [...r].reverse().join(''));
-      paint(ctx, rows, p.pal, W + 2, H - p.rows.length - (opts.petHop || 0), s);
+      paint(ctx, rows, p.pal, pad + W + 2, H - p.rows.length - (opts.petHop || 0), s);
     }
     return c;
   }
   // Bring an avatar to life on a canvas: gentle breathing, random blinks and the odd pet hop (about 8 frames a second).
   // o.look can be a look or a function returning the current one (e.g. while trying clothes on).
-  // Stays still for people who ask for reduced motion. Returns { blink(), look(dir), redraw(), step(seconds), stop() }.
+  // Stays still for people who ask for reduced motion. Returns { blink(), look(dir), play(), redraw(), step(seconds), stop() }.
+  // Give it pad: 2 so the arms have room for moves.
   function animate(cv, o = {}) {
     const still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
     let t = 0, blinkAt = 1.5 + Math.random() * 2, blinkTo = -1, hopAt = 4 + Math.random() * 5, timer = null, stopped = false;
     let gaze = 0, gazeTo = -1, glanceAt = 5 + Math.random() * 4; // gazeTo: until when a pointer-led look lasts
     let petBlinkAt = 2.5 + Math.random() * 3, petBlinkTo = -1, petTurnTo = -1, petTurnAt = 8 + Math.random() * 8;
+    let moveAt = 3 + Math.random() * 3, moving = null, mf = 0; // the outfit's move plays every 10–15 s (and on play())
     const FPS = 8;
+    const lookNow = () => (typeof o.look === 'function' ? o.look() : o.look) || load().look;
+    function play() { const m = MOVES[lookNow().move]; if (m) { moving = m.frames; mf = 0; frame(); } return !!m; }
     function frame() {
       const hop = t >= hopAt ? [1, 2, 2, 1][Math.floor((t - hopAt) * FPS)] || 0 : 0;
-      const breathe = still ? 0 : Math.floor(t / 0.75) % 2, g = t < gazeTo ? gaze : 0;
-      draw((typeof o.look === 'function' ? o.look() : o.look) || load().look, {
-        scale: o.scale || 10, pet: o.pet, canvas: cv, blink: t < blinkTo, gaze: g, breathe,
+      const breathe = still || moving ? 0 : Math.floor(t / 0.75) % 2, g = t < gazeTo ? gaze : 0;
+      draw(lookNow(), {
+        scale: o.scale || 10, pet: o.pet, canvas: cv, blink: t < blinkTo, gaze: g, breathe, pad: o.pad || 0, pose: moving ? moving[mf] : null,
         // the pet bounces on the other beat to the avatar's breathing, blinks on its own, and turns to look where you look
         petHop: still ? 0 : hop || 1 - breathe, petBlink: t < petBlinkTo, petFlip: g < 0 || t < petTurnTo,
       });
@@ -450,6 +504,8 @@
       t += dt;
       if (t >= blinkAt) { blinkTo = t + 0.15; blinkAt = t + (Math.random() < 0.2 ? 0.35 : 2.5 + Math.random() * 2.5); } // sometimes a double blink
       if (t >= hopAt + 0.5) hopAt = t + 5 + Math.random() * 6;
+      if (moving && ++mf >= moving.length) { moving = null; moveAt = t + 10 + Math.random() * 5; }
+      if (!moving && t >= moveAt) { if (!play()) moveAt = t + 3; }
       if (t >= petBlinkAt) { petBlinkTo = t + 0.15; petBlinkAt = t + 2 + Math.random() * 3.5; }
       if (t >= petTurnAt) { petTurnTo = t + 1.5; petTurnAt = t + 9 + Math.random() * 8; } // a quick look the other way
       if (t >= glanceAt && t >= gazeTo) { gaze = Math.random() < 0.5 ? -1 : 1; gazeTo = t + 1.2; glanceAt = t + 6 + Math.random() * 6; } // an idle look around
@@ -461,6 +517,7 @@
     return {
       blink() { blinkTo = t + 0.15; frame(); },
       redraw: frame,
+      play, // do the outfit's move now (returns false when it has none)
       look(dir) { gaze = dir; gazeTo = dir ? t + 2.5 : -1; frame(); }, // look left (-1) or right (1) for a moment
       step,
       stop() { stopped = true; clearTimeout(timer); },
@@ -469,7 +526,7 @@
   const dataURL = (look, opts) => draw(look, opts).toDataURL();
 
   const sceneDef = () => SCENES.find(s => s.id === load().look.scene) || SCENES[0];
-  window.Avatar = { ITEMS, SKINS, HAIR_COLOURS, SCENES, COSTUMES, CATS, UNLOCK_TEXT, LEVEL_REWARDS, levelInfo, levelOfUnlock, unlockText, newRewards, markSeen, DEFAULT_LOOK, byId, load, save, wallet, earn, achievements, owns, priceOf, buy, wear, draw, animate, dataURL, isFree, applyScene, sceneBox, sceneDef };
+  window.Avatar = { ITEMS, SKINS, HAIR_COLOURS, SCENES, COSTUMES, CATS, UNLOCK_TEXT, LEVEL_REWARDS, levelInfo, levelOfUnlock, unlockText, newRewards, markSeen, DEFAULT_LOOK, byId, load, save, wallet, earn, achievements, owns, priceOf, buy, wear, draw, animate, movePose, dataURL, isFree, applyScene, sceneBox, sceneDef };
   // every page that loads this file shows the player's chosen scene
   applyScene(load().look.scene);
 })();
