@@ -216,20 +216,30 @@ window.LESSON = {
           words: ['PUSH', 'PULL', 'FORCE', 'FRICTION', 'ROUGH', 'SMOOTH', 'GRIP', 'SLIDE'],
         },
         {
-          game: 'runner', title: 'Force Run',
-          intro: 'Your hero runs by itself and the words come two at a time – pick the lane with the right one! Collect the **pushes**, dodge the **pulls**.',
-          say: 'Tap the top or bottom lane. Collect the PUSHES!',
-          prompt: 'Collect the PUSHES – dodge the PULLS!',
-          items: [
-            { label: '⚽ kick', ok: true },
-            { label: '🔔 press', ok: true },
-            { label: '🛒 push trolley', ok: true },
-            { label: '🎳 bowl', ok: true },
-            { label: '🪢 tug', ok: false, why: 'Tug of war is a PULL – the rope comes towards you.' },
-            { label: '🍎 pick', ok: false, why: 'Picking an apple is a PULL.' },
-            { label: '🧳 drag', ok: false, why: 'Dragging a suitcase is a PULL.' },
+          game: 'invaders', title: 'Force Blaster',
+          intro: 'Push-and-pull aliens are invading! Read each mission at the top – then shoot ONLY the right aliens.',
+          say: 'Tap above an alien to fly there and fire!',
+          waves: [
+            {
+              prompt: 'Shoot the PUSHES!',
+              items: [
+                { label: '⚽ kick', ok: true }, { label: '🔔 press', ok: true }, { label: '🛒 push trolley', ok: true }, { label: '🎳 bowl', ok: true },
+                { label: '🪢 tug', ok: false, why: 'Tug of war is a PULL – the rope comes towards you.' },
+                { label: '🍎 pick', ok: false, why: 'Picking an apple is a PULL.' },
+                { label: '🧳 drag', ok: false, why: 'Dragging a suitcase is a PULL.' },
+              ],
+            },
+            {
+              prompt: 'Now shoot the PULLS!',
+              items: [
+                { label: '🚪 open a drawer', ok: true }, { label: '🐕 walk a dog on a lead', ok: true }, { label: '🧦 pull up socks', ok: true },
+                { label: '🛝 push a swing', ok: false, why: 'You push a swing AWAY from you – that is a push.' },
+                { label: '🚲 pedal', ok: false, why: 'Pedalling pushes the pedals down – a push.' },
+                { label: '🔔 ring a doorbell', ok: false, why: 'Pressing a doorbell is a push.' },
+              ],
+            },
           ],
-          done: 'LEVEL COMPLETE! Did you notice how you slid on the ice? Less friction!',
+          done: 'MISSION COMPLETE! Pushes move things away, pulls bring them closer.',
         },
       ],
     },

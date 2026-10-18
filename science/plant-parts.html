@@ -18,7 +18,7 @@ const R = (x, y, w, hh, fill) => `<rect x="${x}" y="${y}" width="${w}" height="$
 const LINE = (x1, y1, x2, y2) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#000" stroke-width="2" stroke-dasharray="4 3"/>`;
 
 // a flowering plant in a slice of soil, with dotted lines out to the four label spots
-const PLANT_LABEL = svg('0 0 300 230', `
+const PLANT_BODY = `
   ${R(0, 150, 300, 80, '#8a5a32')}${R(0, 150, 300, 6, '#5bbf3a')}
   ${[[30, 175], [250, 200], [90, 215], [210, 168]].map(([x, y]) => R(x, y, 6, 6, '#6b4425')).join('')}
   ${R(146, 52, 8, 100, '#2e9e3e')}
@@ -28,8 +28,14 @@ const PLANT_LABEL = svg('0 0 300 230', `
   ${R(134, 22, 32, 24, '#ffcc33')}${R(142, 28, 6, 6, '#c98a00')}${R(152, 34, 6, 6, '#c98a00')}
   ${R(146, 156, 8, 24, '#e9cfa6')}${R(132, 176, 14, 6, '#e9cfa6')}${R(126, 182, 6, 22, '#e9cfa6')}
   ${R(154, 176, 16, 6, '#e9cfa6')}${R(168, 182, 6, 26, '#e9cfa6')}${R(146, 180, 6, 32, '#e9cfa6')}
-  ${R(116, 204, 10, 4, '#e9cfa6')}${R(174, 206, 10, 4, '#e9cfa6')}
-  ${LINE(180, 34, 214, 34)}${LINE(116, 92, 86, 92)}${LINE(154, 140, 214, 132)}${LINE(126, 192, 86, 192)}`);
+  ${R(116, 204, 10, 4, '#e9cfa6')}${R(174, 206, 10, 4, '#e9cfa6')}`;
+const PLANT_LABEL = svg('0 0 300 230', PLANT_BODY + `${LINE(180, 34, 214, 34)}${LINE(116, 92, 86, 92)}${LINE(154, 140, 214, 132)}${LINE(126, 192, 86, 192)}`);
+const PLANT_PIC = svg('0 0 300 230', PLANT_BODY);
+// the parts of PLANT_PIC as tap zones (% of the picture)
+const PLANT_SPOTS = [
+  { x: 50, y: 15, r: 11, label: 'flower' }, { x: 43.7, y: 40, r: 6, label: 'leaf' }, { x: 56.3, y: 51, r: 6, label: 'leaf' },
+  { x: 50, y: 61.5, r: 5, label: 'stem' }, { x: 50, y: 82, r: 11, label: 'roots' },
+];
 
 // welcome picture: a magnifying glass over a sprout
 const SPROUT = Pixel.svg([
@@ -158,7 +164,7 @@ window.LESSON = {
             'The [[stem]] holds the plant up, so its leaves and flowers can reach the sunshine.',
             'Inside the stem are tiny tubes. They carry water up from the roots to the leaves and flowers. A tree has a stem too – a huge, woody one called a [[trunk]].',
           ],
-          check: { q: 'An oak tree\'s trunk does the same job as…', options: ['a daisy\'s stem', 'a daisy\'s petals', 'a daisy\'s roots'], answer: 0, hint: 'Which part holds a daisy up and carries water?' },
+          check: { type: 'evidence', q: 'How does water get from the roots up to the flowers?', answer: 'carry water up', hint: 'Look for the sentence about the tiny tubes.', explain: 'Tiny tubes inside the stem carry the water up.' },
         },
         {
           title: 'Leaves: the food factory', pic: '☀️➡️🍃',
@@ -242,11 +248,14 @@ window.LESSON = {
           ],
         },
         {
-          game: 'wordsearch', title: 'Word Hunt',
-          intro: 'Find all the **plant words** hidden in the grid. They go across ➡ or down ⬇.',
-          say: 'Hunt for the hidden words! Drag across a word – or tap the first letter, then the last.',
-          size: 10,
-          words: ['ROOTS', 'STEM', 'LEAF', 'FLOWER', 'PETAL', 'SEED', 'POLLEN', 'SOIL'],
+          game: 'mystery', title: 'Mystery Plant Words',
+          intro: 'A detective case! Read the clue and work out the **plant word**. Solve it on the first clue for 3 gems!',
+          say: 'Think hard before you ask for another clue – the fewer clues you need, the more gems you win!',
+          words: [
+            { word: 'roots', clues: ['You hardly ever see them.', 'They hold the plant tight so the wind cannot blow it over.', 'They soak up water like lots of tiny straws.'] },
+            { word: 'pollen', clues: ['It is a yellow dust.', 'It sticks to a bee\'s hairy body.', 'Bees carry it from flower to flower so seeds can grow.'] },
+            { word: 'photosynthesis', clues: ['It happens inside leaves.', 'It needs sunlight, air and water.', 'It is how a plant makes its own food.'], options: ['photosynthesis', 'nutrients', 'pollen', 'anchor'] },
+          ],
         },
       ],
     },
@@ -269,7 +278,7 @@ window.LESSON = {
             'Lots of our food comes from plants. Carrots and radishes are roots. Celery is a stem. Lettuce and spinach are leaves.',
             'Broccoli is a bunch of tiny flowers that have not opened yet! Apples are fruits, and peas and beans are seeds.',
           ],
-          check: { q: 'A parsnip is long and pointy, and grows down under the soil. Which part of the plant do we eat?', options: ['the root', 'the flower', 'the leaf'], answer: 0, hint: 'Which part grows under the ground?' },
+          check: { type: 'oddone', q: 'Odd one out! Think about which PART of the plant we eat.', items: ['carrot', 'radish', 'parsnip', 'celery'], answer: 3, reasons: ['We eat its stem – the others are roots', 'It is green', 'It is the crunchiest'], reason: 0, hint: 'Carrots and radishes are roots. A parsnip grows down under the soil too.' },
         },
         {
           title: 'Trees are plants too', pic: '🌳🪵',
@@ -285,7 +294,7 @@ window.LESSON = {
             'The Venus flytrap has leaves that SNAP shut to catch flies – then it slowly dissolves them for extra goodness!',
             'A cactus has a fat stem that stores water for months, and its spines are its leaves. A giant water lily has floating leaves wider than your bed is long.',
           ],
-          check: { q: 'A cactus lives in a desert where it hardly ever rains. Why is its fat, squishy stem so useful?', options: ['It stores water to use later', 'It keeps the cactus cool like a fan', 'It helps the cactus walk to water'], answer: 0 },
+          check: { type: 'evidence', q: 'A cactus looks like it has no leaves at all. Which sentence proves it DOES have some?', answer: 'spines are its leaves', hint: 'Read the sentence about the cactus again.', explain: 'Its prickly spines are its leaves!' },
         },
         {
           title: 'Teamwork!', pic: '🥕🤝🌿🤝🍃🤝🌸',
@@ -310,9 +319,9 @@ window.LESSON = {
       ],
       questions: [
         { type: 'mcq', q: 'What were the plant parts arguing about?', options: ['which part is the most important', 'who is the tallest', 'who gets the most sunshine'], answer: 0 },
-        { type: 'mcq', q: 'The part of a plant that grows ABOVE the ground is called the…', options: ['shoot', 'root', 'boot'], answer: 0 },
+        { type: 'type', q: 'The part of a plant that grows ABOVE the ground is called the…', answer: ['shoot', 'the shoot'], placeholder: 'Type the word from the video', hint: 'It rhymes with "root".' },
         { type: 'mcq', q: 'Mr Stem carries water up the plant. What else does he carry?', options: ['the food made by the leaves', 'the bees', 'the soil'], answer: 0 },
-        { type: 'mcq', q: 'The leaf calls itself the…', options: ['food factory', 'water tower', 'fire station'], answer: 0 },
+        { type: 'type', q: 'The leaf calls itself the food…', answer: ['factory', 'food factory'], placeholder: 'Type the missing word', hint: 'A place where things are made.' },
         { type: 'mcq', q: 'The tiny holes on a leaf are called stomata. What do they help the plant do?', options: ['breathe – let gases in and out', 'see in the dark', 'hold on to the ground'], answer: 0 },
         { type: 'mcq', q: 'What does Tori decide at the end?', options: ['All the parts are equally important', 'The flower is the best', 'The roots should be in charge'], answer: 0 },
       ],
@@ -336,18 +345,14 @@ window.LESSON = {
           ],
         },
         {
-          game: 'crossword', title: 'Plant Crossword',
-          intro: 'Solve the crossword! Tap a clue, then type the answer with the letter keys.',
-          say: 'Crossword time! Stuck? Press 💡 Hint for a free letter.',
-          entries: [
-            { answer: 'ROOTS', clue: 'They hold a plant in the ground and soak up water' },
-            { answer: 'STEM', clue: 'It holds a plant up and carries water' },
-            { answer: 'LEAF', clue: 'A plant\'s food factory' },
-            { answer: 'FLOWER', clue: 'The colourful part where seeds are made' },
-            { answer: 'SEED', clue: 'It can grow into a brand-new plant' },
-            { answer: 'BEE', clue: 'A buzzy insect that carries pollen' },
-            { answer: 'TRUNK', clue: 'The woody stem of a tree' },
-            { answer: 'FRUIT', clue: 'It grows from a flower and has seeds inside' },
+          game: 'questions', title: 'Plant Part Finder',
+          intro: 'No labels this time, detective! Read the JOB, then tap the part of the plant that does it.',
+          say: 'Think about each job – then tap the right part of the plant!',
+          questions: [
+            { type: 'hotspot', q: 'Which part is the food factory?', img: PLANT_PIC, spots: PLANT_SPOTS, answer: [1, 2], hint: 'It is green, flat and wide to catch the light.' },
+            { type: 'hotspot', q: 'Where are new seeds made?', img: PLANT_PIC, spots: PLANT_SPOTS, answer: 0, hint: 'Bees visit this part.' },
+            { type: 'hotspot', q: 'Which part soaks up water from the soil?', img: PLANT_PIC, spots: PLANT_SPOTS, answer: 4, hint: 'They work like tiny straws.' },
+            { type: 'hotspot', q: 'Which part holds the leaves up to the sunshine?', img: PLANT_PIC, spots: PLANT_SPOTS, answer: 3, hint: 'Its tiny tubes carry water up, too.' },
           ],
         },
         {
@@ -428,15 +433,16 @@ window.LESSON = {
         button: 'Watch the bonus video ▶',
       },
       questions: [
-        { type: 'mcq', q: 'Weedzilla is very hard to pull out of the ground. Which part is holding on so tightly?', options: ['its roots', 'its flowers', 'its leaves'], answer: 0 },
-        { type: 'mcq', q: 'Which part of a plant carries water from the roots up to the leaves?', options: ['the stem', 'the petals', 'the seeds'], answer: 0 },
-        { type: 'gap', q: 'Plants make their own food in their ___, using sunlight.', options: ['leaves', 'roots', 'seeds'], answer: 0 },
+        { type: 'hotspot', q: 'Weedzilla is very hard to pull out of the ground. Tap the part that is holding on so tightly!', img: PLANT_PIC, spots: PLANT_SPOTS, answer: 4, hint: 'Which part grows down into the soil?' },
+        { type: 'hotspot', q: 'Weedzilla hid the water pipes! Tap the part that carries water from the roots up to the leaves.', img: PLANT_PIC, spots: PLANT_SPOTS, answer: 3, hint: 'It is the thin green part that holds the plant up.' },
+        { type: 'type', q: 'Plants make their own food in their…', answer: ['leaves', 'leaf'], placeholder: 'Type the plant part', hint: 'It is the green, flat and wide part.' },
         { type: 'mcq', q: 'Weedzilla says, "Plants eat dinner with their roots, like a mouth!" What could you tell it?', options: ['Wrong – plants make their own food in their leaves', 'Right – roots chew up the soil', 'Right – flowers eat flies every day'], answer: 0 },
         { type: 'mcq', q: 'Which of these is a tree\'s stem?', options: ['the trunk', 'the bark chippings', 'the acorns'], answer: 0 },
         { type: 'mcq', q: 'Why do bees visit flowers?', options: ['The bright petals and sweet smell invite them', 'They want to eat the roots', 'They are looking for a bed'], answer: 0 },
         { type: 'tf', q: 'A strawberry is a fruit because it has seeds.', answer: true, explain: 'The seeds are the tiny dots on the outside!' },
-        { type: 'mcq', q: 'Which of these do we eat as a ROOT?', options: ['🥕 carrot', '🥬 lettuce', '🥦 broccoli'], answer: 0 },
-        { type: 'mcq', q: 'A plant is left in a dark cupboard. Which part will find it hardest to do its job?', options: ['the leaves – they need light to make food', 'the roots – they need light to drink', 'the stem – it needs light to stand'], answer: 0 },
+        { type: 'oddone', q: 'Odd one out! Three of these are fruits.', items: ['🍎 apple', '🍅 tomato', '🫛 pea pod', '🥕 carrot'], answer: 3, reasons: ['It has no seeds inside – it is a root', 'It is orange', 'It does not grow on a tree'], reason: 0, hint: 'Which one has NO seeds inside?' },
+        { type: 'predict', q: 'Weedzilla locks a bean plant in a dark cupboard for two weeks. What do you think will happen?', options: ['It stays green and strong', 'It turns pale and droopy'], answer: 1, reveal: 'It turns pale, weak and droopy. With no light, its leaves cannot make food.', revealPic: '🥀',
+          then: { q: 'Which part found it hardest to do its job?', options: ['the leaves – they need light to make food', 'the roots – they need light to drink', 'the stem – it needs light to stand'], answer: 0 } },
         { type: 'mcq', q: 'Why does a cactus have a fat, squishy stem?', options: ['to store water for dry days', 'to scare away bees', 'so it can roll'], answer: 0 },
         { type: 'tf', q: 'The roots are the only important part of a plant.', answer: false, explain: 'All the parts work as a team – each one has its own job!' },
         { type: 'order', q: 'Put these in order, from flower to new plant.', items: ['🐝 a bee visits the flower', '🍏 a fruit grows with seeds inside', '🌱 a seed grows into a new plant'], ends: ['FLOWER', 'NEW PLANT'], hint: 'What happens first – the bee, or the fruit?' },

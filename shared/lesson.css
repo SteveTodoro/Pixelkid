@@ -1123,7 +1123,7 @@ a { color: var(--brand-dark); }
 .ev-sent.right { background: var(--good-soft); box-shadow: 0 0 0 2px #4caf2a; }
 .ev-sent.wrong { background: var(--bad-soft); }
 /* hotspot: invisible tap zones over a picture */
-.hs-pic { position: relative; max-width: 360px; margin: 0 auto; background: var(--paper); border: 3px solid #000; }
+.hs-pic { position: relative; max-width: 440px; margin: 0 auto; background: var(--paper); border: 3px solid #000; }
 .hs-img svg, .hs-img img { display: block; width: 100%; height: auto; }
 .hs-img.emoji { font-size: 9rem; text-align: center; line-height: 1.2; }
 .hs-spot { position: absolute; aspect-ratio: 1; transform: translate(-50%, -50%); padding: 0; cursor: pointer; background: transparent; border: 3px dashed transparent; border-radius: 50%; }
@@ -1164,3 +1164,34 @@ a { color: var(--brand-dark); }
 .pred-reveal p { margin: 0; font-weight: 600; font-size: 1.1rem; }
 .pred-pic.emoji { font-size: 3rem; }
 .pred-pic svg { width: 90px; height: auto; display: block; }
+
+/* ---------- comic reading pages (read card with `comic`) ---------- */
+.comic .story-title { margin: 0 0 12px; }
+.comic-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); align-items: start; gap: 12px; }
+.comic-panel { position: relative; display: flex; flex-direction: column; gap: 10px; padding: 12px; background: var(--brand-soft); border: 4px solid #000; box-shadow: 4px 4px 0 #000; }
+.comic-panel.me { background: #fff3c4; }
+.comic-scene { display: grid; place-items: center; min-height: 90px; background: rgba(255, 255, 255, .55); border: 3px solid #000; }
+.comic-scene.emoji { font-size: 4rem; line-height: 1.2; }
+.comic-scene svg { width: 100%; max-height: 150px; height: auto; display: block; }
+.comic-who { display: flex; align-items: center; gap: 8px; }
+.comic-panel.me .comic-who { flex-direction: row-reverse; }
+.comic-face { width: 52px; height: 52px; display: grid; place-items: center; flex: none; background: #fff; border: 3px solid #000; image-rendering: pixelated; object-fit: contain; }
+.comic-face.emoji { font-size: 2rem; }
+.comic-face svg { width: 100%; height: 100%; }
+.comic-name { font-family: var(--pixel); font-weight: 700; font-size: .95rem; }
+.comic-bubble { position: relative; padding: 10px 12px; background: #fff; border: 3px solid #000; border-radius: 0; }
+.comic-bubble::before { content: ""; position: absolute; top: -12px; left: 18px; border: 6px solid transparent; border-bottom: 6px solid #000; border-left-width: 0; }
+.comic-panel.me .comic-bubble::before { left: auto; right: 18px; border-left-width: 6px; border-right-width: 0; }
+.comic-bubble p { margin: 0; font-size: 1.15rem; line-height: 1.55; }
+
+/* ---------- mystery word game ---------- */
+.my-card { max-width: 620px; margin: 0 auto 14px; padding: 14px 18px; background: #1b1430; color: #fff; border: 4px solid #000; box-shadow: inset 0 0 0 3px #4a3a7a; }
+.my-head { font-family: var(--pixel); font-weight: 700; font-size: 1.2rem; color: var(--gold); text-align: center; }
+.my-letters { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; margin: 12px 0; }
+.my-letters span { width: 30px; height: 38px; display: grid; place-items: center; background: #fff; color: #000; border: 3px solid #000; box-shadow: inset 0 -4px 0 #bbb; font: 800 1.3rem Lexend, sans-serif; }
+.my-letters span.gap { background: none; border: 0; box-shadow: none; width: 12px; }
+.my-clues { margin: 0; padding-left: 1.4em; font-size: 1.15rem; font-weight: 600; line-height: 1.5; }
+.my-clues li.new { color: #ffe27a; animation: pop .3s steps(3); }
+.my-worth { margin-top: 6px; text-align: center; font-family: var(--pixel); font-size: .95rem; color: #9fe8ff; }
+.my-answer { max-width: 620px; margin: 0 auto; }
+.comic .read-row { margin-top: 12px; }

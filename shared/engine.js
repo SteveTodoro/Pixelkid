@@ -553,7 +553,9 @@
       const titleEl = c.title && h('h2', { class: 'story-title' }, c.title);
       // an evidence check makes the page's own sentences tappable
       const evidence = c.check && c.check.type === 'evidence';
-      const paras = [].concat(c.text).map(p => (evidence ? h('p', null, splitSentences(p)) : h('p', { html: fmt(p) })));
+      const para = t => (evidence ? h('p', null, splitSentences(t)) : h('p', { html: fmt(t) }));
+      // a comic page: c.comic = [{ who: 'mascot' | 'me' | emoji / svg, name, say, pic }] – each line is a panel with a speech bubble
+      const paras = c.comic ? c.comic.map(line => para(fill(line.say))) : [].concat(c.text).map(para);
 
       let check = null;
       if (c.check && QTYPES[c.check.type]) {
@@ -618,11 +620,20 @@
       const reader = readAloud([titleEl, ...paras]);
       const prevCleanup = cleanup;
       cleanup = () => { if (prevCleanup) prevCleanup(); reader.stop(); };
-      put(area, h('div', { class: 'story-anim' },
-        h('div', { class: 'panel-inner story' },
+      const face = who => who === 'mascot' ? (M.sprite ? pic(M.sprite, 'comic-face') : h('div', { class: 'comic-face emoji' }, M.emoji))
+        : who === 'me' ? (AV ? h('img', { class: 'comic-face', src: AV.dataURL(AV.load().look, { scale: 4 }), alt: '' }) : h('div', { class: 'comic-face emoji' }, '🧒'))
+        : pic(who, 'comic-face');
+      const page = c.comic
+        ? h('div', { class: 'panel-inner comic' }, titleEl,
+          h('div', { class: 'comic-strip' }, c.comic.map((line, k) => h('div', { class: 'comic-panel' + (line.who === 'me' ? ' me' : '') },
+            line.pic && pic(line.pic, 'comic-scene'),
+            h('div', { class: 'comic-who' }, face(line.who), h('span', { class: 'comic-name' }, line.name || (line.who === 'mascot' ? M.name : line.who === 'me' ? settings.name || 'You' : ''))),
+            h('div', { class: 'comic-bubble' }, paras[k])))),
+          h('div', { class: 'read-row' }, reader.btn))
+        : h('div', { class: 'panel-inner story' },
           pic(c.pic),
-          h('div', { class: 'story-text' }, titleEl, paras, h('div', { class: 'read-row' }, reader.btn))),
-        check));
+          h('div', { class: 'story-text' }, titleEl, paras, h('div', { class: 'read-row' }, reader.btn)));
+      put(area, h('div', { class: 'story-anim' }, page, check));
       dots.replaceChildren(...s.cards.map((_, j) => h('span', { class: 'dot' + (j === ci ? ' on' : j < ci ? ' seen' : '') })));
       nav.set(label, goNext, answered);
       if (ci === 0 && !enteringBackwards) say(s.say || `Read each page. Tap the yellow words to learn what they mean – and earn a ${CUR.icon}!`);
@@ -679,7 +690,8 @@
   // a passage split into tappable sentences (for evidence questions)
   const splitSentences = p => (String(p).match(/[^.!?…]+[.!?…]+["'”’)]*\s*|[^.!?…]+$/g) || [String(p)]).map(t => [h('span', { class: 'ev-sent', html: fmt(t.trim()) }), ' ']);
 
-  // evidence: tap the sentence that proves the answer. { q, answer: a few words from the right sentence, passage }
+  // evidence: tap the sentence that proves the answer. { q, answer: a few words from the right sentence (or a list, when
+  //   more than one sentence proves it), passage }
   // In a reading check the page's own sentences are tapped (ctx.sentences); anywhere else q.passage is shown.
   QTYPES.evidence = (q, onRight, onMiss, ctx = {}) => {
     let wrong = false, done = false, panel = null, sents = ctx.sentences;
@@ -688,11 +700,12 @@
       sents = ps.flatMap(el => [...el.querySelectorAll('.ev-sent')]);
       panel = h('div', { class: 'ev-passage' }, ps);
     }
-    const want = String(q.answer).toLowerCase();
-    if (!sents.some(el => el.textContent.toLowerCase().includes(want))) console.warn('evidence: no sentence contains', q.answer);
+    const wants = [].concat(q.answer).map(a => String(a).toLowerCase());
+    const proves = el => wants.some(a => el.textContent.toLowerCase().includes(a));
+    wants.forEach(a => { if (!sents.some(el => el.textContent.toLowerCase().includes(a))) console.warn('evidence: no sentence contains', a); });
     const tap = el => {
       if (done) return;
-      if (el.textContent.toLowerCase().includes(want)) {
+      if (proves(el)) {
         done = true; el.classList.add('right');
         sents.forEach(x => { x.classList.remove('tap'); x.removeAttribute('role'); x.removeAttribute('tabindex'); });
         onRight(el, !wrong);
@@ -706,16 +719,18 @@
     return [h('div', { class: 'q-tag' }, ctx.sentences ? '👆 Tap the sentence on the page that proves it!' : '👆 Tap the sentence that proves it!'), panel];
   };
 
-  // hotspot: tap the right place on a picture. { q, img (svg / emoji), spots: [{ x, y, r, label }] (% of the picture), answer: spot index }
+  // hotspot: tap the right place on a picture. { q, img (svg / emoji), spots: [{ x, y, r, label }] (% of the picture),
+  //   answer: spot index, or a list when several spots are right (e.g. both leaves) }
   QTYPES.hotspot = (q, onRight, onMiss) => {
     let wrong = false, done = false;
+    const ok = [].concat(q.answer);
     const spots = q.spots.map((sp, k) => h('button', {
       class: 'hs-spot', type: 'button', 'aria-label': sp.label || `spot ${k + 1}`,
       style: `left:${sp.x}%;top:${sp.y}%;width:${(sp.r || 12) * 2}%`,
       onclick(e) {
         const b = e.currentTarget;
         if (done) return;
-        if (k === q.answer) { done = true; b.classList.add('right'); onRight(b, !wrong); }
+        if (ok.includes(k)) { done = true; b.classList.add('right'); onRight(b, !wrong); }
         else {
           wrong = true; b.classList.add('wrong'); shake(b); sfx.bad(); onMiss(b);
           if (sp.label) popText(b, sp.label, 'hs-name');
@@ -1716,6 +1731,68 @@
           r.tips && h('ul', { class: 'px-tips' }, r.tips.map(t => h('li', { html: fmt(t, false) })))),
         h('div', null, ed.el, meter, h('div', { class: 'btn-row' }, submitBtn, hintBtn), result)));
   }
+
+  // Mystery word: clues appear one at a time – work the word out as early as you can.
+  // r.words: [{ word, clues: [hardest first, usually 3], options (optional: tap one instead of typing), explain }]
+  // Solving on clue 1 earns 3 gems, on clue 2 earns 2, after that 1. A wrong guess shows the next clue,
+  // and after two wrong guesses the first letter is given.
+  GAMES.mystery = function (r, key, done) {
+    const box = h('div', { class: 'game mystery' });
+    const clean = t => String(t).toLowerCase().replace(/[^a-z0-9]+/g, '');
+    let wi = 0;
+    function word() {
+      const w = r.words[wi], last = wi === r.words.length - 1;
+      let shown = 1, wrongs = 0, solved = false;
+      const worth = () => Math.max(1, 4 - shown);
+      const clues = h('ol', { class: 'my-clues' });
+      const letters = h('div', { class: 'my-letters', 'aria-label': `${w.word.replace(/ /g, '').length} letters` });
+      const worthEl = h('div', { class: 'my-worth' });
+      const fb = h('div', { class: 'feedback', hidden: true });
+      const moreBtn = h('button', { class: 'btn ghost', type: 'button', onclick() { reveal(); } }, '🔍 Another clue');
+      const nextBtn = h('button', { class: 'btn', type: 'button', hidden: true, onclick() { sfx.tap(); wi++; word(); } }, 'Next mystery ▶');
+      const answer = h('div', { class: 'my-answer' });
+      const paint = () => {
+        put(clues, w.clues.slice(0, shown).map((t, k) => h('li', { class: k === shown - 1 && !solved ? 'new' : '', html: fmt(t, false) })));
+        put(letters, [...w.word].map((ch, k) => h('span', { class: ch === ' ' ? 'gap' : '' }, solved || (k === 0 && wrongs >= 2) ? ch.toUpperCase() : '')));
+        worthEl.textContent = solved ? '' : `Solve it now for ${'💎'.repeat(worth())}`;
+        moreBtn.disabled = solved || shown >= w.clues.length;
+      };
+      function reveal() { if (shown < w.clues.length) { shown++; sfx.tap(); paint(); } }
+      function win(el) {
+        const n = worth();
+        solved = true;
+        for (let k = 0; k < n; k++) award(`${key}:${wi}:${k}`, el);
+        sfx.good(); say(n === 3 ? 'WOW – on the very first clue!' : praise());
+        fb.className = 'feedback good'; fb.hidden = false; fb.innerHTML = '✔ ' + fmt(w.explain || `It's **${w.word}**!`, false);
+        answer.hidden = true; paint();
+        if (last) done(); else nextBtn.hidden = false;
+      }
+      function miss(el) {
+        wrongs++; shake(el); sfx.bad();
+        say(shown < w.clues.length ? 'Not that one – here is another clue!' : 'Not quite – look at the letters and try again!');
+        if (shown < w.clues.length) reveal(); else paint();
+      }
+      if (w.options) {
+        put(answer, h('div', { class: 'opts' }, shuffle(w.options).map(o => h('button', {
+          class: 'opt', type: 'button',
+          onclick(e) { const b = e.currentTarget; if (solved) return; if (clean(o) === clean(w.word)) { b.classList.add('right'); win(b); } else { b.classList.add('wrong'); b.disabled = true; miss(b); } },
+        }, o))));
+      } else {
+        const input = h('input', { class: 'q-type', type: 'text', autocomplete: 'off', autocapitalize: 'off', spellcheck: 'false', 'aria-label': 'Your guess', placeholder: 'Type the mystery word' });
+        const guess = () => { if (solved || !input.value.trim()) return; if (clean(input.value) === clean(w.word)) { input.classList.add('right'); input.disabled = true; win(input); } else { miss(input); input.select(); } };
+        input.addEventListener('keydown', e => { if (e.key === 'Enter') guess(); });
+        put(answer, h('div', { class: 'q-type-row' }, input, h('button', { class: 'btn q-check', type: 'button', onclick: guess }, '✔ Guess')));
+      }
+      put(box,
+        r.words.length > 1 && h('div', { class: 'q-count' }, `Mystery word ${wi + 1} of ${r.words.length}`),
+        h('div', { class: 'my-card' }, h('div', { class: 'my-head' }, '🕵️ MYSTERY WORD'), letters, clues, h('div', { class: 'btn-row' }, moreBtn), worthEl),
+        answer, fb, h('div', { class: 'btn-row' }, nextBtn));
+      paint();
+      box._test = { guess(t) { const inp = box.querySelector('input.q-type'); if (inp) { inp.value = t; box.querySelector('.q-check').click(); } else [...box.querySelectorAll('.opt')].find(b => b.textContent === t).click(); }, more: reveal, get shown() { return shown; } };
+    }
+    word();
+    return box;
+  };
 
   // Free studio: draw anything; save to the gallery, download as a picture.
   GAMES.pixelstudio = function (r, key, done) {

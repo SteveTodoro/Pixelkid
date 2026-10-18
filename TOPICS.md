@@ -110,13 +110,16 @@ One country per lesson: find it on the map, then the history and culture childre
 **Video tip:** check a video exists and read its transcript before writing questions about it.
 
 **Hands-on question types (work in quizzes, video quests, the `questions` game, boss battles AND as reading-page `check`s):**
-- `evidence` — tap the sentence that proves it. `{ q, answer: 'a few words from the right sentence' }`. As a reading check the page's own sentences become tappable; anywhere else add `passage: 'text'` (or a list of paragraphs).
-- `hotspot` — tap the right place on a picture. `{ q, img: svg or emoji, spots: [{ x, y, r, label }] (% of the picture; r = radius, default 12), answer: spot index }`. A wrong tap shows that spot's `label`.
+- `evidence` — tap the sentence that proves it. `{ q, answer: 'a few words from the right sentence' }` (or a list when several sentences prove it). As a reading check the page's own sentences become tappable; anywhere else add `passage: 'text'` (or a list of paragraphs).
+- `hotspot` — tap the right place on a picture. `{ q, img: svg or emoji, spots: [{ x, y, r, label }] (% of the picture; r = radius, default 12), answer: spot index or a list of right spots }`. A wrong tap shows that spot's `label`.
 - `slider` — drag a marker on a number line. `{ q, min, max, step, answer, tolerance, unit, ticks (gaps, default 10), from, endsOnly (label only the ends), hideValue (for estimating), format: v => … }`. A wrong answer says "too high" or "too low".
 - `oddone` — odd one out, then WHY. `{ q, items, answer, why, reasons, reason }`.
 - `build` — tap tiles into a word or sentence. `{ q, answer: ['un', 'happy'], extra: ['re'] (decoys), join: '' (word) or ' ' (sentence) }`.
 - `type` — write the answer. `{ q, answer: '12' or ['colour', 'color'], before, after, placeholder }`. Capitals, spaces and punctuation are ignored.
 - `predict` — guess first (never marked wrong), see the reveal, then explain. `{ q, options, answer (the real outcome, optional), reveal, revealPic, then: { q, options, answer, explain } }`.
+
+**Comic pages:** a read card can use `comic: [{ who: 'mascot' | 'me' | emoji/svg, name, say, pic }]` instead of `text` – each line becomes a comic panel with a speech bubble ('me' is the child's own avatar and name). Checks (including `evidence`) work the same. Good for explaining an idea as a conversation (see the "Meet AI" card in `future/ai.html`).
+**Mystery word (`mystery` game):** `words: [{ word, clues: [hardest first, usually 3], options (optional: tap instead of type), explain }]`. Clues appear one at a time; solving on clue 1 = 3 gems, clue 2 = 2, then 1. A wrong guess shows the next clue; after two wrong guesses the first letter is given. Use it instead of a word search or crossword.
 
 **Keep lessons varied (check with `node tools/activity-audit.js`):**
 - At most ONE word puzzle (`crossword` or `wordsearch`) per lesson, and none in about half of lessons. Never in two lessons in a row of the same world. Other vocabulary practice: `build`, picture↔word `match`, `type`.
