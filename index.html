@@ -9,42 +9,51 @@
   <script src="shared/pixel-icons.js"></script>
   <script src="shared/avatar.js"></script>
   <style>
-    /* header: the hero portrait fills the top-left corner, the title sits beside it */
-    .lib-head { position: relative; z-index: 1; display: grid; grid-template-columns: auto auto; justify-content: center; align-items: center; gap: 36px; padding: 16px 16px 4px; }
-    .lib-title { text-align: center; }
+    /* header: the player stands in the world on a grass block (like a game's title screen), the title and HUD beside it */
+    .lib-head { position: relative; z-index: 1; display: grid; grid-template-columns: auto auto; justify-content: center; align-items: end; gap: 40px; padding: 50px 16px 4px; }
+    .lib-title { text-align: center; padding-bottom: 54px; }
     .lib-head h1 { font-size: 3.4rem; color: #fff; margin: 0; text-shadow: 4px 4px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000; }
     .lib-head p { font-family: var(--pixel); font-size: 1.3rem; font-weight: 700; color: #fff; text-shadow: 2px 2px 0 #000; margin: 6px 0 0; }
-    /* the hero portrait: a gold frame, on purpose nothing like the grey stone lesson cards */
-    .pk-hero { width: 250px; }
-    .pk-link { display: block; text-decoration: none; color: inherit; }
-    .pk-frame { position: relative; padding: 10px; background: #ffc928; border: 4px solid #000;
-      box-shadow: inset 4px 4px 0 #fff1a6, inset -4px -4px 0 #b37800, 0 6px 0 rgba(0,0,0,.3); transition: transform .12s steps(2); }
-    .pk-link:hover .pk-frame, .pk-link:focus-visible .pk-frame { transform: translateY(-3px); }
-    .pk-pic { position: relative; height: 250px; overflow: hidden; border: 3px solid #000; box-shadow: 0 0 0 3px #b37800; }
-    .pk-pic canvas { position: absolute; left: 50%; bottom: 20%; height: 74%; transform: translateX(-50%); image-rendering: pixelated; }
-    .rivet { position: absolute; width: 10px; height: 10px; background: #fff1a6; border: 2px solid #000; box-shadow: inset -2px -2px 0 #b37800; transform: rotate(45deg); z-index: 1; }
-    .rivet.tl { left: -1px; top: -1px; } .rivet.tr { right: -1px; top: -1px; } .rivet.bl { left: -1px; bottom: -1px; } .rivet.br { right: -1px; bottom: -1px; }
-    .me-dress { position: absolute; left: 50%; bottom: 5px; transform: translateX(-50%); white-space: nowrap; z-index: 1; padding: 1px 8px; font-family: var(--pixel); font-weight: 700; font-size: .85rem; color: #000; background: var(--gold); border: 2px solid #000; }
-    /* the nameplate under the portrait */
-    .pk-plate { position: relative; margin: 0 10px; padding: 8px 10px 9px; background: #1f1a12; border: 4px solid #000; border-top: 0; box-shadow: inset 0 0 0 2px #b37800; color: #eee; text-align: left; }
-    .me-row { display: flex; align-items: center; gap: 8px; }
-    .me-row .xp-bar { flex: 1; min-width: 50px; }
-    .pk-plate .xp-level { color: #7cfc3a; font-size: .95rem; white-space: nowrap; }
-    .me-meta { display: flex; flex-direction: column; margin-top: 4px; font-weight: 700; font-size: .85rem; color: #ddd; }
-    .me-meta b { color: #ffd43b; }
+    .pk-hero { position: relative; display: flex; flex-direction: column; align-items: center; }
+    .pk-link { position: relative; display: block; text-decoration: none; }
+    .pk-link canvas { display: block; height: 220px; margin: 0 auto -6px; image-rendering: pixelated; position: relative; z-index: 1; }
+    /* a name tag floating over the head, like in Minecraft */
+    .pk-tag { position: absolute; top: -34px; z-index: 2; transform: translateX(-50%); white-space: nowrap; padding: 2px 10px; background: rgba(0,0,0,.55); color: #fff; font-family: var(--pixel); font-weight: 700; font-size: 1.05rem; pointer-events: none; }
+    /* the grass block it stands on, with a soft shadow under its feet */
+    .pk-block { position: relative; height: 50px; margin: 0 -28px; border: 4px solid #000;
+      background:
+        linear-gradient(#5bbf3a 0 12px, #3d8a26 12px 16px, transparent 16px),
+        repeating-linear-gradient(90deg, transparent 0 10px, rgba(0,0,0,.14) 10px 15px, transparent 15px 26px),
+        repeating-linear-gradient(0deg, transparent 0 9px, rgba(255,255,255,.08) 9px 13px),
+        #8a5a32;
+      box-shadow: inset -6px -6px 0 rgba(0,0,0,.22), 0 6px 0 rgba(0,0,0,.25); }
+    .pk-block::before { content: ""; position: absolute; left: var(--feet, 50%); top: -1px; width: 92px; height: 8px; transform: translateX(-50%); background: rgba(0,0,0,.28); border-radius: 50%; }
+    .pk-room { margin-top: 12px; font-size: 1rem; padding: 8px 14px; white-space: nowrap; }
+    /* the HUD: a Minecraft-style XP bar with the level number on top, and a hotbar slot for gems */
+    .hud { display: flex; align-items: flex-end; justify-content: center; gap: 14px; margin-top: 18px; }
+    .hud-xp { position: relative; width: 260px; padding-top: 26px; }
+    .hud-lvl { position: absolute; left: 50%; top: 0; transform: translateX(-50%); font-family: Lexend, sans-serif; font-weight: 800; font-size: 1.5rem; line-height: 1; color: #7cfc3a; text-shadow: 2px 0 0 #000, -2px 0 0 #000, 0 2px 0 #000, 0 -2px 0 #000; }
+    .hud-xp .xp-bar { height: 16px; }
+    .hud-name { margin-top: 4px; font-family: var(--pixel); font-weight: 700; font-size: .9rem; color: #fff; text-shadow: 2px 2px 0 #000; }
+    .hud-gems { position: relative; width: 62px; height: 62px; display: grid; place-items: center; font-size: 2rem; background: #8b8b8b; border: 4px solid #000;
+      box-shadow: inset 4px 4px 0 #373737, inset -4px -4px 0 #fff; }
+    .hud-gems b { position: absolute; right: 4px; bottom: 0; font-family: Lexend, sans-serif; font-size: 1.05rem; color: #fff; text-shadow: 2px 2px 0 #3f3f3f; }
     @media (max-width: 640px) {
-      .lib-head { gap: 12px; padding: 12px 12px 2px; }
+      .lib-head { gap: 16px; padding: 36px 12px 2px; align-items: center; }
+      .lib-title { padding-bottom: 0; }
       .lib-head h1 { font-size: 2rem; }
       .lib-head p { font-size: 1rem; }
-      .pk-hero { width: 150px; }
-      .pk-frame { padding: 6px; }
-      .pk-pic { height: 150px; }
-      .pk-plate { margin: 0 6px; padding: 6px 7px; }
-      .pk-plate .xp-level { font-size: .75rem; }
-      .me-meta { font-size: .72rem; }
-      .me-dress { font-size: .7rem; bottom: 3px; }
-      .me-row { flex-wrap: wrap; gap: 4px; }
-      .me-row .xp-bar { flex-basis: 100%; }
+      .pk-link canvas { height: 130px; }
+      .pk-tag { top: -28px; font-size: .85rem; }
+      .pk-block { height: 32px; margin: 0 -14px; }
+      .pk-block::before { width: 54px; }
+      .pk-room { font-size: .75rem; padding: 6px 8px; }
+      .hud-name { font-size: .7rem; }
+      .hud { gap: 8px; margin-top: 10px; }
+      .hud-xp { width: 130px; padding-top: 20px; }
+      .hud-lvl { font-size: 1.1rem; }
+      .hud-gems { width: 46px; height: 46px; font-size: 1.4rem; }
+      .hud-gems b { font-size: .8rem; }
     }
     /* one row of worlds; scrolls sideways on a phone */
     .tabs { position: relative; z-index: 1; display: flex; gap: 8px; max-width: 1040px; margin: 22px auto 0; padding: 4px 16px 8px; overflow-x: auto; scrollbar-width: none; }
@@ -93,23 +102,24 @@
 <body class="science">
   <header class="lib-head">
     <div class="pk-hero">
-      <a class="pk-link" id="pk-hero" href="avatar.html" aria-label="Wardrobe and Shop: dress up your hero">
-        <div class="pk-frame">
-          <i class="rivet tl"></i><i class="rivet tr"></i><i class="rivet bl"></i><i class="rivet br"></i>
-          <div class="pk-pic" id="pk-pic"><canvas id="me"></canvas><span class="me-dress">👕 Dress up</span></div>
-        </div>
+      <a class="pk-link" id="pk-hero" href="avatar.html" aria-label="Dressing Room: dress up your hero">
+        <span class="pk-tag" id="pk-tag">Player</span>
+        <canvas id="me"></canvas>
+        <div class="pk-block" id="pk-block"></div>
       </a>
-      <div class="pk-plate">
-        <div class="me-row" id="level" hidden>
-          <span class="xp-level" id="lvl"></span>
-          <div class="xp-bar" aria-hidden="true"><div class="xp-fill" id="lvlfill"></div></div>
-        </div>
-        <div class="me-meta" id="meta"></div>
-      </div>
+      <a class="btn pk-room" href="avatar.html">👕 Dressing Room</a>
     </div>
     <div class="lib-title">
       <h1>PIXELKID</h1>
       <p id="hello">Choose your world, then pick a quest!</p>
+      <div class="hud">
+        <div class="hud-xp" id="level" hidden>
+          <span class="hud-lvl" id="lvl"></span>
+          <div class="xp-bar" aria-hidden="true"><div class="xp-fill" id="lvlfill"></div></div>
+          <div class="hud-name" id="lvlname"></div>
+        </div>
+        <div class="hud-gems" id="gems" title="Gems to spend">💎<b></b></div>
+      </div>
     </div>
   </header>
   <nav class="tabs" role="tablist" id="tabs"></nav>
@@ -238,11 +248,24 @@ if (!LIBRARY[current]) current = 'science';
 
 const total = Object.values(records).reduce((n, r) => n + (r.stars || 0), 0);
 const wal = window.Avatar ? Avatar.wallet() : { balance: total };
-// the hero portrait: the avatar breathes, blinks and blinks again when you point at it
+// the hero stands on its grass block: it breathes, blinks, looks around and follows your finger with its eyes
 if (window.Avatar) {
-  document.getElementById('pk-pic').style.background = Avatar.sceneBox(Avatar.load().look.scene);
-  const heroAnim = Avatar.animate(document.getElementById('me'), { scale: 10, pet: true });
-  document.getElementById('pk-hero').addEventListener('pointerenter', () => heroAnim.blink());
+  const me = document.getElementById('me'), hero = document.getElementById('pk-hero');
+  const heroAnim = Avatar.animate(me, { scale: 10, pet: true });
+  // the name tag and the foot shadow sit over the avatar, not the pet beside it (the avatar is the first 12 pixel columns)
+  const mid = 6 / (me.width / 10) * 100 + '%';
+  document.getElementById('pk-tag').style.left = mid;
+  document.getElementById('pk-block').style.setProperty('--feet', `calc(28px + (100% - 56px) * ${6 / (me.width / 10)})`);
+  document.getElementById('pk-tag').textContent = settings.name || 'Player';
+  let lastDir = 0;
+  const follow = e => {
+    const r = me.getBoundingClientRect(), x = r.left + r.width * parseFloat(mid) / 100;
+    const dir = e.clientX < x - 60 ? -1 : e.clientX > x + 60 ? 1 : 0;
+    if (dir !== lastDir) { lastDir = dir; heroAnim.look(dir); }
+  };
+  document.addEventListener('pointermove', follow);
+  document.addEventListener('pointerdown', follow);
+  hero.addEventListener('pointerenter', () => heroAnim.blink());
   window.heroAnim = heroAnim;
 }
 if (settings.name) document.getElementById('hello').textContent = `Welcome back, ${settings.name}! Pick a quest.`;
@@ -250,7 +273,8 @@ if (settings.name) document.getElementById('hello').textContent = `Welcome back,
 if (window.Avatar) {
   const p = Avatar.levelInfo();
   document.getElementById('level').hidden = false;
-  document.getElementById('lvl').textContent = `LV ${p.level} · ${p.title.toUpperCase()}`;
+  document.getElementById('lvl').textContent = p.level;
+  document.getElementById('lvlname').textContent = `LEVEL ${p.level} · ${p.title.toUpperCase()}`;
   document.getElementById('lvlfill').style.width = p.into / p.need * 100 + '%';
   document.getElementById('level').title = `${p.toNext} more gems to level ${p.level + 1}`;
   Avatar.newRewards(p.level).forEach((r, k) => setTimeout(() => {
@@ -263,10 +287,8 @@ if (window.Avatar) {
   Avatar.markSeen(p.level);
 }
 
-// gems to spend, under the level
-const meta = document.getElementById('meta');
-meta.innerHTML = '<span>💎 <b></b> to spend</span>';
-meta.querySelector('b').textContent = wal.balance;
+// gems to spend, in a hotbar slot
+document.getElementById('gems').querySelector('b').textContent = wal.balance;
 
 const tabs = document.getElementById('tabs'), shelf = document.getElementById('shelf');
 // Around the World: the passport shows a stamp for every country lesson finished

@@ -377,7 +377,7 @@
     rows.forEach((r, y) => { const dy = shift ? shift(oy + y) : 0; [...r].forEach((ch, x) => { const c = pal[ch]; if (c) { ctx.fillStyle = c; ctx.fillRect((ox + x) * s, (oy + y + dy) * s, s, s); } }); });
   }
   // Draw the avatar onto a canvas. opts: { scale, pet: true|false, bob: 0|1, canvas (redraw into this one),
-  //   blink: true (eyes shut), breathe: 0|1 (head and body dip a pixel, feet stay put), petHop: 0–2 (pet jumps up) }
+  //   blink: true (eyes shut), gaze: -1|0|1 (look left / right), breathe: 0|1 (head and body dip a pixel, feet stay put), petHop: 0–2 (pet jumps up) }
   function draw(look = load().look, opts = {}) {
     const s = opts.scale || 4, withPet = opts.pet && look.pet && look.pet !== 'pet-none';
     const c = opts.canvas || document.createElement('canvas');
@@ -390,7 +390,8 @@
     const extra = part('extra');
     if (extra && extra.behind) layer(extra);
     paint(ctx, BASE, { s: skin.s, S: skin.S, W: '#ffffff', K: '#1b1b1b', M: '#a0522d' }, 0, opts.bob || 0, s, shift);
-    // shut eyes go under the clothes, so glasses, eyepatches and helmets still cover them
+    // eyes (drawn under the clothes, so glasses, eyepatches and helmets still cover them): gaze -1 looks left, 1 looks right
+    if (opts.gaze && !opts.blink) paint(ctx, [opts.gaze < 0 ? '...KW..KW...' : '...WK..WK...'], { W: '#ffffff', K: '#1b1b1b' }, 0, 5 + (opts.bob || 0), s, shift);
     if (opts.blink) paint(ctx, ['...SS..SS...'], { S: skin.S }, 0, 5 + (opts.bob || 0), s, shift);
     const hideHair = part('hat') && part('hat').hideHair;
     ['legs', 'shoes', 'top', 'hair', 'hat'].forEach(cat => { if (!(cat === 'hair' && hideHair)) layer(part(cat)); });
@@ -400,19 +401,21 @@
   }
   // Bring an avatar to life on a canvas: gentle breathing, random blinks and the odd pet hop (about 8 frames a second).
   // o.look can be a look or a function returning the current one (e.g. while trying clothes on).
-  // Stays still for people who ask for reduced motion. Returns { blink(), redraw(), step(seconds), stop() }.
+  // Stays still for people who ask for reduced motion. Returns { blink(), look(dir), redraw(), step(seconds), stop() }.
   function animate(cv, o = {}) {
     const still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
     let t = 0, blinkAt = 1.5 + Math.random() * 2, blinkTo = -1, hopAt = 4 + Math.random() * 5, timer = null, stopped = false;
+    let gaze = 0, gazeTo = -1, glanceAt = 5 + Math.random() * 4; // gazeTo: until when a pointer-led look lasts
     const FPS = 8;
     function frame() {
       const hop = t >= hopAt ? [1, 2, 2, 1][Math.floor((t - hopAt) * FPS)] || 0 : 0;
-      draw((typeof o.look === 'function' ? o.look() : o.look) || load().look, { scale: o.scale || 10, pet: o.pet, canvas: cv, blink: t < blinkTo, breathe: still ? 0 : Math.floor(t / 0.75) % 2, petHop: still ? 0 : hop });
+      draw((typeof o.look === 'function' ? o.look() : o.look) || load().look, { scale: o.scale || 10, pet: o.pet, canvas: cv, blink: t < blinkTo, gaze: t < gazeTo ? gaze : 0, breathe: still ? 0 : Math.floor(t / 0.75) % 2, petHop: still ? 0 : hop });
     }
     function step(dt) {
       t += dt;
       if (t >= blinkAt) { blinkTo = t + 0.15; blinkAt = t + (Math.random() < 0.2 ? 0.35 : 2.5 + Math.random() * 2.5); } // sometimes a double blink
       if (t >= hopAt + 0.5) hopAt = t + 5 + Math.random() * 6;
+      if (t >= glanceAt && t >= gazeTo) { gaze = Math.random() < 0.5 ? -1 : 1; gazeTo = t + 1.2; glanceAt = t + 6 + Math.random() * 6; } // an idle look around
       frame();
     }
     const tick = () => { if (stopped || !cv.isConnected) return; step(1 / FPS); timer = setTimeout(tick, 1000 / FPS); };
@@ -421,6 +424,7 @@
     return {
       blink() { blinkTo = t + 0.15; frame(); },
       redraw: frame,
+      look(dir) { gaze = dir; gazeTo = dir ? t + 2.5 : -1; frame(); }, // look left (-1) or right (1) for a moment
       step,
       stop() { stopped = true; clearTimeout(timer); },
     };
