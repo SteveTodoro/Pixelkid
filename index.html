@@ -296,6 +296,8 @@ if (window.Avatar) {
   hero.addEventListener('click', doMove);
   hero.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); doMove(); } });
   window.heroAnim = heroAnim;
+  // first visit: pick boy or girl and a starter look (the hero redraws from the saved look by itself)
+  if (Avatar.needsStarter()) Avatar.showPicker(() => heroAnim.play() || heroAnim.blink());
 }
 const greet = () => { document.getElementById('hello').textContent = settings.name ? `Welcome back, ${settings.name}! Pick a quest.` : 'Choose your world, then pick a quest!'; };
 greet();

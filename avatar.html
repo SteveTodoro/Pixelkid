@@ -29,6 +29,7 @@
           <div class="wd-name" id="who"></div>
           <div class="xp-level wd-level" id="lvl"></div>
           <div id="action" class="wd-action"></div>
+          <button type="button" class="btn ghost wd-restart" id="restart">🔄 Start over: boy or girl</button>
           <p class="wd-earn">Earn more 💎 gems by playing lessons – every right answer counts! Gems also level you up, and new levels unlock secret costumes, pets and scenes.</p>
         </div>
         <div class="wd-right">
@@ -138,6 +139,8 @@
     btn('↺ Back to my outfit', 'ghost', () => { selected = null; look = Object.assign({}, saved.look); sfx.tap(); render(); });
   }
   function render() { drawPreview(); drawTabs(); drawGrid(); drawAction(); }
+  // pick a new starter look; everything bought stays owned
+  $('restart').onclick = () => A.showPicker(() => { saved = A.load(); look = Object.assign({}, saved.look); selected = null; sfx.buy(); render(); }, { closable: true });
   render();
 })();
 </script>

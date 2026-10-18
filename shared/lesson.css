@@ -1078,3 +1078,18 @@ a { color: var(--brand-dark); }
 .runner .arcade-canvas { touch-action: none; cursor: pointer; }
 .runner .arc-controls { justify-content: center; gap: 18px; }
 .runner .runner-btn { min-width: 150px; font-size: 1.15rem; padding: 12px 18px; }
+
+/* ---------- starter picker: "Boy or girl?", then four looks (Avatar.showPicker) ---------- */
+.pick-card { width: min(560px, 100%); text-align: center; animation: pop .3s steps(3); }
+.pick-card h2 { margin: 0 0 4px; font-size: 1.8rem; }
+.pick-sub { margin: 0 0 14px; font-weight: 600; }
+.pick-kind { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; }
+.btn.pink { background: #e0479e; }
+.btn.blue { background: #1e6fd9; }
+.pick-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+@media (max-width: 480px) { .pick-grid { grid-template-columns: repeat(2, 1fr); } }
+.pick-look { padding: 12px 0 0; cursor: pointer; border: 4px solid #000; box-shadow: 0 4px 0 rgba(0,0,0,.3); }
+.pick-look:hover, .pick-look:focus-visible { outline: 4px solid var(--gold); outline-offset: -1px; transform: translateY(-3px); }
+.pick-look img { display: block; margin: 0 auto; width: 72px; height: auto; image-rendering: pixelated; }
+.pick-back { margin-top: 14px; }
+.wd-restart { margin-top: 12px; font-size: .9rem; }

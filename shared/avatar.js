@@ -58,10 +58,14 @@
     // ----- hair -----
     { id: 'hair-short', cat: 'hair', name: 'Short', price: 0, rows: ['............', '...hhhhhh...', '..hhhhhhhh..', '..hHhhhhhh..', '..h......h..'] },
     { id: 'hair-spiky', cat: 'hair', name: 'Spiky', price: 15, rows: ['...h.hh.h...', '..hhhhhhhh..', '..hhHhhhhh..', '..hh.hh.hh..', '..h......h..'] },
-    { id: 'hair-long', cat: 'hair', name: 'Long', price: 15, rows: ['............', '...hhhhhh...', '..hhhhhhhh..', '.hhHhhhhhhh.', '.hh......hh.', '.h........h.', '.h........h.', '.h........h.', '.hh......hh.'] },
+    { id: 'hair-long', cat: 'hair', name: 'Long', price: 0, rows: ['............', '...hhhhhh...', '..hhhhhhhh..', '.hhHhhhhhhh.', '.hh......hh.', '.h........h.', '.h........h.', '.h........h.', '.hh......hh.'] },
     { id: 'hair-curly', cat: 'hair', name: 'Big & Curly', price: 20, rows: ['...hhhhhh...', '.hhhHhhhhhh.', '.hhhhhhhHhh.', '.hHhhhhhhhh.', '.hh......hh.', '.h........h.'] },
     { id: 'hair-mohawk', cat: 'hair', name: 'Mohawk', price: 20, rows: ['.....hh.....', '.....hh.....', '....hHhh....', '....hhhh....'] },
-    { id: 'hair-bob', cat: 'hair', name: 'Bob cut', price: 20, rows: ['............', '...hhhhhh...', '..hhhhhhhh..', '..hhhhhhhh..', '.hhhhhhhhhh.', '.hh......hh.', '.hh......hh.', '.hh......hh.'] },
+    { id: 'hair-bob', cat: 'hair', name: 'Bob cut', price: 0, rows: ['............', '...hhhhhh...', '..hhhhhhhh..', '..hhhhhhhh..', '.hhhhhhhhhh.', '.hh......hh.', '.hh......hh.', '.hh......hh.'] },
+    { id: 'hair-ponytail', cat: 'hair', name: 'Ponytail', price: 0, rows: ['........hhh.', '...hhhhhhrh.', '..hhhhhhhhhh', '..hHhhhhhh.h', '..h......h.h', '...........h', '..........hh'], pal: { r: '#ff5fa2' } },
+    { id: 'hair-bunches', cat: 'hair', name: 'Bunches', price: 0, rows: ['............', '...hhhhhh...', '..hhhhhhhh..', '.rhHhhhhhhr.', 'hhh......hhh', 'hh........hh', 'hh........hh', '.h........h.'], pal: { r: '#ff5fa2' } },
+    { id: 'hair-plaits', cat: 'hair', name: 'Plaits', price: 15, rows: ['............', '...hhhhhh...', '..hhhhhhhh..', '..hhHhhHhh..', '..h......h..', '.h........h.', '.H........H.', '.h........h.', '.H........H.', '.h........h.', '.r........r.'], pal: { r: '#ffd43b' } },
+    { id: 'hair-buns', cat: 'hair', name: 'Space buns', price: 20, rows: ['.hhh....hhh.', '.hHhhhhhhHh.', '..rhhhhhhr..', '..hHhhhhhh..', '..h......h..'], pal: { r: '#ff5fa2' } },
     { id: 'undyne-ponytail', cat: 'hair', name: 'Undyne ponytail', price: 60, special: true, rows: ['........hhh.', '...hhhhhhhhh', '..hhhhhhhh.h', '..hHhhhhhh.h', '..hh....hh.h', '..h......h..'], pal: { h: '#e53935', H: '#ff6b5e' } },
     { id: 'hair-none', cat: 'hair', name: 'No hair', price: 0, rows: [] },
     // ----- tops -----
@@ -73,6 +77,12 @@
     { id: 'labcoat', cat: 'top', name: 'Lab coat', price: 30, y: 9, rows: ['.ttttTTtttt.', '.ttttTTtttt.', '.ttttTTtttt.', '.ttttTTtttt.', '...ttTTtt...', '...t....t...'], pal: { t: '#ffffff', T: '#8fd3ff' } },
     { id: 'hero-suit', cat: 'top', name: 'Hero suit', price: 40, y: 9, rows: ['.tttttttttt.', '.tttTTTTttt.', '.ttttTTtttt.', '.tttttttttt.', '...yyyyyy...'], pal: { t: '#d9433b', T: '#ffd43b', y: '#ffd43b' } },
     { id: 'space-top', cat: 'top', name: 'Space suit', price: 40, y: 9, rows: ['.tttttttttt.', '.tttOOOOttt.', '.tttObcOttt.', '.tttttttttt.', '...tttttt...'], pal: { t: '#f2f2f2', O: '#ff8c1a', b: '#2ee6d6', c: '#e53935' } },
+    { id: 'tee-pink', cat: 'top', name: 'Pink tee', price: 10, y: 9, rows: ['.tttttttttt.', '.tttttttttt.', '...tttttt...', '...tttttt...', '...tttttt...'], pal: { t: '#ff7eb6' } },
+    // dresses reach down over the hips (rows 14-15), so wear them with Bare legs, leggings or a skirt
+    { id: 'dress-pink', cat: 'top', name: 'Pink dress', price: 0, y: 9, rows: ['.tttttttttt.', '...tttttt...', '...TTTTTT...', '...tttttt...', '...tttttt...', '..tttttttt..', '..TTTTTTTT..'], pal: { t: '#ff7eb6', T: '#ffffff' } },
+    { id: 'dress-purple', cat: 'top', name: 'Purple dress', price: 15, y: 9, rows: ['.tttttttttt.', '...tttttt...', '...yyyyyy...', '...tttttt...', '...tttttt...', '..tttttttt..', '..tTtTtTtT..'], pal: { t: '#8e5cff', T: '#c9b3ff', y: '#ffd43b' } },
+    { id: 'popstar-top', cat: 'top', name: 'Sparkly pop star top', price: 30, y: 9, rows: ['.pppppppppp.', '.pyppppppyp.', '...ppyppp...', '...pppppy...', '...pypppp...'], pal: { p: '#d6457a', y: '#ffd43b' } },
+    { id: 'knight-dress', cat: 'top', name: 'Princess knight armour', price: 40, y: 9, rows: ['.mmmmmmmmmm.', '...mMmmMm...', '...yyyyyy...', '...dddddd...', '...dddddd...', '..dddddddd..', '..dDdDdDdD..'], pal: { m: '#b8c2cc', M: '#8e9aa8', y: '#ffd43b', d: '#7c4dff', D: '#ffd43b' } },
     // special costumes: pricey tributes, shown with a gold ★ SPECIAL ribbon in the shop
     { id: 'ff-hoodie', cat: 'top', name: 'Foltyn Family hoodie', price: 150, special: true, y: 8, rows: ['..TttttttT..', '.tttttttttt.', '.ttKKKtKKKt.', '.ttKtttKttt.', '.ttKKttKKtt.', '...KtttKt...'], pal: { t: '#fafafa', T: '#c9ced6', K: '#1b1b1b' } },
     { id: 'ninja-gi', cat: 'top', name: 'Ninja suit', price: 80, special: true, y: 9, rows: ['.ggggkkgggg.', '.gggggkgggg.', '.gggggggggg.', '.gggggggggg.', '...RRRRRR...'], pal: { g: '#2d3139', k: '#15171b', R: '#e53935' } },
@@ -98,6 +108,9 @@
     { id: 'liberty-legs', cat: 'legs', name: 'Lady Liberty robe (long)', price: 25, special: true, y: 14, rows: ['...gggggg...', '...gGgggg...', '...ggggGg...', '..gggggggg..'], pal: { g: '#4fb39a', G: '#2e7d6b' } },
     { id: 'elephant-pants', cat: 'legs', name: 'Thai elephant trousers', price: 25, y: 14, rows: ['...pPpPpP...', '...Pp..pP...', '...pP..Pp...', '...Pp..pP...'], pal: { p: '#6a1b9a', P: '#ffd43b' } },
     { id: 'anpan-legs', cat: 'legs', name: 'Anpanman trousers', price: 30, special: true, y: 14, rows: ['...llllll...', '...ll..ll...', '...ll..ll...', '...ll..ll...'], pal: { l: '#e53935' } },
+    { id: 'legs-none', cat: 'legs', name: 'Bare legs', price: 0, rows: [] },
+    { id: 'skirt', cat: 'legs', name: 'Skirt', price: 0, y: 14, rows: ['...llllll...', '..llllllll..', '..LLLLLLLL..'], pal: { l: '#3b5fc9', L: '#2a4596' } },
+    { id: 'tutu', cat: 'legs', name: 'Tutu', price: 25, y: 14, rows: ['...pppppp...', '.pPpPpPpPpP.', '..PpPpPpPp..'], pal: { p: '#ff9cc7', P: '#ff5fa2' } },
     // ----- shoes -----
     { id: 'trainers', cat: 'shoes', name: 'Trainers', price: 0, y: 18, rows: ['...oo..oo...', '..oOo..oOo..'], pal: { o: '#ffffff', O: '#1e6fd9' } },
     { id: 'trainers-red', cat: 'shoes', name: 'Red kicks', price: 10, y: 18, rows: ['...oo..oo...', '..oOo..oOo..'], pal: { o: '#e53935', O: '#ffffff' } },
@@ -106,6 +119,7 @@
     { id: 'ninja-tabi', cat: 'shoes', name: 'Ninja tabi', price: 30, special: true, y: 18, rows: ['...kk..kk...', '..kkk..kkk..'], pal: { k: '#15171b' } },
     { id: 'sans-slippers', cat: 'shoes', name: 'Pink slippers', price: 40, special: true, y: 18, rows: ['...pp..pp...', '..ppp..ppp..'], pal: { p: '#ff9cc7' } },
     { id: 'papyrus-boots', cat: 'shoes', name: 'Red boots', price: 40, special: true, y: 17, rows: ['...rr..rr...', '...rr..rr...', '..rrr..rrr..'], pal: { r: '#e53935' } },
+    { id: 'sparkle-shoes', cat: 'shoes', name: 'Sparkly trainers', price: 15, y: 18, rows: ['...pp..pp...', '..pyp..pyp..'], pal: { p: '#ff5fa2', y: '#ffd43b' } },
     // ----- hats -----
     { id: 'hat-none', cat: 'hat', name: 'No hat', price: 0, rows: [] },
     { id: 'cap', cat: 'hat', name: 'Cap', price: 15, rows: ['............', '..cccccccc..', '..cccccccc..', '.CCCCCCCCCC.'], pal: { c: '#e53935', C: '#a31515' } },
@@ -113,6 +127,8 @@
     { id: 'headphones', cat: 'hat', name: 'Headphones', price: 25, y: 1, rows: ['..kkkkkkkk..', '.k........k.', '.k........k.', 'cc........cc', 'cc........cc'], pal: { k: '#1b1b1b', c: '#2ee6d6' } },
     { id: 'wizard', cat: 'hat', name: 'Wizard hat', price: 40, rows: ['.....cc.....', '....cyyc....', '...cccccc...', '.CCCCCCCCCC.'], pal: { c: '#3d1f99', y: '#ffd43b', C: '#2a1270' } },
     { id: 'crown', cat: 'hat', name: 'Crown', price: 60, rows: ['..y..yy..y..', '..yryyyyry..'], pal: { y: '#ffd43b', r: '#e53935' } },
+    { id: 'hair-bow', cat: 'hat', name: 'Hair bow', price: 20, rows: ['......pp.pp.', '......ppPpp.', '......pp.pp.'], pal: { p: '#ff5fa2', P: '#d6457a' } },
+    { id: 'tiara', cat: 'hat', name: 'Tiara', price: 40, rows: ['.....yby....', '...yyyyyy...'], pal: { y: '#ffd43b', b: '#2ee6d6' } },
     { id: 'knight', cat: 'hat', name: 'Knight helmet', price: 0, unlock: 'boss', rows: ['.....rr.....', '..mmmmmmmm..', '.mmmmmmmmmm.', '.mmmmmmmmmm.', '.mmmmmmmmmm.', '.mkkkkkkkkm.', '.mmmmmmmmmm.', '.mmm.mm.mmm.', '..mmmmmmmm..'], pal: { m: '#b8c2cc', k: '#1b1b1b', r: '#e53935' } },
     { id: 'beret', cat: 'hat', name: 'Artist beret', price: 0, unlock: 'artist', rows: ['......c.....', '...cccccc...', '.cccccccccc.'], pal: { c: '#e53935' } },
     { id: 'miner-helmet', cat: 'hat', name: 'Miner helmet', price: 0, unlock: 'miner', rows: ['.....yy.....', '....yLLy....', '..cccccccc..', '.cccccccccc.', 'CCCCCCCCCCCC'], pal: { c: '#ffb800', C: '#c98a00', y: '#1b1b1b', L: '#fff59d' } },
@@ -144,6 +160,7 @@
     { id: 'undyne-patch', cat: 'extra', name: 'Eye patch & grin', price: 50, special: true, y: 4, rows: ['..kkkk......', '..kkk..y....', '............', '....wwww....'], pal: { k: '#1b1b1b', y: '#ffd43b', w: '#ffffff' } },
     { id: 'water-blaster', cat: 'extra', name: 'Songkran water blaster', price: 40, y: 11, rows: ['..........ww', '........bb.w', '.......bbbbb', '.......bcc..', '.......b....'], pal: { b: '#1e88e5', c: '#ffd43b', w: '#7fd0ff' } },
     { id: 'liberty-torch', cat: 'extra', name: 'Liberty torch', price: 40, special: true, y: 1, rows: ['...........o', '..........oy', '..........yo', '..........gg', '...........g', '...........g', '...........g', '...........g'], pal: { o: '#ff8c1a', y: '#ffd43b', g: '#4fb39a' } },
+    { id: 'microphone', cat: 'extra', name: 'Microphone', price: 25, y: 10, rows: ['..........kk', '..........kk', '..........g.', '..........g.'], pal: { k: '#3a3a3a', g: '#9aa3ad' } },
     // ----- pets -----
     // ----- moves: gestures the avatar does now and then (drawn by the pose code below, so they work with every outfit) -----
     { id: 'move-none', cat: 'move', name: 'No move', price: 0, rows: [] },
@@ -267,6 +284,8 @@
     { id: 'set-astronaut', name: 'Astronaut', special: true, parts: { hat: 'astro-helmet', top: 'space-top', legs: 'space-legs', shoes: 'boots', extra: 'extra-none' } },
     { id: 'set-liberty', name: 'Lady Liberty', special: true, parts: { hat: 'liberty-crown', top: 'liberty-robe', legs: 'liberty-legs', shoes: 'boots', extra: 'liberty-torch' } },
     { id: 'set-frisk', name: 'Frisk', special: true, parts: { hair: 'hair-bob', hairColor: 'hc-brown', hat: 'hat-none', top: 'frisk-jumper', legs: 'jeans', shoes: 'boots', extra: 'extra-none' } },
+    { id: 'set-popstar', name: 'Pop Star', parts: { hair: 'hair-bunches', hat: 'hat-none', top: 'popstar-top', legs: 'tutu', shoes: 'sparkle-shoes', extra: 'microphone' } },
+    { id: 'set-princess-knight', name: 'Princess Knight', parts: { hat: 'tiara', top: 'knight-dress', legs: 'legs-none', shoes: 'boots', extra: 'extra-none' } },
     // level-reward costumes: every part unlocks at the same level
     { id: 'set-pirate', name: 'Pirate', unlock: 'lvl:7', parts: { hat: 'pirate-hat', top: 'pirate-coat', legs: 'pirate-trousers', extra: 'parrot' } },
     { id: 'set-robot', name: 'Robot', unlock: 'lvl:12', parts: { hat: 'robot-head', top: 'robot-body', legs: 'robot-legs', shoes: 'robot-boots', extra: 'extra-none' } },
@@ -531,7 +550,62 @@
   const dataURL = (look, opts) => draw(look, opts).toDataURL();
 
   const sceneDef = () => SCENES.find(s => s.id === load().look.scene) || SCENES[0];
-  window.Avatar = { ITEMS, SKINS, HAIR_COLOURS, SCENES, COSTUMES, CATS, UNLOCK_TEXT, LEVEL_REWARDS, levelInfo, levelOfUnlock, unlockText, newRewards, markSeen, DEFAULT_LOOK, byId, load, save, wallet, earn, achievements, owns, priceOf, buy, wear, draw, animate, movePose, dataURL, isFree, applyScene, sceneBox, sceneDef };
+
+  // ---------- starter looks: picked once on the first visit (and again from the Dressing Room) ----------
+  // Picking one wears it and gives away its parts, so a starter never needs gems.
+  const STARTERS = {
+    boy: [
+      { skin: 'skin1', hair: 'hair-short', hairColor: 'hc-brown', top: 'tee-grey', legs: 'jeans', shoes: 'trainers' },
+      { skin: 'skin3', hair: 'hair-spiky', hairColor: 'hc-black', top: 'tee-teal', legs: 'shorts', shoes: 'trainers-red' },
+      { skin: 'skin5', hair: 'hair-curly', hairColor: 'hc-black', top: 'hoodie-blue', legs: 'jeans', shoes: 'trainers' },
+      { skin: 'skin2', hair: 'hair-mohawk', hairColor: 'hc-ginger', top: 'jumper-green', legs: 'jeans', shoes: 'boots' },
+    ],
+    girl: [
+      { skin: 'skin2', hair: 'hair-long', hairColor: 'hc-black', top: 'dress-pink', legs: 'legs-none', shoes: 'trainers' },
+      { skin: 'skin1', hair: 'hair-ponytail', hairColor: 'hc-ginger', top: 'tee-pink', legs: 'skirt', shoes: 'trainers' },
+      { skin: 'skin4', hair: 'hair-bunches', hairColor: 'hc-black', top: 'dress-purple', legs: 'legs-none', shoes: 'sparkle-shoes' },
+      { skin: 'skin3', hair: 'hair-buns', hairColor: 'hc-brown', top: 'tee-red', legs: 'tutu', shoes: 'sparkle-shoes' },
+    ],
+  };
+  const needsStarter = () => !store.get(AKEY, null);
+  function pickStarter(kind, i) {
+    const parts = STARTERS[kind][i], a = load();
+    Object.assign(a.look, { hat: 'hat-none', extra: 'extra-none' }, parts);
+    Object.values(parts).forEach(id => { const it = byId(id); if (it && !owns(it, a)) a.owned.push(id); });
+    save({ look: a.look, owned: a.owned, kind });
+  }
+  // the picker: "Boy or girl?", then four looks to tap. onDone runs after a look is picked (not if it's closed).
+  function showPicker(onDone, { closable = false } = {}) {
+    const ov = document.createElement('div');
+    ov.className = 'overlay pick-ov';
+    ov.innerHTML = '<div class="card pick-card" role="dialog" aria-modal="true" aria-labelledby="pick-h"><h2 id="pick-h">Pick your hero!</h2><div class="pick-body"></div></div>';
+    const body = ov.querySelector('.pick-body'), close = () => ov.remove();
+    const btn = (text, cls, fn) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'btn ' + cls; b.textContent = text; b.onclick = fn; return b; };
+    function ask() {
+      const row = document.createElement('div'); row.className = 'pick-kind';
+      row.append(btn('👦 Boy', 'big blue', () => looks('boy')), btn('👧 Girl', 'big pink', () => looks('girl')));
+      const p = document.createElement('p'); p.className = 'pick-sub'; p.textContent = 'Are you a boy or a girl?';
+      body.replaceChildren(p, row);
+      if (closable) body.append(btn('✖ Not now', 'ghost pick-back', close));
+    }
+    function looks(kind) {
+      const p = document.createElement('p'); p.className = 'pick-sub'; p.textContent = 'Tap the hero you like best. You can change clothes later in the Dressing Room!';
+      const grid = document.createElement('div'); grid.className = 'pick-grid';
+      STARTERS[kind].forEach((parts, i) => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'pick-look'; b.setAttribute('aria-label', `${kind} look ${i + 1}`);
+        b.style.background = sceneBox(load().look.scene);
+        const img = document.createElement('img'); img.alt = '';
+        img.src = dataURL(Object.assign({}, DEFAULT_LOOK, { scene: load().look.scene }, parts), { scale: 6 });
+        b.append(img);
+        b.onclick = () => { pickStarter(kind, i); close(); if (onDone) onDone(); };
+        grid.append(b);
+      });
+      body.replaceChildren(p, grid, btn('◀ Back', 'ghost pick-back', ask));
+    }
+    ask();
+    document.body.append(ov);
+  }
+  window.Avatar = { ITEMS, SKINS, HAIR_COLOURS, SCENES, COSTUMES, CATS, UNLOCK_TEXT, LEVEL_REWARDS, levelInfo, levelOfUnlock, unlockText, newRewards, markSeen, DEFAULT_LOOK, byId, load, save, wallet, earn, achievements, owns, priceOf, buy, wear, draw, animate, movePose, dataURL, isFree, applyScene, sceneBox, sceneDef, STARTERS, needsStarter, pickStarter, showPicker };
   // every page that loads this file shows the player's chosen scene
   applyScene(load().look.scene);
 })();
