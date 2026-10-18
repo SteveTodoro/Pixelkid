@@ -399,14 +399,15 @@
     return c;
   }
   // Bring an avatar to life on a canvas: gentle breathing, random blinks and the odd pet hop (about 8 frames a second).
-  // Stays still for people who ask for reduced motion. Returns { blink(), step(seconds), stop() }.
+  // o.look can be a look or a function returning the current one (e.g. while trying clothes on).
+  // Stays still for people who ask for reduced motion. Returns { blink(), redraw(), step(seconds), stop() }.
   function animate(cv, o = {}) {
     const still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
     let t = 0, blinkAt = 1.5 + Math.random() * 2, blinkTo = -1, hopAt = 4 + Math.random() * 5, timer = null, stopped = false;
     const FPS = 8;
     function frame() {
       const hop = t >= hopAt ? [1, 2, 2, 1][Math.floor((t - hopAt) * FPS)] || 0 : 0;
-      draw(o.look || load().look, { scale: o.scale || 10, pet: o.pet, canvas: cv, blink: t < blinkTo, breathe: still ? 0 : Math.floor(t / 0.75) % 2, petHop: still ? 0 : hop });
+      draw((typeof o.look === 'function' ? o.look() : o.look) || load().look, { scale: o.scale || 10, pet: o.pet, canvas: cv, blink: t < blinkTo, breathe: still ? 0 : Math.floor(t / 0.75) % 2, petHop: still ? 0 : hop });
     }
     function step(dt) {
       t += dt;
@@ -419,6 +420,7 @@
     if (!still) timer = setTimeout(tick, 1000 / FPS);
     return {
       blink() { blinkTo = t + 0.15; frame(); },
+      redraw: frame,
       step,
       stop() { stopped = true; clearTimeout(timer); },
     };

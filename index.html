@@ -10,8 +10,8 @@
   <script src="shared/avatar.js"></script>
   <style>
     /* header: the hero portrait fills the top-left corner, the title sits beside it */
-    .lib-head { position: relative; z-index: 1; display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 20px; padding: 16px 16px 4px; }
-    .lib-title { text-align: center; padding-right: 16px; }
+    .lib-head { position: relative; z-index: 1; display: grid; grid-template-columns: auto auto; justify-content: center; align-items: center; gap: 36px; padding: 16px 16px 4px; }
+    .lib-title { text-align: center; }
     .lib-head h1 { font-size: 3.4rem; color: #fff; margin: 0; text-shadow: 4px 4px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000; }
     .lib-head p { font-family: var(--pixel); font-size: 1.3rem; font-weight: 700; color: #fff; text-shadow: 2px 2px 0 #000; margin: 6px 0 0; }
     /* the hero portrait: a gold frame, on purpose nothing like the grey stone lesson cards */
@@ -27,22 +27,19 @@
     .me-dress { position: absolute; left: 50%; bottom: 5px; transform: translateX(-50%); white-space: nowrap; z-index: 1; padding: 1px 8px; font-family: var(--pixel); font-weight: 700; font-size: .85rem; color: #000; background: var(--gold); border: 2px solid #000; }
     /* the nameplate under the portrait */
     .pk-plate { position: relative; margin: 0 10px; padding: 8px 10px 9px; background: #1f1a12; border: 4px solid #000; border-top: 0; box-shadow: inset 0 0 0 2px #b37800; color: #eee; text-align: left; }
-    .pk-name { font-family: var(--pixel); font-weight: 700; font-size: 1.25rem; color: #ffd43b; text-shadow: 2px 2px 0 #000; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .me-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+    .me-row { display: flex; align-items: center; gap: 8px; }
     .me-row .xp-bar { flex: 1; min-width: 50px; }
     .pk-plate .xp-level { color: #7cfc3a; font-size: .95rem; white-space: nowrap; }
-    .me-meta { display: flex; flex-direction: column; margin-top: 6px; font-weight: 700; font-size: .85rem; color: #ddd; }
+    .me-meta { display: flex; flex-direction: column; margin-top: 4px; font-weight: 700; font-size: .85rem; color: #ddd; }
     .me-meta b { color: #ffd43b; }
     @media (max-width: 640px) {
       .lib-head { gap: 12px; padding: 12px 12px 2px; }
-      .lib-title { padding-right: 0; }
       .lib-head h1 { font-size: 2rem; }
       .lib-head p { font-size: 1rem; }
       .pk-hero { width: 150px; }
       .pk-frame { padding: 6px; }
       .pk-pic { height: 150px; }
       .pk-plate { margin: 0 6px; padding: 6px 7px; }
-      .pk-name { font-size: 1rem; }
       .pk-plate .xp-level { font-size: .75rem; }
       .me-meta { font-size: .72rem; }
       .me-dress { font-size: .7rem; bottom: 3px; }
@@ -103,7 +100,6 @@
         </div>
       </a>
       <div class="pk-plate">
-        <div class="pk-name" id="pk-name">Hero</div>
         <div class="me-row" id="level" hidden>
           <span class="xp-level" id="lvl"></span>
           <div class="xp-bar" aria-hidden="true"><div class="xp-fill" id="lvlfill"></div></div>
@@ -249,7 +245,6 @@ if (window.Avatar) {
   document.getElementById('pk-hero').addEventListener('pointerenter', () => heroAnim.blink());
   window.heroAnim = heroAnim;
 }
-if (settings.name) document.getElementById('pk-name').textContent = settings.name;
 if (settings.name) document.getElementById('hello').textContent = `Welcome back, ${settings.name}! Pick a quest.`;
 // the player level carries on across every lesson; new level rewards pop up once
 if (window.Avatar) {
@@ -268,12 +263,10 @@ if (window.Avatar) {
   Avatar.markSeen(p.level);
 }
 
-// one short line under the level: gems to spend and the next level prize
-const meta = document.getElementById('meta'), next = window.Avatar && Avatar.levelInfo().next;
-meta.innerHTML = '<span>💎 <b></b> to spend</span><span class="nx"></span>';
+// gems to spend, under the level
+const meta = document.getElementById('meta');
+meta.innerHTML = '<span>💎 <b></b> to spend</span>';
 meta.querySelector('b').textContent = wal.balance;
-meta.querySelector('.nx').textContent = next ? `🎁 Next prize ${next.label.split(' ')[0]} at Lv ${next.level}` : '';
-if (next) meta.title = `Level ${next.level}: ${next.label}`;
 
 const tabs = document.getElementById('tabs'), shelf = document.getElementById('shelf');
 // Around the World: the passport shows a stamp for every country lesson finished

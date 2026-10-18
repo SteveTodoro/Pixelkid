@@ -25,7 +25,7 @@
       </div>
       <div class="wd-wrap">
         <div class="panel-inner wd-left">
-          <div class="wd-stage"><img id="preview" alt="Your avatar"></div>
+          <div class="wd-stage"><canvas id="preview" role="img" aria-label="Your avatar"></canvas></div>
           <div class="wd-name" id="who"></div>
           <div class="xp-level wd-level" id="lvl"></div>
           <div id="action" class="wd-action"></div>
@@ -72,8 +72,11 @@
   const priceOf = it => A.priceOf(it, saved);
   const isWearing = it => it.parts ? Object.entries(it.parts).every(([c, id]) => saved.look[c] === id) : saved.look[cat] === it.id;
 
+  let previewAnim = null;
   function drawPreview() {
-    $('preview').src = A.dataURL(look, { scale: 12, pet: true });
+    // the preview is alive: it breathes and blinks, and blinks when you try something on
+    if (!previewAnim) previewAnim = A.animate($('preview'), { scale: 12, pet: true, look: () => look });
+    previewAnim.blink();
     $('preview').parentElement.style.background = A.sceneBox(look.scene);
     A.applyScene(look.scene); // previewing a scene changes the whole page
     $('bal').textContent = A.wallet().balance;
