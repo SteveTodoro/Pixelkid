@@ -18,6 +18,14 @@
 const K = '#1b1b1b', W = '#ffffff';
 const grid = (w, hh, f) => Array.from({ length: hh }, (_, y) => Array.from({ length: w }, (_, x) => f(x, y)).join(''));
 
+// a compass for hotspot questions (spots: 0 north, 1 east, 2 south, 3 west)
+const COMPASS = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img">
+  <circle cx="50" cy="50" r="46" fill="#fffdf2" stroke="${K}" stroke-width="4"/>
+  <path d="M50 22 L57 50 L50 78 L43 50 Z" fill="${K}"/><path d="M50 22 L57 50 L43 50 Z" fill="#e53935"/>
+  <g font-family="Lexend, sans-serif" font-weight="800" font-size="15" text-anchor="middle" fill="${K}">
+    <text x="50" y="18">N</text><text x="85" y="55">E</text><text x="50" y="92">S</text><text x="15" y="55">W</text></g></svg>`;
+const COMPASS_SPOTS = [{ x: 50, y: 13, r: 10, label: 'North' }, { x: 85, y: 50, r: 10, label: 'East' }, { x: 50, y: 87, r: 10, label: 'South' }, { x: 15, y: 50, r: 10, label: 'West' }];
+
 // The Union Jack, built layer by layer (stage 3 = the full flag)
 const FW = 31, FH = 19;
 const diag = (x, y) => Math.min(Math.abs(y / (FH - 1) - x / (FW - 1)), Math.abs(y / (FH - 1) - (1 - x / (FW - 1))));
@@ -194,7 +202,7 @@ window.LESSON = {
             'A [[compass]] shows the four main directions: north, east, south and west. On most maps, north is at the top and south is at the bottom.',
             'To remember them going clockwise, say: Never Eat Soggy Weetabix! (Weetabix is a breakfast cereal in England.)',
           ],
-          check: { q: 'You are looking at a map and move your finger straight DOWN the page. Which way are you going?', options: ['South', 'North', 'East'], answer: 0, hint: 'North is at the top of the map – so which direction is at the bottom?' },
+          check: { type: 'hotspot', q: 'You are looking at a map and move your finger straight DOWN the page. Tap the direction you are going.', img: COMPASS, spots: COMPASS_SPOTS, answer: 2, hint: 'North is at the top of the map – so which direction is at the bottom?', explain: 'Down the page is South!' },
         },
         {
           title: 'Far away in Europe', pic: '✈️❄️',
@@ -202,7 +210,7 @@ window.LESSON = {
             'England is in [[europe|Europe]], about 9,500 km north-west of Thailand. The flight takes about 13 hours – more than twice as long as flying to Japan!',
             'Because England is so far north, it is much colder than Thailand. In winter it can even snow.',
           ],
-          check: { q: 'Your family is flying from Bangkok to London in December. What should you pack?', options: ['A warm coat and a hat', 'Only shorts and flip-flops', 'Nothing – it will be hot'], answer: 0 },
+          check: { type: 'evidence', q: 'Your family is flying from Bangkok to London in December. Tap the sentence that tells you to pack a warm coat.', answer: 'it can even snow', hint: 'December is winter in England. What can happen in winter?', explain: 'It can even snow – pack a warm coat and a hat!' },
         },
         {
           title: 'Four countries in one', pic: '🏴󠁧󠁢󠁥󠁮󠁧󠁿🏴󠁧󠁢󠁳󠁣󠁴󠁿🏴󠁧󠁢󠁷󠁬󠁳󠁿',
@@ -210,7 +218,7 @@ window.LESSON = {
             'England shares a big island called [[great britain|Great Britain]] with Scotland and Wales. Across the sea to the west is Northern Ireland.',
             'Together these four countries make one bigger country: the [[united kingdom|United Kingdom]], or the UK for short.',
           ],
-          check: { q: 'Isla lives in Scotland. Does she live in the UK?', options: ['Yes – Scotland is one of the four UK countries', 'No – only England is in the UK', 'No – Scotland is in Asia'], answer: 0 },
+          check: { type: 'evidence', q: 'Isla lives in Scotland. Does she live in the UK? Tap the sentence that tells you.', answer: 'four countries make one bigger country', hint: 'Find the sentence about the United Kingdom.', explain: 'Yes! Scotland is one of the four countries in the UK.' },
         },
         {
           title: 'Four capital cities', pic: '🏙️',
@@ -218,7 +226,7 @@ window.LESSON = {
             'Each of the four countries has its own [[capital]] city: London in England, Edinburgh in Scotland, Cardiff in Wales and Belfast in Northern Ireland.',
             'London is also the capital of the whole UK. It is the biggest city in England, with about 9 million people.',
           ],
-          check: { q: 'A family moves from Cardiff to London. Which countries are they moving between?', options: ['From Wales to England', 'From Scotland to Wales', 'From England to Scotland'], answer: 0, hint: 'Cardiff is the capital of Wales.' },
+          check: { type: 'type', q: 'A family moves from Cardiff to London. Which country are they moving FROM?', answer: ['Wales'], placeholder: 'a country', hint: 'Cardiff is the capital of which country?', explain: 'Cardiff is in Wales – they are moving from Wales to England.' },
         },
         {
           title: 'Four seasons', pic: '🌸☀️🍂❄️',
@@ -226,7 +234,7 @@ window.LESSON = {
             'England has four seasons. In spring, flowers bloom and lambs are born. Summer is warm, with long, light evenings – it can stay light until 10 o\'clock at night!',
             'In autumn, the leaves turn orange and fall off the trees. Winter is cold and the days are short.',
           ],
-          check: { q: 'It is October in London. Crunchy orange leaves are falling off the trees. Which season is it?', options: ['Autumn', 'Spring', 'Summer'], answer: 0, hint: 'Which season do leaves fall in?' },
+          check: { type: 'type', q: 'It is October in London. Crunchy orange leaves are falling off the trees. Which season is it?', answer: ['autumn', 'fall'], placeholder: 'a season', hint: 'Which season do leaves fall in?', explain: 'Autumn – the leaves turn orange and fall.' },
         },
       ],
     },
@@ -242,9 +250,9 @@ window.LESSON = {
         'What languages are spoken in Wales?',
       ],
       questions: [
-        { type: 'mcq', q: 'What does UK stand for?', options: ['United Kingdom', 'Under King', 'Unicorn Kingdom'], answer: 0 },
+        { type: 'type', q: 'What does UK stand for?', answer: ['United Kingdom', 'the United Kingdom'], placeholder: 'two words', hint: 'U… K…' },
         { type: 'mcq', q: 'Which famous clock tower does the song say is in London?', options: ['Big Ben', 'Big Bob', 'Tall Tim'], answer: 0 },
-        { type: 'mcq', q: 'What is the capital of Northern Ireland?', options: ['Belfast', 'London', 'Tokyo'], answer: 0 },
+        { type: 'type', q: 'What is the capital city of Northern Ireland?', answer: ['Belfast'], placeholder: 'a city', hint: 'It starts with B.' },
         { type: 'mcq', q: 'The song says Scotland covers which part of Great Britain?', options: ['the north', 'the south', 'the middle'], answer: 0 },
         { type: 'mcq', q: 'Which two languages does the song say are spoken in Wales?', options: ['Welsh and English', 'French and Spanish', 'Japanese and Thai'], answer: 0 },
         { type: 'mcq', q: 'Which famous band does the song say was born in England?', options: ['The Beatles', 'The Penguins', 'The Pandas'], answer: 0 },
@@ -336,7 +344,7 @@ window.LESSON = {
             'People in the UK drink about 100 million cups of tea every day – usually with milk. Afternoon tea is a treat with little sandwiches, cakes and scones.',
             'A scone is a little round cake. You slice it in half and spread on strawberry jam and thick, creamy clotted cream. Yum!',
           ],
-          check: { q: 'Your English friend asks, "Fancy a cuppa?" What would you like to drink?', options: ['A cup of tea', 'A bowl of soup', 'A glass of mango juice'], answer: 0, hint: 'A "cuppa" is a cup of something hot that people in the UK love.' },
+          check: { type: 'type', q: 'Your English friend asks, "Fancy a cuppa?" What drink are they offering you?', answer: ['tea', 'a cup of tea', 'cup of tea', 'a tea'], placeholder: 'a drink', hint: 'People in the UK drink about 100 million cups of it every day!', explain: 'A cuppa is a cup of tea – usually with milk.' },
         },
         {
           title: 'Football and fish and chips', pic: '⚽🐟🍟',
@@ -344,7 +352,7 @@ window.LESSON = {
             'Football, rugby, cricket and tennis all got their first rules in England. Today millions of people watch the football Premier League every weekend.',
             'A favourite treat is fish and chips: fish fried in crispy batter with chunky chips, often eaten at the seaside.',
           ],
-          check: { q: 'It is Saturday afternoon in England. Lots of people are cheering in a huge stadium. What are they most likely watching?', options: ['A football match', 'A sumo wrestling match', 'A Songkran water fight'], answer: 0 },
+          check: { type: 'evidence', q: 'It is Saturday afternoon in England. Lots of people are cheering in a huge stadium. Tap the sentence that tells you what they are probably watching.', answer: 'premier league', hint: 'What do millions of people watch every weekend?', explain: 'Football! Millions watch the Premier League every weekend.' },
         },
         {
           title: 'A bear from Peru', pic: '🧸🍊',
@@ -352,7 +360,7 @@ window.LESSON = {
             'One of England\'s most famous characters is Paddington: a polite little bear from Peru in a blue coat and a red hat.',
             'He was found at Paddington station in London, and he loves marmalade sandwiches – he keeps one under his hat for emergencies!',
           ],
-          check: { q: 'What would Paddington most like for his lunch?', options: ['A marmalade sandwich', 'A bowl of sushi', 'A plate of carrots'], answer: 0 },
+          check: { type: 'evidence', q: 'What would Paddington most like for his lunch? Tap the sentence that tells you.', answer: 'marmalade sandwiches', hint: 'What does he keep under his hat?', explain: 'A marmalade sandwich, of course!' },
         },
         {
           title: 'Peppa Pig', pic: '🐷',
@@ -360,7 +368,7 @@ window.LESSON = {
             'Peppa Pig is a cartoon made in England. Children in more than 180 countries watch it – maybe you have too!',
             'Peppa lives with Mummy Pig, Daddy Pig and her little brother George, who loves his toy dinosaur. Her favourite thing of all? Jumping up and down in muddy puddles!',
           ],
-          check: { q: 'Peppa\'s little brother George has lost his favourite toy. What is he looking for?', options: ['His toy dinosaur', 'His teddy bear', 'His football'], answer: 0, hint: 'George shouts "Dine-saw!"' },
+          check: { type: 'evidence', q: 'Peppa\'s little brother George has lost his favourite toy. Tap the sentence that tells you what he is looking for.', answer: 'toy dinosaur', hint: 'George shouts "Dine-saw!"', explain: 'His toy dinosaur!' },
         },
       ],
     },
@@ -377,7 +385,7 @@ window.LESSON = {
       ],
       questions: [
         { type: 'mcq', q: 'Which part of England is London in?', options: ['the south-east', 'the far north', 'the middle of the sea'], answer: 0 },
-        { type: 'mcq', q: 'Which wild animals can you see in Richmond Park?', options: ['deer', 'elephants', 'kangaroos'], answer: 0 },
+        { type: 'type', q: 'Which wild animals can you see in Richmond Park?', answer: ['deer', 'a deer', 'deers'], placeholder: 'an animal', hint: 'They have antlers!' },
         { type: 'mcq', q: 'What is the Tube?', options: ['An underground railway – the oldest in the world', 'A giant water slide', 'A tall tower'], answer: 0 },
         { type: 'mcq', q: 'What is kept in the Tower of London?', options: ['the Crown Jewels', 'the world\'s biggest teapot', 'a dinosaur'], answer: 0 },
         { type: 'mcq', q: 'The name Big Ben really belongs to…', options: ['the giant bell inside the tower', 'the tallest guard', 'the river'], answer: 0, explain: 'The tower itself is called the Elizabeth Tower.' },
@@ -549,14 +557,14 @@ window.LESSON = {
         button: 'Watch the bonus video ▶',
       },
       questions: [
-        { type: 'mcq', q: 'You walk from England to Scotland. Which direction are you walking?', options: ['North', 'South', 'East'], answer: 0, hint: 'Scotland is above England on the map.' },
+        { type: 'hotspot', q: 'You walk from England to Scotland. Tap the direction you are walking.', img: COMPASS, spots: COMPASS_SPOTS, answer: 0, hint: 'Scotland is above England on the map.' },
         { type: 'mcq', q: 'Sir Scorch says, "England is in Asia, right next to Japan!" What could you tell him?', options: ['No – England is in Europe', 'Yes, that\'s right', 'No – England is in Africa'], answer: 0 },
         { type: 'gap', q: 'The capital city of Scotland is ___.', options: ['Edinburgh', 'Cardiff', 'Belfast'], answer: 0 },
-        { type: 'mcq', q: 'Which four countries make up the UK?', options: ['England, Scotland, Wales and Northern Ireland', 'England, France, Spain and Wales', 'England, Japan, Thailand and Scotland'], answer: 0 },
+        { type: 'oddone', q: 'Which one is NOT one of the four countries in the UK?', items: ['England', 'Scotland', 'France', 'Wales'], answer: 2, why: 'Why is France the odd one out?', reasons: ['It is a different country, across the sea', 'It is the smallest', 'It is in Asia'], reason: 0, hint: 'The UK is England, Scotland, Wales and Northern Ireland.' },
         { type: 'mcq', q: 'You are on a ferry from England to France. Which way are you sailing?', options: ['South', 'North', 'West'], answer: 0 },
         { type: 'mcq', q: 'A flight to Japan takes about 6 hours, and a flight to England about 13 hours. What does that tell you?', options: ['England is further from Thailand than Japan is', 'Japan is further away', 'They are next to each other'], answer: 0 },
         { type: 'mcq', q: 'Your friend says Peppa Pig is a cartoon from Japan. What could you tell them?', options: ['No – Peppa Pig was made in England', 'Yes, that\'s right', 'No – Peppa Pig was made in Thailand'], answer: 0 },
-        { type: 'mcq', q: 'A tall ship needs to sail under Tower Bridge. What happens?', options: ['The bridge lifts up in two parts', 'The ship has to turn back', 'The bridge sinks'], answer: 0 },
+        { type: 'predict', q: 'A tall ship needs to sail under Tower Bridge. What do you predict will happen?', options: ['The bridge lifts up in two parts', 'The ship has to turn back', 'The bridge sinks'], answer: 0, reveal: 'The road in the middle lifts up in two parts to let the ship through!', then: { q: 'So Tower Bridge was built to…', options: ['open up for big boats', 'float down the river', 'spin around in a circle'], answer: 0 } },
         { type: 'order', q: 'Put the steps for an English cup of tea in order.', items: ['☕ Get a teacup', '🫖 Pour the tea into the cup', '🥛 Add a splash of milk to the tea'], hint: 'The milk goes into the tea, so the tea goes in first.' },
         { type: 'tf', q: 'The Union Jack has a dragon on it for Wales.', answer: false, explain: 'Wales isn\'t on the Union Jack – its dragon has its own flag!' },
         { type: 'mcq', q: 'In the old legend, what did St George fight to save a town?', options: ['a dragon', 'an oni', 'a giant jellyfish'], answer: 0 },
