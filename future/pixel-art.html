@@ -57,6 +57,12 @@ const ALIEN = {
   ],
 };
 
+// pictures + tap zones for hotspot questions
+const HEART_PIC = Pixel.svg(HEART.target, HEART.colors);
+const HEART_SPOTS = [{ x: 27.8, y: 31, r: 6, label: 'the white highlight' }, { x: 66.7, y: 37.5, r: 7, label: 'plain red' }, { x: 50, y: 56, r: 7, label: 'plain red' }, { x: 5.6, y: 37.5, r: 5, label: 'the black outline' }];
+const GHOST_PIC = Pixel.svg(GHOST.target, GHOST.colors);
+const GHOST_SPOTS = [{ x: 22, y: 70, r: 11, label: 'the left side' }, { x: 81, y: 72, r: 11, label: 'the right side' }, { x: 50, y: 22, r: 11, label: 'the top' }];
+
 // the boss: The Smudger, who wants to blur every picture
 const SMUDGER = Pixel.svg([
   '...kkkkkk...',
@@ -130,7 +136,7 @@ window.LESSON = {
             'Every picture on a screen is made of tiny coloured squares called [[pixel|pixels]].',
             'Pixel is short for picture element. Each pixel can only be one colour at a time.',
           ],
-          check: { q: "You zoom right in on a photo on a screen. What do you see?", options: ["lots of tiny coloured squares", "tiny robots", "nothing at all"], answer: 0 },
+          check: { type: 'type', q: 'You zoom right in on a photo on a screen. What do you see? Lots of tiny coloured…', answer: ['squares', 'pixels', 'coloured squares', 'tiny coloured squares', 'tiny squares', 'square'], placeholder: 'one word', hint: 'Read the first sentence again.', explain: 'Tiny coloured squares – pixels!' },
         },
         {
           title: 'Millions of them!', pic: '📱🔍',
@@ -138,7 +144,7 @@ window.LESSON = {
             'A tablet screen has millions of pixels. They are so tiny and packed so close together that you cannot see them one by one.',
             'That is why photos on a screen look smooth – until you zoom right in!',
           ],
-          check: { q: "Why does a photo on a tablet look smooth?", options: ["Its pixels are too small and close together to spot", "Photos have no pixels", "The screen is polished"], answer: 0 },
+          check: { type: 'evidence', q: 'Why does a photo on a tablet look smooth? Tap the sentence that explains it.', answer: 'so tiny and packed so close together', hint: 'Find the sentence about how TINY the pixels are.', explain: 'The pixels are so tiny and close together that you cannot spot them!' },
         },
         {
           title: 'Blocky old games', pic: '👾🕹️',
@@ -154,7 +160,7 @@ window.LESSON = {
             'Lots of games are still made with pixel art today, because it looks cool and is easy to understand. This whole lesson is pixel art!',
             'Pixel artists draw on a [[grid]] – rows and columns of squares, like squared paper.',
           ],
-          check: { q: "Which paper would be best for planning pixel art?", options: ["squared paper", "lined paper", "tissue paper"], answer: 0 },
+          check: { type: 'evidence', q: 'Which paper would be best for planning pixel art? Tap the sentence that gives you the clue.', answer: 'like squared paper', hint: 'Find the sentence about the grid.', explain: 'Squared paper is a grid – perfect for pixel art!' },
         },
         {
           title: 'Choosing colours', pic: '🎨',
@@ -178,7 +184,7 @@ window.LESSON = {
         'How many pixels do computers use?',
       ],
       questions: [
-        { type: 'mcq', q: 'Pixel is short for…', options: ['picture element', 'pick some yellow', 'pizza slice'], answer: 0 },
+        { type: 'type', q: 'Pixel is short for picture…', answer: ['element', 'picture element'], before: 'picture', placeholder: 'one word', hint: 'It starts with e.' },
         { type: 'mcq', q: 'In the video, a pixel is a…', options: ['small square of colour', 'tiny robot', 'kind of sweet'], answer: 0 },
         { type: 'tf', q: 'One pixel on its own makes a big, detailed picture.', answer: false, explain: 'One pixel is just one square. LOTS of pixels together make a picture.' },
         { type: 'mcq', q: 'Why did the pixel portrait look blocky?', options: ['There were only a few pixels to use', 'The paint was wet', 'The computer was sleepy'], answer: 0 },
@@ -216,7 +222,7 @@ window.LESSON = {
             'Pixel artists usually start with an [[outline]] – a dark line around the edges of the shape.',
             'Then they fill in the big areas of colour. Details come last.',
           ],
-          check: { q: "You are drawing a pixel cat. Which order works best?", options: ["outline → big colours → details", "details → outline → big colours", "big colours → details → outline"], answer: 0 },
+          check: { type: 'build', q: 'You are drawing a pixel cat. Build the order that works best.', answer: ['outline', 'big colours', 'details'], join: ' → ', hint: 'Read the page: what comes first, and what comes last?', explain: 'Outline first, then big colours, details last.' },
         },
         {
           title: 'Light and shadow', pic: Pixel.svg(GHOST.target, GHOST.colors),
@@ -224,7 +230,7 @@ window.LESSON = {
             '[[Shading|shading]] means using a darker colour on the side in shadow. It makes things look round and solid.',
             'A [[highlight]] is a light pixel where the light shines. It makes things look shiny!',
           ],
-          check: { q: "The light is shining from the LEFT. Where should the shading go?", options: ["on the right side", "on the left side", "everywhere"], answer: 0, hint: "Shading goes on the side in shadow – away from the light." },
+          check: { type: 'hotspot', q: 'The light is shining on this ghost from the LEFT. Tap the side where the grey shading is.', img: GHOST_PIC, spots: GHOST_SPOTS, answer: 1, hint: 'Shading goes on the side in shadow – away from the light.', explain: 'The shading is on the right – the side away from the light.' },
         },
         {
           title: 'Mirror, mirror', pic: Pixel.svg(ALIEN.target, ALIEN.colors),
@@ -232,7 +238,7 @@ window.LESSON = {
             'Lots of characters are [[symmetrical]] – the same on both sides, like this alien.',
             'Designers draw one half, then mirror it to make the other half. It saves loads of time!',
           ],
-          check: { q: "Which of these is symmetrical?", options: ["🦋 a butterfly", "🐌 a snail", "☁️ a cloud"], answer: 0, hint: "Which one is the same on both sides?" },
+          check: { type: 'oddone', q: 'Three of these are symmetrical. Which one is NOT?', items: ['🦋 a butterfly', '👓 a pair of glasses', '❤️ a heart', '🐌 a snail'], answer: 3, why: 'Why is the snail the odd one out?', reasons: ['Its two sides are not the same', 'It is very slow', 'It lives in a shell'], reason: 0, hint: 'Symmetrical means the same on both sides.' },
         },
         {
           title: 'Fewer colours, better art', pic: '🟩🟦🟨',
@@ -240,7 +246,7 @@ window.LESSON = {
             'Using too many colours can make a picture messy. Pros pick a small [[palette]] – often just 4 to 6 colours.',
             'A light and a dark version of the same colour is great for shading.',
           ],
-          check: { q: "Leo used 20 different colours on a tiny sprite. What might happen?", options: ["It might look messy", "It will look neater", "It will disappear"], answer: 0 },
+          check: { type: 'evidence', q: 'Leo used 20 different colours on a tiny sprite. Tap the sentence that warns what might happen.', answer: 'make a picture messy', hint: 'Find the sentence about too many colours.', explain: 'Too many colours can look messy – pros use 4 to 6.' },
         },
         {
           title: 'Try, check, improve', pic: '↶✏️✅',
@@ -380,11 +386,11 @@ window.LESSON = {
       questions: [
         { type: 'mcq', q: 'Pixel is short for…', options: ['picture element', 'pixie elephant', 'pick a pencil'], answer: 0 },
         { type: 'tf', q: 'One pixel can be two colours at the same time.', answer: false, explain: 'Each pixel is just one colour.' },
-        { type: 'mcq', q: 'A palette is…', options: ['the set of colours you choose', 'a kind of brush', 'a robot'], answer: 0 },
+        { type: 'type', q: 'The set of colours you choose for a picture is called a…', answer: ['palette', 'pallet', 'palet', 'pallette', 'colour palette'], placeholder: 'one word', hint: 'It starts with p – artists hold one with paint on it!' },
         { type: 'mcq', q: 'Old video games looked blocky because…', options: ['they could only use a few pixels', 'players liked squares', 'the TVs were broken'], answer: 0 },
-        { type: 'mcq', q: 'Pixel artists usually draw on a…', options: ['grid', 'balloon', 'pancake'], answer: 0 },
+        { type: 'type', q: 'Pixel artists usually draw on rows and columns of squares. What is that called?', answer: ['grid', 'a grid'], placeholder: 'one word', hint: 'It is like squared paper.' },
         { type: 'mcq', q: 'What do pixel artists often draw first?', options: ['the outline', 'the sprinkles', 'the sky'], answer: 0 },
-        { type: 'mcq', q: 'To make something look shiny, add…', options: ['a light highlight', 'more black', 'a big X'], answer: 0 },
+        { type: 'hotspot', q: 'Tap the pixel that makes this heart look SHINY.', img: HEART_PIC, spots: HEART_SPOTS, answer: 0, hint: 'Look for a light pixel where the light shines.' },
         { type: 'mcq', q: 'Where does the darker shading colour go?', options: ['on the side in shadow', 'everywhere', 'only on the eyes'], answer: 0 },
         { type: 'tf', q: 'A symmetrical picture is the same on both sides.', answer: true },
         { type: 'mcq', q: 'The 🪞 Mirror tool helps you…', options: ['draw both halves at once', 'make it rain', 'delete everything'], answer: 0 },
