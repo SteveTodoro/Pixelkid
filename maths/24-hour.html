@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Night &amp; Day: The 24-Hour Clock</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <script src="../shared/pixel.js"></script>
+  <script src="../shared/pixel-icons.js"></script>
+  <script src="../shared/avatar.js"></script>
+  <script src="../shared/clock.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// ---------- pictures for this lesson ----------
+const C = (t, o) => Clock.svg(t, o);                                   // a plain clock
+const TXT = s => `<div style="font-family:Lexend,sans-serif;font-weight:800;font-size:1.6rem;line-height:1.5;text-align:center;padding:8px">${s}</div>`; // a number picture
+const LCD = t => `<div class="clk-lcd" style="display:inline-block">${t}</div>`; // a digital clock
+
+// the boss: the Night Owl, who wants it to be night-time for ever and has muddled every clock
+const OWL = Pixel.svg([
+  '.kk......kk.',
+  '.kvk....kvk.',
+  '.kvvkkkkvvk.',
+  'kvvvvvvvvvvk',
+  'kvyyyvvyyyvk',
+  'kvykyvvykyvk',
+  'kvyyyvvyyyvk',
+  'kvvvvoovvvvk',
+  'kvVVVooVVVvk',
+  'kvVtVVVVtVvk',
+  'kvVVtVVtVVvk',
+  '.kvVVVVVVvk.',
+  '..kvvvvvvk..',
+  '...oo..oo...',
+], { k: '#1b1b1b', v: '#5b3fa0', V: '#8e6ad8', y: '#ffd43b', o: '#ff8c1a', t: '#3a2a6e' });
+
+// a school day for the Day Dial
+const DAY = [
+  { time: '7:00', emoji: '🥣' }, { time: '8:30', emoji: '🏫' }, { time: '12:30', emoji: '🍝' },
+  { time: '16:00', emoji: '⚽' }, { time: '18:30', emoji: '🛁' }, { time: '20:00', emoji: '🛏️' },
+];
+
+// ---------- the lesson ----------
+window.LESSON = {
+  id: 'maths-24-hour',
+  subject: 'maths',
+  title: 'Night & Day: The 24-Hour Clock',
+  emoji: '🌙',
+  home: '../index.html',
+  finishAch: 'miner',
+  mascot: {
+    name: 'Tock the Clock-Bot',
+    sprite: Pixel.sprites.tock,
+    praise: ['Tick-tock, TOP clock!', 'Round-the-clock genius!', 'Clock-tastic!', 'Critical hit!', 'You nailed it!', 'Brilliant!', '24-carat answer!'],
+    oops: ['Oops! Have another go.', 'Not quite – morning or evening?', 'Hmm, think again!', 'So close! One more try.'],
+  },
+  glossary: {
+    '24-hour clock': { emoji: '⏰', def: 'A way of telling the time that counts all 24 hours of the day, from 00:00 to 23:59. It never needs a.m. or p.m.' },
+    midnight: { emoji: '🌙', def: '12 o\'clock in the middle of the night, when a new day begins. On the 24-hour clock it is 00:00.' },
+    timetable: { emoji: '🚆', def: 'A list of the times when things happen – like when trains or buses leave and arrive.' },
+    fortnight: { emoji: '🗓️', def: 'Two weeks, which is 14 days.' },
+    calendar: { emoji: '📅', def: 'A chart that shows all the days, weeks and months of a year.' },
+    'leap year': { emoji: '🐸', def: 'A year with 366 days instead of 365. It comes every 4 years, and February gets an extra day: 29 February.' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'Night & Day', short: 'Start', minutes: 1,
+      pic: LCD('19:30'),
+      hello: "Welcome back to the MATHS MINE! In Thailand, train tickets and phones often show times like 19:30. Today you crack the 24-hour clock – and the calendar too!",
+      question: 'A train leaves at 19:30. Is that in the morning or the evening? How could you tell?',
+      intro: 'Recap, read, watch, slide the sun round the Day Dial, count months on your knuckles – then beat **the Night Owl**!',
+      nameLabel: 'Player name:',
+    },
+
+    {
+      type: 'review', title: 'Last time…', short: 'Recap', minutes: 4,
+      from: { title: 'Clock Quest: To the Minute', emoji: '🕰️', url: 'clock-quest.html' },
+      facts: [
+        'Short hand first! Then count the long hand in 5s, and the little marks in 1s.',
+        'a.m. is from midnight to midday. p.m. is from midday to midnight.',
+        '60 seconds make 1 minute. 60 minutes make 1 hour.',
+        'Roman numerals: I = 1, V = 5, X = 10. IV is 4 and IX is 9.',
+      ],
+      questions: [
+        { type: 'mcq', q: 'What time does this clock show?', pic: C('4:38'), options: ['4:38', '5:38', '4:43'], answer: 0, hint: 'Short hand first – it has not reached the 5 yet. Then count 5s to the 7 and 3 more marks.' },
+        { type: 'mcq', q: 'You wake up at 7 o\'clock in the morning. How do we write that?', options: ['7:00 a.m.', '7:00 p.m.', '7:00 midnight'], answer: 0 },
+        { type: 'tf', q: 'There are 60 seconds in a minute AND 60 minutes in an hour.', answer: true },
+        { type: 'mcq', q: 'Which Roman numeral means 4?', options: ['IV', 'VI', 'XI'], answer: 0, hint: 'Take 1 away from 5: put the I BEFORE the V.' },
+      ],
+      game: {
+        game: 'clock', mode: 'read', title: 'Warm-up clocks',
+        intro: 'Quick warm-up: read these clocks to the minute.',
+        say: 'Short hand first, then the long red hand!',
+        times: ['3:52', '8:17'],
+      },
+    },
+
+    {
+      type: 'read', title: 'Hello, 24-hour clock!', short: 'Read 1', minutes: 7,
+      say: 'Read each page carefully – the checks use NEW times. Tap the yellow words for a 💎.',
+      cards: [
+        {
+          title: 'One day, 24 hours', pic: TXT('☀️ 12<br>+ 12 🌙<br>= 24 hours'),
+          text: [
+            'In one day, the short hand goes round the clock twice: 12 hours of a.m. and 12 more hours of p.m. 12 + 12 = 24 hours.',
+            'The [[24-hour clock]] does not start again at midday. It just keeps counting: 13, 14, 15… all the way up to 23!',
+          ],
+          check: { q: 'On the 24-hour clock, what time is it one hour after 12:00?', options: ['13:00', '1:00', '12:60'], answer: 0, hint: 'The 24-hour clock keeps counting after 12.' },
+        },
+        {
+          title: 'Morning times', pic: LCD('07:45'),
+          text: [
+            'Morning times look nearly the same on both clocks. But a 24-hour clock always shows 4 digits, so a 0 goes in front.',
+            'So 7:45 a.m. is 07:45. You say it "oh-seven forty-five".',
+          ],
+          check: { q: 'How does a 24-hour clock show ten past 9 in the morning?', options: ['09:10', '21:10', '9:10 a.m.'], answer: 0, hint: 'Morning: no adding. Just put a 0 in front of the hour.' },
+        },
+        {
+          title: 'Afternoon? Add 12!', pic: TXT('3 p.m.<br>3 + 12 = 15<br>') + LCD('15:00'),
+          text: [
+            'For p.m. times, add 12 to the hour. 3 p.m. is 3 + 12 = 15, so it is 15:00. The minutes stay the same.',
+            'Going back is easy too: take away 12. 18:30 is 18 − 12 = 6, so it is half past 6 in the evening.',
+          ],
+          check: { q: 'A cartoon starts at 4:20 in the afternoon. On the 24-hour clock that is…', options: ['16:20', '14:20', '04:20'], answer: 0, hint: 'Afternoon means add 12 to the 4.' },
+        },
+        {
+          title: 'Midnight and midday', pic: LCD('00:00'),
+          text: [
+            'At [[midnight]] a new day starts, so the 24-hour clock shows 00:00. Then 00:01, 00:02… The first hour of the day is all 00-something!',
+            'Midday is 12:00. After 23:59 the clock does not show 24:00 – it goes back to 00:00 for the next day.',
+          ],
+          check: { q: 'A clock shows 00:15. When is it?', options: ['15 minutes after midnight', 'quarter past 12 in the afternoon', 'quarter to midnight'], answer: 0, hint: '00 hours is the very start of the day.' },
+        },
+        {
+          title: 'Why do we need it?', pic: '🚆 🚌 ✈️',
+          text: [
+            'Trains, buses, planes and lots of phones use the 24-hour clock. A list of times like that is called a [[timetable]].',
+            'In Thailand, train tickets show times like 19:30. Nobody can mix up the morning train with the evening one!',
+          ],
+          check: { q: 'Why is "19:30" better than "7:30" on a train ticket?', options: ['it can only mean the evening, so nobody misses the train', 'it is a shorter number', 'it makes the train go faster'], answer: 0 },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: '12-hour and 24-hour times', short: 'Video 1', minutes: 7,
+      video: { id: 'Ib84G7OQY1k', title: 'How Do You Convert Between Analogue and Digital 24 Hour Time?', channel: 'Twinkl Educational Publishing', duration: '4:46' },
+      say: 'Watch how one time looks on three different clocks. Pause and try the puzzles before the video shows the answer!',
+      clues: [
+        'What does a 12-hour clock show that a 24-hour clock does not?',
+        'How is 6:45 p.m. written on a 24-hour clock?',
+        'What do you add to change a p.m. time?',
+        'What mistake did Alfie make?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'In the video, a.m. means…', options: ['before noon', 'after noon', 'at midnight'], answer: 0 },
+        { type: 'mcq', q: 'A 12-hour digital clock shows a.m. or p.m. What does a 24-hour clock always show instead?', options: ['two digits for the hours, with no a.m. or p.m.', 'the date', 'the seconds'], answer: 0 },
+        { type: 'mcq', q: '6:45 p.m. is 18:45, because it is 6 hours and 45 minutes after…', options: ['12 o\'clock midday', 'midnight', '6 o\'clock in the morning'], answer: 0 },
+        { type: 'tf', q: 'You add 12 hours to a.m. times too.', answer: false, explain: 'Only p.m. times get 12 added. Morning times stay the same (with a 0 in front if needed).' },
+        { type: 'mcq', q: 'Alfie put the times in order, but he got it wrong. What did he forget?', options: ['to check if each time was before or after noon', 'to count in 5s', 'to use Roman numerals'], answer: 0 },
+        { type: 'mcq', q: 'Anesha got home at 5 minutes past 8 in the evening. How is that written on a 24-hour clock?', options: ['20:05', '08:05', '18:05'], answer: 0, hint: '8 p.m. – add 12 to the 8.' },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Day Dial', short: 'Game 1', minutes: 9,
+      rounds: [
+        {
+          game: 'daydial', title: 'Slide through the day', events: DAY, start: '6:00', step: 15, nudge: 5,
+          intro: 'Drag along the day to move the sun and moon – watch the clocks change! One clock is 🔒 locked in each mission, so you have to work it out.',
+          say: 'Drag the sun from morning to night. What happens to the 24-hour clock after midday?',
+          missions: [
+            { time: '7:00', show: '12', yes: '7:00 a.m. is 07:00 – morning times just get a 0 in front!' },
+            { time: '15:00', show: '12', yes: '3 p.m. + 12 = 15:00. Home time!' },
+            { time: '19:30', show: '24', yes: '19 − 12 = 7, so 19:30 is half past 7 in the evening!' },
+            { time: '12:00', show: 'words', hide: ['24'], yes: 'Midday is 12:00 on both clocks – the sun is at the very top of the sky!' },
+            { time: '0:00', show: 'words', hide: ['24'], start: '3:00', yes: 'Midnight is 00:00 – the very start of the day!' },
+            {
+              time: '21:45', show: '24', yes: '21 − 12 = 9. So 21:45 is 9:45 p.m.!',
+              ask: [{ type: 'mcq', q: 'How do we say 21:45 in clock words?', options: ['quarter to 10 at night', 'quarter past 9 in the morning', 'quarter to 9 at night'], answer: 0, hint: '9:45 is 15 minutes before 10 o\'clock.' }],
+            },
+          ],
+        },
+        {
+          game: 'match', title: 'Clock twins',
+          intro: 'Match each 12-hour time to its 24-hour twin.',
+          say: 'p.m.? Add 12 to the hour!',
+          pairs: [
+            { a: '6:00 a.m.', b: '06:00' }, { a: '2:00 p.m.', b: '14:00' }, { a: '5:30 p.m.', b: '17:30' },
+            { a: '9:15 p.m.', b: '21:15' }, { a: '11:45 a.m.', b: '11:45' }, { a: 'midnight', b: '00:00' },
+          ],
+        },
+        {
+          game: 'platformer', title: 'P.M. Runner',
+          intro: 'Run and jump! Collect only the 24-hour times that are **after midday** – dodge the morning ones.',
+          say: '◀ ▶ to run, ⬆ to jump. 12 or more means after midday!',
+          prompt: 'Collect the p.m. times!',
+          items: [
+            { label: '13:00', ok: true },
+            { label: '18:30', ok: true },
+            { label: '21:15', ok: true },
+            { label: '16:45', ok: true },
+            { label: '20:00', ok: true },
+            { label: '09:00', ok: false, why: '09:00 is 9 o\'clock in the morning.' },
+            { label: '06:30', ok: false, why: '06:30 is half past 6 in the morning.' },
+            { label: '11:15', ok: false, why: '11:15 is still before midday.' },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'read', title: 'Days, months and years', short: 'Read 2', minutes: 6,
+      say: 'From seconds all the way up to years! Read on.',
+      cards: [
+        {
+          title: 'Bigger and bigger', pic: '⏱️ ➡ 📅',
+          text: [
+            'You know that 60 seconds make a minute, 60 minutes make an hour, and 24 hours make a day.',
+            '7 days make a week, and 2 weeks make a [[fortnight]]. 12 months make a year.',
+          ],
+          check: { q: 'Your cousin comes to stay for 2 weeks. How many days is that?', options: ['14', '7', '21'], answer: 0, hint: 'One week is 7 days. Double it!' },
+        },
+        {
+          title: 'Months come in different sizes', pic: '📅',
+          text: [
+            'Some months have 31 days and some have 30. February is the shortest, with just 28 days.',
+            'A [[calendar]] shows every day of every month, so you can count how many days until your birthday!',
+          ],
+          check: { q: 'Which month can NEVER have a 30th day?', options: ['February', 'March', 'November'], answer: 0, hint: 'Which month is the shortest?' },
+        },
+        {
+          title: 'The knuckle trick', pic: '✊ ✊',
+          text: [
+            'Make two fists. Start on the knuckle of your left little finger and say the months in order: knuckle, dip, knuckle, dip…',
+            'Every month on a knuckle has 31 days. Every month in a dip has 30 – except February.',
+          ],
+          check: { q: 'May lands on a knuckle. June comes next. Where does June land, and how long is it?', options: ['in a dip – 30 days', 'on a knuckle – 31 days', 'in a dip – 28 days'], answer: 0, hint: 'Knuckle, dip, knuckle, dip… what comes after a knuckle?' },
+        },
+        {
+          title: 'Leap years', pic: TXT('🐸<br>366 days'),
+          text: [
+            'A normal year has 365 days. But every 4 years there is a [[leap year]], with 366 days!',
+            'The extra day goes on the end of February. Someone born on that day only has their real birthday once every 4 years!',
+          ],
+          check: { q: 'In a leap year, what is the LAST day of February?', options: ['29 February', '28 February', '30 February'], answer: 0, hint: 'February usually has 28 days. A leap year adds one more.' },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'The Knuckle Trick', short: 'Video 2', minutes: 6,
+      video: { id: 'v7VjC8PdwJ8', title: 'How Many Days are in a Month? | Knuckle Mnemonic', channel: 'The Good and the Beautiful Kids', duration: '4:21' },
+      say: 'Make two fists and join in with the video!',
+      clues: [
+        'What is a mnemonic?',
+        'What does a knuckle stand for? What about a space?',
+        'Which month is the only one with fewer than 30 days?',
+        'What do you do after July?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'The video says a mnemonic device is…', options: ['a simple memory trick', 'a kind of calendar', 'a type of clock'], answer: 0 },
+        { type: 'mcq', q: 'In the trick, each knuckle stands for a month with…', options: ['31 days', '30 days', '28 days'], answer: 0 },
+        { type: 'mcq', q: 'Where do you start counting?', options: ['the little finger side of your left hand', 'the thumb of your right hand', 'your middle finger'], answer: 0 },
+        { type: 'mcq', q: 'After July you have run out of knuckles. What do you do next?', options: ['start on the first knuckle of your other hand for August', 'start again with January', 'put August in a dip'], answer: 0 },
+        { type: 'mcq', q: 'The video checks October. How many days does October have?', options: ['31', '30', '28'], answer: 0 },
+        { type: 'tf', q: 'Every 4 years, in a leap year, February has 29 days.', answer: true },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Calendar Quest', short: 'Game 2', minutes: 8,
+      rounds: [
+        {
+          game: 'knuckles', title: 'Knuckle months',
+          intro: 'Make two fists like these! Tap along the knuckles and dips in order to find out how long each month is.',
+          say: 'Start on the left little finger knuckle: January!',
+          ask: [
+            { type: 'mcq', q: 'Your birthday is on 30 April. What is the date the next day?', options: ['1 May', '31 April', '29 April'], answer: 0, hint: 'April is in a dip, so it only has 30 days.' },
+            { type: 'mcq', q: 'Which two months next door to each other BOTH have 31 days?', options: ['July and August', 'June and July', 'November and December'], answer: 0, hint: 'Look where your left hand ends and your right hand starts.' },
+          ],
+        },
+        {
+          game: 'sort', title: 'How many days?',
+          intro: 'Sort the months: 31 days, 30 days, or the shortest month of all? Use your knuckles!',
+          say: 'Knuckles have 31, dips have 30!',
+          buckets: [
+            { id: 'k', label: '31 days', emoji: '✊' },
+            { id: 'd', label: '30 days', emoji: '📅' },
+            { id: 'f', label: '28 or 29 days', emoji: '🐸' },
+          ],
+          items: [
+            { label: 'January', bucket: 'k' },
+            { label: 'February', bucket: 'f' },
+            { label: 'March', bucket: 'k' },
+            { label: 'April', bucket: 'd', hint: 'April comes after March (a knuckle), so it is in a dip.' },
+            { label: 'June', bucket: 'd' },
+            { label: 'August', bucket: 'k', hint: 'August starts the right hand – on a knuckle!' },
+            { label: 'September', bucket: 'd' },
+            { label: 'October', bucket: 'k' },
+            { label: 'November', bucket: 'd' },
+            { label: 'December', bucket: 'k' },
+          ],
+        },
+        {
+          game: 'crossword', title: 'Time crossword',
+          intro: 'Solve the clues to fill in the crossword.',
+          say: 'Tap a clue, then type the word!',
+          entries: [
+            { answer: 'MIDNIGHT', clue: '00:00 on the 24-hour clock' },
+            { answer: 'FORTNIGHT', clue: 'Two weeks, or 14 days' },
+            { answer: 'FEBRUARY', clue: 'The shortest month' },
+            { answer: 'LEAP', clue: 'A ___ year has 366 days' },
+            { answer: 'TIMETABLE', clue: 'A list of times when trains or buses leave' },
+            { answer: 'HOURS', clue: 'There are 24 of these in a day' },
+            { answer: 'WEEK', clue: '7 days' },
+            { answer: 'MIDDAY', clue: '12:00 in the middle of the day' },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
+      say: 'Time to move – all day long!',
+      wiggle: {
+        title: '🌅 Round-the-Clock Moves!',
+        seconds: 60,
+        moves: [
+          '🌅 06:00 – sunrise! Stretch up slowly, like the sun coming up.',
+          '🏫 08:30 – march on the spot all the way to school.',
+          '⚽ 16:00 – kick an invisible ball 10 times!',
+          '🛏️ 20:00 – tiptoe quietly to bed…',
+          '🦉 00:00 – midnight! Flap your wings like an owl: hoo-hoo!',
+          '✊ Knuckle check! Make two fists and tap each knuckle.',
+        ],
+      },
+      tryit: {
+        title: '🏠 Try it at home: 24-Hour Clock Spotter',
+        intro: 'With a grown-up, hunt around your home for clocks. Which ones use the 24-hour clock?',
+        steps: [
+          'Find each thing on the list and look at its clock.',
+          'Tap the first box if you found it.',
+          'Tap the second box if it shows 24-hour time (like 15:30, with no a.m. or p.m.).',
+        ],
+        table: {
+          cols: ['I found it', 'It uses 24-hour time'],
+          items: ['📱 a phone or tablet', '📺 the TV or TV box', '⏰ an alarm clock', '🚗 the car', '🎫 an old train or bus ticket'],
+        },
+        tip: 'Tap once for ✅ and twice for ❌. Many phones let you switch between the 12-hour and 24-hour clock in the settings!',
+      },
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: The Night Owl', short: 'Boss', kind: 'Boss battle', minutes: 7,
+      say: 'Oh no! The NIGHT OWL has muddled every clock in town – nobody knows if it is morning or night! Every right answer is a hit. Bring back the day, {name}!',
+      boss: {
+        name: 'The Night Owl', sprite: OWL, attack: ['🌙', '⭐'], spin: true,
+        lines: {
+          intro: 'Hoo-hoo! I\'m the NIGHT OWL! I\'ve muddled every clock – now nobody knows 7 a.m. from 19:00! Whoo will stop me?',
+          hurt: ['Hoo-OUCH!', 'My feathers are ruffled!', 'Whoo taught you that?!', 'Twit-twoo… that hurt!'],
+          taunt: ['Hoo-hoo! Wrong half of the day!', 'Too sleepy to count to 24?', 'Twit-twoo, that\'s not true!', 'Night-night, wrong answer!'],
+          angry: 'Whoo-hoo-HOO! Now I\'ll make it MIDNIGHT for ever!',
+          dodge: 'Moonbeam swoop… GO!',
+          miss: 'Hoo?! You dodged every single star!',
+          last: 'Oh no… I can feel the sun coming up…',
+          defeat: 'NOOO! It\'s 06:00 – SUNRISE! That\'s an owl\'s bedtime… zzz…',
+          win: 'Hoo-hoo! It\'s night for ever! Come back when you can count all 24 hours!',
+          stunned: 'Hoo… hoo… what time is it?',
+          beg: ['Wait! I just need a little nap!', 'Hoo-please! I\'ll fix all the clocks!', 'Let me fly home before 06:00!'],
+        },
+      },
+      bonus: {
+        title: '⭐ Bonus quest (for a grown-up to help with)',
+        text: 'Want more practice? Watch "Understanding the 24-Hour Clock" (5 min) – it even shows what happens to a film that goes past midnight!',
+        url: 'https://www.youtube.com/watch?v=dQ5vIHA4L5s',
+        button: 'Watch the bonus video ▶',
+      },
+      questions: [
+        { type: 'mcq', q: 'What is 8:15 p.m. on the 24-hour clock?', options: ['20:15', '08:15', '18:15'], answer: 0, hint: 'p.m. means add 12 to the hour.' },
+        { type: 'mcq', q: 'A 24-hour clock shows 06:40. When is that?', options: ['20 to 7 in the morning', '20 to 7 in the evening', '20 past 6 in the evening'], answer: 0, hint: '06 is less than 12, so it is the morning. 6:40 is 20 minutes before 7.' },
+        { type: 'mcq', q: 'Which clock shows the same time as 14:30?', optionsHtml: true, options: [C('2:30'), C('4:30'), C('2:15')], answer: 0, hint: '14 − 12 = 2.' },
+        { type: 'gap', q: 'There are ___ hours in one day.', options: ['24', '12', '60'], answer: 0 },
+        { type: 'mcq', q: 'On the 24-hour clock, midnight is…', options: ['00:00', '12:00', '24:60'], answer: 0 },
+        { type: 'mcq', q: 'The train timetable says 17:05. What is that in 12-hour time?', options: ['5:05 p.m.', '7:05 p.m.', '5:05 a.m.'], answer: 0, hint: 'Take away 12: 17 − 12 = ?' },
+        { type: 'mcq', q: 'How many days does September have?', options: ['30', '31', '28'], answer: 0, hint: 'Use your knuckles! September lands in a dip.' },
+        { type: 'tf', q: 'A leap year has 366 days.', answer: true },
+        { type: 'mcq', q: 'Which time is the LATEST in the day?', options: ['21:10', '09:50', '12:45'], answer: 0, hint: 'On the 24-hour clock, a bigger hour means later in the day.' },
+        { type: 'order', q: 'Put these in order, from the start of the day.', items: ['🌙 00:30', '🥣 07:15', '🍝 12:30', '🛏️ 19:45'], hint: 'A new day starts at 00:00.' },
+        { type: 'mcq', q: 'Today is 31 May. What is the date tomorrow?', options: ['1 June', '32 May', '31 June'], answer: 0, hint: 'May has 31 days, so after the 31st comes a new month.' },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>

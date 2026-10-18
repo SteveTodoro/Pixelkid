@@ -1027,3 +1027,37 @@ a { color: var(--brand-dark); }
 .px-result p { margin: 6px 0 0; }
 .px-result-tip { font-size: .95rem; color: #555; }
 .wd-level { margin: 0 0 8px; }
+
+/* ---------- Day Dial (24-hour clock) ---------- */
+.daydial .arcade-canvas { cursor: ew-resize; touch-action: none; }
+.dd-reads { display: flex; gap: 12px; justify-content: center; align-items: stretch; flex-wrap: wrap; margin: 14px auto 0; max-width: 720px; }
+.dd-read { background: var(--paper); border: 4px solid #000; padding: 6px 10px 10px; display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 150px; }
+.dd-title { font-family: var(--pixel); font-weight: 700; font-size: 1rem; }
+.dd-face { width: 104px; height: 104px; }
+.dd-face svg { width: 100%; height: 100%; display: block; }
+.dd-lcd { font-size: 1.9rem; min-width: 0; padding: 4px 12px; margin: auto 0; white-space: nowrap; }
+.dd-lcd.locked { color: #ffd43b; text-shadow: none; }
+.dd-lcd.locked::before { content: '🔒 '; font-size: 1.1rem; vertical-align: middle; }
+
+/* ---------- Time Hops (durations) ---------- */
+.th-list { text-align: center; font-size: 1.1rem; margin: 10px auto 0; max-width: 720px; font-variant-numeric: tabular-nums; }
+.th-list b { font-family: var(--read); color: var(--brand-dark); }
+.th-hop { font-family: var(--read); }
+
+/* ---------- Knuckle months ---------- */
+.kn-hands { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
+.kn-hand { display: flex; flex-direction: column; align-items: center; }
+.kn-label { font-family: var(--pixel); font-weight: 700; margin-bottom: 6px; }
+.kn-row { display: flex; align-items: flex-end; }
+.kn-slot { width: 46px; border: 3px solid #000; border-bottom: 0; background: #f2c39b; box-shadow: inset -4px 0 0 #cf9466, inset 4px 4px 0 #ffe0c4; cursor: pointer; padding: 4px 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 2px; color: #1b1b1b; touch-action: manipulation; }
+.kn-slot.knuckle { height: 82px; border-radius: 14px 14px 0 0; }
+.kn-slot.dip { height: 58px; background: #e6b085; margin: 0 -3px; position: relative; z-index: 1; }
+.kn-slot.spare { opacity: .55; cursor: default; }
+.kn-slot.glow { outline: 4px solid #ffd43b; outline-offset: -8px; animation: blink 1s steps(2) infinite; }
+.kn-slot.done.knuckle { background: #9be15d; box-shadow: inset -4px 0 0 #4caf2a, inset 4px 4px 0 #d8ffb8; }
+.kn-slot.done.dip { background: #8fdcff; box-shadow: inset -4px 0 0 #2f80ed, inset 4px 4px 0 #e6f7ff; }
+.kn-month { font-family: var(--pixel); font-weight: 700; font-size: .8rem; }
+.kn-days { font-family: var(--read); font-weight: 800; font-size: 1.15rem; }
+.kn-fist { width: 100%; height: 64px; background: #f2c39b; border: 3px solid #000; box-shadow: inset -4px -4px 0 #cf9466; display: flex; justify-content: space-evenly; align-items: flex-start; }
+.kn-fist i { display: block; width: 3px; height: 26px; background: #cf9466; }
+@media (max-width: 420px) { .kn-slot { width: 38px; } .kn-month { font-size: .7rem; } }
