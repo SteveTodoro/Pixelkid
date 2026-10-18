@@ -194,7 +194,7 @@ window.LESSON = {
           intro: 'Put the life cycle of a flowering plant in order, then answer Professor Bolt\'s questions.',
           say: 'Think about what has to happen FIRST!',
           questions: [
-            { type: 'order', q: 'Put the life cycle in order, starting with the seed.', items: ['🫘 a seed', '🌱 it germinates', '🌿 a seedling grows', '🌷 the adult plant flowers', '🐝 the flowers are pollinated', '🍎 seeds grow inside the fruit'], hint: 'Seed first. Seeds can only be made after pollination.' },
+            { type: 'order', q: 'Put the life cycle in order. The seed is done for you!', items: ['🫘 a seed', '🌱 it germinates (sprouts)', '🌿 a seedling grows', '🌷 the adult plant flowers', '🐝 the flowers are pollinated', '🍎 seeds grow inside the fruit'], start: true, ends: ['START', 'END'], hint: 'Seeds can only be made after pollination.' },
             { type: 'mcq', q: 'What comes straight after the seeds are spread to a new place?', options: ['They germinate and the cycle starts again', 'The plant grows its first flower', 'The fruit turns back into a flower'], answer: 0 },
           ],
         },
@@ -473,7 +473,7 @@ window.LESSON = {
         { type: 'tf', q: 'A tomato is a fruit, because it grows from the flower and holds seeds.', answer: true },
         { type: 'mcq', q: 'A seed has tiny hooks all over it. How does it most likely travel?', options: ['It sticks to animals\' fur', 'It floats on the sea', 'It spins on the wind'], answer: 0 },
         { type: 'mcq', q: 'Why do plants spread their seeds far away?', options: ['So the seedlings are not squashed together fighting for light, water and space', 'So the parent plant gets lonely', 'So the seeds can see the world'], answer: 0 },
-        { type: 'order', q: 'Put the life cycle in order.', items: ['🫘 seed', '🌱 germination', '🌷 the plant flowers', '🐝 pollination', '🍎 fruit with seeds', '🌬️ seed dispersal'], hint: 'Start with the seed – and seeds can only be made after pollination.' },
+        { type: 'order', q: 'Put the life cycle in order. The seed is done for you!', items: ['🫘 a seed', '🌱 germination: the seed sprouts', '🌷 the plant grows flowers', '🐝 pollination: a bee carries pollen', '🍎 a fruit grows with new seeds inside', '🌬️ seed dispersal: the seeds are spread'], start: true, ends: ['START', 'END'], hint: 'Seeds can only be made after pollination.' },
       ],
     },
   ],

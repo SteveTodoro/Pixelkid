@@ -280,6 +280,17 @@ a { color: var(--brand-dark); }
 .order-list li::before { content: counter(ord); flex: none; width: 32px; height: 32px; display: grid; place-items: center; background: #333; color: #fff; border: 2px solid #000; font-family: var(--pixel); font-weight: 700; }
 .order-list li.filled { border-style: solid; background: var(--good-soft); color: var(--ink); animation: pop .3s steps(3); }
 .order-list li.filled::before { background: var(--good); }
+.order-list li { position: relative; }
+.order-list .ord-text { flex: 1; }
+/* which end is which: FIRST / LAST (or SHORTEST / LONGEST …) */
+.order-list .ord-end { flex: none; padding: 2px 8px; font-family: var(--pixel); font-weight: 700; font-size: .8rem; color: #fff; background: #333; border: 2px solid #000; white-space: nowrap; }
+.order-list li.filled .ord-end { background: var(--good); }
+/* the box to fill next */
+.order-list li.next { border-color: #e09a00; background: #fff3a8; box-shadow: 0 0 0 3px #ffd43b; }
+.order-list li.next .ord-text::after { content: '◀ next one goes here'; font-size: .9rem; color: #8a5a00; }
+.order-list li.next .ord-text { color: transparent; }
+.order-list li.next .ord-text::after { color: #8a5a00; }
+.order-list li.given { opacity: .85; }
 .order-pool { display: grid; gap: 8px; }
 .order-pool .opt { text-align: left; }
 

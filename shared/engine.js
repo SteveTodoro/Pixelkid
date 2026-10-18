@@ -10,7 +10,7 @@
  *   daydial (24-hour Day Dial), timehops (durations on a time line), knuckles (days in each month).
  *   Around the World: worldmap (needs shared/world-map.js + shared/world.js), cook (Chef), phrases (Say it! greetings).
  * Questions can set optionsHtml: true to show pictures (HTML) as the answer buttons.
- * Question types (quiz, video, questions game): mcq, tf, gap, order.
+ * Question types (quiz, video, questions game): mcq, tf, gap, order (ends: ['FIRST', 'LAST'] labels, start: true pre-fills item 1).
  */
 (function () {
   'use strict';
@@ -617,7 +617,8 @@
     let wrong = false;
     if (q.type === 'order') {
       const text = h('p', { class: 'q-text', html: fmt(q.q, false) });
-      const body = GAMES.order({ items: q.items, hint: q.hint }, '', () => onRight(body, !wrong), { noStars: true, quiet: true, wrong: el => { wrong = true; onMiss(el); } });
+      let misses = 0; // order questions are many taps long, so the first slip is only a hint (no lost heart)
+      const body = GAMES.order({ items: q.items, hint: q.hint, ends: q.ends, start: q.start }, '', () => onRight(body, !wrong), { noStars: true, quiet: true, wrong: el => { wrong = true; onMiss(el, ++misses === 1); } });
       return [text, body];
     }
     const options = q.type === 'tf' ? ['✅ True', '❌ False'] : q.options;
@@ -670,11 +671,11 @@
         if (boss) { boss.hit(); if (boss.dodgeDue()) nextBtn.textContent = '⚠️ Get ready to DODGE! ▶'; else if (isLast) nextBtn.classList.add('gold', 'final'); }
         nextBtn.hidden = false;
       };
-      const onMiss = () => {
+      const onMiss = (el, free) => {
         say(q.hint ? '💡 ' + q.hint : oops());
         fb.className = 'feedback try'; fb.hidden = false;
         fb.innerHTML = '💡 ' + fmt(q.hint || 'Not quite – have another go!', false);
-        if (boss && boss.zap(qi)) {
+        if (boss && !free && boss.zap(qi)) {
           area.classList.add('locked');
           setTimeout(() => { area.classList.remove('locked'); lost(score); }, 1600);
         }
@@ -897,18 +898,25 @@
           h('div', { class: 'match-col right' }, right)));
     },
 
+    // Tap the items into the numbered boxes in order. r.ends: labels for the two ends (default FIRST / LAST),
+    // e.g. ['MOST friction', 'LEAST friction'] or ['SHORTEST', 'LONGEST']. r.start: true puts the first item in already.
     order(r, key, done, hooks = {}) {
-      let n = 0;
-      const slots = r.items.map(() => h('li', null, '…'));
-      const pool = shuffle(r.items).map(t => h('button', {
+      let n = r.start ? 1 : 0;
+      const ends = r.ends || ['FIRST', 'LAST'];
+      const slots = r.items.map((t, k) => h('li', null,
+        h('span', { class: 'ord-text' }, k < n ? t : '…'),
+        (k === 0 || k === r.items.length - 1) && h('span', { class: 'ord-end' }, k === 0 ? ends[0] : ends[1])));
+      slots.slice(0, n).forEach(li => li.classList.add('filled', 'given'));
+      const point = () => slots.forEach((li, k) => li.classList.toggle('next', k === n));
+      const pool = shuffle(r.items.slice(n)).map(t => h('button', {
         class: 'opt', type: 'button', html: fmt(t, false),
         onclick(e) {
           const b = e.currentTarget;
           if (t === r.items[n]) {
-            slots[n].textContent = t; slots[n].classList.add('filled');
+            slots[n].querySelector('.ord-text').textContent = t; slots[n].classList.add('filled');
             b.remove();
             if (!hooks.noStars) award(key + ':' + n, slots[n]);
-            n++;
+            n++; point();
             if (n === r.items.length) done();
             else if (hooks.quiet) sfx.tap(); else { sfx.good(); say(n === 1 ? 'Great start! What comes next?' : praise()); }
           } else {
@@ -918,9 +926,10 @@
           }
         },
       }));
+      point();
       return h('div', { class: 'game order' },
         h('ol', { class: 'order-list' }, slots),
-        h('div', { class: 'tray-label' }, '👇 Tap them in the right order'),
+        h('div', { class: 'tray-label' }, `👇 Tap them in order – start with the ${ends[0].toLowerCase()} one`),
         h('div', { class: 'order-pool' }, pool));
     },
 

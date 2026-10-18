@@ -243,7 +243,7 @@ window.LESSON = {
             { place: 'USA', pin: '🇺🇸', ask: 'Drag the USA flag onto the USA – the big country under Canada.', yes: 'Spot on! The USA – even big, snowy Alaska in the top-left corner is part of it.', hint: 'Find North America, then look below the giant country at the top (Canada).' },
             {
               fly: 'USA', hours: 17, ask: 'Now fly ✈️ from your home 🏠 all the way to the USA!', yes: 'Touchdown in Washington, D.C.!',
-              then: [{ type: 'order', q: 'Put the flights from home in order, from SHORTEST to LONGEST.', items: ['🇯🇵 to Japan (about 6 hours)', '🏴󠁧󠁢󠁥󠁮󠁧󠁿 to England (about 13 hours)', '🇺🇸 to the USA (about 17 hours)'], hint: 'Japan is the closest. Which is the furthest of all?' }],
+              then: [{ type: 'order', q: 'Put the flights from home in order, from SHORTEST to LONGEST.', items: ['🇯🇵 to Japan (about 6 hours)', '🏴󠁧󠁢󠁥󠁮󠁧󠁿 to England (about 13 hours)', '🇺🇸 to the USA (about 17 hours)'], ends: ['SHORTEST', 'LONGEST'], hint: 'Japan is the closest. Which is the furthest of all?' }],
             },
           ],
         },
@@ -557,7 +557,7 @@ window.LESSON = {
         { type: 'gap', q: 'The capital city of the USA is ___.', options: ['Washington, D.C.', 'New York', 'London'], answer: 0 },
         { type: 'mcq', q: 'You walk south from the USA and cross the border. Where are you?', options: ['Mexico', 'Canada', 'Alaska'], answer: 0 },
         { type: 'mcq', q: 'You wake up in Bangkok and the sun is rising. What are children in New York doing?', options: ['Going to bed – it is evening there', 'Waking up too', 'Eating lunch at school'], answer: 0, hint: 'New York is on the other side of the world.' },
-        { type: 'order', q: 'Put the flights from home in order, from SHORTEST to LONGEST.', items: ['🇰🇭 to Cambodia (about 1 hour)', '🇯🇵 to Japan (about 6 hours)', '🇺🇸 to the USA (about 17 hours)'], hint: 'A neighbour is closest. The USA is on the other side of the world.' },
+        { type: 'order', q: 'Put the flights from home in order, from SHORTEST to LONGEST.', items: ['🇰🇭 to Cambodia (about 1 hour)', '🇯🇵 to Japan (about 6 hours)', '🇺🇸 to the USA (about 17 hours)'], ends: ['SHORTEST', 'LONGEST'], hint: 'A neighbour is closest. The USA is on the other side of the world.' },
         { type: 'mcq', q: 'Which state is made up of islands in the Pacific Ocean?', options: ['Hawaii', 'Alaska', 'Texas'], answer: 0 },
         { type: 'mcq', q: 'Why is the Statue of Liberty green?', options: ['Her copper slowly changed colour in the rain and sea air', 'She was painted green', 'She is covered in grass'], answer: 0 },
         { type: 'tf', q: 'The footprints from the first Moon landing have already been washed away by rain.', answer: false, explain: 'There is no rain or wind on the Moon, so the footprints are still there!' },
