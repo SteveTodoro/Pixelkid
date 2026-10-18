@@ -2421,6 +2421,7 @@
   const SPR = {
     alienA: ['...p...p...', '....g.g....', '..ggggggg..', '.ggkwgwkgg.', 'ggggggggggg', 'gg.ggggg.gg', 'g..g...g..g', '..gg...gg..'],
     alienB: ['...p...p...', '....g.g....', '..ggggggg..', '.ggwkgkwgg.', 'ggggggggggg', 'gg.ggggg.gg', '.g.g...g.g.', 'g.........g'],
+    ufo: ['......rrrr......', '...rrrrrrrrrr...', '..rrrrrrrrrrrr..', '.rrwrrwrrwrrwrr.', 'rrrrrrrrrrrrrrrr', '..rrr..rr..rrr..', '...r........r...'],
     ship: ['.....r.....', '....www....', '....wcw....', '..wwwwwww..', '.wwwwwwwww.', 'wwwwwwwwwww', 'rr.r...r.rr'],
     robot: ['.....yy.....', '.....kk.....', '..kkkkkkkk..', '.kllllllllk.', '.klccllcclk.', '.klccllcclk.', '.kllllllllk.', '.kllkkkkllk.', '.kllllllllk.', '..kkkkkkkk..', '.kkggggggkk.', 'kgkgrggygkgk', 'kgkggggggkgk', '..kggggggk..', '..kgk..kgk..', '..kkk..kkk..'],
     robotRun: ['.....yy.....', '.....kk.....', '..kkkkkkkk..', '.kllllllllk.', '.klccllcclk.', '.klccllcclk.', '.kllllllllk.', '.kllkkkkllk.', '.kllllllllk.', '..kkkkkkkk..', '.kkggggggkk.', 'kgkgrggygkgk', 'kgkggggggkgk', '..kggggggk..', '.kgk....kgk.', '.kkk....kkk.'],
@@ -2431,17 +2432,23 @@
   // ===== Answer Invaders: shoot the aliens carrying the right answers =====
   // r.waves: [{ prompt, items: [{ label, ok, why }] }]
   // Spelling waves: { spell: 'unlock', clue: 'open with a key', decoys: 'ae' } – shoot the letters in order to spell the word.
+  // Like the arcade original, the aliens drop bombs to dodge (a hit stuns the ship for a moment – it never costs gems;
+  // a wave with no hits earns a bonus gem) and now and then a mystery UFO flies over: shoot it for a bonus gem (3 at most).
   GAMES.invaders = function (r, key, done) {
     const W = 640, H = 440;
     const { cv, ctx } = arcadeCanvas(W, H);
     const colors = ['#7cfc3a', '#ff7eb6', '#2ee6d6', '#ffb800', '#b44dff', '#ff8c1a'];
     const alienSpr = colors.map(c => [SPR.alienA, SPR.alienB].map(rows => spriteCanvas(rows, { g: c, p: '#ffffff', k: '#1b1b1b', w: '#ffffff' }, 4)));
     const shipSpr = spriteCanvas(SPR.ship, { w: '#e8f4ff', c: '#2ee6d6', r: '#ff5252' }, 4);
+    const ufoSpr = ['#ffe27a', '#ffffff'].map(w => spriteCanvas(SPR.ufo, { r: '#ff3b6b', w }, 3));
+    const UFO_MAX = 3;
     const stars = Array.from({ length: 70 }, () => ({ x: Math.random() * W, y: Math.random() * H, s: Math.random() < 0.2 ? 3 : 2, t: Math.random() * 6 }));
     let wi = -1, aliens = [], ox = 0, oy = 0, dir = 1, shot = null, cool = 0, banner = null, finished = false, time = 0;
     const ship = { x: W / 2, target: null, fireOnArrive: false, move: 0 };
     const parts = [];
     let autopilot = false, spellAt = 0, misses = 0;
+    const bombs = [];
+    let bombT = 0, stun = 0, waveHit = false, bombsSeen = false, ufo = null, ufoT = 10 + Math.random() * 6, ufoGems = 0;
 
     function startWave() {
       wi++;
@@ -2458,6 +2465,7 @@
         bx: (i % perRow - (perRow - 1) / 2) * 136 + (Math.floor(i / perRow) % 2 ? 34 : -34), by: 96 + Math.floor(i / perRow) * 92,
       }));
       ox = 0; oy = 0; dir = 1;
+      bombs.length = 0; bombT = 2.6; waveHit = false;
       banner = { text: `WAVE ${wi + 1}`, t: 1.4 };
       if (wave.spell) { say(`Spell the word: ${wave.clue || wave.spell}. Shoot the letters in order!`); speak(wave.spell); }
       else say(wave.prompt);
@@ -2467,7 +2475,7 @@
     const promptText = w => w.spell ? `${w.clue ? w.clue + ': ' : 'SPELL: '}${[...w.spell.toLowerCase()].map((c, k) => (k < spellAt ? c : '_')).join(' ')}` : w.prompt;
     const alienPos = a => [W / 2 + a.bx + ox, a.by + oy];
     function fire() {
-      if (shot || cool > 0 || finished) return;
+      if (shot || cool > 0 || finished || stun > 0) return;
       shot = { x: ship.x, y: H - 58 }; cool = 0.3; sfx.tap();
     }
     function hit(a) {
@@ -2482,7 +2490,10 @@
         else say(`Yes! Now find the next letter…`);
         if (!aliens.some(o => o.alive && o.it.ok)) {
           aliens.forEach(o => { if (o.alive) o.leaving = 0.001; });
-          banner = { text: 'WAVE CLEAR!', t: 1.6 }; sfx.win();
+          bombs.length = 0;
+          if (!waveHit && bombsSeen) { award(`${key}:${wi}:nohit`, cv); banner = { text: 'NO-HIT BONUS! +💎', t: 1.6 }; }
+          else banner = { text: 'WAVE CLEAR!', t: 1.6 };
+          sfx.win();
           setTimeout(startWave, 1700);
         }
       } else {
@@ -2518,13 +2529,50 @@
         if (Math.abs(d) < 3) { ship.target = null; if (ship.fireOnArrive) { ship.fireOnArrive = false; fire(); } }
       }
       ship.x = Math.max(30, Math.min(W - 30, ship.x));
-      // shot
+      stun = Math.max(0, stun - dt);
+      const burst = (x, y, c, n = 10) => { for (let k = 0; k < n; k++) parts.push({ x, y, vx: (Math.random() - 0.5) * 260, vy: (Math.random() - 0.5) * 260, life: 0.5, c }); };
+      // bombs: a random alien drops one now and then – about half of them aimed at the ship. Faster in later waves.
+      if (live.length && !finished && !(banner && banner.t > 0 && /WAVE \d/.test(banner.text))) {
+        bombT -= dt;
+        if (bombT <= 0 && bombs.length < 3) {
+          const aim = Math.random() < 0.5;
+          const from = aim ? live.reduce((b, a) => (Math.abs(alienPos(a)[0] - ship.x) < Math.abs(alienPos(b)[0] - ship.x) ? a : b)) : pick(live);
+          const [bx, by] = alienPos(from);
+          bombs.push({ x: bx, y: by + 30, vy: 110 + 15 * wi, t: 0 });
+          bombT = Math.max(1.1, 2.3 - wi * 0.25) * (0.75 + Math.random() * 0.5);
+          if (!bombsSeen) { bombsSeen = true; say('Watch out – the aliens are dropping bombs! Move to dodge them.'); }
+        }
+      }
+      for (let i = bombs.length - 1; i >= 0; i--) {
+        const b = bombs[i];
+        b.y += b.vy * dt; b.t += dt;
+        if (stun <= 0 && Math.abs(b.x - ship.x) < 24 && b.y > H - 56 && b.y < H - 16) {
+          bombs.splice(i, 1); stun = 1.1; waveHit = true; sfx.bad(); burst(ship.x, H - 40, '#ff5252', 16);
+          say(pick(['Ouch! Dodge the bombs – then keep shooting!', 'Zapped! Move out of the way of the bombs!']));
+        } else if (b.y > H - 16) { bombs.splice(i, 1); burst(b.x, H - 16, '#7f8bb3', 6); }
+      }
+      // the mystery UFO: flies across the top now and then while a wave is on
+      if (!ufo && live.length && !finished && ufoGems < UFO_MAX && (ufoT -= dt) <= 0) {
+        const fromLeft = Math.random() < 0.5;
+        ufo = { x: fromLeft ? -30 : W + 30, vx: fromLeft ? 95 : -95, y: 60 };
+        ufoT = 14 + Math.random() * 8; sfx.ding();
+      }
+      if (ufo) { ufo.x += ufo.vx * dt; if (ufo.x < -40 || ufo.x > W + 40) ufo = null; }
+      // shot: hits an alien, a bomb or the UFO
       if (shot) {
         shot.y -= 640 * dt;
         for (const a of aliens) {
           if (!a.alive || a.leaving) continue;
           const [x, y] = alienPos(a);
           if (Math.abs(shot.x - x) < 44 && shot.y < y + 36 && shot.y > y - 24) { hit(a); shot = null; break; }
+        }
+        const bi = shot ? bombs.findIndex(b => Math.abs(shot.x - b.x) < 12 && Math.abs(shot.y - b.y) < 18) : -1;
+        if (bi >= 0) { burst(bombs[bi].x, bombs[bi].y, '#ffd43b', 8); bombs.splice(bi, 1); shot = null; sfx.tap(); }
+        if (shot && ufo && Math.abs(shot.x - ufo.x) < 32 && Math.abs(shot.y - ufo.y) < 18) {
+          award(`${key}:ufo:${ufoGems}`, cv); ufoGems++;
+          burst(ufo.x, ufo.y, '#ffd43b', 24); burst(ufo.x, ufo.y, '#ff3b6b', 12);
+          banner = { text: 'UFO BONUS! +💎', t: 1.4 }; sfx.win(); say('You shot the mystery UFO! Bonus gem!');
+          ufo = null; shot = null;
         }
         if (shot && shot.y < 0) shot = null;
       }
@@ -2554,8 +2602,16 @@
         pxText(ctx, a.it.label, x, y + 34, 15, '#fff');
       });
       if (shot) { ctx.fillStyle = '#7cfc3a'; ctx.fillRect(shot.x - 2, shot.y - 12, 4, 16); ctx.fillStyle = '#e8ffe0'; ctx.fillRect(shot.x - 1, shot.y - 12, 2, 6); }
+      // zig-zag bombs, like the arcade original
+      bombs.forEach(b => {
+        const z = Math.floor(b.t * 10) % 2 ? 4 : -4;
+        ctx.fillStyle = '#ff5252';
+        for (let k = 0; k < 4; k++) ctx.fillRect(b.x - 3 + (k % 2 ? z : -z), b.y - 22 + k * 6, 6, 6);
+        ctx.fillStyle = '#ffd43b'; ctx.fillRect(b.x - 4, b.y + 2, 8, 8);
+      });
+      if (ufo) { const u = ufoSpr[Math.floor(time * 6) % 2]; ctx.drawImage(u, ufo.x - u.width / 2, ufo.y - u.height / 2); }
       parts.forEach(p => { ctx.fillStyle = p.c; ctx.fillRect(p.x, p.y, 5, 5); });
-      ctx.drawImage(shipSpr, ship.x - shipSpr.width / 2, H - 52);
+      if (!(stun > 0 && Math.floor(time * 12) % 2)) ctx.drawImage(shipSpr, ship.x - shipSpr.width / 2, H - 52); // blinks while stunned
       if (ship.target != null) { ctx.fillStyle = 'rgba(124,252,58,.35)'; ctx.fillRect(ship.target - 1, H - 70, 2, 14); }
       const wave = r.waves[Math.min(wi, r.waves.length - 1)];
       ctx.fillStyle = 'rgba(0,0,0,.6)'; ctx.fillRect(0, 0, W, 40);
@@ -2579,13 +2635,17 @@
         holdButton('🔥 FIRE', 'arc-fire', fire),
         holdButton('▶', 'arc-right', () => { ship.move = 1; }, () => { if (ship.move > 0) ship.move = 0; })),
       r.waves.some(w => w.spell) && h('div', { class: 'btn-row' }, h('button', { class: 'btn gold', type: 'button', onclick() { const w = r.waves[wi]; if (w && w.spell) speak(w.spell, { force: true }); } }, '🔊 Hear the word')),
-      h('p', { class: 'arc-tip' }, '👆 Tap above an alien to fly there and fire – or use ◀ 🔥 ▶. Only shoot the RIGHT answers!'));
+      h('p', { class: 'arc-tip' }, '👆 Tap above an alien to fly there and fire – or use ◀ 🔥 ▶. Only shoot the RIGHT answers! Dodge the bombs, and shoot the mystery UFO for a bonus 💎'));
     keys(root, {
       ArrowLeft: [() => { ship.move = -1; }, () => { if (ship.move < 0) ship.move = 0; }],
       ArrowRight: [() => { ship.move = 1; }, () => { if (ship.move > 0) ship.move = 0; }],
       ' ': [fire],
     });
-    root._test = { frames(n) { for (let i = 0; i < n; i++) step(1 / 60); }, autopilot() { autopilot = true; }, shootWrong() { const a = aliens.find(o => o.alive && !o.it.ok); if (a) hit(a); }, get finished() { return finished; } };
+    root._test = {
+      frames(n) { for (let i = 0; i < n; i++) step(1 / 60); }, autopilot() { autopilot = true; }, shootWrong() { const a = aliens.find(o => o.alive && !o.it.ok); if (a) hit(a); },
+      get finished() { return finished; }, get stun() { return stun; }, get bombs() { return bombs.length; }, get ufo() { return ufo; }, get ufoGems() { return ufoGems; }, get wave() { return wi; }, get left() { return aliens.filter(o => o.alive && o.it.ok).length; },
+      ufoNow() { ufoT = 0; }, bombOnShip() { bombs.push({ x: ship.x, y: H - 60, vy: 120, t: 0 }); }, shootAt(x) { ship.x = x; shot = null; cool = 0; fire(); },
+    };
     startWave();
     root._stop = stopLoop;
     return root;
