@@ -121,6 +121,8 @@ One country per lesson: find it on the map, then the history and culture childre
 **Comic pages:** a read card can use `comic: [{ who: 'mascot' | 'me' | emoji/svg, name, say, pic }]` instead of `text` – each line becomes a comic panel with a speech bubble ('me' is the child's own avatar and name). Checks (including `evidence`) work the same. Good for explaining an idea as a conversation (see the "Meet AI" card in `future/ai.html`).
 **Mystery word (`mystery` game):** `words: [{ word, clues: [hardest first, usually 3], options (optional: tap instead of type), explain }]`. Clues appear one at a time; solving on clue 1 = 3 gems, clue 2 = 2, then 1. A wrong guess shows the next clue; after two wrong guesses the first letter is given. Use it instead of a word search or crossword.
 
+**Check every new or changed lesson:** `node tools/lesson-check.js <file>` validates the data (answer indexes, evidence answers found on the page, hotspot and slider answers you can actually reach, runner items with both right and wrong words). Reading-page checks can be multiple choice or a hands-on type (`evidence`, `hotspot`, `slider`, `oddone`, `build`, `type`, `predict`), but not `tf`, `gap` or `order`.
+
 **Keep lessons varied (check with `node tools/activity-audit.js`):**
 - At most ONE word puzzle (`crossword` or `wordsearch`) per lesson, and none in about half of lessons. Never in two lessons in a row of the same world. Other vocabulary practice: `build`, picture↔word `match`, `type`.
 - Don't repeat an arcade game (`invaders`, `runner`, `platformer`, `blocks`) from the previous lesson of the same world.
