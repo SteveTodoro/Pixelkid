@@ -5,7 +5,7 @@
  * A quick 'Games' break is added after the first game stage automatically (L.midBreak: false turns it off).
  * Game types: sort, match, label, order, truefalse, questions, wordsearch, crossword, trainai, pixelcopy, pixelstudio, poster,
  *   spelltest (spelling test: listen / look-cover-write-check / fix the mistake),
- *   and arcade games: invaders, platformer, blocks.
+ *   and arcade games: invaders, runner (two-lane word runner), platformer, blocks.
  *   clock (needs shared/clock.js): set the clock by dragging the hands, or read a clock and type the time.
  *   daydial (24-hour Day Dial), timehops (durations on a time line), knuckles (days in each month).
  *   Around the World: worldmap (needs shared/world-map.js + shared/world.js), cook (Chef), phrases (Say it! greetings).
@@ -2478,6 +2478,138 @@
       iceX: () => { for (let tx = 0; tx < cols; tx++) if (tile[10][tx] === 3) return tx * T; return null; },
       ghost(on) { ghost = on; },
       teleport(x0) { p.x = x0; p.y = 9 * T - 32; p.vx = 0; p.vy = 0; },
+    };
+    root._stop = stopLoop;
+    return root;
+  };
+
+  // ===== Lane Runner: the avatar runs by itself; word signs come in pairs (top lane / bottom lane) – pick the lane with the right one =====
+  // Same data as the platformer: r.prompt, r.items: [{ label, ok, why, yes }]. Right and wrong words are paired up (one of each per pair);
+  // a wrong pick shows why and that pair comes round again later. r.speed: pixels per second (default 105).
+  // Tap the top or bottom half (or the word), swipe, use the ⬆ / ⬇ buttons, or the arrow keys.
+  GAMES.runner = function (r, key, done) {
+    const W = 640, H = 360, HX = 120, LANES = [158, 296]; // lane floor heights
+    const { cv, ctx } = arcadeCanvas(W, H);
+    const oks = shuffle(r.items.filter(i => i.ok)), bads = shuffle(r.items.filter(i => !i.ok));
+    const n = Math.max(oks.length, bads.length);
+    let queue = Array.from({ length: n }, (_, k) => ({ ok: oks[k % oks.length], bad: bads[k % bads.length] }));
+    const total = n, speed = r.speed || 105;
+    const scene = AV ? AV.sceneDef() : { sky: ['#5fb8f5', '#c4e8ff'], ground: ['#5bbf3a', '#3d8a26', '#8a5a32', '#6b4425'] };
+    const [g1, g2, g3, g4] = scene.ground;
+    const heroImg = AV ? AV.draw(AV.load().look, { scale: 3 }) : spriteCanvas(SPR.robot, ROBOT_PAL, 3);
+    const clouds = Array.from({ length: 6 }, (_, i) => ({ x: i * 140 + 30, y: 20 + (i * 37) % 70 }));
+    let lane = 1, heroY = LANES[1], gate = null, wait = 0.8, got = 0, time = 0, scroll = 0, started = false, finished = false, stumble = 0, sparks = [], banner = null;
+    const label = it => { const m = /^(\S+)\s+(.+)$/.exec(it.label); return m && window.Pixel && Pixel.has && Pixel.has(m[1]) ? { icon: m[1], text: m[2] } : { icon: null, text: it.label }; };
+    function nextGate() {
+      if (!queue.length) { finished = true; banner = { text: '🏁 FINISHED!', t: 0 }; sfx.win(); setTimeout(done, 900); return; }
+      const pair = queue.shift(), top = Math.random() < 0.5;
+      gate = { x: W + 40, pair, words: top ? [pair.ok, pair.bad] : [pair.bad, pair.ok], hit: false };
+    }
+    function setLane(l) { if (!started) { start(); return; } if (l !== lane && !finished) { lane = l; sfx.tap(); } }
+    function start() { if (started) return; started = true; sfx.good(); say(r.say || 'Pick the lane with the right word!'); }
+    function judge() {
+      const it = gate.words[lane], ok = it.ok;
+      gate.hit = true;
+      if (ok) {
+        got++; sfx.good(); award(`${key}:${it.label}`, cv);
+        for (let i = 0; i < 14; i++) sparks.push({ x: HX + 20, y: heroY - 40, vx: (Math.random() - 0.3) * 260, vy: -Math.random() * 220, life: 0.7 });
+        say(it.yes || praise());
+      } else {
+        stumble = 0.6; sfx.bad();
+        say('💡 ' + (it.why || `"${it.label}" is not one of them.`) + ' This one will come round again!');
+        queue.splice(Math.min(queue.length, 1 + Math.floor(Math.random() * 2)), 0, gate.pair); // try it again soon
+      }
+    }
+    // controls: tap a half (or the sign in it), swipe, buttons, keys
+    let sy = null;
+    cv.addEventListener('pointerdown', e => { e.preventDefault(); sy = toGame(cv, W, H, e)[1]; });
+    cv.addEventListener('pointerup', e => {
+      const y = toGame(cv, W, H, e)[1];
+      if (sy != null && Math.abs(y - sy) > 30) setLane(y < sy ? 0 : 1); else setLane(y < (LANES[0] + LANES[1]) / 2 - 20 ? 0 : 1);
+      sy = null;
+    });
+    function step(dt) {
+      time += dt;
+      if (started && !finished) {
+        scroll += speed * dt;
+        if (!gate) { wait -= dt; if (wait <= 0) nextGate(); }
+        else {
+          gate.x -= speed * dt;
+          if (!gate.hit && gate.x <= HX + 18) judge();
+          if (gate.x < -260) { gate = null; wait = 0.5; }
+        }
+      }
+      stumble = Math.max(0, stumble - dt);
+      heroY += (LANES[lane] - heroY) * Math.min(1, dt * 12);
+      sparks.forEach(s => { s.x += s.vx * dt; s.y += s.vy * dt; s.vy += 500 * dt; s.life -= dt; });
+      sparks = sparks.filter(s => s.life > 0);
+      if (banner) banner.t += dt;
+      draw();
+    }
+    function sign(it, x, floor, highlight) {
+      const { icon, text } = label(it);
+      ctx.font = '800 21px Lexend, "Trebuchet MS", sans-serif';
+      const tw = ctx.measureText(text).width, w = Math.max(110, tw + (icon ? 52 : 28)), hgt = 46, top = floor - 112;
+      // two posts and a banner the hero runs under
+      ctx.fillStyle = '#000'; ctx.fillRect(x - 3, top + hgt - 2, 8, floor - top - hgt + 2); ctx.fillRect(x + w - 5, top + hgt - 2, 8, floor - top - hgt + 2);
+      ctx.fillStyle = '#8a5a32'; ctx.fillRect(x - 1, top + hgt, 4, floor - top - hgt); ctx.fillRect(x + w - 3, top + hgt, 4, floor - top - hgt);
+      ctx.fillStyle = '#000'; ctx.fillRect(x - 4, top - 4, w + 8, hgt + 8);
+      ctx.fillStyle = highlight || '#fffdf2'; ctx.fillRect(x, top, w, hgt);
+      if (icon) emojiAt(ctx, icon, x + 22, top + hgt / 2 + 11, 28);
+      ctx.fillStyle = '#1b1b1b'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+      ctx.fillText(text, x + (icon ? 42 : 14), top + hgt / 2 + 1);
+    }
+    function draw() {
+      const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, scene.sky[0]); g.addColorStop(1, scene.sky[1]);
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = 'rgba(255,255,255,.8)';
+      clouds.forEach(c => { const x = ((c.x - scroll * 0.2) % (W + 160) + W + 160) % (W + 160) - 120; ctx.fillRect(x, c.y, 80, 12); ctx.fillRect(x + 12, c.y - 10, 50, 10); });
+      // top lane: a floating block bridge; bottom lane: the ground
+      const blocks = (y, hgt) => {
+        for (let x = -((scroll) % 32) - 32; x < W + 32; x += 32) {
+          ctx.fillStyle = g3; ctx.fillRect(x, y, 32, hgt); ctx.fillStyle = g4; ctx.fillRect(x + 6, y + 14, 6, 6); ctx.fillRect(x + 20, y + 26, 6, 6);
+          ctx.fillStyle = g1; ctx.fillRect(x, y, 32, 8); ctx.fillStyle = g2; ctx.fillRect(x, y + 8, 32, 4);
+          ctx.fillStyle = 'rgba(0,0,0,.25)'; ctx.fillRect(x + 31, y, 1, hgt);
+        }
+      };
+      blocks(LANES[0], 26); ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.fillRect(0, LANES[0] + 26, W, 4);
+      blocks(LANES[1], H - LANES[1]);
+      // the signs
+      if (gate) gate.words.forEach((it, l) => sign(it, gate.x, LANES[l], gate.hit && l === lane ? (it.ok ? '#c8f7b0' : '#ffc9c9') : null));
+      // the hero: runs with a bob, stumbles on a wrong pick, glows on the lane it is in
+      const bobY = started && !finished ? (Math.floor(time * 10) % 2) * -3 : 0;
+      ctx.save();
+      if (stumble) { ctx.globalAlpha = Math.floor(time * 16) % 2 ? 0.4 : 1; }
+      ctx.drawImage(heroImg, HX - heroImg.width / 2 + (stumble ? -6 : 0), heroY - heroImg.height + bobY);
+      ctx.restore();
+      sparks.forEach(s => { ctx.fillStyle = '#ffd43b'; ctx.fillRect(s.x, s.y, 5, 5); });
+      // lane arrows on the left edge show where you can go
+      pxText(ctx, lane === 0 ? '▶' : '', 18, LANES[0] - 30, 22, '#ffd43b');
+      pxText(ctx, lane === 1 ? '▶' : '', 18, LANES[1] - 30, 22, '#ffd43b');
+      // HUD
+      ctx.fillStyle = 'rgba(0,0,0,.55)'; ctx.fillRect(0, 0, W, 34);
+      pxText(ctx, r.prompt || 'Pick the right lane!', 12, 18, 16, '#fff', 'left');
+      pxText(ctx, `✔ ${got}/${total}`, W - 12, 18, 16, got === total ? '#7cfc3a' : '#ffd43b', 'right');
+      if (!started) {
+        ctx.fillStyle = 'rgba(0,0,0,.55)'; ctx.fillRect(0, 0, W, H);
+        pxText(ctx, 'TAP TO START', W / 2, H / 2 - 20, 30, '#ffd43b');
+        pxText(ctx, 'Tap the top or bottom to pick the lane with the right word!', W / 2, H / 2 + 20, 14, '#fff');
+      }
+      if (banner) pxText(ctx, banner.text, W / 2, H / 2, 34, '#7cfc3a');
+    }
+    keys(cv, { ArrowUp: [() => setLane(0)], w: [() => setLane(0)], ArrowDown: [() => setLane(1)], s: [() => setLane(1)], ' ': [() => start()], Enter: [() => start()] });
+    const stopLoop = gameLoop(cv, step);
+    const root = h('div', { class: 'game arcade runner' },
+      h('div', { class: 'arc-screen' }, cv),
+      h('div', { class: 'arc-controls' },
+        holdButton('⬆ Top', 'runner-btn', () => setLane(0)),
+        holdButton('⬇ Bottom', 'runner-btn', () => setLane(1))),
+      h('p', { class: 'arc-tip' }, '🏃 Your hero runs by itself – just pick the lane with the right word!'));
+    root._test = {
+      frames(k) { for (let i = 0; i < k; i++) step(1 / 30); },
+      start, lane: l => setLane(l),
+      get gate() { return gate && { x: gate.x, words: gate.words.map(w => w.label), ok: gate.words.findIndex(w => w.ok) }; },
+      get got() { return got; }, get finished() { return finished; }, get left() { return queue.length; },
     };
     root._stop = stopLoop;
     return root;

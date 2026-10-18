@@ -1073,3 +1073,8 @@ a { color: var(--brand-dark); }
 .kn-fist { width: 100%; height: 64px; background: #f2c39b; border: 3px solid #000; box-shadow: inset -4px -4px 0 #cf9466; display: flex; justify-content: space-evenly; align-items: flex-start; }
 .kn-fist i { display: block; width: 3px; height: 26px; background: #cf9466; }
 @media (max-width: 420px) { .kn-slot { width: 38px; } .kn-month { font-size: .7rem; } }
+
+/* ---------- Lane Runner ---------- */
+.runner .arcade-canvas { touch-action: none; cursor: pointer; }
+.runner .arc-controls { justify-content: center; gap: 18px; }
+.runner .runner-btn { min-width: 150px; font-size: 1.15rem; padding: 12px 18px; }
