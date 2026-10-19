@@ -360,6 +360,14 @@
       body);
     return stageCard;
   }
+  // A plain "Correct!" (no explanation to read) moves on by itself after a beat, so quizzes and boss battles keep their pace.
+  // The button stays up with a filling bar, so a tap skips the wait. stillValid() says the button still means the same step.
+  const AUTO_NEXT_MS = 1500;
+  function autoClick(btn, stillValid = () => true) {
+    btn.classList.add('auto');
+    setTimeout(() => { if (btn.isConnected && !btn.hidden && !btn.disabled && stillValid()) btn.click(); }, AUTO_NEXT_MS);
+  }
+
   function navRow(onBack) {
     const back = h('button', { class: 'btn ghost', type: 'button', onclick() { sfx.tap(); onBack(); } }, '◀ Back');
     const next = h('button', { class: 'btn big', type: 'button' }, 'Next ▶');
@@ -369,8 +377,9 @@
       el: h('div', { class: 'navrow' }, back, next),
       set(label, fn, enabled = true) {
         next.textContent = label; handler = fn; next.disabled = !enabled;
-        next.classList.toggle('ready', enabled);
+        next.classList.toggle('ready', enabled); next.classList.remove('auto');
       },
+      auto() { const fn = handler; autoClick(next, () => handler === fn); },
       hideNext() { next.hidden = true; },
     };
   }
@@ -566,6 +575,7 @@
           if (first) { award(key, el); say(c.check.yes || praise()); } else say('You got there! Next time, read carefully first to win the gem.');
           fb.className = 'feedback good'; fb.hidden = false; fb.innerHTML = '✔ ' + fmt(c.check.explain || 'Correct!', false);
           answered = true; nav.set(label, goNext);
+          if (!c.check.explain) nav.auto();
         };
         const onMiss = () => say(c.check.hint || 'Not quite! Read the page again to find the answer.');
         if (answered) { fb.className = 'feedback good'; fb.hidden = false; fb.innerHTML = '✔ ' + fmt(c.check.explain || 'Done!', false); }
@@ -591,6 +601,7 @@
                 if (firstTry) { award(key, b); say(c.check.yes || praise()); } else say('You got there! Next time, read carefully first to win the gem.');
                 fb.className = 'feedback good'; fb.hidden = false; fb.innerHTML = '✔ ' + fmt(c.check.explain || 'Correct!', false);
                 answered = true; nav.set(label, goNext);
+                if (!c.check.explain) nav.auto();
               } else {
                 firstTry = false;
                 b.classList.add('wrong'); opts.forEach(x => { x.disabled = true; }); shake(b); sfx.bad();
@@ -851,11 +862,14 @@
     let qi = 0, score = 0;
     function show() {
       const q = qs[qi], isLast = qi === qs.length - 1;
+      const explain = q.explain || (q.then && q.then.explain); // a predict question's explanation sits on its follow-up
       const fb = h('div', { class: 'feedback', hidden: true });
+      let moved = false;
       const nextBtn = h('button', {
         class: 'btn', type: 'button', hidden: true,
         onclick() {
-          sfx.tap(); qi++;
+          if (moved) return;
+          moved = true; sfx.tap(); qi++;
           const next = () => { if (qi < qs.length) show(); else done(score); };
           if (boss && boss.dodgeDue()) boss.dodge(area, dead => (dead ? lost(score) : next()));
           else next();
@@ -865,9 +879,15 @@
         if (first) { score++; award(`${key}:${qi}`, el); }
         sfx.good(); say(praise());
         fb.className = 'feedback good'; fb.hidden = false;
-        fb.innerHTML = '✔ ' + fmt(q.explain || (first ? 'Correct!' : 'You got there!'), false);
-        if (boss) { boss.hit(); if (boss.dodgeDue()) nextBtn.textContent = '⚠️ Get ready to DODGE! ▶'; else if (isLast) nextBtn.classList.add('gold', 'final'); }
+        fb.innerHTML = '✔ ' + fmt(explain || (first ? 'Correct!' : 'You got there!'), false);
+        let pause = !!explain; // something to read: wait for the tap
+        if (boss) {
+          boss.hit();
+          if (boss.dodgeDue()) { nextBtn.textContent = '⚠️ Get ready to DODGE! ▶'; pause = true; }
+          else if (isLast) { nextBtn.classList.add('gold', 'final'); pause = true; } // the final blow is the child's to strike
+        }
         nextBtn.hidden = false;
+        if (!pause) autoClick(nextBtn);
       };
       const onMiss = (el, free) => {
         say(q.hint ? '💡 ' + q.hint : oops());

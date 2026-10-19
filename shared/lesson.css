@@ -151,6 +151,10 @@ a { color: var(--brand-dark); }
 .btn.gold { background: var(--gold); }
 .btn.green { background: var(--good); }
 .btn.ready { animation: nudge 1.4s steps(4) infinite; }
+/* moving on by itself: a pixel bar fills along the bottom (engine AUTO_NEXT_MS); a tap skips the wait */
+.btn.auto { position: relative; overflow: hidden; }
+.btn.auto::after { content: ''; position: absolute; left: 0; bottom: 0; height: 5px; width: 0; background: rgba(255, 255, 255, .75); animation: autofill 1.5s steps(10) forwards; }
+@keyframes autofill { to { width: 100%; } }
 .navrow { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
 .btn-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
 
