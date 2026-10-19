@@ -106,30 +106,21 @@ window.LESSON = {
     },
 
     {
-      type: 'review', title: 'Last time…', short: 'Recap', minutes: 4,
-      from: { title: 'England: Castles, Kings & Cups of Tea', emoji: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', url: 'england.html' },
+      type: 'review', title: 'Warm-up: home and the compass', short: 'Warm-up', minutes: 3,
+      say: "We're flying HOME! Let's warm up with what you already know. Read the notes, then test your memory!",
+      from: { title: 'Home and the compass – what you already know', emoji: '🧭' },
       facts: [
-        'A compass shows north, east, south and west. On most maps, north is at the top. (Never Eat Soggy Weetabix!)',
-        'England, Scotland, Wales and Northern Ireland make the United Kingdom. England\'s capital is London.',
-        'England is in Europe, about 13 hours from Thailand by plane – much further away than Japan.',
-        'English people love tea with milk and scones with jam and cream. Peppa Pig and Paddington come from England too!',
+        'A compass shows four main directions: north, east, south and west. On most maps, north is at the top.',
+        'In between are directions like north-east: up and to the right on a map.',
+        'Thailand\'s flag has five stripes: red, white, a wide blue stripe in the middle, white, red.',
+        'Money in Thailand is the baht.',
       ],
       questions: [
         { type: 'type', q: 'You are holding a map. Which direction is at the top?', answer: ['north', 'n'], placeholder: 'a direction', hint: 'Never Eat Soggy Weetabix – the first one!' },
-        { type: 'mcq', q: 'Which of these is NOT one of the four UK countries?', options: ['France', 'Wales', 'Scotland'], answer: 0 },
-        { type: 'mcq', q: 'Which famous cartoon pig comes from England?', options: ['Peppa Pig', 'Anpanman', 'Pikachu'], answer: 0, hint: 'She loves jumping in muddy puddles!' },
-        { type: 'mcq', q: 'What is the real name of the bell inside London\'s famous clock tower?', options: ['Big Ben', 'Little Lucy', 'Tower Bridge'], answer: 0 },
+        { type: 'tf', q: 'North-east is between north and east.', answer: true },
+        { type: 'mcq', q: 'Which one is the flag of Thailand?', options: ['🇹🇭', '🇯🇵', '🇬🇧'], answer: 0, hint: 'Look for the wide blue stripe in the middle.' },
+        { type: 'mcq', q: 'You buy a mango at the market. What money do you pay with?', options: ['baht', 'pounds', 'yen'], answer: 0 },
       ],
-      game: {
-        game: 'worldmap', title: 'Compass check', view: 'ukfrance', colour: 'countries', compass: true,
-        colours: { ENG: '#e8584e', SCT: '#5c7cfa', WLS: '#3fae5a', NIR: '#f2b33d', IRL: '#9e9e9e', FXX: '#b65bd1' },
-        intro: 'Follow the arrow and use the compass!',
-        say: 'Remember the compass? North is up!',
-        tasks: [
-          { find: 'SCT', from: 'ENG', dir: 'N', ask: 'Start in England and go NORTH. Tap the country you reach!', yes: 'Scotland! Great compass skills!', hint: 'North is up.' },
-          { find: 'FXX', from: 'ENG', dir: 'S', ask: 'Now go SOUTH from England across the sea. Tap it!', yes: 'France! Bonjour!', hint: 'South is down.' },
-        ],
-      },
     },
 
     {

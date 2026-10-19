@@ -1,6 +1,6 @@
 # Year 3 Lesson Library — Topic Ideas (UK National Curriculum)
 
-Each lesson is about 30–40 minutes: Start → Recap of last lesson → Read → Video quest → Game → Read → Video quest → Game → Brain Break → Boss Battle quiz.
+Each lesson is about 30–40 minutes: Start → Recap of last lesson (or a Warm-up when it starts a new topic) → Read → Video quest → Game → Read → Video quest → Game → Brain Break → Boss Battle quiz.
 
 ## 🔬 Science
 | Unit | Lesson ideas |
@@ -94,7 +94,7 @@ One country per lesson: find it on the map, then the history and culture childre
 2. Change the `window.LESSON = { … }` data: `id`, `subject` (`science` / `maths` / `english` / `future` / `wonders` / `world` sets the colours), title, mascot, glossary, and the stages.
 3. Add it to the `LIBRARY` list in `index.html` by setting its `file`.
 
-**Stage types:** `welcome`, `review` ("Last time…" recap: `from`, `facts`, `questions` — put one in every lesson after the first), `read`, `video` (YouTube `id` + questions), `game`, `break` (wiggle moves and/or a `tryit` activity, plus 🕹️ Brain Games – boss tic-tac-toe, steady hand, maze, hangman (uses the lesson's glossary words as a theme) – added automatically; `games: ['maze']` picks some, `games: false` turns them off), `quiz` (add `boss` for a boss battle).
+**Stage types:** `welcome`, `review` ("Last time…" recap: `from: { title, emoji, url }`, `facts`, `questions`; or a 🔥 warm-up when `from` has no url — see **Roads, recaps and warm-ups** below), `read`, `video` (YouTube `id` + questions), `game`, `break` (wiggle moves and/or a `tryit` activity, plus 🕹️ Brain Games – boss tic-tac-toe, steady hand, maze, hangman (uses the lesson's glossary words as a theme) – added automatically; `games: ['maze']` picks some, `games: false` turns them off), `quiz` (add `boss` for a boss battle).
 **Quick brain-games break:** the engine adds a short `Games` stage (pick Tic-Tac-Toe, Steady Hand, Maze or Hangman) after the first game stage of every lesson. Set `midBreak: false` on the lesson to skip it, or pass `{ title, say, games }` to customise it.
 
 **Game types available:** `sort`, `match`, `label`, `order`, `truefalse`, `questions` (read a table/picture, then answer), `wordsearch` (`words`, `size`), `crossword` (`entries` of `{answer, clue}`; the layout is built automatically), `trainai` (teach the robot with labelled examples, then judge its guesses), `pixelcopy` (copy a target sprite on a pixel grid; `mirror: true` for symmetry; "I'm finished!" scores a % and unlocks the next round; `choices: [{ label, level 1–3, target, colors, names, tips, say, done }]` lets the player pick what to draw), `pixelstudio` (free drawing with a design `brief`; saves to the device's gallery and downloads PNGs), `poster` (drag-and-drop poster editor with a `start` layout, `brief` and `checklist` — items with `auto: bigTitle | contrast | clutter | picture | inside` tick themselves)
@@ -120,6 +120,8 @@ One country per lesson: find it on the map, then the history and culture childre
 
 **Comic pages:** a read card can use `comic: [{ who: 'mascot' | 'me' | emoji/svg, name, say, pic }]` instead of `text` – each line becomes a comic panel with a speech bubble ('me' is the child's own avatar and name). Checks (including `evidence`) work the same. Good for explaining an idea as a conversation (see the "Meet AI" card in `future/ai.html`).
 **Mystery word (`mystery` game):** `words: [{ word, clues: [hardest first, usually 3], options (optional: tap instead of type), explain }]`. Clues appear one at a time; solving on clue 1 = 3 gems, clue 2 = 2, then 1. A wrong guess shows the next clue; after two wrong guesses the first letter is given. Use it instead of a word search or crossword.
+
+**Roads, recaps and warm-ups (the home page quest map):** each world on index.html is a road. A lesson follows the one listed before it in `LIBRARY`, or the lesson named by `after: '<title>'`, which starts a branch (a fork splits the road into two lanes that meet again at the world's goal). A stop unlocks once the stop before it is cleared. A lesson in the **same unit** as the stop before it opens with a recap of that lesson (`from.url` set). A lesson that **starts a new unit** (including the first lesson after a fork into a new unit) opens with a **warm-up** instead: a `review` stage whose `from` names what the child already knows (no url), e.g. `{ title: 'Living things you already know', emoji: '🌳' }`. Its facts and questions draw on everyday or earlier knowledge the lesson builds on, without giving away the lesson's content. `tools/lesson-check.js` checks both rules.
 
 **Check every new or changed lesson:** `node tools/lesson-check.js <file>` validates the data (answer indexes, evidence answers found on the page, hotspot and slider answers you can actually reach, runner items with both right and wrong words). Reading-page checks can be multiple choice or a hands-on type (`evidence`, `hotspot`, `slider`, `oddone`, `build`, `type`, `predict`), but not `tf`, `gap` or `order`.
 

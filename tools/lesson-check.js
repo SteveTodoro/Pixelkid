@@ -3,6 +3,10 @@
  * (answers in range, evidence answers found in the page, hotspot/slider answers that can be reached …).
  *   node tools/lesson-check.js                     every lesson in the library
  *   node tools/lesson-check.js english/a-or-an.html  just these lessons
+ *   node tools/lesson-check.js --home=other.html     read the library (and its road map) from another home page
+ * It also checks the quest map. The stop before a lesson on its world's road is the lesson listed before it, or the one
+ * named by `after:`. A lesson in the same unit as that stop must open with a recap of it ("Last time…", `from.url`);
+ * a lesson that starts a new unit must open with a warm-up instead (a review stage whose `from` has no url).
  * Exits with code 1 when anything is wrong. Run it with tools/activity-audit.js after writing or changing a lesson.
  */
 'use strict';
@@ -159,14 +163,39 @@ function check(file) {
   return errs;
 }
 
-let files = process.argv.slice(2);
-if (!files.length) {
-  const index = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
-  files = [...index.matchAll(/file: '([^']+)'/g)].map(m => m[1]).filter(f => fs.existsSync(path.join(ROOT, f)));
+const args = process.argv.slice(2);
+const home = (args.find(a => a.startsWith('--home=')) || '--home=index.html').slice(7);
+let files = args.filter(a => !a.startsWith('--'));
+const index = fs.readFileSync(path.join(ROOT, home), 'utf8');
+if (!files.length) files = [...index.matchAll(/file: '([^']+)'/g)].map(m => m[1]).filter(f => fs.existsSync(path.join(ROOT, f)));
+
+// the road map: each lesson's stop before it (same rule as the home page's roadTree)
+const roadErrs = {}, before = {};
+{
+  const src = index.match(/const LIBRARY = (\{[\s\S]*?\n\});/);
+  const LIB = src ? vm.runInNewContext(`(${src[1]})`) : {};
+  for (const [world, w] of Object.entries(LIB)) {
+    w.lessons.forEach((l, i) => {
+      const p = l.after ? w.lessons.find(x => x.title === l.after) : w.lessons[i - 1];
+      if (l.after && !p) (roadErrs[l.file || world] = roadErrs[l.file || world] || []).push(`map: "${l.title}" is after "${l.after}", which isn't in the ${world} world`);
+      if (l.file) before[l.file] = { l, p: p || null };
+    });
+  }
 }
+function checkRecap(file) {
+  if (!(file in before)) return [];
+  const { l, p } = before[file], same = p && p.unit === l.unit;
+  const review = (loadLesson(file).stages || []).find(s => s.type === 'review'), from = (review && review.from) || {};
+  if (!review) return same && p.file ? [`map: same unit as "${p.title}", so start with a recap of it`] : [];
+  if (!from.url) return same && p.file ? [`map: same unit as "${p.title}", so recap it instead of a warm-up`] : [];
+  if (!same) return [`map: starts a new unit (${l.unit}), so open with a warm-up instead of a recap of "${from.title}"`];
+  return from.title === p.title ? [] : [`map: the recap looks back at "${from.title}", but the stop before this one on the road is "${p.title}"`];
+}
+
 let bad = 0;
+for (const e of Object.entries(roadErrs)) if (!files.includes(e[0])) { bad += e[1].length; console.log(`❌ ${home}\n${e[1].map(x => '   ' + x).join('\n')}`); }
 for (const f of files) {
-  const errs = check(f);
+  const errs = [...check(f), ...(roadErrs[f] || []), ...checkRecap(f)];
   if (errs.length) { bad += errs.length; console.log(`❌ ${f}\n${errs.map(e => '   ' + e).join('\n')}`); }
   else console.log(`✅ ${f}`);
 }

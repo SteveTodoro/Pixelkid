@@ -91,35 +91,89 @@
     .stamp .sf { font-size: 2.2rem; line-height: 1; }
     .stamp.empty { background: rgba(255,255,255,.15); color: #e8c9c9; border-color: #e8c9c9; transform: none; }
     .stamp.empty .sf { filter: grayscale(1); opacity: .45; }
-    .shelf { position: relative; z-index: 1; max-width: 1040px; margin: 0 auto; padding: 16px 16px 90px; display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); }
-    /* the card's top strip is the world's colour, so each world's shelf looks different */
-    .lesson-card {
-      position: relative; display: flex; flex-direction: column; gap: 4px; padding: 28px 16px 16px; min-height: 150px;
-      background: linear-gradient(var(--brand) 0 12px, #000 12px 15px, var(--stone) 15px); border: 4px solid #000; box-shadow: var(--bevel), 0 6px 0 rgba(0,0,0,.25); color: var(--ink); text-decoration: none;
+    /* ---------- the quest map: each world's lessons are stops on a road from START to the world's castle ---------- */
+    .qmap-wrap { position: relative; z-index: 1; max-width: 1040px; margin: 16px auto 0; padding: 0 16px 90px; }
+    /* the ground: a field with a pixel speckle; each world swaps the colour */
+    .qmap { --m1: #6cc644;
+      position: relative; overflow: hidden; border: 4px solid #000; box-shadow: var(--bevel), 0 6px 0 rgba(0,0,0,.25);
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' shape-rendering='crispEdges'%3E%3Cg fill='%23fff' opacity='.14'%3E%3Crect x='6' y='6' width='6' height='6'/%3E%3Crect x='30' y='26' width='6' height='6'/%3E%3Crect x='42' y='40' width='6' height='3'/%3E%3C/g%3E%3Cg fill='%23000' opacity='.09'%3E%3Crect x='18' y='36' width='6' height='6'/%3E%3Crect x='36' y='8' width='6' height='6'/%3E%3Crect x='12' y='22' width='6' height='3'/%3E%3C/g%3E%3C/svg%3E") 0 0 / 48px 48px, var(--m1); }
+    body.maths .qmap { --m1: #8d6e52; }
+    body.english .qmap { --m1: #7cc35a; }
+    body.future .qmap { --m1: #2b2463; }
+    body.wonders .qmap { --m1: #5aa9d6; }
+    body.world .qmap { --m1: #3d8fd1; }
+    .qmap > svg { position: absolute; inset: 0; }
+    .qdeco { position: absolute; transform: translate(-50%, -50%) scale(var(--s, 1)); font-size: 1.9rem; line-height: 1; pointer-events: none; filter: drop-shadow(3px 3px 0 rgba(0,0,0,.25)); }
+    .qdeco.big { font-size: 2.6rem; }
+    .qdeco.small { font-size: 1.2rem; }
+    /* a unit's landmark: a big set piece standing on its own patch of ground */
+    .qmark { position: absolute; transform: translate(-50%, -60%); font-size: 4.4rem; line-height: 1; pointer-events: none; filter: drop-shadow(5px 5px 0 rgba(0,0,0,.25)); }
+    .qmark::after { content: ""; position: absolute; left: 10%; right: 10%; bottom: -6px; height: 12px; background: rgba(0,0,0,.18); z-index: -1; }
+    /* fog over the stretches of road still being built: blocky pixel clouds; the stops inside it show through faintly */
+    .qfog { position: absolute; z-index: 1; width: 190px; height: 116px; transform: translate(-50%, -50%) scale(var(--s, 1)); pointer-events: none; opacity: .82;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 11' shape-rendering='crispEdges'%3E%3Cg fill='%23f4f7fa'%3E%3Crect x='5' y='0' width='6' height='2'/%3E%3Crect x='3' y='2' width='11' height='2'/%3E%3Crect x='1' y='4' width='16' height='3'/%3E%3Crect x='0' y='7' width='18' height='3'/%3E%3Crect x='2' y='10' width='14' height='1'/%3E%3C/g%3E%3C/svg%3E") center / 100% 100% no-repeat; }
+    body.future .qfog { opacity: .35; }
+    body.maths .qfog { opacity: .7; filter: brightness(.22); } /* the mine's unexplored tunnels are dark, not misty */
+    .qnode { z-index: 2; }
+    .qnode.soon { opacity: .75; }
+    .qsign.fogged { opacity: .6; }
+    /* a wooden sign across the road names each unit as the road enters it */
+    .qsign { position: absolute; z-index: 2; transform: translate(-50%, -50%); width: max-content; padding: 5px 12px; text-align: center; background: #a8743e; color: #fff8e1; border: 3px solid #000;
+      box-shadow: inset 3px 3px 0 #c99a62, inset -3px -3px 0 #7a5228, 0 4px 0 rgba(0,0,0,.3);
+      font-family: var(--pixel); font-weight: 700; font-size: .95rem; line-height: 1.15; text-shadow: 2px 2px 0 #4a2f14; }
+    /* a stop on the road: a big block with the lesson's icon, its name on a tag underneath */
+    .qnode { position: absolute; width: 76px; height: 76px; transform: translate(-50%, -50%); display: grid; place-items: center; padding: 0; cursor: pointer;
+      font-size: 2.5rem; background: var(--brand); border: 4px solid #000; box-shadow: var(--bevel), 0 5px 0 #000; -webkit-tap-highlight-color: transparent; }
+    .qnode:hover, .qnode:focus-visible { outline: 4px solid #fff; outline-offset: 2px; }
+    .qnode:active { transform: translate(-50%, calc(-50% + 3px)); box-shadow: var(--bevel), 0 2px 0 #000; }
+    .qnode.done { background: var(--gold); }
+    .qnode.going { background: #e09a00; }
+    .qnode.soon { background: #9a9a9a; cursor: pointer; }
+    .qnode.soon .qi { filter: grayscale(1); opacity: .55; }
+    .qnode.locked { background: #9a9a9a; }
+    .qnode.locked .qi { filter: grayscale(.7); opacity: .8; }
+    .qnode.locked .qbadge { background: #555; color: #fff; }
+    .qnode.end { background: #8a5a32; }
+    .qnode.start { width: 64px; height: 64px; font-size: 2rem; background: #fff; }
+    /* the next quest glows, so the eye finds it straight away */
+    .qnode.next { animation: qglow 1.2s steps(2) infinite; }
+    @keyframes qglow { 50% { box-shadow: var(--bevel), 0 5px 0 #000, 0 0 0 6px #fff, 0 0 0 10px rgba(0,0,0,.6); } }
+    .qbadge { position: absolute; bottom: -12px; right: -26px; width: max-content; padding: 1px 6px; z-index: 1; white-space: nowrap; font-family: var(--pixel); font-weight: 700; font-size: .8rem; color: #000; background: #fff; border: 2px solid #000; }
+    .qnode.done .qbadge { background: var(--gold); }
+    .qnode.soon .qbadge { background: #555; color: #fff; }
+    .qlabel { position: absolute; top: calc(100% + 14px); left: 50%; transform: translateX(-50%); width: max-content; max-width: 150px; padding: 2px 7px; text-align: center;
+      background: rgba(0,0,0,.6); color: #fff; font-family: var(--pixel); font-weight: 700; font-size: .85rem; line-height: 1.15; pointer-events: none; }
+    .qnode.soon .qlabel, .qnode.locked .qlabel { color: #ddd; background: rgba(0,0,0,.4); }
+    /* the player's hero stands on the road at the next stop (and walks there after finishing a quest) */
+    .qhero { position: absolute; z-index: 3; pointer-events: none; image-rendering: pixelated; }
+    .qhero-tag { position: absolute; z-index: 4; transform: translate(-50%, -100%); padding: 2px 8px; white-space: nowrap; background: #000; color: #ffd43b; font-family: var(--pixel); font-weight: 700; font-size: .8rem; pointer-events: none; animation: qbob 1s steps(2) infinite; }
+    @keyframes qbob { 50% { margin-top: -4px; } }
+    /* tapping a stop opens its quest card */
+    .qcard-back { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 16px; background: rgba(0,0,0,.55); }
+    .qcard-back[hidden] { display: none; }
+    .qcard { position: relative; width: min(440px, 100%); display: flex; gap: 16px; align-items: flex-start; padding: 26px 18px 18px;
+      background: linear-gradient(var(--brand) 0 12px, #000 12px 15px, var(--stone) 15px); border: 4px solid #000; box-shadow: var(--bevel), 0 8px 0 rgba(0,0,0,.4); }
+    .qcard .le { flex: none; width: 84px; height: 84px; display: grid; place-items: center; font-size: 3rem; background: var(--slot); border: 3px solid #000; box-shadow: var(--bevel-in); }
+    .qcard.soon .le { filter: grayscale(1); }
+    .qc-body { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+    .qc-tag { padding: 2px 8px; background: #000; color: #ffd43b; font-family: var(--pixel); font-weight: 700; font-size: .8rem; }
+    .qcard h2 { margin: 2px 0 0; font-size: 1.35rem; }
+    .qc-unit { color: #444; font-weight: 600; font-size: .85rem; }
+    .qc-stat { margin: 6px 0 0; font-weight: 600; }
+    .qc-tip { margin: 6px 0 0; padding: 6px 8px; background: #fff8d6; border: 2px solid #000; font-size: .9rem; }
+    .qc-btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+    @media (max-width: 479px) {
+      .qmap-wrap { padding: 0 10px 70px; }
+      .qnode { width: 64px; height: 64px; font-size: 2.1rem; }
+      .qlabel { max-width: 120px; font-size: .78rem; }
+      .qsign { font-size: .78rem; padding: 3px 7px; }
+      .qdeco { font-size: 1.5rem; }
+      .qdeco.big { font-size: 2rem; }
+      .qmark { font-size: 3.2rem; }
+      .qcard { flex-direction: column; align-items: center; text-align: center; }
+      .qc-body { align-items: center; }
+      .qc-btns { justify-content: center; }
     }
-    a.lesson-card:hover { transform: translateY(-4px); outline: 4px solid #fff; outline-offset: -2px; }
-    .lesson-card .le { width: 64px; height: 64px; display: grid; place-items: center; font-size: 2.4rem; background: var(--slot); border: 3px solid #000; box-shadow: var(--bevel-in); }
-    .lesson-card h2 { font-size: 1.25rem; margin: 8px 0 0; }
-    .lesson-card .unit { color: #444; font-weight: 600; font-size: .85rem; }
-    /* corner badge: ▶ new · ⭐ in progress · 🏆 done */
-    .lesson-card .badge { position: absolute; top: 24px; right: 12px; padding: 2px 8px; font-family: var(--pixel); font-weight: 700; font-size: .85rem; color: #fff; background: var(--good); border: 2px solid #000; text-shadow: 1px 1px 0 #000; }
-    .lesson-card.going .badge { background: #e09a00; }
-    .lesson-card.done .badge { background: var(--gold); color: #000; text-shadow: none; }
-    /* the next quest to play: a wide card with a big play button, first on the shelf */
-    .lesson-card.next { flex-direction: row; align-items: center; gap: 18px; }
-    @media (min-width: 480px) { .lesson-card.next { grid-column: span 2; } }
-    .lesson-card.next .le { flex: none; width: 96px; height: 96px; font-size: 3.6rem; }
-    .lesson-card.next .nx { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-width: 0; }
-    .lesson-card.next .nx-tag { padding: 2px 8px; background: #000; color: #ffd43b; font-family: var(--pixel); font-weight: 700; font-size: .8rem; }
-    .lesson-card.next h2 { margin: 2px 0 0; font-size: 1.45rem; }
-    .lesson-card.next .btn { margin-top: 8px; pointer-events: none; }
-    .lesson-card.next .badge { display: none; }
-    @media (max-width: 479px) { .lesson-card.next .le { width: 72px; height: 72px; font-size: 2.6rem; } .lesson-card.next h2 { font-size: 1.2rem; } }
-    .soon { grid-column: 1 / -1; margin-top: 8px; padding: 12px 14px; background: rgba(255,255,255,.55); border: 3px solid #000; }
-    .soon h2 { margin: 0 0 10px; font-size: 1.05rem; color: #333; }
-    .soon-row { display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); }
-    .soon-chip { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; font-weight: 600; font-size: .8rem; line-height: 1.2; color: #555; }
-    .soon-chip .se { width: 44px; height: 44px; display: grid; place-items: center; font-size: 1.6rem; background: var(--slot); border: 2px solid #000; filter: grayscale(.9); opacity: .6; }
   </style>
 </head>
 <body class="science">
@@ -149,11 +203,15 @@
   </header>
   <nav class="tabs" role="tablist" id="tabs"></nav>
   <section class="passport" id="passport" hidden></section>
-  <main class="shelf" id="shelf"></main>
+  <main class="qmap-wrap" id="shelf"></main>
+  <div class="qcard-back" id="qcard-back" hidden></div>
   <div class="toasts" id="toasts" aria-live="polite"></div>
 
 <script>
 // Add a lesson by giving it a `file`. Lessons without one show as "Coming soon".
+// Each lesson follows the one listed before it on the world's road; `after: '<title>'` starts a branch after another lesson.
+// A lesson in the same unit as the stop before it opens with a recap of that lesson; a lesson that starts a new unit opens
+// with a warm-up instead (a review stage whose `from` has no url). tools/lesson-check.js checks both.
 const LIBRARY = {
   science: {
     label: '🔬 Science Lab', tab: '🔬 Science',
@@ -163,11 +221,12 @@ const LIBRARY = {
       { id: 'science-plant-parts', title: 'Plant Detectives', emoji: '🌱', unit: 'Plants', file: 'science/plant-parts.html' },
       { id: 'science-plant-needs', title: 'What Do Plants Need?', emoji: '🌻', unit: 'Plants', file: 'science/plant-needs.html' },
       { id: 'science-flower-life-cycle', title: 'Flower Power Life Cycle', emoji: '🌸', unit: 'Plants', file: 'science/flower-life-cycle.html' },
-      { title: 'Fuel Your Body', emoji: '🥦', unit: 'Animals incl. Humans' },
-      { title: 'Bones & Muscles', emoji: '🦴', unit: 'Animals incl. Humans' },
       { title: 'Rock Stars', emoji: '🪨', unit: 'Rocks' },
       { title: 'Fossil Hunters', emoji: '🦖', unit: 'Rocks' },
       { title: 'Super Soil', emoji: '🪱', unit: 'Rocks' },
+      // the road forks after Friction: Plants → Rocks one way, Animals → Light the other
+      { title: 'Fuel Your Body', emoji: '🥦', unit: 'Animals incl. Humans', after: 'Pushes, Pulls & Friction' },
+      { title: 'Bones & Muscles', emoji: '🦴', unit: 'Animals incl. Humans' },
       { title: 'Light & Mirrors', emoji: '💡', unit: 'Light' },
       { title: 'Shadow Shapes', emoji: '👤', unit: 'Light' },
     ],
@@ -180,15 +239,16 @@ const LIBRARY = {
       { id: 'maths-24-hour', title: 'Night & Day: The 24-Hour Clock', emoji: '🌙', unit: 'Time', file: 'maths/24-hour.html' },
       { id: 'maths-how-long', title: 'How Long? Time Hops', emoji: '⏳', unit: 'Time', file: 'maths/how-long.html' },
       { title: 'Place Value Party', emoji: '🎉', unit: 'Numbers to 1,000' },
-      { title: 'Counting in 4s, 8s, 50s & 100s', emoji: '🐸', unit: 'Number' },
       { title: '3-Digit Add & Subtract', emoji: '➕', unit: 'Addition & Subtraction' },
-      { title: 'Times Tables Tower (3, 4, 8)', emoji: '🏰', unit: 'Multiplication & Division' },
-      { title: 'Fraction Pizza Shop', emoji: '🍕', unit: 'Fractions' },
       { title: 'Money Market', emoji: '💷', unit: 'Measurement' },
       { title: 'Measure It!', emoji: '📏', unit: 'Measurement' },
       { title: 'Perimeter Fences', emoji: '🐑', unit: 'Measurement' },
-      { title: 'Shape Explorers', emoji: '🔺', unit: 'Geometry' },
       { title: 'Bar Chart Bonanza', emoji: '📊', unit: 'Statistics' },
+      // the road forks after Place Value: adding & measuring one way, multiplying & dividing the other
+      { title: 'Counting in 4s, 8s, 50s & 100s', emoji: '🐸', unit: 'Number', after: 'Place Value Party' },
+      { title: 'Times Tables Tower (3, 4, 8)', emoji: '🏰', unit: 'Multiplication & Division' },
+      { title: 'Fraction Pizza Shop', emoji: '🍕', unit: 'Fractions' },
+      { title: 'Shape Explorers', emoji: '🔺', unit: 'Geometry' },
     ],
   },
   english: {
@@ -196,13 +256,14 @@ const LIBRARY = {
     lessons: [
       { id: 'english-prefixes', title: 'Prefix Power', emoji: '🦸', unit: 'Spelling & Vocabulary', file: 'english/prefixes.html' },
       { id: 'english-suffixes', title: 'Suffix Squad', emoji: '🧩', unit: 'Spelling & Vocabulary', file: 'english/suffixes.html' },
-      { id: 'english-homophones', title: 'Homophone Hunters', emoji: '👂', unit: 'Spelling', file: 'english/homophones.html' },
+      { id: 'english-homophones', title: 'Homophone Hunters', emoji: '👂', unit: 'Spelling & Vocabulary', file: 'english/homophones.html' },
       { id: 'english-a-or-an', title: 'A or An?', emoji: '🍎', unit: 'Grammar', file: 'english/a-or-an.html' },
       { id: 'english-conjunctions', title: 'Conjunction Junction', emoji: '🚂', unit: 'Grammar', file: 'english/conjunctions.html' },
       { title: 'Speech Marks Squad', emoji: '💬', unit: 'Punctuation' },
-      { title: 'Theseus & the Minotaur', emoji: '🐂', unit: 'Myths & Legends' },
-      { title: 'Fairy Tale Twist', emoji: '🧚', unit: 'Fiction' },
       { title: 'Poetry Playground', emoji: '🎵', unit: 'Poetry' },
+      // the road forks after Homophones: writing (grammar & punctuation) one way, reading (stories & facts) the other
+      { title: 'Theseus & the Minotaur', emoji: '🐂', unit: 'Myths & Legends', after: 'Homophone Hunters' },
+      { title: 'Fairy Tale Twist', emoji: '🧚', unit: 'Fiction' },
       { title: 'Non-fiction Detectives', emoji: '🔎', unit: 'Non-fiction' },
       { title: 'Inference Investigators', emoji: '🕵️', unit: 'Reading Skills' },
     ],
@@ -213,13 +274,14 @@ const LIBRARY = {
       { id: 'future-ai', title: 'How Does AI Work?', emoji: '🤖', unit: 'AI & Computers', file: 'future/ai.html' },
       { id: 'future-pixel-art', title: 'Pixel Art Studio', emoji: '🎨', unit: 'Creative Tech', file: 'future/pixel-art.html' },
       { id: 'future-poster', title: 'Design a Poster', emoji: '🖼️', unit: 'Creative Tech', file: 'future/poster.html' },
-      { title: 'Asking Great Questions', emoji: '💬', unit: 'AI & Computers' },
+      { title: 'Video Editing: Tell a Story', emoji: '🎬', unit: 'Creative Tech' },
+      { title: 'Think Like a Coder', emoji: '🧩', unit: 'Coding' },
+      { title: 'Money Smarts', emoji: '🪙', unit: 'Life Skills' },
+      // the road forks after the AI lesson: making things one way, thinking online the other
+      { title: 'Asking Great Questions', emoji: '💬', unit: 'AI & Computers', after: 'How Does AI Work?' },
       { title: 'Real or Fake?', emoji: '🕵️', unit: 'Thinking Online' },
       { title: 'Search Detective', emoji: '🔎', unit: 'Thinking Online' },
       { title: 'Staying Safe Online', emoji: '🛡️', unit: 'Thinking Online' },
-      { title: 'Think Like a Coder', emoji: '🧩', unit: 'Coding' },
-      { title: 'Video Editing: Tell a Story', emoji: '🎬', unit: 'Creative Tech' },
-      { title: 'Money Smarts', emoji: '🪙', unit: 'Life Skills' },
       { title: 'Be the Boss of Screen Time', emoji: '⏰', unit: 'Life Skills' },
     ],
   },
@@ -230,17 +292,18 @@ const LIBRARY = {
       { id: 'wonders-jellyfish', title: 'The Immortal Jellyfish: Can It Live Forever?', emoji: '🪼', unit: 'Amazing Animals', file: 'wonders/jellyfish.html' },
       { title: 'Octopus: 3 Hearts & Blue Blood', emoji: '🐙', unit: 'Amazing Animals' },
       { title: 'Animal Superpowers', emoji: '🦸', unit: 'Amazing Animals' },
-      { title: 'Pyramids of Giza', emoji: '🔺', unit: 'Ancient Wonders' },
-      { title: 'The Great Wall of China', emoji: '🧱', unit: 'Ancient Wonders' },
-      { title: 'Pompeii: The City Frozen in Time', emoji: '🏺', unit: 'Ancient Wonders' },
-      { title: 'The Terracotta Army', emoji: '🗿', unit: 'Ancient Wonders' },
+      { title: "Your Body's Secret Superpowers", emoji: '🧠', unit: 'Your Amazing Body' },
       { title: 'Oops! Accidental Inventions', emoji: '🍭', unit: 'Incredible Inventions' },
       { title: 'The Wright Brothers Take Off', emoji: '✈️', unit: 'Incredible Inventions' },
       { title: 'The Eiffel Tower Grows in Summer', emoji: '🗼', unit: 'Incredible Inventions' },
+      // the road forks after the Jellyfish: living things (and inventions) one way, places on the planet the other
+      { title: 'Pyramids of Giza', emoji: '🔺', unit: 'Ancient Wonders', after: 'The Immortal Jellyfish: Can It Live Forever?' },
+      { title: 'The Great Wall of China', emoji: '🧱', unit: 'Ancient Wonders' },
+      { title: 'Pompeii: The City Frozen in Time', emoji: '🏺', unit: 'Ancient Wonders' },
+      { title: 'The Terracotta Army', emoji: '🗿', unit: 'Ancient Wonders' },
       { title: 'Volcanoes: Earth Blows Its Top', emoji: '🌋', unit: 'Wild Planet' },
       { title: 'The Deepest Ocean', emoji: '🌊', unit: 'Wild Planet' },
       { title: 'The Northern Lights', emoji: '🌌', unit: 'Wild Planet' },
-      { title: "Your Body's Secret Superpowers", emoji: '🧠', unit: 'Your Amazing Body' },
     ],
   },
   world: {
@@ -346,7 +409,7 @@ if (window.Avatar) {
 // gems to spend, in a hotbar slot
 document.getElementById('gems').querySelector('b').textContent = wal.balance;
 
-const tabs = document.getElementById('tabs'), shelf = document.getElementById('shelf');
+const tabs = document.getElementById('tabs');
 // Around the World: the passport shows a stamp for every country lesson finished
 function passport() {
   const box = document.getElementById('passport');
@@ -368,6 +431,349 @@ function passport() {
   box.querySelector('h2').textContent = `🛂 My passport – ${n} countr${n === 1 ? 'y' : 'ies'} visited`;
   box.querySelector('.stamps').replaceChildren(...stamps);
 }
+// ---------- the quest map ----------
+// Each world is a road from START to its goal, and every lesson is a stop on it. A lesson follows the one listed before it,
+// unless it names another with `after: '<title>'`: two lessons after the same one make a fork, and the road splits into
+// lanes that meet again at the goal. A stop opens once the stop before it is cleared (lessons already started stay open),
+// so picking a branch is the player's choice while each lesson can still build on (and recap) the one before it.
+// Lessons still being made are grey stops on an unfinished stretch of road, hidden in fog.
+// Each world's look: its road, the little groups of scenery dotted around it and a few one-off pieces. Never scenery that
+// looks collectable (gems, coins, stars, keys): children want to pick it up and can't.
+const MAP_LOOK = {
+  science: { road: 'dirt', groups: { wood: ['🌳', '🌲', '🌳'], flowers: ['🌷', '🌼', '🌻', '🌸'], rocks: ['🪨'], mushrooms: ['🍄'] },
+    units: { Plants: ['flowers', 'flowers', 'wood'], Rocks: ['rocks', 'wood'], 'Animals incl. Humans': ['wood', 'flowers'] }, critters: ['🦋', '🐝', '🐌', '🐸'] },
+  maths: { road: 'rail', groups: { rocks: ['🪨'], timber: ['🪵'], mushrooms: ['🍄'] }, mix: ['rocks', 'rocks', 'timber', 'timber', 'mushrooms'], singles: ['⛏️', '🕯️'] },
+  english: { road: 'cobble', groups: { wood: ['🌳', '🌲'], flowers: ['🌷', '🌸', '🌼'], mushrooms: ['🍄'] }, singles: ['⛲', '🐎'], critters: ['🦋'] },
+  future: { road: 'circuit', groups: { asteroids: ['🪨'] }, singles: ['🪐', '🌙'] },
+  wonders: { road: 'boardwalk', groups: { reef: ['🪸', '🐠'], fish: ['🐠', '🐬'] }, singles: ['🐳', '⛵'] },
+  world: { road: 'flight', groups: { waves: ['🌊'], fish: ['🐬', '🐠'] }, singles: ['⛵', '🐳'] },
+};
+// one big landmark stands in each unit's part of the map
+const LANDMARK = {
+  'Forces & Magnets': '🪁', Plants: '🏡', 'Animals incl. Humans': '🐄', Rocks: '🏔️', Light: '🌈',
+  Time: '🔔', 'Numbers to 1,000': '🧮', Number: '🧱', 'Addition & Subtraction': '⚖️', 'Multiplication & Division': '🚂', Fractions: '🍰', Measurement: '📏', Geometry: '📐', Statistics: '📈',
+  'Spelling & Vocabulary': '📚', Grammar: '📜', Punctuation: '🪶', 'Myths & Legends': '🐉', Fiction: '🧚', Poetry: '🎭', 'Non-fiction': '🔭', 'Reading Skills': '📖',
+  'AI & Computers': '🖥️', 'Creative Tech': '📺', 'Thinking Online': '🔭', Coding: '🤖', 'Life Skills': '🏡',
+  'Amazing Animals': '🐳', 'Your Amazing Body': '🧠', 'Incredible Inventions': '💡', 'Ancient Wonders': '🏛️', 'Wild Planet': '🗻',
+  Asia: '🐘', 'Asia – home!': '🏠', Europe: '🏰', 'North America': '🗽', Africa: '🦒', 'South America': '🌴', Oceania: '🦘',
+};
+// the road's layers for each style (an SVG path `d`; `id` names the rail mask)
+function roadLayers(style, d, id, W, H) {
+  const P = a => `<path d="${d}" ${a}/>`, butt = 'stroke-linecap="butt"';
+  switch (style) {
+    case 'rail': // sleepers on dark ballast, two steel rails
+      return P('stroke="#000" stroke-width="30"') + P('stroke="#4a3b2c" stroke-width="26"') + P(`stroke="#8a5a32" stroke-width="26" stroke-dasharray="5 9" ${butt}`)
+        + `<mask id="${id}" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}"><path d="${d}" fill="none" stroke="#fff" stroke-width="20"/><path d="${d}" fill="none" stroke="#000" stroke-width="12"/></mask>`
+        + P(`stroke="#cfd4dc" stroke-width="20" mask="url(#${id})"`);
+    case 'cobble': // grey cobblestones
+      return P('stroke="#000" stroke-width="34"') + P('stroke="#6f6f6f" stroke-width="28"') + P(`stroke="#a9a9a9" stroke-width="22" stroke-dasharray="9 3" ${butt}`)
+        + P(`stroke="#c4c4c4" stroke-width="8" stroke-dasharray="9 3" stroke-dashoffset="6" ${butt}`);
+    case 'circuit': // a glowing circuit-board line
+      return P('stroke="#2ee6d6" stroke-opacity=".22" stroke-width="22"') + P('stroke="#000" stroke-width="12"') + P('stroke="#2ee6d6" stroke-width="6"')
+        + P(`stroke="#e6fffd" stroke-width="2" stroke-dasharray="3 9" ${butt}`);
+    case 'boardwalk': // wooden planks over the water
+      return P('stroke="#000" stroke-width="32"') + P('stroke="#6b4425" stroke-width="26"') + P(`stroke="#c08a52" stroke-width="22" stroke-dasharray="7 2" ${butt}`);
+    case 'flight': // a dotted flight path across the sea
+      return P(`stroke="rgba(0,0,0,.35)" stroke-width="9" stroke-dasharray="12 10" ${butt}`) + P(`stroke="#fff" stroke-width="5" stroke-dasharray="12 10" ${butt}`);
+    default: // a sandy dirt path with a dashed middle line
+      return P('stroke="#000" stroke-width="34"') + P('stroke="#b8925a" stroke-width="26"') + P('stroke="#e8cf98" stroke-width="18"')
+        + P(`stroke="#fff" stroke-opacity=".7" stroke-width="3" stroke-dasharray="8 12" ${butt}`);
+  }
+}
+// the goal at the end of each world's road
+const GOAL = { science: ['🏰', 'Castle of Science'], maths: ['👑', 'Crown of the Mine'], english: ['🏰', 'Word Kingdom Castle'], future: ['🚀', 'Rocket Launch Pad'], wonders: ['🏆', 'Hall of Wonders'], world: ['🏝️', 'Treasure Island'] };
+const mapWrap = document.getElementById('shelf');
+let mapWidth = 0, mapHero = null, walking = 0;
+
+// the road as a tree: each stop's parent is the stop before it
+function roadTree(lessons) {
+  const stops = lessons.map((l, i) => ({ l, i, kids: [] }));
+  const byTitle = Object.fromEntries(stops.map(s => [s.l.title, s]));
+  stops.forEach((s, i) => {
+    s.parent = s.l.after ? byTitle[s.l.after] || null : stops[i - 1] || null;
+    if (s.l.after && !s.parent) console.warn(`"${s.l.title}" is after "${s.l.after}", which isn't in this world`);
+    if (s.parent) s.parent.kids.push(s);
+  });
+  return stops;
+}
+
+function drawMap(key, lessons, stateOf) {
+  if (mapHero) { mapHero.stop(); mapHero = null; }
+  cancelAnimationFrame(walking);
+  const map = document.createElement('div');
+  map.className = 'qmap';
+  mapWrap.replaceChildren(map);
+  const W = mapWidth = map.clientWidth;
+  const small = W < 600, S = small ? 3 : 4; // S: the hero's pixel size
+  const ROW = small ? 150 : 170, HALF = small ? 32 : 38, HERO_H = 20 * S + 26, SIGN = small ? 128 : 134; // SIGN: extra road before a unit sign, room for a 3-line name above it
+  let seed = [...key].reduce((n, c) => (n * 31 + c.charCodeAt(0)) >>> 0, 7); // seeded, so the scenery stays put between visits
+  const rnd = () => (seed = (seed * 1103515245 + 12345) >>> 0) / 4294967296;
+
+  // what state each stop is in: done · going · new · locked (the stop before isn't cleared yet) · soon (not built yet)
+  const stops = roadTree(lessons);
+  const cleared = s => !!(s && s.l.file && stateOf(s.l) === 'done');
+  stops.forEach(s => {
+    const st = s.l.file ? stateOf(s.l) : 'soon';
+    s.st = st === 'new' && s.parent && s.parent.l.file && !cleared(s.parent) ? 'locked' : st;
+  });
+
+  // lay the tree out: a lane snakes left and right inside its share of the width; at a fork the share is split between the branches
+  const start = { x: W / 2, y: 56 };
+  const signs = [];
+  const lay = (s, x0, x1, y, k) => {
+    if (!s.parent || s.parent.l.unit !== s.l.unit) { signs.push(s); y += SIGN; }
+    const amp = Math.max(0, Math.min(0.3 * (x1 - x0), (x1 - x0 - 150) / 2));
+    Object.assign(s, { x0, x1, x: (x0 + x1) / 2 + [0, 1, 0, -1][k % 4] * amp, y });
+    const w = (x1 - x0) / s.kids.length;
+    s.kids.forEach((c, j) => lay(c, x0 + j * w, x0 + (j + 1) * w, y + ROW, s.kids.length > 1 ? 0 : k + 1));
+  };
+  const roots = stops.filter(s => !s.parent), pad = small ? 8 : 24;
+  roots.forEach((r, j) => lay(r, pad + j * (W - 2 * pad) / roots.length, pad + (j + 1) * (W - 2 * pad) / roots.length, start.y + ROW, 0));
+  const leaves = stops.filter(s => !s.kids.length);
+  const goal = { x: W / 2, y: Math.max(start.y, ...stops.map(s => s.y)) + ROW + 20 };
+  const H = goal.y + 110;
+  map.style.height = H + 'px';
+
+  // the road: square pixel corners, styled for the world. A stretch leading to a stop that isn't built yet is faded (and
+  // hidden in fog below). Branches join a crossroad just above the goal.
+  const look = MAP_LOOK[key] || MAP_LOOK.science;
+  const meet = goal.y - 70;
+  let built = '', todo = '';
+  const edge = (a, b, ok) => { const d = ` M${a.x} ${a.y} H${b.x} V${b.y}`; if (ok) built += d; else todo += d; };
+  roots.forEach(r => edge(start, r, r.l.file));
+  stops.forEach(s => s.kids.forEach(c => edge(s, c, c.l.file)));
+  leaves.forEach(s => { const d = ` M${s.x} ${s.y} V${meet} H${goal.x} V${goal.y}`; if (s.l.file && stops.every(t => t.l.file)) built += d; else todo += d; });
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('width', W); svg.setAttribute('height', H);
+  svg.innerHTML = `<g fill="none" stroke-linejoin="miter" stroke-linecap="square" shape-rendering="crispEdges">
+    ${todo ? `<g opacity=".45">${roadLayers(look.road, todo, `rail-todo-${key}`, W, H)}</g>` : ''}
+    ${built ? roadLayers(look.road, built, `rail-${key}`, W, H) : ''}</g>`;
+  map.append(svg);
+
+  const put = (cls, x, y, text) => {
+    const d = document.createElement('div');
+    d.className = cls; d.style.left = x + 'px'; d.style.top = y + 'px'; d.textContent = text;
+    map.append(d);
+    return d;
+  };
+  // a wooden sign across the road where it enters a new unit (high enough to leave room for the hero)
+  const signAt = s => ({ x: s.x, y: s.y - HALF - HERO_H - 30 });
+  const unitStops = s => { const run = [s]; for (let c = s; (c = c.kids.find(k => k.l.unit === s.l.unit));) run.push(c); return run; };
+  signs.forEach(s => {
+    const p = signAt(s), d = put('qsign', p.x, p.y, s.l.unit);
+    d.style.maxWidth = Math.min(220, s.x1 - s.x0 - 12) + 'px';
+    if (unitStops(s).every(t => t.st === 'soon')) d.classList.add('fogged');
+  });
+  // roadworks where a built stretch of road runs out
+  const works = [];
+  if (look.road !== 'flight') stops.forEach(s => s.kids.forEach(c => {
+    if (!s.l.file || c.l.file) return;
+    const dx = c.x - s.x, gap = HALF + 26; // on the sideways leg if it's long enough to clear the stop, else just above the next stop
+    const p = Math.abs(dx) > gap + 20 ? { x: s.x + Math.sign(dx) * Math.max(gap, Math.abs(dx) / 2), y: s.y } : { x: c.x, y: c.y - HALF - 22 };
+    put('qdeco', p.x, p.y, '🚧'); works.push(p);
+  }));
+
+  // fog hangs over every stretch that isn't built yet: puffs along the road to each unbuilt stop (the locked stops peek out)
+  const fog = [];
+  const fogLine = (a, b, skip) => { // puffs every ~55px along a straight piece of road
+    const n = Math.max(1, Math.round(Math.hypot(b.x - a.x, b.y - a.y) / 55));
+    for (let k = 0; k <= n; k++) { const t = k / n, x = a.x + (b.x - a.x) * t, y = a.y + (b.y - a.y) * t; if (Math.hypot(x - a.x, y - a.y) >= skip) fog.push({ x, y }); }
+  };
+  stops.filter(s => s.st === 'soon').forEach(s => {
+    const p = s.parent || start, skip = p.l && p.l.file ? 140 : 0; // keep the built stop and the roadworks sign in the clear
+    fogLine(p, { x: s.x, y: p.y }, skip); fogLine({ x: s.x, y: p.y }, { x: s.x, y: s.y }, Math.max(0, skip - Math.abs(s.x - p.x)));
+    if (!s.kids.length) fogLine(s, { x: s.x, y: meet }, 0);
+  });
+  fog.forEach(f => {
+    const d = put('qfog', f.x + (rnd() - 0.5) * 30, f.y + (rnd() - 0.5) * 24, '');
+    d.style.setProperty('--s', (small ? 0.75 : 1) * (0.85 + rnd() * 0.4));
+  });
+
+  // scenery keeps clear of the road, the stops (with their name tags and the hero's spot), the signs and the fog
+  const boxes = [];
+  const segsOf = d => d.trim().split(/\s*M/).filter(Boolean).forEach(part => {
+    const n = part.replace(/^M/, '').match(/[HV]?-?[\d.]+/g); // "x y H x V y …"
+    let x = +n[0], y = +n[1];
+    n.slice(2).forEach(t => { const v = +t.slice(1), a = { x, y }; if (t[0] === 'H') x = v; else y = v; boxes.push([Math.min(a.x, x) - 26, Math.min(a.y, y) - 26, Math.max(a.x, x) + 26, Math.max(a.y, y) + 26]); });
+  });
+  segsOf(built); segsOf(todo);
+  [start, goal, ...stops].forEach(s => boxes.push([s.x - 80, s.y - HALF - HERO_H - 8, s.x + 80, s.y + HALF + 62]));
+  signs.forEach(s => { const p = signAt(s); boxes.push([p.x - 115, p.y - 22, p.x + 115, p.y + 22]); });
+  works.forEach(p => boxes.push([p.x - 22, p.y - 22, p.x + 22, p.y + 22]));
+  fog.forEach(f => boxes.push([f.x - 90, f.y - 60, f.x + 90, f.y + 60]));
+  const room = (x, y) => Math.min(x, W - x, y, H - y, ...boxes.map(([a, b, c, d]) => Math.hypot(Math.max(a - x, 0, x - c), Math.max(b - y, 0, y - d))));
+  const spots = [];
+  for (let y = 30; y < H - 20; y += 24) for (let x = 20; x < W - 10; x += 24) spots.push({ x: x + (rnd() - 0.5) * 10, y: y + (rnd() - 0.5) * 10 });
+  const nearest = (x, y) => stops.reduce((b, s) => (!b || Math.hypot(s.x - x, s.y - y) < Math.hypot(b.x - x, b.y - y) ? s : b), null);
+  const items = [];
+
+  // landmarks first: the roomiest spot inside each unit's stretch of its lane
+  signs.forEach(s => {
+    const run = unitStops(s), icon = LANDMARK[s.l.unit];
+    if (!icon || run.every(t => t.st === 'soon')) return;
+    const top = signAt(s).y - 20, bottom = run[run.length - 1].y + ROW * 0.6;
+    let best = null, br = 0;
+    spots.forEach(p => { if (p.x > s.x0 && p.x < s.x1 && p.y > top && p.y < bottom) { const r = room(p.x, p.y); if (r > br) { br = r; best = p; } } });
+    if (!best || br < (small ? 34 : 46)) return;
+    items.push({ cls: 'qmark', x: best.x, y: best.y, icon, title: s.l.unit });
+    boxes.push([best.x - 60, best.y - 60, best.x + 60, best.y + 50]);
+  });
+  // then little groups of scenery in the open ground, with plenty of plain ground left between them
+  const gkeys = Object.keys(look.groups), MIN = small ? 46 : 60;
+  const order = spots.map(p => ({ p, r: room(p.x, p.y) + rnd() * 25 })).filter(o => o.r >= MIN).sort((a, b) => b.r - a.r);
+  let groupsLeft = Math.round((W * H) / (small ? 120000 : 150000));
+  for (const { p } of order) {
+    if (groupsLeft <= 0) break;
+    const r = room(p.x, p.y);
+    if (r < MIN) continue;
+    groupsLeft--;
+    const unit = (nearest(p.x, p.y) || {}).l?.unit, pref = (look.units && look.units[unit]) || look.mix || gkeys; // mix: how often each group appears
+    if (look.singles && rnd() < 0.3) { // a one-off piece: a fountain, a ship, a planet…
+      items.push({ cls: 'qdeco big', x: p.x, y: p.y, icon: look.singles[Math.floor(rnd() * look.singles.length)] });
+      boxes.push([p.x - 40, p.y - 40, p.x + 40, p.y + 40]);
+      continue;
+    }
+    const pool = look.groups[pref[Math.floor(rnd() * pref.length)]] || look.groups[gkeys[0]];
+    const spread = Math.min(r - 16, small ? 34 : 48), n = 2 + Math.floor(rnd() * (spread > 36 ? 4 : 3));
+    for (let k = 0; k < n; k++) {
+      const a = rnd() * Math.PI * 2, d = k ? spread * (0.45 + rnd() * 0.55) : 0;
+      items.push({ cls: 'qdeco', x: p.x + Math.cos(a) * d, y: p.y + Math.sin(a) * d * 0.7, icon: pool[Math.floor(rnd() * pool.length)], s: 0.8 + rnd() * 0.45 });
+    }
+    if (look.critters && rnd() < 0.35) items.push({ cls: 'qdeco small', x: p.x + spread + 6, y: p.y - spread * 0.5, icon: look.critters[Math.floor(rnd() * look.critters.length)] });
+    boxes.push([p.x - spread - 26, p.y - spread - 22, p.x + spread + 26, p.y + spread + 22]);
+  }
+  // back to front, so nearer things overlap the ones behind them
+  items.sort((a, b) => a.y - b.y).forEach(it => {
+    const d = put(it.cls, it.x, it.y, it.icon);
+    if (it.s) d.style.setProperty('--s', it.s);
+    if (it.title) d.title = it.title;
+  });
+
+  // where the hero stands: on a quest already started; else, when the only open quests are the branches of one fork,
+  // at the fork ("pick a path"); else at the first open quest. Once everything built is cleared, at the last built stop.
+  const going = stops.find(s => s.st === 'going'), open = stops.filter(s => s.st === 'new');
+  const fork = !going && open.length > 1 && open.every(s => s.parent && s.parent === open[0].parent) ? open[0].parent : null;
+  const at = going || fork || open[0] || [...stops].reverse().find(s => s.l.file);
+
+  // the stops
+  const node = (tag, cls, p, icon, label, badge) => {
+    const b = document.createElement(tag);
+    b.className = 'qnode ' + cls; b.style.left = p.x + 'px'; b.style.top = p.y + 'px';
+    if (tag === 'button') b.type = 'button';
+    b.innerHTML = '<span class="qi"></span><span class="qlabel"></span>';
+    b.querySelector('.qi').textContent = icon;
+    b.querySelector('.qlabel').textContent = label;
+    if (badge) { const s = document.createElement('span'); s.className = 'qbadge'; s.textContent = badge; b.append(s); }
+    map.append(b);
+    return b;
+  };
+  node('div', 'start', start, '🏁', 'START');
+  stops.forEach(s => {
+    const l = s.l, rec = records[l.id];
+    const badge = s.st === 'done' ? `🏆 ${rec.best}/${rec.total}` : s.st === 'going' ? `⭐ ${rec.stars}` : s.st === 'soon' || s.st === 'locked' ? '🔒' : null;
+    const glow = s === going || (!going && s.st === 'new');
+    const b = node('button', s.st + (glow ? ' next' : ''), s, l.emoji, l.title, badge);
+    b.setAttribute('aria-label', `${l.title}: ${{ done: 'cleared', going: 'started', new: 'open', locked: 'locked', soon: 'coming soon' }[s.st]}`);
+    b.onclick = () => questCard(s, glow);
+  });
+  const builtStops = stops.filter(s => s.l.file), nCleared = builtStops.filter(cleared).length, allClear = nCleared === stops.length;
+  const [goalIcon, goalName] = GOAL[key] || ['🏰', 'The Castle'];
+  node('button', 'end', goal, goalIcon, allClear ? 'WORLD CLEAR!' : goalName, allClear ? '👑' : null).onclick = () => openCard({
+    icon: goalIcon, tag: 'THE GOAL', title: goalName,
+    stat: `Clear every quest on the road to reach it! ${nCleared} of ${builtStops.length} cleared so far` + (builtStops.length < stops.length ? `, and ${stops.length - builtStops.length} more are being built.` : '.'),
+  });
+
+  // the hero, on the road just above its stop (y3:mapAt remembers where it stood, so after a quest it walks to the next one)
+  if (!window.Avatar || !at) return;
+  const cv = document.createElement('canvas');
+  cv.className = 'qhero';
+  map.append(cv);
+  mapHero = Avatar.animate(cv, { scale: S, pet: true });
+  const tag = put('qhero-tag', 0, 0, going ? 'KEEP GOING!' : fork ? 'PICK A PATH!' : open.length ? 'NEXT QUEST!' : 'MORE SOON!');
+  const place = (x, y) => {
+    cv.style.left = x - 6 * S + 'px'; cv.style.top = y - HALF - 20 * S + 4 + 'px';
+    tag.style.left = x + 'px'; tag.style.top = y - HALF - 20 * S - 4 + 'px';
+  };
+  const marks = get('y3:mapAt', {}), from = stops.find(s => s.l.id && s.l.id === marks[key]);
+  if (at.l.id) { marks[key] = at.l.id; try { localStorage.setItem('y3:mapAt', JSON.stringify(marks)); } catch (e) { /* ignore */ } }
+  const chain = []; // the stops from just after `from` down to `at`, if `at` is further along the same road
+  for (let s = at; s && s !== from; s = s.parent) chain.unshift(s);
+  const still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const inView = () => { const r = cv.getBoundingClientRect(); return r.top > 60 && r.bottom < innerHeight - 20; };
+  if (!from || from === at || !chain.length || chain[0].parent !== from || still) {
+    place(at.x, at.y);
+    if (!inView()) setTimeout(() => cv.scrollIntoView({ block: 'center', behavior: 'smooth' }), 400);
+    return;
+  }
+  // a quest was finished since the last visit: walk the road from the old stop to the new one
+  const way = chain.flatMap(s => [{ x: s.x, y: s.parent.y }, { x: s.x, y: s.y }]);
+  let p = { x: from.x, y: from.y }, w = 0, last = 0, t0 = 0;
+  place(p.x, p.y); tag.hidden = true;
+  const SPEED = 200; // pixels a second
+  const step = now => {
+    if (!cv.isConnected) return;
+    if (!last) last = t0 = now;
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (now - t0 > 700) { // a short pause first, so the eye finds the hero
+      let go = SPEED * dt;
+      while (go > 0 && w < way.length) {
+        const q = way[w], dx = q.x - p.x, dy = q.y - p.y, d = Math.hypot(dx, dy);
+        if (dx) mapHero.look(dx < 0 ? -1 : 1);
+        if (d <= go) { p = { x: q.x, y: q.y }; go -= d; w++; } else { p = { x: p.x + dx / d * go, y: p.y + dy / d * go }; go = 0; }
+      }
+      place(p.x, p.y);
+      cv.style.marginTop = Math.floor(now / 120) % 2 ? '-3px' : '0'; // a little hop with each step
+      const r = cv.getBoundingClientRect(), want = r.top + r.height / 2 - innerHeight * 0.5;
+      if (Math.abs(want) > innerHeight * 0.2) window.scrollBy(0, want * 0.06); // follow the hero down the map
+    }
+    if (w < way.length) walking = requestAnimationFrame(step);
+    else { cv.style.marginTop = '0'; tag.hidden = false; mapHero.look(0); mapHero.play() || mapHero.blink(); }
+  };
+  if (!inView()) cv.scrollIntoView({ block: 'center' });
+  walking = requestAnimationFrame(step);
+}
+
+// a stop's quest card: what it is, how far you got, and the button to play it
+function questCard(s, isNext) {
+  const l = s.l, rec = records[l.id] || {}, st = s.st;
+  const branches = s.kids.length > 1 && st === 'done' ? `The road splits here: ${s.kids.map(k => `“${k.l.title}”`).join(' or ')}. You choose!` : '';
+  openCard({
+    icon: l.emoji, title: l.title, unit: l.unit, soon: st === 'soon' || st === 'locked',
+    tag: isNext ? (st === 'going' ? 'KEEP GOING!' : 'NEXT QUEST') : { done: 'CLEARED!', going: 'STARTED', new: 'OPEN', locked: 'LOCKED', soon: 'COMING SOON' }[st],
+    stat: {
+      done: `🏆 Boss score ${rec.best}/${rec.total} · ⭐ ${rec.stars || 0} gems`, going: `⭐ ${rec.stars} gems so far`, new: 'A brand-new quest!',
+      locked: `🔒 Clear “${s.parent && s.parent.l.title}” to open this quest.`, soon: '🔒 This quest is still being built.',
+    }[st],
+    tip: branches,
+    play: st === 'soon' || st === 'locked' ? null : l.file,
+    playLabel: { done: '▶ PLAY AGAIN', going: '▶ CONTINUE', new: '▶ PLAY' }[st],
+  });
+}
+const qBack = document.getElementById('qcard-back');
+function openCard(o) {
+  const card = document.createElement('div');
+  card.className = 'qcard' + (o.soon ? ' soon' : '');
+  card.setAttribute('role', 'dialog'); card.setAttribute('aria-modal', 'true');
+  card.innerHTML = '<div class="le"></div><div class="qc-body"><span class="qc-tag"></span><h2></h2><div class="qc-unit"></div><p class="qc-stat"></p><p class="qc-tip"></p><div class="qc-btns"></div></div>';
+  const set = (sel, t) => { const e = card.querySelector(sel); if (t) e.textContent = t; else e.remove(); };
+  set('.le', o.icon); set('.qc-tag', o.tag); set('h2', o.title); set('.qc-unit', o.unit); set('.qc-stat', o.stat); set('.qc-tip', o.tip);
+  card.setAttribute('aria-label', o.title);
+  const btns = card.querySelector('.qc-btns');
+  if (o.play) { const a = document.createElement('a'); a.className = 'btn big ready'; a.href = o.play; a.textContent = o.playLabel; btns.append(a); }
+  const close = document.createElement('button');
+  close.type = 'button'; close.className = 'btn ghost'; close.textContent = o.play ? 'Not now' : 'OK';
+  close.onclick = closeCard;
+  btns.append(close);
+  qBack.replaceChildren(card); qBack.hidden = false;
+  btns.firstChild.focus();
+}
+function closeCard() { qBack.hidden = true; qBack.replaceChildren(); }
+qBack.addEventListener('click', e => { if (e.target === qBack) closeCard(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !qBack.hidden) closeCard(); });
+// a new width (phone turned, window resized) lays the road out again
+let resizeT = 0;
+window.addEventListener('resize', () => { clearTimeout(resizeT); resizeT = setTimeout(() => { if (mapWrap.firstChild && mapWrap.firstChild.clientWidth !== mapWidth) render(); }, 200); });
+
 function render() {
   document.body.className = current;
   passport();
@@ -387,47 +793,9 @@ function render() {
   }));
   const sel = tabs.querySelector('[aria-selected="true"]');
   tabs.scrollLeft = sel.offsetLeft - (tabs.clientWidth - sel.offsetWidth) / 2; // keep the chosen world in view on a phone
-  const all = LIBRARY[current].lessons, ready = all.filter(l => l.file), later = all.filter(l => !l.file);
+  const all = LIBRARY[current].lessons;
   const stateOf = l => { const rec = records[l.id]; return rec && rec.done ? 'done' : rec && rec.stars ? 'going' : 'new'; };
-  // the next quest goes first as a wide card: one already started, else the first new one (none once the world is cleared)
-  const next = ready.find(l => stateOf(l) === 'going') || ready.find(l => stateOf(l) === 'new');
-  if (next) ready.splice(ready.indexOf(next), 1), ready.unshift(next);
-  const cards = ready.map(l => {
-    const rec = records[l.id];
-    const state = stateOf(l);
-    const card = document.createElement('a');
-    card.className = 'lesson-card ' + state + (l === next ? ' next' : ''); card.href = l.file;
-    card.innerHTML = l === next
-      ? `<div class="le"></div><div class="nx"><span class="nx-tag"></span><h2></h2><div class="unit"></div><span class="btn"></span></div><span class="badge"></span>`
-      : `<div class="le"></div><h2></h2><div class="unit"></div><span class="badge"></span>`;
-    if (l === next) {
-      card.querySelector('.nx-tag').textContent = state === 'going' ? 'KEEP GOING!' : 'NEXT QUEST';
-      card.querySelector('.btn').textContent = state === 'going' ? `▶ CONTINUE · ⭐ ${rec.stars} 💎` : '▶ PLAY';
-    }
-    card.querySelector('.le').textContent = l.emoji;
-    card.querySelector('h2').textContent = l.title;
-    card.querySelector('.unit').textContent = l.unit;
-    const badge = card.querySelector('.badge');
-    badge.textContent = state === 'done' ? `🏆 ${rec.best}/${rec.total}` : state === 'going' ? `⭐ ${rec.stars} 💎` : '▶ NEW';
-    badge.title = state === 'done' ? `Finished! ${rec.stars || 0} gems · boss score ${rec.best}/${rec.total}` : state === 'going' ? 'Keep going!' : 'Not started yet';
-    return card;
-  });
-  // topics still being made: one small strip instead of full-size locked cards
-  if (later.length) {
-    const soon = document.createElement('section');
-    soon.className = 'soon';
-    soon.innerHTML = '<h2>🔒 Coming soon</h2><div class="soon-row"></div>';
-    soon.querySelector('.soon-row').replaceChildren(...later.map(l => {
-      const c = document.createElement('div');
-      c.className = 'soon-chip'; c.title = l.unit;
-      c.innerHTML = '<span class="se"></span><span class="sn"></span>';
-      c.querySelector('.se').textContent = l.emoji;
-      c.querySelector('.sn').textContent = l.title;
-      return c;
-    }));
-    cards.push(soon);
-  }
-  shelf.replaceChildren(...cards);
+  drawMap(current, all, stateOf);
 }
 render();
 </script>

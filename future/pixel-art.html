@@ -111,19 +111,20 @@ window.LESSON = {
     },
 
     {
-      type: 'review', title: 'Last time…', short: 'Recap', minutes: 3,
-      from: { title: 'How Does AI Work?', emoji: '🤖', url: 'ai.html' },
+      type: 'review', title: 'Warm-up: colours and shapes', short: 'Warm-up', minutes: 3,
+      say: "New topic: ART! Let's warm up with colours and shapes you already know. Read the notes, then test your memory!",
+      from: { title: 'Colours and shapes you already know', emoji: '🎨' },
       facts: [
-        'AI stands for **artificial intelligence** – computer programs that learn from examples.',
-        'The examples are called **data**. AI finds **patterns** in the data. Teaching it is called **training**.',
-        'AI can be **confidently wrong** – always check with a grown-up or a trusted book.',
-        'Never tell an AI your **personal information**, like your address or passwords.',
+        'The three primary colours are red, yellow and blue. Mixing them makes new colours.',
+        'Blue + yellow = green. Red + yellow = orange. Red + blue = purple.',
+        'A square has 4 straight sides, all the same length.',
+        'A grid is made of rows (going across) and columns (going down).',
       ],
       questions: [
-        { type: 'mcq', q: 'The examples an AI learns from are called…', options: ['data', 'dots', 'dates'], answer: 0 },
-        { type: 'tf', q: 'If an AI sounds very sure, it must be right.', answer: false, explain: 'Remember Bolt and the lemon? AI can be confidently wrong!' },
-        { type: 'mcq', q: 'Which is OK to tell an AI?', options: ['🦖 my favourite dinosaur', '🏠 my address', '🔑 my password'], answer: 0 },
-        { type: 'mcq', q: 'Bolt was only taught apples and bananas. He saw a lemon and said "banana!". How could we fix him?', options: ['Train him with more, different examples', 'Shout at him', 'Turn the lemon blue'], answer: 0 },
+        { type: 'mcq', q: 'You mix blue paint and yellow paint. What colour do you get?', options: ['green', 'orange', 'purple'], answer: 0 },
+        { type: 'oddone', q: 'Which colour is the odd one out?', items: ['🔴 red', '🟡 yellow', '🟢 green', '🔵 blue'], answer: 2, why: 'Why does green not belong?', reasons: ['It is not a primary colour – you make it by mixing two', 'It is the darkest colour', 'It is the only colour you see in nature'], reason: 0 },
+        { type: 'tf', q: 'All 4 sides of a square are the same length.', answer: true },
+        { type: 'mcq', q: 'In a grid, which way does a ROW go?', options: ['across ↔', 'down ↕', 'round in a circle'], answer: 0, hint: 'Rows of seats in a cinema go across.' },
       ],
     },
 

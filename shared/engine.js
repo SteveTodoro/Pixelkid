@@ -431,10 +431,12 @@
   }
 
   // ---------- stage: review ("last time…" recap of the previous lesson) ----------
+  // A lesson that starts a new topic has a warm-up instead: the same stage, but `from` names what the child already knows
+  // and has no url (e.g. { title: 'Clocks you already know', emoji: '🕐' }).
   function renderReview(s, i) {
     const area = h('div');
     const nav = navRow(() => go(i - 1, true));
-    const from = s.from || {};
+    const from = s.from || {}, warm = !from.url && !!from.title;
     const start = () => {
       stopReading();
       sfx.good();
@@ -444,8 +446,8 @@
         done(score) {
           const finish = () => {
             sfx.win(); confetti(80); complete(i);
-            say(score === s.questions.length ? 'Your memory is EPIC! Now for something new…' : 'Great recap! Now for something new…');
-            put(area, h('div', { class: 'results' }, h('div', { class: 'trophy' }, '🧠'), h('h2', null, 'RECAP COMPLETE!'),
+            say(score === s.questions.length ? 'Your memory is EPIC! Now for something new…' : warm ? 'Brain warmed up! Now for something new…' : 'Great recap! Now for something new…');
+            put(area, h('div', { class: 'results' }, h('div', { class: 'trophy' }, '🧠'), h('h2', null, warm ? 'WARM-UP COMPLETE!' : 'RECAP COMPLETE!'),
               h('p', { class: 'lead' }, `You remembered ${score} of ${s.questions.length} first time.`)));
             nav.set(nextLabel(i), () => go(i + 1));
           };
@@ -465,13 +467,13 @@
     cleanup = reader.stop;
     put(area,
       h('div', { class: 'panel-inner recap' },
-        h('h3', null, `⏪ Last time: ${from.emoji || ''} ${from.title || 'our last lesson'}`),
+        h('h3', null, warm ? `🔥 Warm-up: ${from.emoji || ''} ${from.title}` : `⏪ Last time: ${from.emoji || ''} ${from.title || 'our last lesson'}`),
         h('ul', null, factEls),
         h('div', { class: 'read-row' }, reader.btn),
         from.url && h('a', { class: 'recap-link', href: from.url }, '↺ Replay that lesson')),
       h('div', { class: 'btn-row' }, h('button', { class: 'btn big green ready', type: 'button', onclick: start }, '🧠 Test my memory!')));
     nav.set(nextLabel(i), () => go(i + 1), !!state.complete[i]);
-    return shell(s, [mascot(s.say || 'Welcome back! First, a quick recap of last time. Read the notes, then test your memory!'), area, nav.el]);
+    return shell(s, [mascot(s.say || (warm ? 'New topic! First, a quick warm-up with what you already know. Read the notes, then test your memory!' : 'Welcome back! First, a quick recap of last time. Read the notes, then test your memory!')), area, nav.el]);
   }
 
   // ---------- read-aloud: a 🔊 button that reads a passage, lighting up each word as it is spoken ----------

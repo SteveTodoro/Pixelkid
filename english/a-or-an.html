@@ -69,34 +69,26 @@ window.LESSON = {
       pic: AN_BRIDGE,
       hello: "Welcome back to the WORD KINGDOM! A sneaky magpie called Snatchit is stealing the n from AN. Now everyone is saying \"a apple\" and getting their tongues in a twist!",
       question: 'Why do we say AN apple but A banana?',
-      intro: 'Recap, read, watch, sort, proofread, fuel a **rocket** with your spelling – then get the n back from Snatchit the magpie!',
+      intro: 'Warm up, read, watch, sort, proofread, fuel a **rocket** with your spelling – then get the n back from Snatchit the magpie!',
       nameLabel: 'Player name:',
     },
 
     {
-      type: 'review', title: 'Last time…', short: 'Recap', minutes: 3,
-      from: { title: 'Homophone Hunters', emoji: '👂', url: 'homophones.html' },
+      type: 'review', title: 'Warm-up: letters and words', short: 'Warm-up', minutes: 3,
+      say: "New topic: GRAMMAR! Let's warm up with letters and words you already know. Read the notes, then test your memory!",
+      from: { title: 'Letters and words you already know', emoji: '🔤' },
       facts: [
-        'Homophones sound the same but have different spellings and meanings: sea and see, night and knight.',
-        'hear has ear in it. two is the number. too means also or too much.',
-        'they\'re = they are · their = belongs to them · there = a place (here hides inside).',
-        'A spellchecker can\'t catch homophones – only a sharp-eyed hunter can!',
+        'The alphabet has 26 letters. Five of them are vowels: a, e, i, o and u.',
+        'All the other letters, like b, d, k and s, are consonants.',
+        'A noun is a naming word: a person, place, animal or thing – like teacher, beach, cat or ball.',
+        'Every word starts with a sound. Say "cat" slowly: its first sound is c.',
       ],
       questions: [
-        { type: 'gap', q: 'The cats licked ___ paws.', options: ['their', 'there', 'they\'re'], answer: 0, hint: 'Whose paws?' },
-        { type: 'gap', q: 'I\'ve eaten ___ many sweets!', options: ['too', 'two', 'to'], answer: 0 },
-        { type: 'mcq', q: 'Which word goes with a bee: "The bee buzzed round the ___."', options: ['flower', 'flour', 'flowr'], answer: 0 },
-        { type: 'tf', q: 'Knight and night are homophones.', answer: true },
+        { type: 'oddone', q: 'Which letter is the odd one out?', items: ['a', 'e', 'k', 'o'], answer: 2, why: 'Why does k not belong?', reasons: ['It is a consonant – the others are vowels', 'It is the only tall letter', 'It comes last in the alphabet'], reason: 0 },
+        { type: 'type', q: 'Type the five vowels.', answer: ['a e i o u', 'aeiou'], placeholder: 'five letters', hint: 'The first one is a, the last one is u.' },
+        { type: 'mcq', q: 'Which word is a noun (a naming word)?', options: ['rabbit', 'quickly', 'jump'], answer: 0, hint: 'Which one is an animal or a thing?' },
+        { type: 'mcq', q: 'Say "elephant" out loud. What is its very first sound?', options: ['e – a vowel', 'l – a consonant', 'f – a consonant'], answer: 0 },
       ],
-      game: {
-        game: 'fixit', title: 'Quick proofread',
-        intro: 'Echo the ghost left one last note. Tap the wrong word, then drag the right twin onto it!',
-        noOk: true,
-        sentences: [
-          { text: 'Can you here the waves?', wrong: 'here', fix: 'hear', options: ['hair'], why: 'Ears → hear.' },
-          { text: 'There going to build a sandcastle.', wrong: 'There', fix: 'they\'re', options: ['their'], why: 'They are going → they\'re.' },
-        ],
-      },
     },
 
     {
