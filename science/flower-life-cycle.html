@@ -256,49 +256,42 @@ window.LESSON = {
     },
 
     {
-      type: 'read', title: 'Seeds on the move', short: 'Read 2', minutes: 6,
-      say: 'A plant can\'t walk – but its seeds are great travellers. Let\'s find out how!',
-      cards: [
-        {
-          title: 'From flower to fruit', pic: '🌸➡️🍏➡️🍎',
-          text: [
-            'After pollination, the petals dry up and fall off. They have done their job!',
-            'The ovary swells up into a fruit, with the seeds safe inside. Apples, tomatoes, peppers and even pea pods are all fruits holding seeds.',
-          ],
-          check: { q: 'You cut open a cucumber and find lots of little seeds. What does that tell you?', options: ['A cucumber grew from a pollinated flower', 'Someone put the seeds inside it', 'Cucumbers grow from roots'], answer: 0 },
-        },
-        {
-          title: 'Why seeds need to travel', pic: '🌳🌱🌱🌱',
-          text: [
-            'If every seed fell right under its parent plant, the seedlings would be squashed together, fighting for water, light and space. The big parent would block the sunlight too.',
-            'So plants send their seeds away. This is called [[seed dispersal]].',
-          ],
-          check: { q: 'An oak tree drops 100 acorns straight down onto the ground beneath it. Why might most of them struggle to grow?', options: ['The big tree shades them, and they all share the same water and space', 'Acorns can only grow in the sea', 'Acorns need to be planted by people'], answer: 0 },
-        },
-        {
-          title: 'Wind and water', pic: '🌬️🌼 🥥🌊',
-          text: [
-            'Some seeds fly. Dandelion seeds have fluffy parachutes, and sycamore seeds have wings that spin like helicopters.',
-            'Some seeds sail! A coconut is a giant seed that floats. It can drift across the sea and grow on a faraway beach.',
-          ],
-          check: { q: 'A seed is very light and has a fluffy top. How does it most likely travel?', options: ['It floats away on the wind', 'It rolls along the ground', 'Squirrels bury it'], answer: 0 },
-        },
-        {
-          title: 'Animal taxis', pic: '🐿️🌰 🐦🍓',
-          text: [
-            'Animals carry seeds too. Burrs have tiny hooks that stick to fur and socks. Squirrels bury acorns to eat later – and the ones they forget grow into new oak trees!',
-            'Birds and other animals eat tasty fruit, then the seeds come out in their poo, far away. Plus a free blob of fertiliser!',
-          ],
-          check: { type: 'evidence', q: 'After a walk in the woods, your dog has spiky little balls stuck in its fur. Tap the sentence that explains what they are.', answer: 'Burrs have tiny hooks', hint: 'Find the sentence about hooks.', explain: 'They are burrs, hitching a ride to carry their seeds somewhere new!' },
-        },
-        {
-          title: 'Myth-buster: is a tomato a vegetable?', pic: '🍅❓',
-          text: [
-            'Lots of people say a tomato is a vegetable. Scientists say: busted! To a scientist, a fruit is the part that grows from the flower and holds the seeds.',
-            'Tomatoes have seeds inside, so they are fruits – and so are cucumbers, peppers and pumpkins!',
-          ],
-          check: { type: 'oddone', q: 'Using the scientist\'s rule, which one is NOT a fruit?', items: ['🍅 tomato', '🫑 pepper', '🥒 cucumber', '🥕 carrot'], answer: 3, why: 'Why is the carrot the odd one out?', reasons: ['It is a root – it does not hold seeds', 'It is orange', 'It grows on a tree'], reason: 0, hint: 'A fruit holds the seeds.' },
-        },
+      type: 'investigate', title: 'Seeds on the move: the wind test', short: 'Investigate', minutes: 8,
+      say: 'A plant can\'t walk – but its seeds are great travellers! Let\'s investigate how.',
+      question: 'Which seeds can the wind carry far away from their parent plant?',
+      predict: { q: 'We will switch on a big fan next to three seeds. Which one do you think the wind will carry the FURTHEST?', options: ['🪂 a dandelion seed', '🚁 a sycamore seed', '🌰 a conker'], answer: 0 },
+      test: {
+        game: 'windtest', title: 'Wind Test',
+        intro: 'Pick a seed, then switch on the wind. Watch how it flies – and where it lands!',
+        say: 'Pick a seed, then switch on the wind!',
+        caption: '🌬️ Our wind test results',
+        seeds: [
+          { id: 'dandelion', name: '🪂 Dandelion seed', look: 'parachute', m: 24 },
+          { id: 'sycamore', name: '🚁 Sycamore seed', look: 'wing', m: 9 },
+          { id: 'conker', name: '🌰 Conker', look: 'nut', m: 1 },
+        ],
+        missions: [
+          { text: 'Test the **dandelion seed**. Switch on the wind and watch it go!', need: ['dandelion'], yes: 'Look how it floated on its fluffy parachute!' },
+          { text: 'Now test the **sycamore seed** and the **conker**. Which one goes the shortest distance?', need: ['sycamore', 'conker'],
+            yes: 'The sycamore spun like a helicopter. The heavy conker just dropped!',
+            ask: [
+              { q: 'Why did the dandelion seed travel the furthest?', options: ['It is light, and its fluffy parachute catches the wind', 'It is the heaviest seed', 'It has tiny hooks'], answer: 0, hint: 'Think about its fluffy top.' },
+              { q: 'The conker landed right next to its tree. How do conkers and acorns really get spread around?', options: ['Animals like squirrels carry them off and bury them', 'The wind blows them far away', 'They float up into the clouds'], answer: 0, hint: 'Who loves to collect nuts?' },
+            ] },
+        ],
+      },
+      explain: [
+        { q: 'An oak tree drops 100 acorns straight down onto the ground beneath it. Why might most of them struggle to grow?', options: ['The big tree shades them, and they all share the same water and space', 'Acorns can only grow in the sea', 'Acorns need to be planted by people'], answer: 0, hint: 'What does every seedling need? Is there enough to go round?' },
+        { q: 'A coconut drops onto a beach. How could it start a new palm tree on a faraway island?', options: ['It floats across the sea and washes up on another beach', 'It rolls along the bottom of the sea', 'The wind blows it into the sky'], answer: 0, hint: 'A coconut is a giant seed that can float.' },
+        { type: 'type', q: 'After a walk in the woods, your dog has spiky little balls with tiny hooks stuck in its fur. They are called…', answer: ['burrs', 'burr', 'a burr'], placeholder: 'one word', hint: 'It starts with b and rhymes with fur!', explain: 'Burrs hitch a ride on fur and socks, to carry their seeds somewhere new.' },
+        { q: 'A bird eats a juicy cherry and flies away. How does this help the cherry tree?', options: ['The seed comes out in the bird\'s poo, far away – with free fertiliser!', 'The bird plants the seed with its beak', 'It doesn\'t help the tree at all'], answer: 0, hint: 'What happens to the seed inside the bird?' },
+        { type: 'oddone', q: 'To a scientist, a fruit is the part that grows from the flower and holds the seeds. Which one is NOT a fruit?', items: ['🍅 tomato', '🫑 pepper', '🥒 cucumber', '🥕 carrot'], answer: 3, why: 'Why is the carrot the odd one out?', reasons: ['It is a root – it does not hold seeds', 'It is orange', 'It grows on a tree'], reason: 0, hint: 'Which one has no seeds inside?' },
+      ],
+      result: [
+        'After a flower is pollinated, the petals fall off and the ovary swells into a **fruit** with the seeds safe inside. Then the seeds need to travel. This is called [[seed dispersal]].',
+        'Why? If every seed landed under its parent, the seedlings would be squashed together, fighting for water, light and space.',
+        '🌬️ **Wind:** light seeds with parachutes (dandelions) or wings (sycamores) fly away. 🌊 **Water:** a coconut floats across the sea. 🐿️ **Animals:** burrs hook onto fur, squirrels bury acorns and forget some, and birds eat fruit and drop the seeds far away.',
+        'Myth-buster: a tomato is a fruit, not a vegetable – it grows from the flower and holds seeds!',
       ],
     },
 

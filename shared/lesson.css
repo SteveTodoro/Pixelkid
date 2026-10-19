@@ -1203,3 +1203,55 @@ a { color: var(--brand-dark); }
 .my-worth { margin-top: 6px; text-align: center; font-family: var(--pixel); font-size: .95rem; color: #9fe8ff; }
 .my-answer { max-width: 620px; margin: 0 auto; }
 .comic .read-row { margin-top: 12px; }
+
+/* ---------- teach the robot: the robot "teaches", the child fixes its mistakes ---------- */
+.tb-robot { display: flex; gap: 14px; align-items: flex-start; max-width: 760px; margin: 0 auto 14px; }
+.tb-face { flex: none; display: grid; place-items: center; width: 76px; height: 76px; font-size: 3rem; background: #2b3a4a; border: 4px solid #000; box-shadow: var(--bevel); }
+.tb-bubble { position: relative; flex: 1; padding: 12px 16px; background: #fff; border: 4px solid #000; font-size: 1.1rem; }
+.tb-bubble::before { content: ""; position: absolute; left: -16px; top: 22px; border: 8px solid transparent; border-right-color: #000; }
+.tb-lesson { max-width: 760px; margin: 0 auto; padding: 12px; background: #dff3ff; border: 4px dashed #2b3a4a; }
+.tb-lesson .fx-sentence { padding: 12px; background: #fff; border: 3px solid #000; }
+.tb-notes { max-width: 760px; margin: 0 auto; }
+.tb-notes h3 { margin: 0 0 8px; font-family: var(--pixel); }
+.tb-notes li { margin: 6px 0; font-size: 1.1rem; }
+.tb-notes strong { background: var(--good-soft); padding: 0 3px; }
+
+/* ---------- detective case: case file, evidence board with clue cards, stamp ---------- */
+.cs-file { position: relative; max-width: 760px; margin: 0 auto 14px; padding: 26px 18px 10px; background: #f3e2b8; border: 4px solid #000; box-shadow: var(--bevel); font-size: 1.1rem; }
+.cs-tag { position: absolute; top: -14px; left: 14px; padding: 2px 10px; background: #000; color: #ffd43b; font-family: var(--pixel); font-weight: 700; font-size: .85rem; }
+.cs-pic { display: block; max-width: 180px; margin: 0 auto 8px; }
+.cs-board { position: relative; max-width: 760px; margin: 0 auto 16px; padding: 24px 12px 12px; background: #b5835a; border: 4px solid #000; box-shadow: inset 0 0 0 4px #8a5a32; }
+.cs-clues { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.cs-clue { position: relative; min-height: 92px; border: 3px solid #000; background: #fff8e1; box-shadow: 3px 3px 0 rgba(0,0,0,.35); }
+.cs-clue:nth-child(odd) { transform: rotate(-1.5deg); }
+.cs-clue:nth-child(even) { transform: rotate(1.2deg); }
+.cs-back { position: absolute; inset: 0; display: grid; place-items: center; align-content: center; gap: 2px; font-size: 1.8rem; background: #5a6b7a; color: #fff; }
+.cs-back small { font-family: var(--pixel); font-size: .8rem; }
+.cs-front { display: flex; gap: 8px; align-items: flex-start; padding: 10px; font-size: .95rem; visibility: hidden; }
+.cs-clue.open .cs-back { display: none; }
+.cs-clue.open .cs-front { visibility: visible; animation: cs-pop .4s steps(4); }
+@keyframes cs-pop { from { transform: scale(.6); } to { transform: none; } }
+.cs-icon { font-size: 1.6rem; line-height: 1; }
+.cs-found { display: flex; gap: 12px; align-items: center; max-width: 620px; margin: 6px auto 12px; padding: 12px 16px; background: #fff8e1; border: 4px solid #000; font-size: 1.15rem; font-weight: 600; }
+.cs-closed { max-width: 640px; margin: 0 auto; text-align: center; font-size: 1.1rem; }
+.cs-stamp { display: inline-block; margin: 6px 0 12px; padding: 6px 18px; color: #c62828; border: 5px solid #c62828; font-family: var(--pixel); font-weight: 700; font-size: 2rem; letter-spacing: 2px; transform: rotate(-6deg); animation: cs-stamp .35s steps(3); }
+@keyframes cs-stamp { from { transform: rotate(-6deg) scale(2.2); opacity: 0; } to { transform: rotate(-6deg); opacity: 1; } }
+
+/* ---------- investigation: predict → test → explain ---------- */
+.iv-head { max-width: 760px; margin: 0 auto 14px; }
+.iv-question { margin-bottom: 10px; padding: 10px 14px; background: #fff3a8; border: 4px solid #000; font-weight: 700; font-size: 1.2rem; text-align: center; }
+.iv-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.iv-step { padding: 6px 4px; text-align: center; font-family: var(--pixel); font-weight: 700; background: #d9d9d9; color: #666; border: 3px solid #000; }
+.iv-step.now { background: var(--brand); color: #fff; box-shadow: var(--bevel); }
+.iv-step.done { background: var(--good-soft); color: #000; }
+.iv-step.done::after { content: " ✔"; }
+.iv-recall { max-width: 720px; margin: 0 auto 12px; padding: 8px 12px; background: #efe6ff; border: 3px solid #000; text-align: center; }
+.iv-result { max-width: 720px; margin: 0 auto; font-size: 1.1rem; }
+.iv-result h3 { margin: 0 0 8px; font-family: var(--pixel); }
+.iv-verdict { padding: 8px 10px; background: #fff3a8; border: 3px solid #000; font-weight: 700; }
+.iv-verdict.right { background: var(--good-soft); }
+@media (max-width: 560px) {
+  .tb-face { width: 56px; height: 56px; font-size: 2.2rem; }
+  .tb-bubble { font-size: 1rem; }
+  .iv-step { font-size: .8rem; }
+}

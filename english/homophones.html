@@ -96,7 +96,7 @@ window.LESSON = {
       ],
       game: {
         game: 'fixit', title: 'Goblin leftovers',
-        intro: 'Grumblegob left some suffix mistakes behind! Tap the wrong word, then drag the right spelling onto it.',
+        intro: 'Grumblegob left some suffix mistakes behind! Tap the wrong word, then tap the right spelling to swap it in.',
         noOk: true,
         sentences: [
           { text: 'Be carefull on the icy path.', wrong: 'carefull', fix: 'careful', options: ['carful'], why: 'ful has only ONE l.' },
@@ -212,42 +212,30 @@ window.LESSON = {
     },
 
     {
-      type: 'read', title: 'There, their or they\'re?', short: 'Read 2', minutes: 5,
-      say: 'The trickiest triplets in the Kingdom! Each one has a secret test.',
-      cards: [
-        {
-          title: 'they\'re = they are', pic: '🤏 they are',
-          text: [
-            'they\'re is a [[contraction]]: they are squashed together. The [[apostrophe]] sits where the a fell out.',
-            'Test: if you can say "they are" instead, write they\'re.',
-          ],
-          check: { q: '"___ playing football in the rain." Which test works?', options: ['They are playing football… makes sense, so write they\'re', 'Here playing football… makes sense', 'His playing football… makes sense'], answer: 0 },
-        },
-        {
-          title: 'their = it belongs to them', pic: '🎒🎒',
-          text: [
-            'their tells you who owns something: "The twins packed their bags."',
-            'Test: swap in his or her. "He packed his bag" still makes sense, so it is their.',
-          ],
-          check: { type: 'type', q: 'The ducks waddled back to ___ pond. Write the missing word.', answer: ['their'], before: 'back to', after: 'pond.', placeholder: 'there, their or they\'re?', hint: 'Whose pond is it? Try the his/her test.', explain: 'their pond – it belongs to the ducks.' },
-        },
-        {
-          title: 'there = a place', pic: '📍👉',
-          text: [
-            'there is about places, and the word here hides inside it: t-HERE.',
-            'Test: swap in here. "Put it down there" → "Put it down here" still works. We also say "There is…" and "There are…".',
-          ],
-          check: { q: 'Look! ___ is a spider on your hat!', options: ['There', 'Their', 'They\'re'], answer: 0, hint: 'Try the they are test and the his/her test first. Do they work?' },
-        },
-        {
-          title: 'Myth-buster: the computer will fix it!', pic: '💻❌',
-          text: [
-            'Lots of people think a spellchecker will catch homophone mistakes. It usually won\'t!',
-            'their, there and they\'re are all real words, so the computer thinks they are fine. Only a sharp-eyed hunter spots them.',
-          ],
-          check: { type: 'evidence', q: 'Sam typed "I can here you" and the computer didn\'t spot the mistake. Tap the sentence that explains why.', answer: 'all real words', hint: 'Look on the second line.', explain: 'here is a real word – just the wrong one!' },
-        },
+      type: 'case', title: 'The Case of the Muddled Note', short: 'Case', minutes: 6,
+      say: 'A detective case! Answer each question to uncover a clue about there, their and they\'re. Then solve it!',
+      mystery: [
+        'Someone pinned a secret note to the castle door. It says: **"Meet me over their at midnight. Bring there torches! They\'re going to be amazed."**',
+        'Three suspects were seen near the door. 👻 **Ghost Echo** always gets they\'re wrong. 👺 **Goblin Grumble** always swaps their and there round. 👸 **Lady Lexi** never makes a homophone mistake.',
+        'Uncover the four clues, then work out who wrote the note.',
       ],
+      clues: [
+        { icon: '🗣️', clue: '**they\'re = they are.** Test: if you can say "they are" instead, write they\'re.',
+          q: { q: '"___ playing football in the rain." Which test works?', options: ['They are playing football… makes sense, so write they\'re', 'Here playing football… makes sense', 'His playing football… makes sense'], answer: 0, hint: 'Try saying "they are" in the gap.' } },
+        { icon: '🎒', clue: '**their = it belongs to them.** Test: swap in his or her. "He packed his bag" works, so "they packed their bags".',
+          q: { type: 'type', q: 'The ducks waddled back to ___ pond. Write the missing word.', answer: ['their'], before: 'back to', after: 'pond.', placeholder: 'there, their or they\'re?', hint: 'Whose pond is it? Try the his/her test.', explain: 'their pond – it belongs to the ducks.' } },
+        { icon: '📍', clue: '**there = a place.** The word here hides inside it: t-HERE. We also say "There is…" and "There are…".',
+          q: { q: 'Look! ___ is a spider on your hat!', options: ['There', 'Their', 'They\'re'], answer: 0, hint: 'Try the they are test and the his/her test first. Do they work?' } },
+        { icon: '💻', clue: 'The castle\'s spellchecker did NOT spot the mistakes. their, there and they\'re are all real words, so the computer thinks they are fine!',
+          q: { type: 'tf', q: 'A spellchecker always spots homophone mistakes.', answer: false, hint: 'Is "there" a real word? Is "their"?', explain: 'They are all real words, so the computer thinks they are fine. Only a sharp-eyed hunter spots them!' } },
+      ],
+      solve: {
+        q: 'The note says: "Meet me over **their** at midnight. Bring **there** torches! **They\'re** going to be amazed." Who wrote it?',
+        options: ['👺 Goblin Grumble – their and there are swapped round', '👻 Ghost Echo – they\'re is wrong', '👸 Lady Lexi – there are no mistakes'],
+        answer: 0, hint: 'Check each word with your clue tests. Which words are wrong, and which one is right?',
+        explain: '"over their" should be there (a place), and "there torches" should be their (they own them). But "They\'re going to be amazed" is right – they are! So it was the one who swaps their and there.',
+      },
+      closed: 'Goblin Grumble confessed! He swapped their and there – but he got they\'re right, just by luck. Now you know all three tests: **they are** → they\'re, **his/her** → their, **here** → there.',
     },
 
     {
@@ -275,7 +263,7 @@ window.LESSON = {
       rounds: [
         {
           game: 'fixit', title: 'Ghost graffiti',
-          intro: 'Echo the ghost has sneaked homophone mistakes into the castle notices! Tap the wrong word, then drag the right twin onto it. Careful – some notices are already perfect.',
+          intro: 'Echo the ghost has sneaked homophone mistakes into the castle notices! Tap the wrong word, then tap the right twin to swap it in. Careful – some notices are already perfect.',
           say: 'Read each sentence aloud in your head. Which word has the wrong meaning?',
           sentences: [
             { text: 'I can here the birds singing.', wrong: 'here', fix: 'hear', options: ['hair'], why: 'You hear with your ear!' },

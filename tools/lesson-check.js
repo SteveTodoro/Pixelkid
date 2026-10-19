@@ -127,6 +127,12 @@ function checkRound(r, where, err) {
       if (!(r.waves || []).length) err(`${where}: no waves`);
       (r.waves || []).forEach((w, k) => (w.spell ? !w.clue && err(`${where} wave ${k + 1}: spelling wave needs a clue`) : checkItems(w.items, `${where} wave ${k + 1}`, err)));
       break;
+    case 'windtest': {
+      const ids = (r.seeds || []).map(sd => sd.id);
+      if (ids.length < 2) err(`${where}: needs at least two seeds`);
+      (r.missions || []).forEach((m, k) => (m.need || []).forEach(id => { if (!ids.includes(id)) err(`${where} mission ${k + 1}: no seed "${id}"`); }));
+      break;
+    }
     case 'mystery':
       if (!(r.words || []).length) err(`${where}: no words`);
       for (const w of r.words || []) {
@@ -144,6 +150,24 @@ function checkRound(r, where, err) {
   }
 }
 
+// teach the robot: each line is right (ok) or has exactly one wrong word that the fix replaces
+function checkTeach(s, at, err) {
+  const bare = w => w.toLowerCase().replace(/^[^a-z']+|[^a-z']+$/gi, '');
+  if (!(s.lines || []).length) err(`${at}: no lines`);
+  (s.lines || []).forEach((l, k) => {
+    const where = `${at} line ${k + 1}`;
+    if (/\[\[|\*\*|</.test(l.text)) err(`${where}: lines are split into word buttons, so no [[glossary]], **bold** or HTML`);
+    if (l.ok) return;
+    const tokens = String(l.text).split(/\s+/);
+    const wi = l.wrongAt != null ? l.wrongAt : tokens.findIndex(t => bare(t) === String(l.wrong).toLowerCase());
+    if (wi < 0 || wi >= tokens.length) err(`${where}: the wrong word isn't in the sentence (use wrongAt for numbers)`);
+    if (!l.fix) err(`${where}: no fix`);
+    if ((l.options || []).includes(l.fix)) err(`${where}: options repeat the fix`);
+    if (!l.why) err(`${where}: no why`);
+  });
+  if ((s.lines || []).every(l => !l.ok)) err(`${at}: give at least one line that is right, so "That's right!" is a real choice`);
+}
+
 function check(file) {
   const errs = [];
   const err = m => errs.push(m);
@@ -159,6 +183,21 @@ function check(file) {
     (s.questions || []).forEach((q, k) => checkQuestion(q, `${at} q${k + 1}`, err));
     (s.rounds || []).forEach((r, k) => checkRound(r, `${at} round ${k + 1} (${r.game})`, err));
     if (s.game) checkRound(s.game, `${at} game`, err);
+    if (s.type === 'teach') checkTeach(s, at, err);
+    if (s.type === 'case') {
+      if (!s.mystery) err(`${at}: no mystery (the case file)`);
+      (s.clues || []).forEach((c, k) => { if (!c.clue) err(`${at} clue ${k + 1}: no clue text`); if (!c.q) err(`${at} clue ${k + 1}: no question`); else checkQuestion(c.q, `${at} clue ${k + 1}`, err); });
+      if (!(s.clues || []).length) err(`${at}: no clues`);
+      if (!s.solve) err(`${at}: no solve question`); else checkQuestion(s.solve, `${at} solve`, err);
+    }
+    if (s.type === 'investigate') {
+      const P = s.predict || {};
+      if (!(P.options || []).length) err(`${at}: the prediction needs options`);
+      if (P.answer != null && !(P.answer in (P.options || []))) err(`${at}: prediction answer ${P.answer} is not an option`);
+      if (!s.test || !s.test.game) err(`${at}: no test game`); else checkRound(s.test, `${at} test (${s.test.game})`, err);
+      (s.explain || []).forEach((q, k) => checkQuestion(q, `${at} explain q${k + 1}`, err));
+      if (!(s.explain || []).length) err(`${at}: no explain questions`);
+    }
   });
   return errs;
 }

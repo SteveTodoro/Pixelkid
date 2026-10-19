@@ -134,6 +134,10 @@ One country per lesson: find it on the map, then the history and culture childre
 - Don't repeat an arcade game (`invaders`, `runner`, `platformer`, `blocks`) from the previous lesson of the same world.
 - Multiple choice should be at most 60% of a lesson's questions. Mix in `evidence` and `type` reading checks, `hotspot` for pictures and diagrams, `slider` for numbers, and `oddone` / `predict` for reasoning.
 - Every activity must make the child do the lesson's thinking (recall, apply, explain, predict, create). A game only wraps that thinking.
+- Don't repeat the previous lesson's stage order. A lesson's second read stage can become one of three stages that teach the same facts (see the top of `shared/engine.js` for their fields), and two lessons next to each other on a road shouldn't use the same one:
+  - `teach` (🤖 Teach the robot): Professor Bolt teaches the topic line by line and some lines have one wrong word. The child taps it, then taps the right word, or presses "That's right!". Numbers need `wrongAt` (word index). Lines have no [[glossary]], bold or HTML, and at least one line is right.
+  - `case` (🕵️ Detective case): a case file (`mystery`), clue questions that pin clue cards to an evidence board, then a `solve` inference question and a `closed` ending. Use **bold**, not HTML.
+  - `investigate` (🧪 Investigation): `predict` (never wrong; `answer` says what really happens), a `test` round (a simulation with missions: `windtest`, `garden`, `ramp`, `forces`, `pollinate`, or a maths tool like `timehops`), `explain` questions, then a `result`.
 
 **Question-writing rules (so children read rather than scan):**
 - Answers are shuffled automatically, so write the right answer anywhere. Use `keepOrder: true` only if the order matters.

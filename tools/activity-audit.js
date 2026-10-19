@@ -14,7 +14,7 @@ const fs = require('fs');
 const path = require('path');
 const ROOT = path.join(__dirname, '..');
 
-const STAGES = ['welcome', 'review', 'read', 'video', 'game', 'break', 'quiz', 'investigate', 'case'];
+const STAGES = ['welcome', 'review', 'read', 'video', 'game', 'break', 'quiz', 'investigate', 'case', 'teach'];
 const QUESTIONS = ['mcq', 'tf', 'gap', 'order', 'evidence', 'hotspot', 'slider', 'oddone', 'build', 'type', 'predict'];
 const PUZZLES = ['crossword', 'wordsearch'];
 const ARCADE = ['invaders', 'runner', 'platformer', 'blocks'];
@@ -42,7 +42,7 @@ function audit(file) {
   spellArcade.forEach(g => arcade.splice(arcade.indexOf(g), 1));
   // questions: every typed question, plus reading checks that don't set a type (those are multiple choice)
   const qs = types.filter(t => QUESTIONS.includes(t));
-  const plainChecks = [...src.matchAll(/check: \{(?![^{}]*\btype:)/g)].length;
+  const plainChecks = [...src.matchAll(/(?:check|q|solve): \{(?![^{}]*\btype:)/g)].length; // case clues and solves are questions too
   for (let k = 0; k < plainChecks; k++) qs.push('mcq');
   return { file, stages, games, arcade, qs };
 }

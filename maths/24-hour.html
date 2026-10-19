@@ -251,42 +251,21 @@ window.LESSON = {
     },
 
     {
-      type: 'read', title: 'Days, months and years', short: 'Read 2', minutes: 6,
-      say: 'From seconds all the way up to years! Read on.',
-      cards: [
-        {
-          title: 'Bigger and bigger', pic: '⏱️ ➡ 📅',
-          text: [
-            'You know that 60 seconds make a minute, 60 minutes make an hour, and 24 hours make a day.',
-            '7 days make a week, and 2 weeks make a [[fortnight]]. 12 months make a year.',
-          ],
-          check: { type: 'type', q: 'Your cousin comes to stay for 2 weeks. How many days is that?', answer: ['14', 'fourteen'], after: 'days', placeholder: 'a number', hint: 'One week is 7 days. Double it!', explain: '7 + 7 = 14 days – a fortnight!' },
-        },
-        {
-          title: 'Months come in different sizes', pic: '📅',
-          text: [
-            'Some months have 31 days and some have 30. February is the shortest, with just 28 days.',
-            'A [[calendar]] shows every day of every month, so you can count how many days until your birthday!',
-          ],
-          check: { type: 'evidence', q: 'One month can NEVER have a 30th day. Tap the sentence that tells you which one.', answer: 'February is the shortest', hint: 'Which month is the shortest?', explain: 'February has just 28 days – or 29 in a leap year. Never 30!' },
-        },
-        {
-          title: 'The knuckle trick', pic: '✊ ✊',
-          text: [
-            'Make two fists. Start on the knuckle of your left little finger and say the months in order: knuckle, dip, knuckle, dip…',
-            'Every month on a knuckle has 31 days. Every month in a dip has 30 – except February.',
-          ],
-          check: { q: 'May lands on a knuckle. June comes next. Where does June land, and how long is it?', options: ['in a dip – 30 days', 'on a knuckle – 31 days', 'in a dip – 28 days'], answer: 0, hint: 'Knuckle, dip, knuckle, dip… what comes after a knuckle?' },
-        },
-        {
-          title: 'Leap years', pic: TXT('🐸<br>366 days'),
-          text: [
-            'A normal year has 365 days. But every 4 years there is a [[leap year]], with 366 days!',
-            'The extra day goes on the end of February. Someone born on that day only has their real birthday once every 4 years!',
-          ],
-          check: { type: 'type', q: 'In a leap year, what is the date of the LAST day of February?', answer: ['29 February', '29th February', 'February 29', 'February 29th', '29 feb', '29'], placeholder: 'like 3 March', hint: 'February usually has 28 days. A leap year adds one more.', explain: '29 February – the leap day!' },
-        },
+      type: 'teach', title: 'Teach Professor Bolt: days, months and years', short: 'Teach', minutes: 6,
+      say: 'Professor Bolt is teaching you about days, months and years – but his memory chip is wobbly! Fix his mistakes.',
+      robot: { name: 'Professor Bolt', emoji: '🤖' },
+      intro: 'Hello! I am Professor Bolt. I have learned ALL about days, months and years. Let me teach YOU! (My memory chip is a little bit wobbly…)',
+      lines: [
+        { text: 'One day has 12 hours, and one hour has 60 minutes.', wrongAt: 3, fix: '24', options: ['60', '7'], hint: 'Count the hours from one midnight to the next.', why: 'A whole day and night is 24 hours. 12 hours is only half a day!' },
+        { text: 'Seven days make a week, and two weeks make a fortnight.', ok: true, why: 'Right! 7 + 7 = 14 days in a fortnight.' },
+        { text: 'There are 10 months in one year.', wrongAt: 2, fix: '12', options: ['52', '7'], hint: 'January, February, March… keep counting to December.', why: 'January to December makes 12 months.' },
+        { text: 'February is the longest month, with just 28 days.', wrong: 'longest', fix: 'shortest', options: ['oldest', 'coldest'], hint: 'Is 28 days a lot or a little for a month?', why: 'February is the SHORTEST month: 28 days, or 29 in a leap year.' },
+        { text: 'With the knuckle trick, every month on a knuckle has 31 days.', ok: true, why: 'Yes! January, March, May… they all land on knuckles and have 31 days.' },
+        { text: 'Every month in a dip has 31 days, except February.', wrongAt: 6, fix: '30', options: ['28', '29'], hint: 'Knuckles are the long months. What about the dips?', why: 'Dips are the shorter months: 30 days. February is the odd one out.' },
+        { text: 'A leap year comes every 10 years and has 366 days.', wrongAt: 5, fix: '4', options: ['2', '100'], hint: 'Leap years come round quite often – the same as the Olympic Games.', why: 'Every 4 years there is a leap year, with 366 days instead of 365.' },
+        { text: 'In a leap year, the extra day is added to the end of March.', wrong: 'march', fix: 'February', options: ['January', 'December'], hint: 'Which month is usually too short?', why: 'The extra day is 29 February – the leap day!' },
       ],
+      outro: 'Thank you! My calendar chip is fixed. Now I know my days, months and years – and so do you!',
     },
 
     {
