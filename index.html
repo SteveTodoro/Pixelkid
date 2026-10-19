@@ -112,7 +112,6 @@
     .qdeco { position: absolute; transform: translate(-50%, -50%) scale(var(--s, 1)); font-size: 1.9rem; line-height: 1; pointer-events: none; filter: drop-shadow(3px 3px 0 rgba(0,0,0,.25)); }
     .qdeco.big { font-size: 2.6rem; }
     .qdeco.small { font-size: 1.2rem; }
-    /* a unit's landmark: a big set piece standing on its own patch of ground */
     /* a quiet link to the parent page, under the map */
     .grownups { position: relative; z-index: 1; max-width: 1040px; margin: 18px auto 28px; padding: 0 16px; text-align: right; }
     .grownups a { padding: 4px 10px; font-family: var(--pixel); font-weight: 700; font-size: .85rem; color: #fff; background: rgba(0,0,0,.45); text-decoration: none; }
@@ -123,23 +122,14 @@
     .qnpc:hover canvas, .qnpc:focus-visible canvas { filter: drop-shadow(0 0 0 #fff) drop-shadow(3px 3px 0 rgba(0,0,0,.25)); outline: 3px solid #fff; outline-offset: 2px; }
     .qnpc-mark { position: absolute; top: -26px; min-width: 24px; padding: 0 4px; text-align: center; font-family: var(--pixel); font-weight: 700; font-size: 1rem; line-height: 22px; color: #000; background: #fff; border: 2px solid #000; }
     .qnpc-mark.ask { color: #000; background: #ffd43b; animation: qbob 1s steps(2) infinite; }
-    .qnpc-name { position: absolute; top: 100%; margin-top: 2px; white-space: nowrap; padding: 0 5px; background: rgba(0,0,0,.55); color: #fff; font-family: var(--pixel); font-weight: 700; font-size: .7rem; }
     .hud-bag { padding: 0; cursor: pointer; font: inherit; font-size: 2rem; color: inherit; }
     .hud-bag:hover, .hud-bag:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
-    .qmark { position: absolute; transform: translate(-50%, -60%); font-size: 4.4rem; line-height: 1; pointer-events: none; filter: drop-shadow(5px 5px 0 rgba(0,0,0,.25)); }
+    /* a topic's landmark: a big set piece at the end of the topic's row. Tap it for the topic's name */
+    .qmark { position: absolute; z-index: 1; transform: translate(-50%, -60%); padding: 0; font-size: 3.6rem; line-height: 1; background: none; border: 0; cursor: pointer; filter: drop-shadow(5px 5px 0 rgba(0,0,0,.25)); -webkit-tap-highlight-color: transparent; }
+    .qmark:hover, .qmark:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
     .qmark::after { content: ""; position: absolute; left: 10%; right: 10%; bottom: -6px; height: 12px; background: rgba(0,0,0,.18); z-index: -1; }
-    /* fog over the stretches of road still being built: blocky pixel clouds; the stops inside it show through faintly */
-    .qfog { position: absolute; z-index: 1; width: 190px; height: 116px; transform: translate(-50%, -50%) scale(var(--s, 1)); pointer-events: none; opacity: .82;
-      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 11' shape-rendering='crispEdges'%3E%3Cg fill='%23f4f7fa'%3E%3Crect x='5' y='0' width='6' height='2'/%3E%3Crect x='3' y='2' width='11' height='2'/%3E%3Crect x='1' y='4' width='16' height='3'/%3E%3Crect x='0' y='7' width='18' height='3'/%3E%3Crect x='2' y='10' width='14' height='1'/%3E%3C/g%3E%3C/svg%3E") center / 100% 100% no-repeat; }
-    body.future .qfog { opacity: .35; }
-    body.maths .qfog { opacity: .7; filter: brightness(.22); } /* the mine's unexplored tunnels are dark, not misty */
     .qnode { z-index: 2; }
     .qnode.soon { opacity: .75; }
-    .qsign.fogged { opacity: .6; }
-    /* a wooden sign across the road names each unit as the road enters it */
-    .qsign { position: absolute; z-index: 2; transform: translate(-50%, -50%); width: max-content; padding: 5px 12px; text-align: center; background: #a8743e; color: #fff8e1; border: 3px solid #000;
-      box-shadow: inset 3px 3px 0 #c99a62, inset -3px -3px 0 #7a5228, 0 4px 0 rgba(0,0,0,.3);
-      font-family: var(--pixel); font-weight: 700; font-size: .95rem; line-height: 1.15; text-shadow: 2px 2px 0 #4a2f14; }
     /* a stop on the road: a big block with the lesson's icon, its name on a tag underneath */
     .qnode { position: absolute; width: 76px; height: 76px; transform: translate(-50%, -50%); display: grid; place-items: center; padding: 0; cursor: pointer;
       font-size: 2.5rem; background: var(--brand); border: 4px solid #000; box-shadow: var(--bevel), 0 5px 0 #000; -webkit-tap-highlight-color: transparent; }
@@ -161,7 +151,7 @@
     .qnode.done .qbadge { background: var(--gold); }
     .qnode.soon .qbadge { background: #555; color: #fff; }
     .qlabel { position: absolute; top: calc(100% + 14px); left: 50%; transform: translateX(-50%); width: max-content; max-width: 150px; padding: 2px 7px; text-align: center;
-      background: rgba(0,0,0,.6); color: #fff; font-family: var(--pixel); font-weight: 700; font-size: .85rem; line-height: 1.15; pointer-events: none; }
+      background: rgba(0,0,0,.78); color: #fff; font-family: var(--pixel); font-weight: 700; font-size: .85rem; line-height: 1.15; pointer-events: none; }
     .qnode.soon .qlabel, .qnode.locked .qlabel { color: #ddd; background: rgba(0,0,0,.4); }
     /* the player's hero stands on the road at the next stop (and walks there after finishing a quest) */
     .qhero { position: absolute; z-index: 3; pointer-events: none; image-rendering: pixelated; }
@@ -185,11 +175,9 @@
       .qmap-wrap { padding: 0 10px 70px; }
       .qnode { width: 64px; height: 64px; font-size: 2.1rem; }
       .qlabel { max-width: 120px; font-size: .78rem; }
-      .qsign { font-size: .78rem; padding: 3px 7px; }
       .qdeco { font-size: 1.5rem; }
       .qdeco.big { font-size: 2rem; }
-      .qnpc-name { display: none; } /* narrow lanes: the name shows in their text box instead */
-      .qmark { font-size: 3.2rem; }
+      .qmark { font-size: 2.8rem; }
       .qcard { flex-direction: column; align-items: center; text-align: center; }
       .qc-body { align-items: center; }
       .qc-btns { justify-content: center; }
@@ -466,7 +454,7 @@ function passport() {
 // unless it names another with `after: '<title>'`: two lessons after the same one make a fork, and the road splits into
 // lanes that meet again at the goal. A stop opens once the stop before it is cleared (lessons already started stay open),
 // so picking a branch is the player's choice while each lesson can still build on (and recap) the one before it.
-// Lessons still being made are grey stops on an unfinished stretch of road, hidden in fog.
+// Lessons still being made are grey stops on a faded stretch of road.
 // Each world's look: its road, the little groups of scenery dotted around it and a few one-off pieces. Never scenery that
 // looks collectable (gems, coins, stars, keys): children want to pick it up and can't.
 const MAP_LOOK = {
@@ -538,8 +526,8 @@ function drawMap(key, lessons, stateOf) {
   map.className = 'qmap';
   mapWrap.replaceChildren(map);
   const W = mapWidth = map.clientWidth;
-  const small = W < 600, S = small ? 3 : 4; // S: the hero's pixel size
-  const ROW = small ? 150 : 170, HALF = small ? 32 : 38, HERO_H = 20 * S + 26, SIGN = small ? 128 : 134; // SIGN: extra road before a unit sign, room for a 3-line name above it
+  const small = W < 600, S = 3; // S: the hero's pixel size
+  const ROW = small ? 160 : 216, HALF = small ? 32 : 38, HERO_H = 20 * S + 26, CELL = small ? 130 : 150; // CELL: the least room a stop needs across a row
   let seed = [...key].reduce((n, c) => (n * 31 + c.charCodeAt(0)) >>> 0, 7); // seeded, so the scenery stays put between visits
   const rnd = () => (seed = (seed * 1103515245 + 12345) >>> 0) / 4294967296;
 
@@ -551,32 +539,62 @@ function drawMap(key, lessons, stateOf) {
     s.st = st === 'new' && s.parent && s.parent.l.file && !cleared(s.parent) ? 'locked' : st;
   });
 
-  // lay the tree out: a lane snakes left and right inside its share of the width; at a fork the share is split between the branches
-  const start = { x: W / 2, y: 56 };
-  const signs = [];
-  const lay = (s, x0, x1, y, k) => {
-    if (!s.parent || s.parent.l.unit !== s.l.unit) { signs.push(s); y += SIGN; }
-    const amp = Math.max(0, Math.min(0.3 * (x1 - x0), (x1 - x0 - 150) / 2));
-    Object.assign(s, { x0, x1, x: (x0 + x1) / 2 + [0, 1, 0, -1][k % 4] * amp, y });
-    const w = (x1 - x0) / s.kids.length;
-    s.kids.forEach((c, j) => lay(c, x0 + j * w, x0 + (j + 1) * w, y + ROW, s.kids.length > 1 ? 0 : k + 1));
+  // Lay the road out in rows across the page, so a whole world fits on about one screen. A lane is a stretch of road with
+  // no fork in it: it fills its share of the width with rows of stops, one topic to a row (a long topic carries on in the
+  // next row), and each row runs the opposite way to the one before, so the road winds down the page. At a fork the
+  // width is split and the branches go on side by side, each starting on the side nearest the fork. START is the first
+  // spot in the first row, and a topic's landmark takes the spot after its last stop when the row has room for it.
+  const start = { x: 0, y: 0 }, spots4marks = [], pad = small ? 8 : 24;
+  let bottom = 0;
+  const lane = (first, x0, x1, y, from) => {
+    const fit = Math.max(1, Math.floor((x1 - x0) / CELL));
+    const run = [first];
+    for (let s = first; s.kids.length === 1;) run.push(s = s.kids[0]);
+    const rows = [];
+    let row = null;
+    (from ? run : [start, ...run]).forEach(t => {
+      const unit = t === start ? first.l.unit : t.l.unit;
+      if (!row || row.unit !== unit || row.cells.length >= fit) rows.push(row = { unit, cells: [] });
+      row.cells.push(t);
+    });
+    let dir = from && from.x > (x0 + x1) / 2 ? -1 : 1;
+    rows.forEach((r, k) => {
+      const lastOfUnit = k === rows.length - 1 || rows[k + 1].unit !== r.unit;
+      const n = r.cells.length + (lastOfUnit && LANDMARK[r.unit] && r.cells.length < fit ? 1 : 0), w = (x1 - x0) / n;
+      const at = j => (dir > 0 ? x0 + (j + 0.5) * w : x1 - (j + 0.5) * w);
+      r.cells.forEach((t, j) => Object.assign(t, { x: at(j), y, x0, x1 }));
+      if (n > r.cells.length) spots4marks.push({ x: at(n - 1), y, unit: r.unit });
+      bottom = Math.max(bottom, y);
+      dir = -dir; y += ROW;
+    });
+    const last = run[run.length - 1], w = (x1 - x0) / (last.kids.length || 1);
+    last.kids.forEach((c, j) => lane(c, x0 + j * w, x0 + (j + 1) * w, y, last));
   };
-  const roots = stops.filter(s => !s.parent), pad = small ? 8 : 24;
-  roots.forEach((r, j) => lay(r, pad + j * (W - 2 * pad) / roots.length, pad + (j + 1) * (W - 2 * pad) / roots.length, start.y + ROW, 0));
+  const roots = stops.filter(s => !s.parent), Y0 = HALF + HERO_H + 34;
+  if (roots.length === 1) lane(roots[0], pad, W - pad, Y0, null);
+  else { // more than one road from START: START stands alone above them
+    Object.assign(start, { x: W / 2, y: Y0 });
+    roots.forEach((r, j) => lane(r, pad + j * (W - 2 * pad) / roots.length, pad + (j + 1) * (W - 2 * pad) / roots.length, Y0 + ROW, start));
+  }
   const leaves = stops.filter(s => !s.kids.length);
-  const goal = { x: W / 2, y: Math.max(start.y, ...stops.map(s => s.y)) + ROW + 20 };
+  const goal = { x: W / 2, y: bottom + ROW * 0.85 };
   const H = goal.y + 110;
   map.style.height = H + 'px';
 
-  // the road: square pixel corners, styled for the world. A stretch leading to a stop that isn't built yet is faded (and
-  // hidden in fog below). Branches join a crossroad just above the goal.
+  // the road: square pixel corners, styled for the world. Along a row it runs straight; from one row to the next it goes
+  // down below the name tags, across, then down. A stretch leading to a stop that isn't built yet is faded. The lanes meet just
+  // above the goal.
   const look = MAP_LOOK[key] || MAP_LOOK.science;
   const meet = goal.y - 70;
+  const jog = (a, b) => Math.min(a.y + HALF + 84, b.y - HALF - 24); // below the stop's name tag (up to 3 lines), above the next row
+  const corners = (a, b) => (a.y === b.y ? [a, b] : [a, { x: a.x, y: jog(a, b) }, { x: b.x, y: jog(a, b) }, b]);
+  const toGoal = s => [s, { x: s.x, y: meet }, { x: goal.x, y: meet }, goal];
+  const dOf = pts => ` M${pts[0].x} ${pts[0].y}` + pts.slice(1).map((p, i) => (p.x !== pts[i].x ? ` H${p.x}` : ` V${p.y}`)).join('');
   let built = '', todo = '';
-  const edge = (a, b, ok) => { const d = ` M${a.x} ${a.y} H${b.x} V${b.y}`; if (ok) built += d; else todo += d; };
-  roots.forEach(r => edge(start, r, r.l.file));
-  stops.forEach(s => s.kids.forEach(c => edge(s, c, c.l.file)));
-  leaves.forEach(s => { const d = ` M${s.x} ${s.y} V${meet} H${goal.x} V${goal.y}`; if (s.l.file && stops.every(t => t.l.file)) built += d; else todo += d; });
+  const edge = (pts, ok) => { if (ok) built += dOf(pts); else todo += dOf(pts); };
+  roots.forEach(r => edge(corners(start, r), r.l.file));
+  stops.forEach(s => s.kids.forEach(c => edge(corners(s, c), c.l.file)));
+  leaves.forEach(s => edge(toGoal(s), s.l.file && stops.every(t => t.l.file)));
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svg.setAttribute('width', W); svg.setAttribute('height', H);
   svg.innerHTML = `<g fill="none" stroke-linejoin="miter" stroke-linecap="square" shape-rendering="crispEdges">
@@ -590,40 +608,24 @@ function drawMap(key, lessons, stateOf) {
     map.append(d);
     return d;
   };
-  // a wooden sign across the road where it enters a new unit (high enough to leave room for the hero)
-  const signAt = s => ({ x: s.x, y: s.y - HALF - HERO_H - 30 });
-  const unitStops = s => { const run = [s]; for (let c = s; (c = c.kids.find(k => k.l.unit === s.l.unit));) run.push(c); return run; };
-  signs.forEach(s => {
-    const p = signAt(s), d = put('qsign', p.x, p.y, s.l.unit);
-    d.style.maxWidth = Math.min(220, s.x1 - s.x0 - 12) + 'px';
-    if (unitStops(s).every(t => t.st === 'soon')) d.classList.add('fogged');
-  });
-  // roadworks where a built stretch of road runs out
+  // roadworks where a built stretch of road runs out: a little way along the road from the last built stop
+  const along = (pts, d) => {
+    for (let i = 1; i < pts.length; i++) {
+      const a = pts[i - 1], b = pts[i], len = Math.hypot(b.x - a.x, b.y - a.y);
+      if (d <= len) return { x: a.x + (b.x - a.x) * d / len, y: a.y + (b.y - a.y) * d / len };
+      d -= len;
+    }
+    return pts[pts.length - 1];
+  };
   const works = [];
   if (look.road !== 'flight') stops.forEach(s => s.kids.forEach(c => {
     if (!s.l.file || c.l.file) return;
-    const dx = c.x - s.x, gap = HALF + 26; // on the sideways leg if it's long enough to clear the stop, else just above the next stop
-    const p = Math.abs(dx) > gap + 20 ? { x: s.x + Math.sign(dx) * Math.max(gap, Math.abs(dx) / 2), y: s.y } : { x: c.x, y: c.y - HALF - 22 };
+    const pts = corners(s, c), len = pts.slice(1).reduce((n, p, i) => n + Math.hypot(p.x - pts[i].x, p.y - pts[i].y), 0);
+    const p = along(pts, Math.min(len / 2, HALF + 44));
     put('qdeco', p.x, p.y, '🚧'); works.push(p);
   }));
 
-  // fog hangs over every stretch that isn't built yet: puffs along the road to each unbuilt stop (the locked stops peek out)
-  const fog = [];
-  const fogLine = (a, b, skip) => { // puffs every ~55px along a straight piece of road
-    const n = Math.max(1, Math.round(Math.hypot(b.x - a.x, b.y - a.y) / 55));
-    for (let k = 0; k <= n; k++) { const t = k / n, x = a.x + (b.x - a.x) * t, y = a.y + (b.y - a.y) * t; if (Math.hypot(x - a.x, y - a.y) >= skip) fog.push({ x, y }); }
-  };
-  stops.filter(s => s.st === 'soon').forEach(s => {
-    const p = s.parent || start, skip = p.l && p.l.file ? 140 : 0; // keep the built stop and the roadworks sign in the clear
-    fogLine(p, { x: s.x, y: p.y }, skip); fogLine({ x: s.x, y: p.y }, { x: s.x, y: s.y }, Math.max(0, skip - Math.abs(s.x - p.x)));
-    if (!s.kids.length) fogLine(s, { x: s.x, y: meet }, 0);
-  });
-  fog.forEach(f => {
-    const d = put('qfog', f.x + (rnd() - 0.5) * 30, f.y + (rnd() - 0.5) * 24, '');
-    d.style.setProperty('--s', (small ? 0.75 : 1) * (0.85 + rnd() * 0.4));
-  });
-
-  // scenery keeps clear of the road, the stops (with their name tags and the hero's spot), the signs and the fog
+  // scenery keeps clear of the road, the stops (with their name tags and the hero's spot), the landmarks and people
   const boxes = [];
   const segsOf = d => d.trim().split(/\s*M/).filter(Boolean).forEach(part => {
     const n = part.replace(/^M/, '').match(/[HV]?-?[\d.]+/g); // "x y H x V y …"
@@ -631,18 +633,41 @@ function drawMap(key, lessons, stateOf) {
     n.slice(2).forEach(t => { const v = +t.slice(1), a = { x, y }; if (t[0] === 'H') x = v; else y = v; boxes.push([Math.min(a.x, x) - 26, Math.min(a.y, y) - 26, Math.max(a.x, x) + 26, Math.max(a.y, y) + 26]); });
   });
   segsOf(built); segsOf(todo);
-  [start, goal, ...stops].forEach(s => boxes.push([s.x - 80, s.y - HALF - HERO_H - 8, s.x + 80, s.y + HALF + 62]));
-  signs.forEach(s => { const p = signAt(s); boxes.push([p.x - 115, p.y - 22, p.x + 115, p.y + 22]); });
+  [start, goal, ...stops].forEach(s => {
+    boxes.push([s.x - 75, s.y - HALF - 8, s.x + 75, s.y + HALF + 58]); // the stop and its name tag
+    boxes.push([s.x - 34, s.y - HALF - HERO_H, s.x + 34, s.y - HALF]); // where the hero stands on it
+  });
   works.forEach(p => boxes.push([p.x - 22, p.y - 22, p.x + 22, p.y + 22]));
-  fog.forEach(f => boxes.push([f.x - 90, f.y - 60, f.x + 90, f.y + 60]));
   const room = (x, y) => Math.min(x, W - x, y, H - y, ...boxes.map(([a, b, c, d]) => Math.hypot(Math.max(a - x, 0, x - c), Math.max(b - y, 0, y - d))));
   const spots = [];
-  for (let y = 30; y < H - 20; y += 24) for (let x = 20; x < W - 10; x += 24) spots.push({ x: x + (rnd() - 0.5) * 10, y: y + (rnd() - 0.5) * 10 });
+  for (let y = 30; y < H - 20; y += 20) for (let x = 20; x < W - 10; x += 20) spots.push({ x: x + (rnd() - 0.5) * 8, y: y + (rnd() - 0.5) * 8 });
   const nearest = (x, y) => stops.reduce((b, s) => (!b || Math.hypot(s.x - x, s.y - y) < Math.hypot(b.x - x, b.y - y) ? s : b), null);
   const items = [];
 
+  // each topic's landmark: in its spot at the end of the topic's row, or else the roomiest spot near the topic's stops.
+  // Tap it to see the topic's name and how much of it is cleared.
+  const unitStops = s => { const run = [s]; for (let c = s; (c = c.kids.find(k => k.l.unit === s.l.unit));) run.push(c); return run; };
+  stops.filter(s => !s.parent || s.parent.l.unit !== s.l.unit).forEach(s => {
+    const run = unitStops(s), icon = LANDMARK[s.l.unit];
+    if (!icon || run.every(t => t.st === 'soon')) return;
+    let best = spots4marks.find(m => m.unit === s.l.unit && m.x >= s.x0 && m.x <= s.x1 && m.y >= s.y && m.y <= run[run.length - 1].y);
+    if (!best) {
+      let br = 0;
+      spots.forEach(p => {
+        if (p.x < s.x0 || p.x > s.x1 || p.y < s.y - ROW / 2 || p.y > run[run.length - 1].y + ROW / 2) return;
+        const r = room(p.x, p.y); if (r > br) { br = r; best = p; }
+      });
+      if (br < (small ? 34 : 40)) return;
+    }
+    const ready = run.filter(t => t.l.file), n = ready.filter(cleared).length;
+    items.push({ cls: 'qmark', x: best.x, y: best.y, icon, title: s.l.unit,
+      card: () => openCard({ icon, tag: 'TOPIC', title: s.l.unit, stat: `${n} of ${ready.length} quest${ready.length === 1 ? '' : 's'} cleared here` + (run.length > ready.length ? `, and ${run.length - ready.length} more coming soon.` : '.') }) });
+    boxes.push([best.x - 50, best.y - 50, best.x + 50, best.y + 40]);
+  });
+
   // people by the road (shared/npcs.js): each one turns up once the stop they live by is cleared
   const npcAt = {}; // where each person by the road stands, and the stop they live by
+  const clear = p => Math.min(room(p.x, p.y), room(p.x, p.y - 10 * S), room(p.x, p.y - 20 * S - 24)); // feet, middle and the marker over their head
   if (window.NPC && window.Avatar) NPC.forWorld(key).forEach(n => {
     const home = n.at ? stops.find(s => s.l.title === n.at) : null;
     if (n.at && !cleared(home)) return;
@@ -650,41 +675,32 @@ function drawMap(key, lessons, stateOf) {
     let best = null, br = -1;
     spots.forEach(p => {
       const d = Math.hypot(p.x - base.x, p.y - base.y);
-      if (d < 70 || d > 240 || p.y < base.y - 30 || p.y < 20 * S + 46) return; // keep their head and the marker over it well inside the map
-      const r = Math.min(room(p.x, p.y), 60) - d * 0.08; // roomy, but close to home
+      if (d < 60 || d > 220 || p.y < 20 * S + 46) return; // keep their head and the marker over it well inside the map
+      const r = Math.min(clear(p), 50) - d * 0.08; // roomy, but close to home
       if (r > br) { br = r; best = p; }
     });
-    if (!best || br < 4) best = { x: base.x + (base.x < W / 2 ? 100 : -100), y: Math.max(base.y + 50, 20 * S + 46) };
-    boxes.push([best.x - 40, best.y - 20 * S - 14, best.x + 40, best.y + 30]);
+    if (!best || br < 4) spots.forEach(p => { // nowhere roomy close by: the roomiest spot a bit further away
+      const d = Math.hypot(p.x - base.x, p.y - base.y), r = clear(p) - d * 0.03;
+      if (p.y >= 20 * S + 46 && d < 420 && r > br) { br = r; best = p; }
+    });
+    boxes.push([best.x - 40, best.y - 20 * S - 40, best.x + 40, best.y + 20]); // their marker too, and a gap before the next person
     const pool = []; // the lessons cleared on the road up to here: what a challenger asks about
     for (let s = home; s; s = s.parent) if (cleared(s) && s.l.id) pool.push(s.l.id);
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'qnpc'; b.style.left = best.x + 'px'; b.style.top = best.y + 'px';
-    b.setAttribute('aria-label', `Talk to ${n.name}`);
+    b.setAttribute('aria-label', `Talk to ${n.name}`); b.title = n.name;
     b.append(Avatar.draw(NPC.look(n), { scale: S })); // the same size as the hero
     const mk = NPC.marker(n);
     if (mk) { const m = document.createElement('span'); m.className = 'qnpc-mark' + (mk === '!' || mk === '?' ? ' ask' : ''); m.textContent = mk; b.append(m); }
-    const tag = document.createElement('span'); tag.className = 'qnpc-name'; tag.textContent = n.name; b.append(tag);
     npcAt[n.id] = { x: best.x, y: best.y, home: base };
     b.onclick = () => goTo({ npc: n.id }, () => NPC.talk(n, { pool, changed() { refreshHud(); render(); } }));
     map.append(b);
   });
 
-  // landmarks first: the roomiest spot inside each unit's stretch of its lane
-  signs.forEach(s => {
-    const run = unitStops(s), icon = LANDMARK[s.l.unit];
-    if (!icon || run.every(t => t.st === 'soon')) return;
-    const top = signAt(s).y - 20, bottom = run[run.length - 1].y + ROW * 0.6;
-    let best = null, br = 0;
-    spots.forEach(p => { if (p.x > s.x0 && p.x < s.x1 && p.y > top && p.y < bottom) { const r = room(p.x, p.y); if (r > br) { br = r; best = p; } } });
-    if (!best || br < (small ? 34 : 46)) return;
-    items.push({ cls: 'qmark', x: best.x, y: best.y, icon, title: s.l.unit });
-    boxes.push([best.x - 60, best.y - 60, best.x + 60, best.y + 50]);
-  });
   // then little groups of scenery in the open ground, with plenty of plain ground left between them
-  const gkeys = Object.keys(look.groups), MIN = small ? 46 : 60;
+  const gkeys = Object.keys(look.groups), MIN = small ? 40 : 46;
   const order = spots.map(p => ({ p, r: room(p.x, p.y) + rnd() * 25 })).filter(o => o.r >= MIN).sort((a, b) => b.r - a.r);
-  let groupsLeft = Math.round((W * H) / (small ? 120000 : 150000));
+  let groupsLeft = Math.round((W * H) / (small ? 90000 : 110000));
   for (const { p } of order) {
     if (groupsLeft <= 0) break;
     const r = room(p.x, p.y);
@@ -697,7 +713,7 @@ function drawMap(key, lessons, stateOf) {
       continue;
     }
     const pool = look.groups[pref[Math.floor(rnd() * pref.length)]] || look.groups[gkeys[0]];
-    const spread = Math.min(r - 16, small ? 34 : 48), n = 2 + Math.floor(rnd() * (spread > 36 ? 4 : 3));
+    const spread = Math.min(r - 16, small ? 30 : 40), n = 2 + Math.floor(rnd() * (spread > 32 ? 4 : 3));
     for (let k = 0; k < n; k++) {
       const a = rnd() * Math.PI * 2, d = k ? spread * (0.45 + rnd() * 0.55) : 0;
       items.push({ cls: 'qdeco', x: p.x + Math.cos(a) * d, y: p.y + Math.sin(a) * d * 0.7, icon: pool[Math.floor(rnd() * pool.length)], s: 0.8 + rnd() * 0.45 });
@@ -707,7 +723,11 @@ function drawMap(key, lessons, stateOf) {
   }
   // back to front, so nearer things overlap the ones behind them
   items.sort((a, b) => a.y - b.y).forEach(it => {
-    const d = put(it.cls, it.x, it.y, it.icon);
+    let d;
+    if (it.card) { // a landmark: tap it for its topic
+      d = document.createElement('button'); d.type = 'button'; d.className = it.cls; d.style.left = it.x + 'px'; d.style.top = it.y + 'px';
+      d.textContent = it.icon; d.setAttribute('aria-label', it.title); d.onclick = it.card; map.append(d);
+    } else d = put(it.cls, it.x, it.y, it.icon);
     if (it.s) d.style.setProperty('--s', it.s);
     if (it.title) d.title = it.title;
   });
@@ -753,11 +773,11 @@ function drawMap(key, lessons, stateOf) {
   const still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   const up = n => (n === start ? null : n.parent || start);
   const line = n => { const a = []; for (let k = n; k; k = up(k)) a.push(k); return a; };
-  // the corners of the road from one stop to another (START counts as a stop): up to where their roads meet, then down
+  // the corners of the road from one stop to another (START counts as a stop): back to where their roads meet, then on
   function route(a, b) {
     const A = line(a), B = line(b), c = A.find(n => B.includes(n)), pts = [];
-    A.slice(0, A.indexOf(c)).forEach(n => { const P = up(n); pts.push({ x: n.x, y: P.y }, { x: P.x, y: P.y }); });
-    B.slice(0, B.indexOf(c)).reverse().forEach(n => { const P = up(n); pts.push({ x: n.x, y: P.y }, { x: n.x, y: n.y }); });
+    A.slice(0, A.indexOf(c)).forEach(n => pts.push(...corners(up(n), n).slice(0, -1).reverse()));
+    B.slice(0, B.indexOf(c)).reverse().forEach(n => pts.push(...corners(up(n), n).slice(1)));
     return pts;
   }
   // How high the hero stands above the point it is at: on a stop it stands on top of the stop's badge (HALF);
