@@ -190,41 +190,31 @@ window.LESSON = {
     },
 
     {
-      type: 'read', title: 'Time puzzles', short: 'Read 2', minutes: 6,
-      say: 'Hop forwards, hop backwards… you are a time traveller now!',
-      cards: [
-        {
-          title: 'When will it end?', pic: TXT('🍕<br>5:40 ➡ 6:10'),
-          text: [
-            'Sometimes you know the start time and how long something lasts. Hop forwards to find when it ends.',
-            'A pizza goes in at 5:40 and cooks for 30 minutes. Hop 20 minutes to 6:00, then 10 more. It is ready at 6:10.',
-          ],
-          check: { type: 'type', q: 'A bedtime story starts at 7:45 and lasts 20 minutes. When does it end?', answer: ['8:05'], placeholder: 'like 6:10', hint: '7:45 to 8:00 is 15 minutes. Then 5 more.', explain: '15 minutes to 8:00, then 5 more: 8:05.' },
-        },
-        {
-          title: 'When did it start?', pic: '⬅ 🐸',
-          text: [
-            'You can hop backwards too! A show ended at 4:15 and lasted 30 minutes.',
-            'Hop back 15 minutes to 4:00, then back 15 more to 3:45. The show started at 3:45.',
-          ],
-          check: { type: 'type', q: 'A walk ended at 11:10. It lasted 20 minutes. When did it start?', answer: ['10:50'], placeholder: 'like 3:45', hint: 'Hop back 10 minutes to 11:00, then 10 more.', explain: 'Back 10 to 11:00, back 10 more to 10:50.' },
-        },
-        {
-          title: 'Hours and minutes', pic: TXT('60 minutes<br>=<br>1 hour'),
-          text: [
-            'When a time gets bigger than 60 minutes, turn it into hours and minutes.',
-            '75 minutes is 1 hour and 15 minutes. 90 minutes is 1 and a half hours.',
-          ],
-          check: { type: 'slider', q: 'A film lasts 1 hour and 10 minutes. How many minutes is that? Drag the marker.', min: 0, max: 120, step: 10, ticks: 12, answer: 70, unit: '', hint: '1 hour is 60 minutes. Add 10.', explain: '60 + 10 = 70 minutes.' },
-        },
-        {
-          title: 'Hopping a timetable', pic: TXT('🚆<br>09:15<br>⬇<br>10:45'),
-          text: [
-            'A [[timetable]] tells you when a train leaves and when it arrives. Hop from one to the other to find how long the journey is.',
-            'Bangkok 09:15, Ayutthaya 10:45. Hop 45 minutes to 10:00, then 45 more. That is 1 hour and 30 minutes.',
-          ],
-          check: { type: 'type', q: 'A bus leaves at 13:20 and arrives at 14:00. How long is the journey?', answer: ['40', '40 minutes', 'forty', '40 mins'], after: 'minutes', placeholder: 'a number', hint: 'How many minutes from 13:20 to the next o\'clock?', explain: '13:20 to 14:00 is 40 minutes.' },
-        },
+      type: 'investigate', title: 'Time puzzles: estimate, then hop', short: 'Investigate', minutes: 8,
+      say: 'Let\'s investigate time puzzles! First guess, then use the frog to find the exact answer.',
+      question: 'How can we work out exactly when something ends – or how long it takes?',
+      predict: { q: 'A film starts at 5:40 and lasts 1 hour and 15 minutes. Have a quick guess: when does it end?', options: ['about 6:55', 'about 6:15', 'about 7:40'], answer: 0 },
+      test: {
+        game: 'timehops', title: 'Frog hops', hops: [60, 10, 5, 1],
+        intro: 'Now find the exact answers. Hop the frog along the time line: big hops first, to the next o\'clock if you can.',
+        say: 'Big hops first, then little ones!',
+        missions: [
+          { from: '5:40', add: 75, text: '🎬 The film starts at **5:40** and lasts **1 hour and 15 minutes**. Hop on to find when it ends!' },
+          { from: '7:45', add: 20, text: '📖 A bedtime story starts at **7:45** and lasts **20 minutes**. When does it end?' },
+          { from: '1:20', to: '2:00', text: '🚌 A bus leaves at **1:20** and arrives at **2:00**. How long is the trip?' },
+        ],
+      },
+      explain: [
+        { type: 'type', q: 'You can hop backwards too! A walk ended at 11:10. It lasted 20 minutes. When did it start?', answer: ['10:50'], placeholder: 'like 3:45', hint: 'Hop back 10 minutes to 11:00, then 10 more.', explain: 'Back 10 to 11:00, back 10 more to 10:50.' },
+        { q: 'Your film hopped 1 hour and 15 minutes. How many minutes is that altogether?', options: ['75 minutes', '115 minutes', '65 minutes'], answer: 0, hint: '1 hour is 60 minutes. Add 15.' },
+        { type: 'slider', q: 'A football match lasts 1 hour and 30 minutes. How many minutes is that? Drag the marker.', min: 0, max: 120, step: 10, ticks: 12, answer: 90, unit: '', hint: '1 hour is 60 minutes. Add 30.', explain: '60 + 30 = 90 minutes – 1 and a half hours.' },
+        { q: 'A timetable says the train leaves Bangkok at 09:15 and reaches Ayutthaya at 10:45. How long is the journey?', options: ['1 hour and 30 minutes', '30 minutes', '1 hour and 45 minutes'], answer: 0, hint: 'Hop 45 minutes to 10:00, then 45 more.' },
+      ],
+      result: [
+        'To find when something **ends**, start at the start time and hop **forwards**: hop to the next o\'clock first, then the rest. A pizza goes in at 5:40 and cooks for 30 minutes: hop 20 to 6:00, then 10 more – it is ready at 6:10.',
+        'To find when something **started**, hop **backwards** from the end time. A show ended at 4:15 and lasted 30 minutes: back 15 to 4:00, back 15 more – it started at 3:45.',
+        'When the minutes come to more than 60, swap 60 of them for an hour: 75 minutes is 1 hour and 15 minutes, and 90 minutes is 1 and a half hours.',
+        'A [[timetable]] tells you when a train leaves and arrives. Hop from one time to the other to find how long the journey is.',
       ],
     },
 

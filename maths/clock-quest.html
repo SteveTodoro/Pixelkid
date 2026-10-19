@@ -179,42 +179,30 @@ window.LESSON = {
     },
 
     {
-      type: 'read', title: 'Clock secrets', short: 'Read 2', minutes: 6,
-      say: 'Morning or afternoon? And what are those funny letters on old clocks? Read on!',
-      cards: [
-        {
-          title: 'Morning or afternoon?', pic: '🌅 ☀️ 🌙',
-          text: [
-            'The short hand goes all the way round the clock twice every day. So 7 o\'clock happens twice: once in the morning and once in the evening!',
-            'We write [[a.m.]] for times from midnight to midday, and [[p.m.]] for times from midday to midnight.',
-          ],
-          check: { q: 'You eat your breakfast at 7:30. How do we write that?', options: ['7:30 a.m.', '7:30 p.m.', '7:30 midnight'], answer: 0 },
-        },
-        {
-          title: 'Midnight and midday', pic: C('12:00'),
-          text: [
-            'At 12 o\'clock in the middle of the day it is [[midday]], also called noon.',
-            'At 12 o\'clock in the middle of the night it is [[midnight]]. That is when a brand new day begins!',
-          ],
-          check: { q: 'You are fast asleep in bed and the clock shows 3 o\'clock. What time is it?', options: ['3 a.m.', '3 p.m.', 'midday'], answer: 0, hint: 'Is it before or after midday?' },
-        },
-        {
-          title: 'Roman numeral clocks', pic: R('10:10'),
-          text: [
-            'Some clocks use [[roman numerals]]. I is 1, V is 5 and X is 10.',
-            'A small one AFTER a big one means add: VI is 6, XI is 11. A small one BEFORE a big one means take away: IV is 4, IX is 9.',
-          ],
-          check: { type: 'type', q: 'Use the rule on this page: write the Roman numeral for 7.', answer: ['VII'], placeholder: 'Roman numeral letters', hint: '7 is 5 add 2. V is 5. Where do the I letters go to ADD?', explain: 'VII – V is 5, add I and I: 5 + 2 = 7.' },
-        },
-        {
-          title: 'Time facts', pic: '⏱️ 60 · 60 · 24',
-          text: [
-            '60 seconds make 1 minute. 60 minutes make 1 hour. 24 hours make 1 day.',
-            'A clap takes about 1 second. Brushing your teeth takes about 2 minutes. A film takes about 2 hours.',
-          ],
-          check: { q: 'Which of these would take about 1 MINUTE?', options: ['singing "Happy Birthday" three times', 'blinking your eyes once', 'a whole school day'], answer: 0 },
-        },
+      type: 'case', title: 'The Case of the Missing Cake', short: 'Case', minutes: 7,
+      say: 'A clock mystery! Answer each question to uncover a clue about a.m., p.m. and Roman numerals. Then solve it!',
+      mystery: [
+        'Someone ate the birthday cake at the clock shop! It was on the counter at **3:25 p.m.**, and gone at **3:35 p.m.**',
+        'Three suspects told us where they were. 🦉 **Owl:** "I was asleep from XI o\'clock in the morning until IV in the afternoon." 🐶 **Dog:** "I was at the park from midday until 5 p.m." 🐱 **Cat:** "At half past 3, I was fast asleep in my basket. It was 3:30 a.m."',
+        'One of them has an alibi for the wrong time. Find the clues, then work out who it was.',
       ],
+      clues: [
+        { icon: '🌅', clue: 'a.m. means from midnight to midday – the morning. p.m. means from midday to midnight – the afternoon and evening. Every time happens twice a day!',
+          q: { q: 'You eat your breakfast at 7:30. How do we write that?', options: ['7:30 a.m.', '7:30 p.m.', '7:30 midnight'], answer: 0, hint: 'Is breakfast before or after midday?' } },
+        { icon: '🕛', clue: '12 o\'clock in the middle of the day is midday, also called noon. 12 o\'clock in the middle of the night is midnight – a brand new day begins.',
+          q: { q: 'You are fast asleep in bed and the clock shows 3 o\'clock. What time is it?', options: ['3 a.m.', '3 p.m.', 'midday'], answer: 0, hint: 'Is it before or after midday?' } },
+        { icon: '🏛️', clue: 'Roman numerals: I is 1, V is 5 and X is 10. A small one AFTER a big one means add (VI is 6, XI is 11). A small one BEFORE a big one means take away (IV is 4, IX is 9).',
+          q: { type: 'type', q: 'Use the Roman numeral rule: write the Roman numeral for 7.', answer: ['VII'], placeholder: 'Roman numeral letters', hint: '7 is 5 add 2. V is 5. Where do the I letters go to ADD?', explain: 'VII – V is 5, add I and I: 5 + 2 = 7.' } },
+        { icon: '⏱️', clue: '60 seconds make 1 minute, 60 minutes make 1 hour and 24 hours make 1 day. A clap takes about 1 second, brushing your teeth about 2 minutes, and a film about 2 hours.',
+          q: { q: 'Which of these would take about 1 MINUTE?', options: ['singing "Happy Birthday" three times', 'blinking your eyes once', 'a whole school day'], answer: 0, hint: 'A minute is 60 seconds – longer than a blink, much shorter than a day.' } },
+      ],
+      solve: {
+        q: 'The cake vanished between 3:25 p.m. and 3:35 p.m. Who ate it?',
+        options: ['🐱 Cat – her alibi is for 3:30 a.m., in the middle of the night', '🦉 Owl – XI to IV doesn\'t cover the afternoon', '🐶 Dog – midday is in the middle of the night'],
+        answer: 0, hint: 'Check each alibi with your clues. Does it cover half past 3 in the AFTERNOON?',
+        explain: 'Owl slept from 11 a.m. (XI) to 4 p.m. (IV), and Dog was at the park from midday to 5 p.m. – both cover the afternoon. But Cat\'s alibi was for 3:30 a.m., in the middle of the night!',
+      },
+      closed: 'Cat confessed – with icing on her whiskers! She hoped nobody knew the difference between a.m. and p.m. But you did. Case closed, time detective!',
     },
 
     {

@@ -224,50 +224,19 @@ window.LESSON = {
     },
 
     {
-      type: 'read', title: 'Design superpowers', short: 'Read 2', minutes: 4,
-      say: 'Here are the 5 superpowers every designer uses!',
-      cards: [
-        {
-          title: '1. Size shows importance', pic: D.bigTitle,
-          text: [
-            'Make the most important words the biggest – usually the title.',
-            'Smaller words, like the time and place, come next. The eye reads the big things first!',
-          ],
-          check: { q: "A poster says SPORTS DAY, Friday, school field. Which words should be the biggest?", options: ["SPORTS DAY", "Friday", "school field"], answer: 0 },
-        },
-        {
-          title: '2. Contrast', pic: D.contrastGood,
-          text: [
-            'Words must stand out from what is behind them. This is called [[contrast]].',
-            'Dark on light, or light on dark, is easy to read. Yellow on white is almost invisible!',
-          ],
-          check: { type: 'predict', q: 'Three posters are hanging at the end of the corridor. Which one do you predict will be HARDEST to read?', options: ['pale yellow writing on white', 'dark blue writing on pale yellow', 'black writing on white'], answer: 0, reveal: 'Pale yellow on white is almost invisible – there is hardly any contrast!', then: { q: 'So what makes words easy to read?', options: ['strong contrast – dark on light, or light on dark', 'very tiny letters', 'using every colour at once'], answer: 0 } },
-        },
-        {
-          title: '3. Line it up', pic: D.aligned,
-          text: [
-            'Designers [[align]] things – they line them up neatly, often all down the middle.',
-            'Things scattered all over the place look messy and are harder to read.',
-          ],
-          check: { q: "Which poster will look neater?", options: ["One with everything lined up", "One with words scattered everywhere", "One with the title upside down"], answer: 0 },
-        },
-        {
-          title: '4. Space to breathe', pic: D.clean,
-          text: [
-            'Too many things squashed together is called [[clutter]]. It makes a poster hard to understand.',
-            'Leave some empty space. Fewer, bigger things work better than lots of tiny ones.',
-          ],
-          check: { type: 'build', q: 'Your poster has 15 stickers squashed together. Build what you should do.', answer: ['Take', 'some', 'away'], extra: ['Add', 'more'], join: ' ', hint: 'Fewer, bigger things work better than lots of tiny ones.', explain: 'Take some away – leave empty space so your poster can breathe!' },
-        },
-        {
-          title: '5. Colours with feelings', pic: '🔴🔵🟢',
-          text: [
-            'Colours make us feel things. Red feels exciting, blue feels calm, green feels like nature.',
-            'Designers pick a [[palette]] – a few colours that work well together and match the message.',
-          ],
-          check: { q: "You are making a calm poster for a quiet reading corner. Which colours fit best?", options: ["soft blues", "bright flashing reds", "every colour at once"], answer: 0, hint: "Which colour feels calm?" },
-        },
+      type: 'teach', title: 'Teach Mini Bolt: design superpowers', short: 'Teach', minutes: 6,
+      say: 'Mini Bolt is making a poster – but his design rules are back to front! Fix his mistakes.',
+      robot: { name: 'Mini Bolt', emoji: '🤖' },
+      intro: 'Beep boop! I am Mini Bolt. I am going to be the best poster designer EVER. Here are my design rules! (Professor Bolt says my last poster was… hard to read.)',
+      lines: [
+        { text: 'Make the most important words the smallest, so people read them first.', wrong: 'smallest', fix: 'biggest', options: ['quietest', 'thinnest'], hint: 'Which words does your eye spot first?', why: 'The eye reads the big things first – usually the title. Smaller words, like the time and place, come next.' },
+        { text: 'Pale yellow writing on a white poster is easy to read.', wrong: 'easy', fix: 'hard', options: ['fun', 'quick'], hint: 'Do the words stand out from the white?', why: 'Words must stand out from what is behind them – that is contrast. Dark on light, or light on dark, is easy to read.' },
+        { text: 'Designers line things up neatly, often all down the middle.', ok: true, why: 'Right! That is called aligning. Things scattered all over the place look messy and are harder to read.' },
+        { text: 'Squashing lots of things together makes a poster easier to understand.', wrong: 'easier', fix: 'harder', options: ['quicker', 'prettier'], hint: 'Think of the Clutter Monster.', why: 'Too many things squashed together is clutter. Leave some empty space – fewer, bigger things work better.' },
+        { text: 'Red feels exciting, blue feels calm, and green feels like nature.', ok: true, why: 'Yes! Colours make us feel things, so pick colours that match your message.' },
+        { text: 'A palette is a few colours that clash together.', wrong: 'clash', fix: 'work', options: ['fight', 'shout'], hint: 'Should a palette\'s colours fight, or be friends?', why: 'A palette is a few colours that work well together and match the message.' },
       ],
+      outro: 'Beep! My design rules are fixed: big titles, strong contrast, line it up, space to breathe and colours with feelings. My next poster will be AMAZING!',
     },
 
     {

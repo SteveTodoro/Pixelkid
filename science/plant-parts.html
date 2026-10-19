@@ -250,50 +250,22 @@ window.LESSON = {
     },
 
     {
-      type: 'read', title: 'Fruits, trees and weird plants', short: 'Read 2', minutes: 5,
-      say: 'More clues to investigate, detective! Some of these plants are VERY strange…',
-      cards: [
-        {
-          title: 'From flower to fruit', pic: '🌸➡️🍏',
-          text: [
-            'After a bee has visited, the petals of a flower dry up and fall off. Then the middle of the flower starts to swell.',
-            'It grows into a [[fruit]] with seeds tucked safely inside. Scientists call anything with seeds inside a fruit – so a tomato, a cucumber and even a pea pod are all fruits!',
-          ],
-          check: { q: 'You slice open a pepper and find lots of little seeds. So a scientist would say a pepper is…', options: ['a fruit', 'a root', 'a leaf'], answer: 0, hint: 'What do scientists call a part with seeds inside?' },
-        },
-        {
-          title: 'We eat every part!', pic: '🥕🥬🥦🍎',
-          text: [
-            'Lots of our food comes from plants. Carrots and radishes are roots. Celery is a stem. Lettuce and spinach are leaves.',
-            'Broccoli is a bunch of tiny flowers that have not opened yet! Apples are fruits, and peas and beans are seeds.',
-          ],
-          check: { type: 'oddone', q: 'Odd one out! Think about which PART of the plant we eat.', items: ['carrot', 'radish', 'parsnip', 'celery'], answer: 3, reasons: ['We eat its stem – the others are roots', 'It is green', 'It is the crunchiest'], reason: 0, hint: 'Carrots and radishes are roots. A parsnip grows down under the soil too.' },
-        },
-        {
-          title: 'Trees are plants too', pic: '🌳🪵',
-          text: [
-            'A tree is a giant plant. Its roots spread out wide under the ground, and its trunk can grow taller than a house.',
-            '[[Bark|bark]] covers the trunk. It keeps out bugs and stops the tree from drying out. The tallest tree in the world is a redwood in America – it is about as tall as 25 double-decker buses stacked up!',
-          ],
-          check: { q: 'A deer scrapes a big patch of bark off a young tree. Why is that bad for the tree?', options: ['Bugs can get in and it might dry out', 'The tree cannot grow flowers any more', 'Its roots will fall off'], answer: 0 },
-        },
-        {
-          title: 'Weird and wonderful plants', pic: '🪤🌵🪷',
-          text: [
-            'The Venus flytrap has leaves that SNAP shut to catch flies – then it slowly dissolves them for extra goodness!',
-            'A cactus has a fat stem that stores water for months, and its spines are its leaves. A giant water lily has floating leaves wider than your bed is long.',
-          ],
-          check: { type: 'evidence', q: 'A cactus looks like it has no leaves at all. Which sentence proves it DOES have some?', answer: 'spines are its leaves', hint: 'Read the sentence about the cactus again.', explain: 'Its prickly spines are its leaves!' },
-        },
-        {
-          title: 'Teamwork!', pic: '🥕🤝🌿🤝🍃🤝🌸',
-          text: [
-            'So which part of a plant is the most important? None of them – they are a team!',
-            'Without roots there is no water. Without a stem the leaves flop down into the dark. Without leaves there is no food, and without flowers there are no new seeds.',
-          ],
-          check: { q: 'A hungry rabbit nibbles off ALL the leaves of a bean plant. What problem will the plant have now?', options: ['It cannot make its food', 'It cannot hold on to the soil', 'It cannot carry water up from the roots'], answer: 0, hint: 'Which part was the food factory?' },
-        },
+      type: 'teach', title: 'Teach Mini Bolt: fruits, trees and weird plants', short: 'Teach', minutes: 7,
+      say: 'Mini Bolt has been learning about plants – but some of his facts are muddled! Fix his mistakes.',
+      robot: { name: 'Mini Bolt', emoji: '🤖' },
+      intro: 'Beep boop! I am Mini Bolt, Professor Bolt\'s little helper. I have learned ALL about fruits, trees and weird plants. Let me teach YOU! (Professor Bolt says I mix things up sometimes…)',
+      lines: [
+        { text: 'After a bee visits, the petals fall off and the middle of the flower swells into a fruit.', ok: true, why: 'Yes – a fruit, with the seeds tucked safely inside.' },
+        { text: 'Scientists call anything with seeds inside a vegetable.', wrong: 'vegetable', fix: 'fruit', options: ['root', 'leaf'], hint: 'What grows from the flower and holds the seeds?', why: 'Anything with seeds inside is a fruit – so tomatoes, cucumbers and even pea pods are fruits!' },
+        { text: 'Carrots and radishes are stems that we eat.', wrong: 'stems', fix: 'roots', options: ['leaves', 'flowers'], hint: 'Which part grows under the ground?', why: 'Carrots and radishes are roots. Celery is a stem, and lettuce and spinach are leaves.' },
+        { text: 'Broccoli is a bunch of tiny leaves that have not opened yet.', wrong: 'leaves', fix: 'flowers', options: ['roots', 'seeds'], hint: 'What opens up on a plant?', why: 'Broccoli is lots of tiny flower buds! And peas and beans are seeds.' },
+        { text: 'Bark covers a tree trunk to keep out bugs and stop it drying out.', ok: true, why: 'Right! A tree is a giant plant, and its trunk can grow taller than a house.' },
+        { text: 'The tallest tree in the world is about as tall as 2 double-decker buses.', wrongAt: 11, fix: '25', options: ['5', '100'], hint: 'It is MUCH taller than a house.', why: 'It is a redwood in America – about as tall as 25 double-decker buses stacked up!' },
+        { text: 'The Venus flytrap catches flies with its snapping leaves.', ok: true, why: 'Snap! Then it slowly dissolves them for extra goodness.' },
+        { text: 'A cactus stores water in its fat stem, and its spines are its roots.', wrong: 'roots', fix: 'leaves', options: ['flowers', 'seeds'], hint: 'The spines grow out of the stem, above the ground.', why: 'The prickly spines are the cactus\'s leaves! And a giant water lily has floating leaves wider than your bed is long.' },
+        { text: 'Every part of a plant works alone.', wrong: 'alone', fix: 'together', options: ['backwards', 'slowly'], hint: 'What happens if one part is missing?', why: 'They are a team! No roots – no water. No stem – the leaves flop into the dark. No leaves – no food. No flowers – no new seeds.' },
       ],
+      outro: 'Beep! My plant facts are fixed. Thank you for teaching me – now we BOTH know them!',
     },
 
     {

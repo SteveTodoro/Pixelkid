@@ -269,50 +269,32 @@ window.LESSON = {
     },
 
     {
-      type: 'read', title: 'How does water get to the top?', short: 'Read 2', minutes: 5,
-      say: 'Plants have no heart to pump water and no mouth to drink. So how does water get all the way up? Let\'s find out!',
-      cards: [
-        {
-          title: 'The water journey', pic: '🟫➡️🥕➡️🌿➡️🍃',
-          text: [
-            'Roots are covered in tiny [[root hairs]]. They soak up water from the damp soil, like a sponge.',
-            'Next, the water travels up through the stem. Finally it reaches the leaves and the flowers, right at the top.',
-          ],
-          check: { type: 'build', q: 'Build the water\'s journey through a plant, from start to end.', answer: ['🟫 soil', '🥕 roots', '🌿 stem', '🍃 leaves'], join: ' → ', hint: 'Water starts in the ground…', explain: 'Soil → roots → stem → leaves!' },
-        },
-        {
-          title: 'Tiny tubes', pic: '🥤🥤🥤',
-          text: [
-            'Inside the stem are lots of thin tubes called [[xylem]] (say "ZY-lem"). They run all the way from the roots to the leaves.',
-            'They are a bit like a bundle of very long, very thin drinking straws. Even the tallest trees have them!',
-          ],
-          check: { q: 'Which of these is MOST like xylem?', options: ['a bundle of drinking straws', 'a bath sponge', 'a plastic bag'], answer: 0, hint: 'Xylem is made of long, thin tubes.' },
-        },
-        {
-          title: 'The water chain', pic: '🍃♨️ ⬆️💧💧💧',
-          text: [
-            'Leaves have tiny holes. Some water [[evaporates|evaporate]] out of them into the air.',
-            'Water drops cling on to each other, like a chain of children holding hands. So when one drop leaves the top, it pulls the next drop up behind it – all the way from the roots!',
-          ],
-          check: { type: 'predict', q: 'On a hot, sunny day, water escapes from the leaves faster. What do you predict happens to the water in the stem?', options: ['It gets pulled up faster', 'It stops moving', 'It flows back down to the roots'], answer: 0, reveal: 'It gets pulled up faster! Every drop that escapes at the top pulls the next drop up behind it.', then: { q: 'The drops of water in the stem are like…', options: ['a chain of children holding hands', 'a pile of sand', 'a popped balloon'], answer: 0, hint: 'Read the second sentence again.' } },
-        },
-        {
-          title: 'The colour-changing celery', pic: CELERY,
-          text: [
-            'You can SEE the water travel! Stand a stick of celery in a cup of water with lots of food colouring in it, and wait a whole day.',
-            'The coloured water travels up the xylem tubes, and the leaves at the top change colour. It works with white flowers too!',
-          ],
-          check: { q: 'Zara stands a white carnation in red water for a day. What will she see?', options: ['The petals start to turn red', 'The flower turns into a tomato', 'The stem shrinks into the cup'], answer: 0 },
-        },
-        {
-          title: 'The droopy plant rescue', pic: '🥀➡️💧➡️🌷',
-          text: [
-            'A plant\'s stem and leaves are full of water, a bit like a balloon full of air. That keeps them firm and standing up.',
-            'When a plant is thirsty, it goes soft and wilts. Give it a drink, and in a few hours it can stand up straight again!',
-          ],
-          check: { q: 'Why does a droopy plant stand up straight after a drink?', options: ['The water fills it up and makes it firm again', 'The water is a kind of glue', 'The plant gets a fright'], answer: 0, hint: 'Think about a balloon.' },
-        },
+      type: 'case', title: 'The Case of the Droopy Sunflower', short: 'Case', minutes: 7,
+      say: 'A plant mystery! Answer each question to uncover a clue about how water travels through a plant. Then solve it!',
+      mystery: [
+        'On Monday, Gran\'s prize sunflower was standing tall. By Wednesday it was soft and droopy! Who – or what – is to blame?',
+        'Suspects: 🐌 **Sid the Snail**, who loves nibbling leaves. 🐱 **Kit the Cat**, who loves digging in plant pots. ☀️ **The Heatwave**, the hottest, sunniest week of the year.',
+        'Detective notes: the leaves have **no bite marks**. Nobody has **dug** in the pot. The soil is **bone dry**.',
       ],
+      clues: [
+        { icon: '🥕', clue: 'Water\'s journey: the soil → the roots (tiny root hairs soak it up like a sponge) → the stem → the leaves and flowers.',
+          q: { type: 'build', q: 'Build the water\'s journey through a plant, from start to end.', answer: ['🟫 soil', '🥕 roots', '🌿 stem', '🍃 leaves'], join: ' → ', hint: 'Water starts in the ground…', explain: 'Soil → roots → stem → leaves!' } },
+        { icon: '🥤', clue: 'Inside the stem are thin tubes called xylem (say "ZY-lem"), from the roots to the leaves – like a bundle of very long drinking straws.',
+          q: { q: 'Which of these is MOST like xylem?', options: ['a bundle of drinking straws', 'a bath sponge', 'a plastic bag'], answer: 0, hint: 'Xylem is made of long, thin tubes.' } },
+        { icon: '☀️', clue: 'Water evaporates out of tiny holes in the leaves, and each drop pulls the next one up, like a chain of children holding hands. On hot, sunny days it escapes FASTER.',
+          q: { q: 'On a hot, sunny day, water escapes from the leaves faster. What happens to the water in the stem?', options: ['It gets pulled up faster', 'It stops moving', 'It flows back down to the roots'], answer: 0, hint: 'Think of the chain of children holding hands.' } },
+        { icon: '🌸', clue: 'Detective test: stand celery or a white flower in coloured water for a day. The leaves or petals change colour – proof that water travels up the stem!',
+          q: { q: 'Zara stands a white carnation in red water for a day. What will she see?', options: ['The petals start to turn red', 'The flower turns into a tomato', 'The stem shrinks into the cup'], answer: 0, hint: 'Where does the water go?' } },
+        { icon: '🎈', clue: 'A plant full of water is firm, like a balloon full of air. A thirsty plant goes soft and wilts – but a drink can stand it up again in a few hours.',
+          q: { type: 'tf', q: 'A droopy plant can stand up straight again a few hours after a drink, because the water fills it up and makes it firm.', answer: true, hint: 'Think about a balloon filling up with air.', explain: 'True – like a balloon full of air, a plant full of water is firm.' } },
+      ],
+      solve: {
+        q: 'Look at the detective notes and your clues. Who made the sunflower droop?',
+        options: ['☀️ The Heatwave – the hot sun pulled water out of the leaves faster, and the dry soil had none left to give', '🐌 Sid the Snail – he ate the leaves', '🐱 Kit the Cat – she dug up the roots'],
+        answer: 0, hint: 'Check the detective notes: bite marks? digging? What about the soil?',
+        explain: 'No bite marks means not Sid, and no digging means not Kit. On a hot day water escapes from the leaves faster, so the roots need MORE water – but the soil was bone dry.',
+      },
+      closed: 'It was the Heatwave! Gran gave the sunflower a big drink, and a few hours later it stood tall again. Remember: soil → roots → stem (xylem) → leaves – and on hot days, plants need extra water.',
     },
 
     {

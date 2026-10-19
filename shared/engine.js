@@ -852,10 +852,11 @@
     const place = b => { if (done) return; sfx.tap(); (b.parentElement === row ? pool : row).append(b); empty.hidden = row.children.length > 1; };
     const empty = h('span', { class: 'bld-empty' }, 'Tap the tiles to build it here');
     row.append(empty);
-    const pool = h('div', { class: 'bld-pool' }, shuffle(q.answer.concat(q.extra || [])).map(t => h('button', { class: 'bld-tile', type: 'button', onclick: e => place(e.currentTarget) }, t)));
+    // each tile keeps its own value: pixel icons may swap the emoji in its text for a picture
+    const pool = h('div', { class: 'bld-pool' }, shuffle(q.answer.concat(q.extra || [])).map(t => Object.assign(h('button', { class: 'bld-tile', type: 'button', onclick: e => place(e.currentTarget) }, t), { _t: t })));
     const btn = checkBtn('✔ Check', () => {
       if (done) return;
-      const built = [...row.querySelectorAll('.bld-tile')].map(b => b.textContent);
+      const built = [...row.querySelectorAll('.bld-tile')].map(b => b._t);
       if (!built.length) { shake(pool); return; }
       if (built.join(join) === q.answer.join(join)) { done = true; btn.disabled = true; row.classList.add('right'); onRight(row, !wrong); }
       else { wrong = true; shake(row); sfx.bad(); onMiss(row); }
@@ -1133,8 +1134,8 @@
       if (!quiet) { sfx.win(); confetti(70); }
       const g = guess(), right = P.answer != null && g === P.answer;
       const verdict = g == null || P.answer == null ? null
-        : right ? '✔ Your prediction was right – great scientific thinking!'
-          : `You predicted “${P.options[g]}”, but really “${P.options[P.answer]}”. Scientists are surprised all the time – that is how we find things out!`;
+        : right ? '✔ Your prediction was right – great thinking!'
+          : `You predicted “${P.options[g]}”, but really “${P.options[P.answer]}”. Guessing first, then checking, is how we find things out!`;
       put(area, h('div', { class: 'panel-inner iv-result' }, h('h3', null, '🔬 What we found out'), verdict && h('p', { class: 'iv-verdict' + (right ? ' right' : '') }, verdict),
         [].concat(s.result || []).map(t => h('p', { html: fmt(t) }))),
         h('div', { class: 'btn-row' }, h('button', { class: 'btn', type: 'button', onclick() { sfx.tap(); test(); } }, '🔁 Test it again')));

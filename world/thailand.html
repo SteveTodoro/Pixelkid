@@ -240,58 +240,22 @@ window.LESSON = {
     },
 
     {
-      type: 'read', title: 'Thai life and traditions', short: 'Read 2', minutes: 7,
-      say: 'Now let\'s explore Thai traditions – some you might already know!',
-      cards: [
-        {
-          title: 'The wai', pic: '🙏',
-          text: [
-            'Thai people greet each other with a [[wai]]: palms pressed together and a small bow. The higher your hands, the more [[respect]] you show – so you wai teachers, grandparents and monks with your hands high.',
-            'Boys say "sawasdee krap" and girls say "sawasdee ka". Thailand is called the Land of Smiles, because people smile so much!',
-          ],
-          check: { type: 'evidence', q: 'You meet your friend\'s grandma for the first time. Tap the sentence that tells you how to show her lots of respect.', answer: 'the higher your hands', hint: 'Find the sentence about your hands.', explain: 'A wai with your hands held high shows the most respect.' },
-        },
-        {
-          title: 'Heads and feet', pic: '🙆🦶',
-          text: [
-            'In Thailand, the head is the most special part of the body, so you should never pat someone on the head.',
-            'The feet are the lowest part, so it is rude to point your feet at people or at a Buddha statue. Shoes come off before going into homes and temples – just like in Japan!',
-          ],
-          check: { type: 'evidence', q: 'You are sitting on the floor of a temple. Tap the sentence that tells you how NOT to sit.', answer: 'rude to point your feet', hint: 'Find the sentence about feet.', explain: 'Tuck your feet away – never point them at a Buddha statue.' },
-        },
-        {
-          title: 'Kind to elephants', pic: '🐘💚',
-          text: [
-            'Elephants have helped Thai people for hundreds of years. Long ago, a rare white elephant was a sign of good luck for the King.',
-            'Today, people know that elephants are happiest roaming free. The kindest way to meet them is at a [[sanctuary]], where you can watch them play and bathe – not ride on them.',
-          ],
-          check: { q: 'Your family wants to see elephants. Which place is kindest to them?', options: ['A sanctuary where they roam free', 'A show where they do tricks', 'A camp where they carry tourists all day'], answer: 0 },
-        },
-        {
-          title: 'Spoon, fork and five flavours', pic: '🥄🍴🌶️',
-          text: [
-            'Thai chefs balance five flavours: sweet, sour, salty, spicy and bitter. Famous dishes include pad thai noodles, green curry and mango sticky rice.',
-            'Most Thai meals are eaten with a spoon and a fork. The spoon goes into your mouth, and the fork is used to push food onto the spoon! Chopsticks are mostly for noodle soup.',
-          ],
-          check: { type: 'type', q: 'You are eating rice and curry. The spoon goes in your mouth. The fork is for pushing food onto your…', answer: ['spoon', 'the spoon', 'your spoon'], placeholder: 'one word', hint: 'Read the last sentence on the page again.', explain: 'Push the food onto your spoon with the fork!' },
-        },
-        {
-          title: 'Songkran splash!', pic: '💦🔫',
-          text: [
-            'Songkran is the Thai New Year, from 13 to 15 April – the hottest time of the year. Everyone has giant water fights in the streets!',
-            'But Songkran is also about respect. Families gently pour water over the hands of their grandparents to say thank you and ask for blessings.',
-          ],
-          check: { type: 'evidence', q: 'At Songkran, Nong pours water gently over her grandma\'s hands. Tap the sentence that tells you why.', answer: 'ask for blessings', hint: 'Songkran is also about respect…', explain: 'To say thank you and ask for blessings.' },
-        },
-        {
-          title: 'Loy Krathong', pic: '🌕🪷🕯️',
-          text: [
-            'On the full moon in November, people make a krathong: a little float of banana leaves, decorated with flowers, a candle and incense sticks.',
-            'They float it on a river or lake to say thank you to the water – and to let their worries drift away. The best krathongs are made of things fish can eat, like bread, so they don\'t pollute the water.',
-          ],
-          check: { type: 'oddone', q: 'Which of these should NOT go on a krathong?', items: ['🍞 bread', '🍃 banana leaves', '🌸 flowers', '🥤 plastic foam'], answer: 3, why: 'Why not the plastic foam?', reasons: ['Fish can\'t eat it, so it pollutes the water', 'It is too heavy to float', 'It is the wrong colour'], reason: 0, hint: 'The best krathongs are made of things fish can eat.' },
-        },
+      type: 'teach', title: 'Teach Mini Bolt: Thai life and traditions', short: 'Teach', minutes: 8,
+      say: 'Mini Bolt is visiting Thailand for the first time and has muddled up some things. You live here – help him get them right!',
+      robot: { name: 'Mini Bolt', emoji: '🤖' },
+      intro: 'Sawasdee krap! I am Mini Bolt, and I have just landed in Thailand. I read a guidebook on the plane, so let me teach YOU about Thai life! (The guidebook got a bit wet…)',
+      lines: [
+        { text: 'Thai people greet each other with a wave.', wrong: 'wave', fix: 'wai', options: ['handshake', 'hug'], hint: 'Palms pressed together and a small bow…', why: 'A wai: palms pressed together and a small bow. The higher your hands, the more respect – so you wai teachers, grandparents and monks with your hands high.' },
+        { text: 'Thailand is called the Land of Smiles.', ok: true, why: 'Yes – because people smile so much! Boys say "sawasdee krap" and girls say "sawasdee ka".' },
+        { text: 'In Thailand, the most special part of the body is the feet.', wrong: 'feet', fix: 'head', options: ['hands', 'knees'], hint: 'Which part should you never pat?', why: 'The head is the most special, so never pat someone on the head. The feet are the lowest, so don\'t point them at people or at a Buddha statue.' },
+        { text: 'People take their shoes off before going into homes and temples.', ok: true, why: 'Right – just like in Japan!' },
+        { text: 'The kindest place to meet elephants is a circus.', wrong: 'circus', fix: 'sanctuary', options: ['show', 'camp'], hint: 'Where can elephants roam free?', why: 'At a sanctuary, elephants roam free and you watch them play and bathe instead of riding them. Long ago, a rare white elephant was a sign of good luck for the King.' },
+        { text: 'Thai chefs balance five flavours: sweet, sour, salty, spicy and bitter.', ok: true, why: 'Yes! Taste them in pad thai, green curry and mango sticky rice.' },
+        { text: 'Most Thai meals are eaten with a spoon and chopsticks.', wrong: 'chopsticks', fix: 'fork', options: ['knife', 'fingers'], hint: 'What pushes the food onto the spoon?', why: 'A spoon and a fork! The fork pushes food onto the spoon. Chopsticks are mostly for noodle soup.' },
+        { text: 'Songkran is the Thai New Year, in the coldest time of the year.', wrong: 'coldest', fix: 'hottest', options: ['wettest', 'darkest'], hint: 'Why are giant water fights so much fun in April?', why: 'Songkran (13 to 15 April) is in the hottest time of the year. Families also gently pour water over their grandparents\' hands to say thank you and ask for blessings.' },
+        { text: 'At Loy Krathong, people float a little boat made of plastic on the river.', wrong: 'plastic', fix: 'leaves', options: ['metal', 'foam'], hint: 'The best krathongs don\'t pollute the water.', why: 'A krathong is made of banana leaves, flowers, a candle and incense. On the November full moon, it says thank you to the water. The best ones are things fish can eat, like bread.' },
       ],
+      outro: 'Khop khun krap – thank you! Now I know how to wai, where to put my feet, and what to eat with. Next stop: Songkran!',
     },
 
     {

@@ -218,41 +218,30 @@ window.LESSON = {
     },
 
     {
-      type: 'read', title: 'Why and when', short: 'Read 2', minutes: 5,
-      say: 'More joining words! These ones tell you WHY something happened, or WHEN.',
-      cards: [
-        {
-          title: 'because gives a reason', pic: '🤔💬',
-          text: [
-            'because tells you the [[reason]] why: I wore a coat because it was cold.',
-            'so and because are opposite ends of the same train: It was cold so I wore a coat.',
-          ],
-          check: { type: 'type', q: 'The dog barked ___ it heard the postman. Write the joining word that gives the REASON.', answer: ['because'], before: 'The dog barked', after: 'it heard the postman.', placeholder: 'a joining word', hint: 'Is it giving a reason, or a choice?', explain: 'because tells you the reason why.' },
-        },
-        {
-          title: 'Time joiners', pic: '⏰🔗',
-          text: [
-            'when, before, after, while and until join ideas by telling you when things happen.',
-            'Brush your teeth before you go to bed. I read my book while Dad cooked.',
-          ],
-          check: { q: 'You and your friend sang at the same time as you painted. Which joining word fits? "We sang ___ we painted."', options: ['while', 'before', 'or'], answer: 0, hint: 'Which word means "at the same time"?' },
-        },
-        {
-          title: 'if – it might happen', pic: '❄️⛄',
-          text: [
-            'if joins an idea that might happen: If it snows, we will build a snowman.',
-          ],
-          check: { q: 'Which sentence uses if correctly?', options: ['If you are thirsty, have some water.', 'If I ate my dinner yesterday.', 'I like if cats.'], answer: 0 },
-        },
-        {
-          title: 'Myth-buster: never start with because?', pic: '❌🚫 ✅',
-          text: [
-            'Some people say you must never start a sentence with because. Busted! You can – as long as the sentence has two parts.',
-            'Because it was raining, we played inside. ✅ Because it was raining. ❌ (Something is missing!) When the joining word comes first, add a [[comma]] between the two parts.',
-          ],
-          check: { type: 'evidence', q: '"Because I was late." Something is wrong with this sentence. Tap the sentence on the page that warns you about it.', answer: 'something is missing', hint: 'Look for the ❌ example.', explain: 'It only has one part – a sentence that starts with because needs two!' },
-        },
+      type: 'case', title: 'The Case of the Broken Window', short: 'Case', minutes: 7,
+      say: 'A joining-word mystery! Answer each question to uncover a clue. Then read the statements carefully and solve it!',
+      mystery: [
+        'CRASH! Someone broke the window of the castle bakery. It happened at 4 o\'clock, **while it was pouring with rain**. A muddy football was found inside, next to the cakes.',
+        'Three suspects gave statements. 🧙 **Wizard Wally:** "I was reading in my tower while it rained." ⚽ **Squire Sam:** "I played football in the courtyard until the rain stopped." 🐉 **Dragon Dot:** "I stayed in my cave all afternoon because I hate getting wet."',
+        'The joining words hold the secret. Uncover the clues, then work out who did it.',
       ],
+      clues: [
+        { icon: '❓', clue: 'because gives a REASON: I wore a coat because it was cold. so is the other end of the same train: It was cold, so I wore a coat.',
+          q: { type: 'type', q: 'The dog barked ___ it heard the postman. Write the joining word that gives the REASON.', answer: ['because'], before: 'The dog barked', after: 'it heard the postman.', placeholder: 'a joining word', hint: 'Is it giving a reason, or a choice?', explain: 'because tells you the reason the dog barked.' } },
+        { icon: '⏰', clue: 'Time joiners tell you WHEN: when, before, after, while (at the same time) and until (right up to the moment something stops).',
+          q: { q: 'You sang at the same time as you painted. Which joining word fits? "We sang ___ we painted."', options: ['while', 'before', 'or'], answer: 0, hint: 'Which word means "at the same time"?' } },
+        { icon: '🤔', clue: 'if joins an idea that MIGHT happen: If it snows, we will build a snowman.',
+          q: { q: 'Which sentence uses if correctly?', options: ['If you are thirsty, have some water.', 'If I ate my dinner yesterday.', 'I like if cats.'], answer: 0, hint: 'if is for something that might happen.' } },
+        { icon: '✅', clue: 'You CAN start a sentence with because – as long as it has two parts: Because it was raining, we played inside. Put a comma between the two parts.',
+          q: { q: '"Because I was late." What is wrong with this sentence?', options: ['It only has one part – something is missing', 'You can never start a sentence with because', 'late should have a capital L'], answer: 0, hint: 'Because I was late… what happened?' } },
+      ],
+      solve: {
+        q: 'The window broke while it was raining, and a football was found inside. Who broke it?',
+        options: ['⚽ Squire Sam – "until the rain stopped" means he was playing football while it rained', '🧙 Wizard Wally – "while" means he was outside', '🐉 Dragon Dot – "because" means she did it'],
+        answer: 0, hint: 'Look at the time joiners. Who was playing football during the rain?',
+        explain: 'until tells us WHEN Sam stopped: he kept playing football the whole time it rained. Wally was reading inside while it rained, and Dot stayed in her cave because she hates getting wet.',
+      },
+      closed: 'Squire Sam owned up – and paid for the window with his pocket money! The joining words gave him away: "until the rain stopped" means he was playing football all through the rain.',
     },
 
     {

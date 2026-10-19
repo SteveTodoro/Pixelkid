@@ -273,66 +273,33 @@ window.LESSON = {
     },
 
     {
-      type: 'read', title: 'Rockets, wonders and hot dogs', short: 'Read 2', minutes: 7,
-      say: 'Now let\'s explore the amazing things the USA is famous for!',
-      cards: [
-        {
-          title: 'One small step', pic: '🚀🌕',
-          text: [
-            'In 1969, a giant rocket blasted off from Florida carrying three American [[astronaut]]s. Four days later, Neil Armstrong became the first person ever to walk on the Moon.',
-            'His footprints are still there today, because there is no wind or rain on the Moon to blow them away!',
-          ],
-          check: { type: 'evidence', q: 'A footprint on the beach disappears, but a footprint on the Moon stays for years and years. Tap the sentence that explains why.', answer: 'no wind or rain', hint: 'What wipes away footprints on Earth?', explain: 'There is no wind or rain on the Moon to blow them away!' },
-        },
-        {
-          title: 'A green giant', pic: '🗽',
-          text: [
-            'The Statue of Liberty stands in New York. She is as tall as about 30 people standing on each other\'s heads – and that is without her stone base!',
-            'She is made of copper, the same metal as a shiny new coin. Over many years, rain and sea air slowly turned her green.',
-          ],
-          check: { q: 'If the Statue of Liberty were brand new today, what colour would she be?', options: ['Shiny orange-brown, like a new coin', 'Green, just like now', 'Bright white'], answer: 0, hint: 'What made her change colour?' },
-        },
-        {
-          title: 'Natural wonders', pic: '🏜️⛲',
-          text: [
-            'The Grand [[canyon]] is a giant crack in the ground, more than 1.5 km deep. The Colorado River dug it out, little by little, over millions of years.',
-            'In Yellowstone, the world\'s very first national park, a [[geyser]] called Old Faithful shoots boiling water high into the sky about every hour and a half!',
-          ],
-          check: { type: 'evidence', q: 'How did the Grand Canyon get so deep? Tap the sentence that tells you.', answer: 'colorado river dug it out', hint: 'Who – or what – dug it?', explain: 'A river wore the rock away, little by little, over millions of years.' },
-        },
-        {
-          title: 'Eagles and bison', pic: '🦅🦬',
-          text: [
-            'The national bird of the USA is the bald eagle. It isn\'t really bald – it has bright white feathers on its head!',
-            'The national animal is the bison: a huge, shaggy cousin of the cow. Long ago, millions of bison roamed across the grassy plains.',
-          ],
-          check: { q: 'Why do you think the bald eagle got its name?', options: ['From far away, its white head looks bare', 'It has no feathers at all', 'It lives on a mountain called Bald'], answer: 0 },
-        },
-        {
-          title: 'Mickey, Woody and Spider-Man', pic: '🐭🎬🕷️',
-          text: [
-            'Lots of cartoon heroes come from the USA. Mickey Mouse first appeared almost 100 years ago, in 1928!',
-            'Toy Story was the first full-length film made completely on computers. And Spider-Man\'s home is New York – he swings between the skyscrapers.',
-          ],
-          check: { q: 'Which of these heroes would you be most likely to spot swinging past a skyscraper?', options: ['Spider-Man', 'Anpanman', 'Peppa Pig'], answer: 0 },
-        },
-        {
-          title: 'Slam dunk!', pic: '🏀🍑',
-          text: [
-            'Basketball was invented in the USA in 1891 by a PE teacher who wanted a game his class could play indoors in winter.',
-            'The first hoops were peach baskets with the bottoms still in – so every time someone scored, a person had to climb a ladder to get the ball out!',
-          ],
-          check: { q: 'Why did they stop using baskets with bottoms in them?', options: ['Getting the ball out after every goal was too slow', 'The peaches kept falling out', 'The ball was too small'], answer: 0 },
-        },
-        {
-          title: 'Hot dogs and fireworks', pic: '🌭🎆',
-          text: [
-            'Americans love hot dogs, burgers and stacks of pancakes. A peanut butter and jelly sandwich is a lunchbox favourite – and "jelly" is the American word for jam!',
-            'On the 4th of July, the USA has its birthday party, with fireworks, parades and picnics. In November, families share a big turkey dinner called Thanksgiving to say thank you for what they have.',
-          ],
-          check: { type: 'type', q: 'Your American friend asks for a "jelly sandwich". What should you spread on the bread?', answer: ['jam', 'some jam', 'strawberry jam'], placeholder: 'one word', hint: '"Jelly" is the American word for…', explain: 'Jam! "Jelly" is the American word for jam.' },
-        },
+      type: 'case', title: 'The Case of the Smudged Postcards', short: 'Case', minutes: 9,
+      say: 'A travel mystery! Answer each question to read one of Auntie Rosie\'s postcards. Then work out where she is now!',
+      mystery: [
+        'Auntie Rosie is travelling around the USA – on the other side of the world from Thailand! She sends a postcard from every stop.',
+        'But it rained on the post bag, and the place names are smudged. Answer each question to read a postcard, then use them all to find out where Rosie is now.',
       ],
+      clues: [
+        { icon: '🚀', clue: '📮 "In 1969 a giant rocket blasted off from Florida with three astronauts. Four days later, Neil Armstrong became the first person to walk on the Moon!"',
+          q: { q: 'A footprint on the beach soon disappears, but Neil Armstrong\'s footprints are still on the Moon. Why?', options: ['There is no wind or rain on the Moon to wipe them away', 'Moon dust is sticky like glue', 'Astronauts guard the footprints'], answer: 0, hint: 'What wipes away footprints on Earth?' } },
+        { icon: '🗽', clue: '📮 "I\'m looking at the Statue of Liberty in New York – as tall as about 30 people standing on each other\'s heads! She\'s made of copper, and rain and sea air turned her green."',
+          q: { q: 'If the Statue of Liberty were brand new today, what colour would she be?', options: ['Shiny orange-brown, like a new coin', 'Green, just like now', 'Bright white'], answer: 0, hint: 'What made her change colour?' } },
+        { icon: '🏜️', clue: '📮 "The Grand Canyon is more than 1.5 km deep! Then in Yellowstone, the world\'s first national park, a geyser called Old Faithful shot boiling water into the sky."',
+          q: { q: 'How did the Grand Canyon get so deep?', options: ['The Colorado River wore the rock away over millions of years', 'A giant dug it with a spade', 'An earthquake opened it in one night'], answer: 0, hint: 'Something slowly wore the rock away, little by little.' } },
+        { icon: '🦅', clue: '📮 "I saw a bald eagle, the national bird – it has a bright white head, not a bald one! And a bison, the huge, shaggy national animal."',
+          q: { q: 'Why do you think the bald eagle got its name?', options: ['From far away, its white head looks bare', 'It has no feathers at all', 'It lives on a mountain called Bald'], answer: 0, hint: 'Look at its head from a long way off.' } },
+        { icon: '🕸️', clue: '📮 "Lots of cartoon heroes come from the USA: Mickey Mouse (from 1928) and Toy Story, the first film made completely on computers. And Spider-Man\'s home is New York!"',
+          q: { q: 'Which of these heroes would you be most likely to spot swinging past a skyscraper?', options: ['Spider-Man', 'Anpanman', 'Peppa Pig'], answer: 0, hint: 'Who swings on webs?' } },
+        { icon: '🏀', clue: '📮 "Basketball was invented here in 1891 – the first hoops were peach baskets! For lunch I had a PB & J: a peanut butter and jelly sandwich."',
+          q: { type: 'type', q: 'Rosie\'s friend asks for a "jelly sandwich". What should Rosie spread on the bread?', answer: ['jam', 'some jam', 'strawberry jam'], placeholder: 'one word', hint: '"Jelly" is the American word for…', explain: 'Jam! "Jelly" is the American word for jam.' } },
+      ],
+      solve: {
+        q: 'Rosie\'s LAST postcard says: "I can see a green copper giant from my window, and I keep looking out for Spider-Man swinging past the skyscrapers!" Which city is she in?',
+        options: ['New York', 'Florida', 'Yellowstone'], answer: 0,
+        hint: 'Which postcards mention a green giant and Spider-Man? Where were they from?',
+        explain: 'The Statue of Liberty (the green copper giant) and Spider-Man\'s home are both in New York!',
+      },
+      closed: 'Rosie is in New York! She flies home on the 4th of July – the USA\'s birthday party, with fireworks, parades and picnics. (In November, American families share a big turkey dinner called Thanksgiving to say thank you for what they have.)',
     },
 
     {
