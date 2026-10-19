@@ -1162,6 +1162,8 @@ a { color: var(--brand-dark); }
 .bld-row .bld-tile { background: #fff3a8; }
 /* type: a short written answer */
 .q-type-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 10px; font-size: 1.2rem; font-weight: 600; }
+.q-reveal { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 10px; padding: 8px 12px; background: #fff3a8; border: 3px solid #000; font-size: 1.1rem; }
+.q-reveal b { font-size: 1.2rem; }
 .q-type { flex: 1 1 180px; min-width: 0; padding: 10px 12px; font: 600 1.3rem Lexend, sans-serif; background: #fff; color: #000; border: 3px solid #000; box-shadow: inset 3px 3px 0 #ccc; }
 .q-type.right { background: var(--good-soft); }
 .q-type.wrong { background: var(--bad-soft); }

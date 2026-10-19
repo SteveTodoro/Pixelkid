@@ -70,6 +70,16 @@ async function answer(page, area, q) {
   const btn = re => [...area.querySelectorAll('button')].find(b => re.test(b.textContent) && !b.disabled && !b.hidden);
   if (t === 'type') {
     const inp = [...area.querySelectorAll('input')].pop();
+    if (!page.triedReveal && area.querySelector('.q-reveal')) {
+      // the first typed question on a page: two wrong tries, then "Use it and carry on" must get past it
+      page.triedReveal = true;
+      for (let k = 0; k < 2; k++) { inp.value = 'zzz'; inp.dispatchEvent(new w.Event('input')); btn(/check/i).click(); await wait(30); }
+      const use = btn(/use it and carry on/i);
+      if (!use) throw new Error('no way past a typed question after two wrong tries');
+      use.click(); await wait(60);
+      if (!inp.classList.contains('right')) throw new Error('"Use it and carry on" did not accept the answer');
+      return;
+    }
     inp.value = [].concat(q.answer)[0]; inp.dispatchEvent(new w.Event('input'));
     (btn(/check|ok/i) || {}).click && btn(/check|ok/i).click();
   } else if (t === 'slider') {

@@ -869,20 +869,30 @@
 
   // type: write the answer. { q, answer: 'word' or ['word', 'other spelling'], before, after, placeholder }
   // Capitals, spaces and punctuation don't matter (so 'Half past 3' = 'half past 3.').
+  // After two wrong tries the answer is shown, with a button to use it and carry on, so nobody gets stuck.
   QTYPES.type = (q, onRight, onMiss) => {
     const clean = t => String(t).toLowerCase().replace(/[^a-z0-9£:]+/g, ' ').trim();
     const ok = [].concat(q.answer).map(clean);
-    let wrong = false;
+    let misses = 0, done = false;
     const box = h('input', { class: 'q-type', type: 'text', autocomplete: 'off', autocapitalize: 'off', spellcheck: 'false', 'aria-label': 'Your answer', placeholder: q.placeholder || 'Type your answer' });
+    const reveal = h('div', { class: 'q-reveal', hidden: true });
+    const right = () => { done = true; box.classList.add('right'); box.disabled = btn.disabled = true; reveal.hidden = true; onRight(box, !misses); };
     const go = () => {
+      if (done) return;
       const v = clean(box.value);
       if (!v) { box.focus(); return; }
-      if (ok.includes(v)) { box.classList.add('right'); box.disabled = btn.disabled = true; onRight(box, !wrong); }
-      else { wrong = true; replay(box, 'wrong'); shake(box); sfx.bad(); onMiss(box); box.select(); }
+      if (ok.includes(v)) return right();
+      misses++; replay(box, 'wrong'); shake(box); sfx.bad(); onMiss(box); box.select();
+      if (misses === 2) {
+        put(reveal, h('span', null, '💡 The answer is: ', h('b', null, [].concat(q.answer)[0])),
+          h('button', { class: 'btn', type: 'button', onclick() { sfx.tap(); box.value = [].concat(q.answer)[0]; right(); } }, '✔ Use it and carry on'));
+        reveal.hidden = false;
+      }
     };
     const btn = checkBtn('✔ Check', go);
     box.addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
-    return h('div', { class: 'q-type-row' }, q.before && h('span', null, q.before), box, q.after && h('span', null, q.after), btn);
+    return h('div', { class: 'q-type-wrap' },
+      h('div', { class: 'q-type-row' }, q.before && h('span', null, q.before), box, q.after && h('span', null, q.after), btn), reveal);
   };
 
   // predict: guess what will happen first (never marked wrong), see what really happens, then explain why.
