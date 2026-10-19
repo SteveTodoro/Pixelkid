@@ -1,0 +1,12 @@
+{
+  "name": "pixelkid",
+  "private": true,
+  "description": "Pixelkid lesson library. A static site: nothing here is needed to run it. jsdom is only for tools/smoke.js.",
+  "scripts": {
+    "smoke": "node tools/smoke.js",
+    "check": "node tools/lesson-check.js && node tools/activity-audit.js"
+  },
+  "devDependencies": {
+    "jsdom": "24.1.3"
+  }
+}
