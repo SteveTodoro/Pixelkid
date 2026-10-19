@@ -637,11 +637,11 @@ function drawMap(key, lessons, stateOf) {
     let best = null, br = -1;
     spots.forEach(p => {
       const d = Math.hypot(p.x - base.x, p.y - base.y);
-      if (d < 70 || d > 240 || p.y < base.y - 30) return;
+      if (d < 70 || d > 240 || p.y < base.y - 30 || p.y < 20 * S + 46) return; // keep their head and the marker over it well inside the map
       const r = Math.min(room(p.x, p.y), 60) - d * 0.08; // roomy, but close to home
       if (r > br) { br = r; best = p; }
     });
-    if (!best || br < 4) best = { x: base.x + (base.x < W / 2 ? 100 : -100), y: base.y + 50 };
+    if (!best || br < 4) best = { x: base.x + (base.x < W / 2 ? 100 : -100), y: Math.max(base.y + 50, 20 * S + 46) };
     boxes.push([best.x - 40, best.y - 20 * S - 14, best.x + 40, best.y + 30]);
     const pool = []; // the lessons cleared on the road up to here: what a challenger asks about
     for (let s = home; s; s = s.parent) if (cleared(s) && s.l.id) pool.push(s.l.id);
