@@ -96,15 +96,18 @@
     .stamp.empty .sf { filter: grayscale(1); opacity: .45; }
     /* ---------- the quest map: each world's lessons are stops on a road from START to the world's castle ---------- */
     .qmap-wrap { position: relative; z-index: 1; max-width: 1040px; margin: 16px auto 0; padding: 0 16px 90px; }
-    /* the ground: a field with a pixel speckle; each world swaps the colour */
-    .qmap { --m1: #6cc644;
+    /* the ground: a colour with a small pixel texture on top (--mtex); each world sets its own below */
+    .qmap { --m1: #6cc644; --mtex: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2048%2048'%20shape-rendering='crispEdges'%3E%3Cg%20fill='%23fff'%20opacity='.14'%3E%3Crect%20x='6'%20y='6'%20width='6'%20height='6'/%3E%3Crect%20x='30'%20y='26'%20width='6'%20height='6'/%3E%3C/g%3E%3Cg%20fill='%232d7a1f'%20opacity='.35'%3E%3Crect%20x='16'%20y='34'%20width='3'%20height='6'/%3E%3Crect%20x='20'%20y='31'%20width='3'%20height='9'/%3E%3Crect%20x='24'%20y='35'%20width='3'%20height='5'/%3E%3Crect%20x='38'%20y='8'%20width='3'%20height='5'/%3E%3Crect%20x='42'%20y='5'%20width='3'%20height='8'/%3E%3C/g%3E%3C/svg%3E");
       position: relative; overflow: hidden; border: 4px solid #000; box-shadow: var(--bevel), 0 6px 0 rgba(0,0,0,.25);
-      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' shape-rendering='crispEdges'%3E%3Cg fill='%23fff' opacity='.14'%3E%3Crect x='6' y='6' width='6' height='6'/%3E%3Crect x='30' y='26' width='6' height='6'/%3E%3Crect x='42' y='40' width='6' height='3'/%3E%3C/g%3E%3Cg fill='%23000' opacity='.09'%3E%3Crect x='18' y='36' width='6' height='6'/%3E%3Crect x='36' y='8' width='6' height='6'/%3E%3Crect x='12' y='22' width='6' height='3'/%3E%3C/g%3E%3C/svg%3E") 0 0 / 48px 48px, var(--m1); }
-    body.maths .qmap { --m1: #8d6e52; }
-    body.english .qmap { --m1: #7cc35a; }
-    body.future .qmap { --m1: #2b2463; }
-    body.wonders .qmap { --m1: #5aa9d6; }
-    body.world .qmap { --m1: #3d8fd1; }
+      background: var(--mtex) 0 0 / 48px 48px, var(--m1); }
+    /* each world is its own biome: ground colour + texture (science: meadow, maths: mine, english: a storybook map,
+       future: space, wonders: a tropical lagoon, world: the deep ocean) */
+    body.maths .qmap { --m1: #7a5c43; --mtex: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2048%2048'%20shape-rendering='crispEdges'%3E%3Cg%20fill='%23000'%20opacity='.16'%3E%3Crect%20x='18'%20y='36'%20width='6'%20height='6'/%3E%3Crect%20x='36'%20y='8'%20width='6'%20height='6'/%3E%3Crect%20x='12'%20y='22'%20width='6'%20height='3'/%3E%3C/g%3E%3Cg%20fill='%23d9c3a5'%20opacity='.22'%3E%3Crect%20x='6'%20y='6'%20width='6'%20height='4'/%3E%3Crect%20x='30'%20y='26'%20width='4'%20height='4'/%3E%3Crect%20x='42'%20y='40'%20width='4'%20height='3'/%3E%3C/g%3E%3C/svg%3E"); }
+    body.english .qmap { --m1: #e8d4a2; --mtex: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2048%2048'%20shape-rendering='crispEdges'%3E%3Cg%20fill='%237a5230'%20opacity='.18'%3E%3Crect%20x='5'%20y='9'%20width='3'%20height='3'/%3E%3Crect%20x='33'%20y='27'%20width='2'%20height='2'/%3E%3Crect%20x='19'%20y='40'%20width='12'%20height='1'/%3E%3Crect%20x='40'%20y='14'%20width='1'%20height='7'/%3E%3Crect%20x='10'%20y='30'%20width='2'%20height='2'/%3E%3C/g%3E%3Cg%20fill='%23fff8e6'%20opacity='.45'%3E%3Crect%20x='26'%20y='6'%20width='8'%20height='2'/%3E%3Crect%20x='2'%20y='44'%20width='6'%20height='2'/%3E%3C/g%3E%3C/svg%3E"); }
+    body.future .qmap { --m1: #2b2463; --mtex: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2048%2048'%20shape-rendering='crispEdges'%3E%3Cg%20fill='%23fff'%20opacity='.55'%3E%3Crect%20x='7'%20y='9'%20width='2'%20height='2'/%3E%3Crect%20x='33'%20y='30'%20width='2'%20height='2'/%3E%3Crect%20x='20'%20y='41'%20width='1'%20height='1'/%3E%3Crect%20x='44'%20y='4'%20width='1'%20height='1'/%3E%3C/g%3E%3Cg%20fill='%23b9a8ff'%20opacity='.35'%3E%3Crect%20x='14'%20y='22'%20width='2'%20height='2'/%3E%3Crect%20x='40'%20y='18'%20width='1'%20height='1'/%3E%3C/g%3E%3C/svg%3E"); }
+    body.wonders .qmap { --m1: #2bbfb0; --mtex: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2048%2048'%20shape-rendering='crispEdges'%3E%3Cg%20fill='%23fff'%20opacity='.35'%3E%3Crect%20x='9'%20y='8'%20width='4'%20height='1'/%3E%3Crect%20x='8'%20y='9'%20width='1'%20height='3'/%3E%3Crect%20x='13'%20y='9'%20width='1'%20height='3'/%3E%3Crect%20x='9'%20y='12'%20width='4'%20height='1'/%3E%3Crect%20x='34'%20y='30'%20width='3'%20height='1'/%3E%3Crect%20x='33'%20y='31'%20width='1'%20height='2'/%3E%3Crect%20x='37'%20y='31'%20width='1'%20height='2'/%3E%3Crect%20x='34'%20y='33'%20width='3'%20height='1'/%3E%3Crect%20x='22'%20y='40'%20width='2'%20height='2'/%3E%3C/g%3E%3Cg%20fill='%23d6fff6'%20opacity='.25'%3E%3Crect%20x='28'%20y='12'%20width='10'%20height='2'/%3E%3Crect%20x='4'%20y='28'%20width='10'%20height='2'/%3E%3C/g%3E%3C/svg%3E"); }
+    body.world .qmap { --m1: #2457ad; --mtex: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2048%2048'%20shape-rendering='crispEdges'%3E%3Cg%20fill='%23fff'%20opacity='.28'%3E%3Crect%20x='6'%20y='10'%20width='4'%20height='2'/%3E%3Crect%20x='10'%20y='8'%20width='4'%20height='2'/%3E%3Crect%20x='14'%20y='10'%20width='4'%20height='2'/%3E%3Crect%20x='28'%20y='32'%20width='4'%20height='2'/%3E%3Crect%20x='32'%20y='30'%20width='4'%20height='2'/%3E%3Crect%20x='36'%20y='32'%20width='4'%20height='2'/%3E%3C/g%3E%3Cg%20fill='%230b2f6b'%20opacity='.35'%3E%3Crect%20x='18'%20y='22'%20width='6'%20height='2'/%3E%3Crect%20x='40'%20y='44'%20width='6'%20height='2'/%3E%3C/g%3E%3C/svg%3E"); }
+    body.english .qmap { box-shadow: var(--bevel), inset 0 0 70px rgba(122,82,48,.45), 0 6px 0 rgba(0,0,0,.25); } /* old paper goes darker at the edges */
     .qmap > svg { position: absolute; inset: 0; }
     .qdeco { position: absolute; transform: translate(-50%, -50%) scale(var(--s, 1)); font-size: 1.9rem; line-height: 1; pointer-events: none; filter: drop-shadow(3px 3px 0 rgba(0,0,0,.25)); }
     .qdeco.big { font-size: 2.6rem; }
@@ -470,16 +473,20 @@ const MAP_LOOK = {
   science: { road: 'dirt', groups: { wood: ['🌳', '🌲', '🌳'], flowers: ['🌷', '🌼', '🌻', '🌸'], rocks: ['🪨'], mushrooms: ['🍄'] },
     units: { Plants: ['flowers', 'flowers', 'wood'], Rocks: ['rocks', 'wood'], 'Animals incl. Humans': ['wood', 'flowers'] }, critters: ['🦋', '🐝', '🐌', '🐸'] },
   maths: { road: 'rail', groups: { rocks: ['🪨'], timber: ['🪵'], mushrooms: ['🍄'] }, mix: ['rocks', 'rocks', 'timber', 'timber', 'mushrooms'], singles: ['⛏️', '🕯️'] },
-  english: { road: 'cobble', groups: { wood: ['🌳', '🌲'], flowers: ['🌷', '🌸', '🌼'], mushrooms: ['🍄'] }, singles: ['⛲', '🐎'], critters: ['🦋'] },
+  // English is a storybook kingdom drawn on an old map: forests, wheat fields, hills and cottages (no animal heads)
+  english: { road: 'cobble', groups: { wood: ['🌳', '🌲', '🌳'], fields: ['🌾', '🌾'], hills: ['⛰️'], village: ['🏠', '🏡'], flowers: ['🌷', '🌼'] },
+    mix: ['wood', 'wood', 'fields', 'fields', 'hills', 'village', 'flowers'], critters: ['🦋'] },
   future: { road: 'circuit', groups: { asteroids: ['🪨'] }, singles: ['🪐', '🌙'] },
   wonders: { road: 'boardwalk', groups: { reef: ['🪸', '🐠'], fish: ['🐠', '🐬'] }, singles: ['🐳', '⛵'] },
   world: { road: 'flight', groups: { waves: ['🌊'], fish: ['🐬', '🐠'] }, singles: ['⛵', '🐳'] },
 };
 // one big landmark stands in each unit's part of the map
 const LANDMARK = {
-  'Forces & Magnets': '🪁', Plants: '🏡', 'Animals incl. Humans': '🐄', Rocks: '🏔️', Light: '🌈',
+  'Forces & Magnets': '🪁', Plants: '🏡', 'Animals incl. Humans': '🐢', Rocks: '🏔️', Light: '🌈',
   Time: '🔔', 'Numbers to 1,000': '🧮', Number: '🧱', 'Addition & Subtraction': '⚖️', 'Multiplication & Division': '🚂', Fractions: '🍰', Measurement: '📏', Geometry: '📐', Statistics: '📈',
-  'Spelling & Vocabulary': '📚', Grammar: '📜', Punctuation: '🪶', 'Myths & Legends': '🐉', Fiction: '🧚', Poetry: '🎭', 'Non-fiction': '🔭', 'Reading Skills': '📖',
+  // the Word Kingdom's landmarks are places: the Great Library, the town fountain, a scribe's cottage, Dragon Mountain,
+  // the Enchanted Wood, the poets' garden, the map room and the wise owl
+  'Spelling & Vocabulary': '🏛️', Grammar: '⛲', Punctuation: '🏡', 'Myths & Legends': '⛰️', Fiction: '🌳', Poetry: '🌷', 'Non-fiction': '🗺️', 'Reading Skills': '🦉',
   'AI & Computers': '🖥️', 'Creative Tech': '📺', 'Thinking Online': '🔭', Coding: '🤖', 'Life Skills': '🏡',
   'Amazing Animals': '🐳', 'Your Amazing Body': '🧠', 'Incredible Inventions': '💡', 'Ancient Wonders': '🏛️', 'Wild Planet': '🗻',
   Asia: '🐘', 'Asia – home!': '🏠', Europe: '🏰', 'North America': '🗽', Africa: '🦒', 'South America': '🌴', Oceania: '🦘',
@@ -635,6 +642,7 @@ function drawMap(key, lessons, stateOf) {
   const items = [];
 
   // people by the road (shared/npcs.js): each one turns up once the stop they live by is cleared
+  const npcAt = {}; // where each person by the road stands, and the stop they live by
   if (window.NPC && window.Avatar) NPC.forWorld(key).forEach(n => {
     const home = n.at ? stops.find(s => s.l.title === n.at) : null;
     if (n.at && !cleared(home)) return;
@@ -657,7 +665,8 @@ function drawMap(key, lessons, stateOf) {
     const mk = NPC.marker(n);
     if (mk) { const m = document.createElement('span'); m.className = 'qnpc-mark' + (mk === '!' || mk === '?' ? ' ask' : ''); m.textContent = mk; b.append(m); }
     const tag = document.createElement('span'); tag.className = 'qnpc-name'; tag.textContent = n.name; b.append(tag);
-    b.onclick = () => NPC.talk(n, { pool, changed() { refreshHud(); render(); } });
+    npcAt[n.id] = { x: best.x, y: best.y, home: base };
+    b.onclick = () => goTo({ npc: n.id }, () => NPC.talk(n, { pool, changed() { refreshHud(); render(); } }));
     map.append(b);
   });
 
@@ -728,7 +737,8 @@ function drawMap(key, lessons, stateOf) {
     const glow = s === going || (!going && s.st === 'new');
     const b = node('button', s.st + (glow ? ' next' : ''), s, l.emoji, l.title, badge);
     b.setAttribute('aria-label', `${l.title}: ${{ done: 'cleared', going: 'started', new: 'open', locked: 'locked', soon: 'coming soon' }[s.st]}`);
-    b.onclick = () => questCard(s, glow);
+    // an open stop: walk there first. Locked and unbuilt stops just show their card
+    b.onclick = () => (['done', 'going', 'new'].includes(s.st) ? goTo(s, () => questCard(s, glow)) : questCard(s, glow));
   });
   const builtStops = stops.filter(s => s.l.file), nCleared = builtStops.filter(cleared).length, allClear = nCleared === stops.length;
   const [goalIcon, goalName] = GOAL[key] || ['🏰', 'The Castle'];
@@ -737,54 +747,110 @@ function drawMap(key, lessons, stateOf) {
     stat: `Clear every quest on the road to reach it! ${nCleared} of ${builtStops.length} cleared so far` + (builtStops.length < stops.length ? `, and ${stops.length - builtStops.length} more are being built.` : '.'),
   });
 
-  // the hero, on the road just above its stop (y3:mapAt remembers where it stood, so after a quest it walks to the next one)
+  // the hero. Tap an open stop or someone by the road and the hero walks there along the road first (goTo).
+  // It stays where it was walked to (y3:mapStand), until a quest is finished: then it walks on to the next stop by itself
+  // (y3:mapAt remembers the stop it was pointing at before).
+  const still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const up = n => (n === start ? null : n.parent || start);
+  const line = n => { const a = []; for (let k = n; k; k = up(k)) a.push(k); return a; };
+  // the corners of the road from one stop to another (START counts as a stop): up to where their roads meet, then down
+  function route(a, b) {
+    const A = line(a), B = line(b), c = A.find(n => B.includes(n)), pts = [];
+    A.slice(0, A.indexOf(c)).forEach(n => { const P = up(n); pts.push({ x: n.x, y: P.y }, { x: P.x, y: P.y }); });
+    B.slice(0, B.indexOf(c)).reverse().forEach(n => { const P = up(n); pts.push({ x: n.x, y: P.y }, { x: n.x, y: n.y }); });
+    return pts;
+  }
+  // How high the hero stands above the point it is at: on a stop it stands on top of the stop's badge (HALF);
+  // on the road (and beside people) its feet are on the road (FOOT). It steps up and down near the ends of a walk.
+  const FOOT = -2;
+  // beside someone by the road, on the road's side of them, feet level with theirs
+  const npcSpot = sp => ({ x: sp.x + (sp.x > sp.home.x ? -46 : 46), y: sp.y + FOOT - 4 });
+  let hero = null; // { cv, tag, node (the stop it is on or nearest to), npc (who it stands beside), x, y, busy }
+  function goTo(target, then) {
+    if (!hero) return then();
+    if (hero.busy) return;
+    const sp = target.npc ? npcAt[target.npc] : null, node = sp ? sp.home : target;
+    const pts = [];
+    if (hero.npc) pts.push({ x: hero.node.x, y: hero.node.y }); // back onto the road first
+    pts.push(...route(hero.node, node));
+    if (sp) pts.push(npcSpot(sp));
+    const stand = get('y3:mapStand', {});
+    stand[key] = sp ? 'npc:' + target.npc : node === start ? 'start' : node.l.id;
+    try { localStorage.setItem('y3:mapStand', JSON.stringify(stand)); } catch (e) { /* ignore */ }
+    hero.node = node; hero.npc = sp ? target.npc : null;
+    walk(pts, then, 0, sp ? FOOT : HALF);
+  }
+  // walk through the points, then call done(). endLift: how high it stands at the end (see FOOT).
+  // Long walks speed up so none takes much more than 2.5 seconds.
+  function walk(pts, done, pause = 0, endLift = HALF) {
+    cancelAnimationFrame(walking);
+    const end = pts.length ? pts[pts.length - 1] : hero;
+    if (still || !pts.length) { hero.place(end.x, end.y, pts.length ? endLift : hero.lift); hero.settle(); return done && done(); }
+    let dist = 0, q = { x: hero.x, y: hero.y };
+    pts.forEach(p => { dist += Math.hypot(p.x - q.x, p.y - q.y); q = p; });
+    const SPEED = Math.max(220, dist / 2.5); // pixels a second
+    const L0 = hero.lift, R = Math.min(40, dist / 2), lerp = (a, b, t) => a + (b - a) * Math.max(0, Math.min(1, t));
+    const liftAt = gone => (gone < R ? lerp(L0, FOOT, gone / R) : dist - gone < R ? lerp(FOOT, endLift, 1 - (dist - gone) / R) : FOOT);
+    let w = 0, last = 0, t0 = 0, gone = 0;
+    hero.busy = true; hero.tag.hidden = true;
+    const step = now => {
+      if (!hero.cv.isConnected) return;
+      if (!last) last = t0 = now;
+      const dt = Math.min(0.05, (now - last) / 1000); last = now;
+      if (now - t0 >= pause) {
+        let go = SPEED * dt, x = hero.x, y = hero.y;
+        while (go > 0 && w < pts.length) {
+          const p = pts[w], dx = p.x - x, dy = p.y - y, d = Math.hypot(dx, dy);
+          if (dx) mapHero.look(dx < 0 ? -1 : 1);
+          if (d <= go) { x = p.x; y = p.y; go -= d; gone += d; w++; } else { x += dx / d * go; y += dy / d * go; gone += go; go = 0; }
+        }
+        hero.place(x, y, w < pts.length ? liftAt(gone) : endLift);
+        hero.cv.style.marginTop = Math.floor(now / 120) % 2 ? '-3px' : '0'; // a little hop with each step
+        const r = hero.cv.getBoundingClientRect(), want = r.top + r.height / 2 - innerHeight * 0.5;
+        if (Math.abs(want) > innerHeight * 0.2) window.scrollBy(0, want * 0.06); // follow the hero along the map
+      }
+      if (w < pts.length) walking = requestAnimationFrame(step);
+      else { hero.busy = false; hero.cv.style.marginTop = '0'; hero.settle(); if (done) done(); }
+    };
+    walking = requestAnimationFrame(step);
+  }
+
   if (!window.Avatar || !at) return;
   const cv = document.createElement('canvas');
   cv.className = 'qhero';
   map.append(cv);
   mapHero = Avatar.animate(cv, { scale: S, pet: true });
   const tag = put('qhero-tag', 0, 0, going ? 'KEEP GOING!' : fork ? 'PICK A PATH!' : open.length ? 'NEXT QUEST!' : 'MORE SOON!');
-  const place = (x, y) => {
-    cv.style.left = x - 6 * S + 'px'; cv.style.top = y - HALF - 20 * S + 4 + 'px';
-    tag.style.left = x + 'px'; tag.style.top = y - HALF - 20 * S - 4 + 'px';
+  hero = {
+    cv, tag, node: at, npc: null, x: at.x, y: at.y, lift: HALF, busy: false,
+    place(x, y, lift = this.lift) {
+      this.x = x; this.y = y; this.lift = lift;
+      cv.style.left = x - 6 * S + 'px'; cv.style.top = y - lift - 20 * S + 4 + 'px';
+      tag.style.left = x + 'px'; tag.style.top = y - lift - 20 * S - 4 + 'px';
+    },
+    // standing still: the "NEXT QUEST!" tag only shows on the stop it is about
+    settle() { tag.hidden = !!this.npc || this.node !== at; mapHero.look(0); },
   };
+  const inView = () => { const r = cv.getBoundingClientRect(); return r.top > 60 && r.bottom < innerHeight - 20; };
   const marks = get('y3:mapAt', {}), from = stops.find(s => s.l.id && s.l.id === marks[key]);
   if (at.l.id) { marks[key] = at.l.id; try { localStorage.setItem('y3:mapAt', JSON.stringify(marks)); } catch (e) { /* ignore */ } }
-  const chain = []; // the stops from just after `from` down to `at`, if `at` is further along the same road
-  for (let s = at; s && s !== from; s = s.parent) chain.unshift(s);
-  const still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const inView = () => { const r = cv.getBoundingClientRect(); return r.top > 60 && r.bottom < innerHeight - 20; };
-  if (!from || from === at || !chain.length || chain[0].parent !== from || still) {
-    place(at.x, at.y);
-    if (!inView()) setTimeout(() => cv.scrollIntoView({ block: 'center', behavior: 'smooth' }), 400);
-    return;
-  }
-  // a quest was finished since the last visit: walk the road from the old stop to the new one
-  const way = chain.flatMap(s => [{ x: s.x, y: s.parent.y }, { x: s.x, y: s.y }]);
-  let p = { x: from.x, y: from.y }, w = 0, last = 0, t0 = 0;
-  place(p.x, p.y); tag.hidden = true;
-  const SPEED = 200; // pixels a second
-  const step = now => {
-    if (!cv.isConnected) return;
-    if (!last) last = t0 = now;
-    const dt = Math.min(0.05, (now - last) / 1000); last = now;
-    if (now - t0 > 700) { // a short pause first, so the eye finds the hero
-      let go = SPEED * dt;
-      while (go > 0 && w < way.length) {
-        const q = way[w], dx = q.x - p.x, dy = q.y - p.y, d = Math.hypot(dx, dy);
-        if (dx) mapHero.look(dx < 0 ? -1 : 1);
-        if (d <= go) { p = { x: q.x, y: q.y }; go -= d; w++; } else { p = { x: p.x + dx / d * go, y: p.y + dy / d * go }; go = 0; }
-      }
-      place(p.x, p.y);
-      cv.style.marginTop = Math.floor(now / 120) % 2 ? '-3px' : '0'; // a little hop with each step
-      const r = cv.getBoundingClientRect(), want = r.top + r.height / 2 - innerHeight * 0.5;
-      if (Math.abs(want) > innerHeight * 0.2) window.scrollBy(0, want * 0.06); // follow the hero down the map
-    }
-    if (w < way.length) walking = requestAnimationFrame(step);
-    else { cv.style.marginTop = '0'; tag.hidden = false; mapHero.look(0); mapHero.play() || mapHero.blink(); }
-  };
-  if (!inView()) cv.scrollIntoView({ block: 'center' });
-  walking = requestAnimationFrame(step);
+  // where it was walked to last time
+  const stood = get('y3:mapStand', {})[key] || '';
+  const npcThere = stood.startsWith('npc:') && npcAt[stood.slice(4)];
+  const stopThere = stood === 'start' ? start : stops.find(s => s.l.id && s.l.id === stood && ['done', 'going', 'new'].includes(s.st));
+  if (npcThere) { hero.node = npcThere.home; hero.npc = stood.slice(4); const p = npcSpot(npcThere); hero.place(p.x, p.y, FOOT); }
+  else if (stopThere) { hero.node = stopThere; hero.place(stopThere.x, stopThere.y); }
+  else hero.place(at.x, at.y);
+  hero.settle();
+  if (from && from !== at && !still) {
+    // a quest was finished since the last visit: walk on to the next stop
+    const stand = get('y3:mapStand', {}); delete stand[key];
+    try { localStorage.setItem('y3:mapStand', JSON.stringify(stand)); } catch (e) { /* ignore */ }
+    const pts = (hero.npc ? [{ x: hero.node.x, y: hero.node.y }] : []).concat(route(hero.node, at));
+    hero.node = at; hero.npc = null;
+    if (!inView()) cv.scrollIntoView({ block: 'center' });
+    walk(pts, () => mapHero.play() || mapHero.blink(), 700); // a short pause first, so the eye finds the hero
+  } else if (!inView()) setTimeout(() => cv.scrollIntoView({ block: 'center', behavior: 'smooth' }), 400);
 }
 
 // a stop's quest card: what it is, how far you got, and the button to play it
