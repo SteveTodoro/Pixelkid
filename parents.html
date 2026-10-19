@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>For Grown-ups</title>
+  <link rel="stylesheet" href="shared/lesson.css">
+  <script src="shared/pixel.js"></script>
+  <script src="shared/pixel-icons.js"></script>
+  <style>
+    /* the parent page: what the child finds hard, from the first try at every question (y3:tries, saved by shared/engine.js) */
+    .pr-tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 18px; }
+    .pr-tile { padding: 10px 8px; text-align: center; background: var(--paper); border: 3px solid #000; box-shadow: var(--bevel-in); }
+    .pr-tile b { display: block; font-family: var(--pixel); font-size: 1.9rem; line-height: 1.1; }
+    .pr-tile span { font-size: .85rem; color: var(--muted); }
+    .pr-sec { margin: 22px 0 10px; font-family: var(--pixel); font-size: 1.35rem; }
+    .pr-sec small { display: block; font-family: var(--read); font-size: .9rem; font-weight: 400; color: var(--muted); }
+    .pr-list { display: grid; gap: 8px; }
+    .pr-q { padding: 10px 14px; background: var(--paper); border: 3px solid #000; border-left-width: 10px; }
+    .pr-q.hard { border-left-color: var(--bad); }
+    .pr-q.better { border-left-color: var(--good); }
+    .pr-q-top { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; font-size: .8rem; color: var(--muted); }
+    .pr-q-text { margin: 4px 0 2px; font-weight: 600; }
+    .pr-q-ans { font-size: .95rem; }
+    .pr-q-ans b { color: #1b5e20; }
+    .pr-q-guess { color: var(--bad); font-weight: 700; text-decoration: line-through; }
+    .pr-count { margin-left: auto; font-family: var(--pixel); font-weight: 700; color: var(--ink); }
+    .pr-world { margin: 14px 0 6px; font-family: var(--pixel); font-weight: 700; }
+    .pr-row { display: grid; grid-template-columns: minmax(0, 1fr) 160px 72px; gap: 10px; align-items: center; padding: 6px 0; border-bottom: 2px dashed rgba(0,0,0,.15); }
+    .pr-row .xp-bar { height: 16px; }
+    .pr-row .fill { position: absolute; inset: 0 auto 0 0; }
+    .pr-row .pct { font-family: var(--pixel); font-weight: 700; text-align: right; }
+    .pr-row .sub { font-size: .8rem; color: var(--muted); }
+    .pr-empty { padding: 14px; background: var(--paper); border: 3px dashed #000; }
+    .pr-foot { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; font-size: .9rem; color: var(--muted); }
+    .pr-more { margin-top: 8px; }
+    @media (max-width: 620px) {
+      .pr-tiles { grid-template-columns: repeat(2, 1fr); }
+      .pr-row { grid-template-columns: minmax(0, 1fr) 64px; }
+      .pr-row .xp-bar { grid-column: 1 / -1; grid-row: 2; }
+    }
+  </style>
+</head>
+<body class="wonders">
+  <header class="topbar">
+    <div class="hud-row">
+      <a class="icon-btn" href="index.html" aria-label="Back to the library">🏠</a>
+      <div class="lesson-title">👪 For Grown-ups</div>
+    </div>
+  </header>
+  <main class="stage">
+    <section class="card stage-card">
+      <div class="stage-head">
+        <span class="chip">📋 Parent page</span>
+        <h1 id="title">What's tricky?</h1>
+      </div>
+      <p class="lead">Every question in a lesson is saved here with how the <b>first try</b> went, so you can see what to go over together. Getting it right on the second go still counts as a miss here, because the first try shows what has really stuck.</p>
+      <div id="out"></div>
+      <div class="pr-foot">
+        <span>Saved in this browser only, so open this page on the device the lessons are played on.</span>
+        <button class="btn" id="clear" type="button">🗑️ Clear the record</button>
+      </div>
+    </section>
+  </main>
+<script>
+(function () {
+  'use strict';
+  const get = (k, d) => { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } };
+  const WORLDS = { science: '🔬 Science', maths: '🔢 Maths', english: '📚 English', future: '🚀 Future Skills', wonders: '🌍 Wonders', world: '🗺️ Around the World' };
+  const name = get('y3:settings', {}).name;
+  if (name) document.getElementById('title').textContent = `What does ${name} find tricky?`;
+  const out = document.getElementById('out');
+  const add = (...kids) => out.append(...kids.flat(Infinity).filter(Boolean));
+
+  function h(tag, attrs, ...kids) {
+    const el = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs || {})) { if (v == null) continue; if (k === 'class') el.className = v; else if (k.startsWith('on')) el.addEventListener(k.slice(2), v); else el.setAttribute(k, v); }
+    kids.flat(Infinity).forEach(k => { if (k != null && k !== false) el.append(k instanceof Node ? k : String(k)); });
+    return el;
+  }
+  const ago = t => {
+    if (!t) return '';
+    const d = Math.floor((Date.now() - t) / 864e5);
+    return d <= 0 ? 'today' : d === 1 ? 'yesterday' : d < 14 ? `${d} days ago` : `${Math.round(d / 7)} weeks ago`;
+  };
+  const pct = (a, b) => (b ? Math.round(a / b * 100) : 0);
+
+  function render() {
+    const tries = get('y3:tries', {});
+    const qs = Object.entries(tries).flatMap(([id, l]) => Object.values(l.qs || {}).map(r => Object.assign({ lesson: l.title || id, subject: l.subject || id.split('-')[0] }, r)));
+    out.replaceChildren();
+    if (!qs.length) {
+      add(h('div', { class: 'pr-empty' }, 'Nothing here yet. Questions are saved from now on, each time a lesson is played. Come back after a lesson or two!'));
+      return;
+    }
+    const asked = qs.reduce((n, r) => n + r.n, 0), missed = qs.reduce((n, r) => n + r.miss, 0);
+    // still tricky: the last try was a miss, or he misses it at least half the time
+    const hard = qs.filter(r => r.miss && (r.last === 'miss' || r.miss * 2 >= r.n))
+      .sort((a, b) => (b.last === 'miss') - (a.last === 'miss') || b.miss - a.miss || (b.missAt || 0) - (a.missAt || 0));
+    const better = qs.filter(r => r.miss && !hard.includes(r)).sort((a, b) => b.at - a.at);
+
+    add(h('div', { class: 'pr-tiles' },
+      h('div', { class: 'pr-tile' }, h('b', null, asked), h('span', null, 'questions answered')),
+      h('div', { class: 'pr-tile' }, h('b', null, pct(asked - missed, asked) + '%'), h('span', null, 'right first time')),
+      h('div', { class: 'pr-tile' }, h('b', null, hard.length), h('span', null, 'still tricky')),
+      h('div', { class: 'pr-tile' }, h('b', null, better.length), h('span', null, 'now got it'))));
+
+    const card = (r, cls) => h('div', { class: 'pr-q ' + cls },
+      h('div', { class: 'pr-q-top' }, h('span', { class: 'chip soft' }, r.kind), `${r.lesson} · ${WORLDS[r.subject] || r.subject}`,
+        h('span', { class: 'pr-count' }, `missed ${r.miss} of ${r.n}`)),
+      h('div', { class: 'pr-q-text' }, r.kind === 'Spelling' ? `Spell "${r.q}"` : r.q),
+      h('div', { class: 'pr-q-ans' },
+        r.guess && [h('span', null, `${name || 'He'} wrote `), h('span', { class: 'pr-q-guess' }, r.guess), ' · '],
+        r.a ? ['Answer: ', h('b', null, r.a)] : null,
+        r.missAt ? ` · last missed ${ago(r.missAt)}` : ''));
+    const list = (items, cls, first = 12) => {
+      const box = h('div', { class: 'pr-list' }, items.slice(0, first).map(r => card(r, cls)));
+      if (items.length <= first) return box;
+      const more = h('button', { class: 'btn pr-more', type: 'button', onclick() { box.replaceChildren(...items.map(r => card(r, cls))); more.remove(); } }, `Show all ${items.length}`);
+      return [box, more];
+    };
+
+    add(h('h2', { class: 'pr-sec' }, '🔴 Still tricky', h('small', null, 'Missed last time, or missed at least half the time. The most-missed come first.')),
+      hard.length ? list(hard, 'hard') : h('div', { class: 'pr-empty' }, 'Nothing tricky right now. 🎉'));
+
+    // each lesson's first-try score, lowest first, grouped by world
+    add(h('h2', { class: 'pr-sec' }, '📊 By lesson', h('small', null, 'How often the first try was right in each lesson. The lowest come first.')));
+    const lessons = Object.entries(tries).map(([id, l]) => {
+      const rs = Object.values(l.qs || {}), n = rs.reduce((a, r) => a + r.n, 0), m = rs.reduce((a, r) => a + r.miss, 0);
+      return { id, title: l.title || id, subject: l.subject || id.split('-')[0], n, m, p: pct(n - m, n) };
+    }).filter(l => l.n);
+    Object.keys(WORLDS).concat([...new Set(lessons.map(l => l.subject))].filter(s => !WORLDS[s])).forEach(w => {
+      const ls = lessons.filter(l => l.subject === w).sort((a, b) => a.p - b.p);
+      if (!ls.length) return;
+      add(h('div', { class: 'pr-world' }, WORLDS[w] || w), ls.map(l => {
+        const colour = l.p >= 80 ? 'var(--good)' : l.p >= 60 ? 'var(--gold)' : 'var(--bad)';
+        return h('div', { class: 'pr-row' },
+          h('div', null, l.title, h('div', { class: 'sub' }, `${l.n - l.m} of ${l.n} right first time`)),
+          h('div', { class: 'xp-bar' }, h('div', { class: 'fill', style: `width:${l.p}%;background:${colour}` })),
+          h('div', { class: 'pct' }, l.p + '%'));
+      }));
+    });
+
+    if (better.length) add(h('h2', { class: 'pr-sec' }, '🟢 Now got it', h('small', null, 'Missed before, but right first time on the latest try.')), list(better, 'better', 6));
+  }
+
+  document.getElementById('clear').addEventListener('click', () => {
+    if (!confirm('Clear the whole record of first tries? Gems, levels and lesson progress are not touched.')) return;
+    try { localStorage.removeItem('y3:tries'); } catch (e) { /* ignore */ }
+    render();
+  });
+  render();
+})();
+</script>
+</body>
+</html>

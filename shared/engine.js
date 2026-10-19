@@ -60,7 +60,37 @@
     get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* ignore */ } },
   };
-  const PKEY = 'y3:progress:' + L.id, RKEY = 'y3:records', SKEY = 'y3:settings';
+  const PKEY = 'y3:progress:' + L.id, RKEY = 'y3:records', SKEY = 'y3:settings', TKEY = 'y3:tries';
+
+  // ---------- what he finds hard: the first try at every question, for the parent page (parents.html) ----------
+  // y3:tries = { [lesson id]: { title, subject, qs: { [kind:question]: { kind, q, a, n: times asked, miss: first-try misses,
+  //   at: last time, missAt: last miss, last: 'right' | 'miss', guess: his first wrong spelling } } } }
+  const plain = t => String(t == null ? '' : t).replace(/<[^>]+>/g, '').replace(/\[\[([^\]|]+)(\|[^\]]*)?\]\]/g, '$1').replace(/\*\*/g, '').replace(/\s+/g, ' ').trim();
+  function answerText(q) {
+    const t = q.type || 'mcq', a = q.answer;
+    if (t === 'predict') return q.then ? answerText(q.then) : '';
+    if (t === 'tf') return a ? 'True' : 'False';
+    if (t === 'type') return plain([].concat(a)[0]);
+    if (t === 'slider') return plain((q.format ? q.format(a) : a) + (q.unit ? ' ' + q.unit : ''));
+    if (t === 'build') return plain(a.join(q.join ?? ''));
+    if (t === 'order') return plain((q.items || []).join(' → '));
+    if (t === 'oddone') return plain(q.items[a]) + (q.reasons ? ' – ' + plain(q.reasons[q.reason]) : '');
+    if (t === 'hotspot') return plain([].concat(a).map(k => q.spots[k] && q.spots[k].label).filter(Boolean).join(' / '));
+    if (t === 'evidence') return `the sentence with "${plain([].concat(a)[0])}"`;
+    return q.options && typeof a === 'number' ? plain(q.options[a]) : '';
+  }
+  function track(kind, q, first, extra) {
+    try {
+      const all = store.get(TKEY, {}), les = all[L.id] || (all[L.id] = { qs: {} });
+      les.title = L.title; les.subject = L.subject;
+      const text = plain(q.q) || plain(q.then && q.then.q), k = `${kind}:${text}`, now = Date.now();
+      const r = les.qs[k] || (les.qs[k] = { kind, q: text, a: answerText(q), n: 0, miss: 0 });
+      r.n++; r.at = now; r.last = first ? 'right' : 'miss';
+      if (!first) { r.miss++; r.missAt = now; }
+      Object.assign(r, extra);
+      store.set(TKEY, all);
+    } catch (e) { /* never get in the way of the lesson */ }
+  }
   const fresh = () => ({ stage: 0, maxStage: 0, stars: 0, awarded: {}, complete: {}, ach: {} });
   // A quick brain break (the pick-a-game menu) goes in after the first game stage, so the games aren't only near the end.
   // A lesson can turn it off with midBreak: false, or pass an object to change its title / say / games.
@@ -442,7 +472,7 @@
       sfx.good();
       say('Notes hidden! How much can you remember?');
       runQuestions(area, s.questions, {
-        key: `s${i}rv`,
+        key: `s${i}rv`, kind: warm ? 'Warm-up' : 'Recap',
         done(score) {
           const finish = () => {
             sfx.win(); confetti(80); complete(i);
@@ -572,14 +602,19 @@
       if (c.check && QTYPES[c.check.type]) {
         // the newer question types: only a first-try answer earns the gem (no answer lock-out needed – there is nothing to guess between)
         const fb = h('div', { class: 'feedback', hidden: true });
+        let tracked = false;
         const onRight = (el, first) => {
+          if (!tracked) { tracked = true; track('Reading check', c.check, first); }
           sfx.good();
           if (first) { award(key, el); say(c.check.yes || praise()); } else say('You got there! Next time, read carefully first to win the gem.');
           fb.className = 'feedback good'; fb.hidden = false; fb.innerHTML = '✔ ' + fmt(c.check.explain || 'Correct!', false);
           answered = true; nav.set(label, goNext);
           if (!c.check.explain) nav.auto();
         };
-        const onMiss = () => say(c.check.hint || 'Not quite! Read the page again to find the answer.');
+        const onMiss = () => {
+          if (!tracked) { tracked = true; track('Reading check', c.check, false); }
+          say(c.check.hint || 'Not quite! Read the page again to find the answer.');
+        };
         if (answered) { fb.className = 'feedback good'; fb.hidden = false; fb.innerHTML = '✔ ' + fmt(c.check.explain || 'Done!', false); }
         check = h('div', { class: 'check' },
           h('div', { class: 'check-q' }, h('b', null, '🔍 CHECK: '), c.check.q),
@@ -600,11 +635,13 @@
               if (oi === c.check.answer) {
                 b.classList.add('right'); opts.forEach(x => { x.disabled = true; });
                 sfx.good();
+                if (firstTry) track('Reading check', c.check, true);
                 if (firstTry) { award(key, b); say(c.check.yes || praise()); } else say('You got there! Next time, read carefully first to win the gem.');
                 fb.className = 'feedback good'; fb.hidden = false; fb.innerHTML = '✔ ' + fmt(c.check.explain || 'Correct!', false);
                 answered = true; nav.set(label, goNext);
                 if (!c.check.explain) nav.auto();
               } else {
+                if (firstTry) track('Reading check', c.check, false);
                 firstTry = false;
                 b.classList.add('wrong'); opts.forEach(x => { x.disabled = true; }); shake(b); sfx.bad();
                 say(c.check.hint || 'Not quite! Read the page again to find the answer.');
@@ -860,10 +897,13 @@
 
   // Runs a list of questions one at a time inside `area`; calls done(firstTryScore) at the end.
   // In a boss battle, boss.zap(qi) returns true when the last heart is gone; then lost(score) is called.
-  function runQuestions(area, qs, { key, done, boss, lost, lastLabel = 'Finish ▶' }) {
+  // kind: what the parent page calls these questions (see track)
+  function runQuestions(area, qs, { key, done, boss, lost, lastLabel = 'Finish ▶', kind = boss ? 'Boss battle' : 'Game question' }) {
     let qi = 0, score = 0;
     function show() {
       const q = qs[qi], isLast = qi === qs.length - 1;
+      let tracked = false; // only the first try counts
+      const log = first => { if (!tracked) { tracked = true; track(kind, q, first); } };
       const explain = q.explain || (q.then && q.then.explain); // a predict question's explanation sits on its follow-up
       const fb = h('div', { class: 'feedback', hidden: true });
       let moved = false;
@@ -878,6 +918,7 @@
         },
       }, isLast ? lastLabel : 'Next question ▶');
       const onRight = (el, first) => {
+        log(first);
         if (first) { score++; award(`${key}:${qi}`, el); }
         sfx.good(); say(praise());
         fb.className = 'feedback good'; fb.hidden = false;
@@ -892,6 +933,7 @@
         if (!pause) autoClick(nextBtn);
       };
       const onMiss = (el, free) => {
+        log(false);
         say(q.hint ? '💡 ' + q.hint : oops());
         fb.className = 'feedback try'; fb.hidden = false;
         fb.innerHTML = '💡 ' + fmt(q.hint || 'Not quite – have another go!', false);
@@ -921,7 +963,7 @@
       sfx.good();
       say(s.qsay || "Let's see what you spotted in the video!");
       runQuestions(area, s.questions, {
-        key: `s${i}v`,
+        key: `s${i}v`, kind: 'Video quest',
         done(score) {
           sfx.win(); confetti(90); complete(i); achieve('video');
           say(score === s.questions.length ? 'You were watching super carefully!' : 'Video quest complete!');
@@ -2226,7 +2268,7 @@
       const target = w.word.toLowerCase().replace(/[^a-z]/g, ''), n = target.length;
       const listen = mode === 'listen' && canSpeak;
       const peekMode = mode === 'peek' || (mode === 'listen' && !canSpeak);
-      let letters = Array(n).fill(''), locked = Array(n).fill(false), tries = 0, revealed = false, peeked = false, over = false, covered = !peekMode;
+      let letters = Array(n).fill(''), locked = Array(n).fill(false), tries = 0, revealed = false, peeked = false, over = false, covered = !peekMode, firstGuess = null;
       const full = () => (w.sentence ? w.sentence.replace(/_{2,}/, w.word) : '');
       const sayWord = (force, rate) => speak([w.word, full(), w.word].filter(Boolean).join('. '), { force, rate });
 
@@ -2260,6 +2302,7 @@
         if (over || letters.some(c => !c)) return;
         const guess = letters.join('');
         tries++;
+        if (tries === 1 && guess !== target) firstGuess = guess;
         if (guess === target) return win();
         sfx.bad(); shake(tileRow);
         letters.forEach((c, i) => { if (c === target[i]) locked[i] = true; else tiles[i].classList.add('bad'); });
@@ -2285,6 +2328,7 @@
         if (peekMode && !revealed) put(card, h('div', { class: 'sp-reveal' }, h('small', null, '✔ CHECK – it matches!'), h('b', null, target)));
         const res = revealed ? 'copied' : tries === 1 && !peeked ? 'first' : 'second';
         if (!practice) {
+          track('Spelling', { q: target, answer: target, type: 'type' }, res === 'first', firstGuess ? { guess: firstGuess } : {});
           results[target] = res;
           if (res === 'first') award(`${key}:${target}`, tileRow);
           count++; drawScene(w);
@@ -6187,7 +6231,7 @@
       boss = s.boss ? bossFight(s.boss, qs.length) : null;
       const qArea = h('div', { class: 'q-area' });
       put(area, boss && boss.el, qArea, boss && boss.hero);
-      runQuestions(qArea, qs, { key: 'quiz', boss, done: score => (boss ? boss.finale(() => results(score)) : results(score)), lost: gameOver, lastLabel: s.boss ? '⚔️ Final blow!' : 'See my score 🏆' });
+      runQuestions(qArea, qs, { key: 'quiz', boss, done: score => (boss ? boss.finale(() => results(score)) : results(score)), lost: gameOver, lastLabel: s.boss ? '⚔️ Final blow!' : 'See my score 🏆', kind: boss ? 'Boss battle' : 'Quiz' });
       nav.hideNext();
     }
 

@@ -379,10 +379,20 @@
     return api;
   }
 
-  // three quick questions from the lessons cleared up to this NPC; stops at the first miss
+  // the questions he got wrong on the first try last time (y3:tries, saved by the lessons), by lesson id
+  const norm = t => String(t).replace(/<[^>]+>/g, '').replace(/\[\[([^\]|]+)(\|[^\]]*)?\]\]/g, '$1').replace(/\*\*/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
+  function tricky(id) {
+    try {
+      const l = (JSON.parse(localStorage.getItem('y3:tries') || '{}') || {})[id];
+      return new Set(Object.values((l && l.qs) || {}).filter(r => r.last === 'miss').map(r => norm(r.q)));
+    } catch (e) { return new Set(); }
+  }
+  // three quick questions from the lessons cleared up to this NPC (up to two of them ones he missed last time); stops at the first miss
   async function challenge(box, pool) {
     const bank = window.QUESTION_BANK || {};
-    const qs = shuffle(pool.flatMap(id => bank[id] || [])).slice(0, 3);
+    const all = shuffle(pool.flatMap(id => { const t = tricky(id); return (bank[id] || []).map(q => ({ q, hard: t.has(norm(q.q)) })); }));
+    const hard = all.filter(x => x.hard).slice(0, 2);
+    const qs = shuffle(hard.concat(all.filter(x => !hard.includes(x)).slice(0, 3 - hard.length))).map(x => x.q);
     for (let i = 0; i < qs.length; i++) if (!(await box.ask(qs[i], `Question ${i + 1} of ${qs.length}`))) return false;
     return qs.length > 0;
   }
