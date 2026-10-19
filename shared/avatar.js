@@ -75,6 +75,7 @@
     { id: 'hoodie-blue', cat: 'top', name: 'Blue hoodie', price: 20, y: 9, rows: ['.tttTttTttt.', '.tttttttttt.', '.tttttttttt.', '.tttTTTTttt.', '...tttttt...'], pal: { t: '#1e6fd9', T: '#0d4aa0' } },
     { id: 'jumper-green', cat: 'top', name: 'Stripy jumper', price: 20, y: 9, rows: ['.tttttttttt.', '.tttttttttt.', '.TTTTTTTTTT.', '.tttttttttt.', '...tttttt...'], pal: { t: '#2e9e3e', T: '#ffd43b' } },
     { id: 'labcoat', cat: 'top', name: 'Lab coat', price: 30, y: 9, rows: ['.ttttTTtttt.', '.ttttTTtttt.', '.ttttTTtttt.', '.ttttTTtttt.', '...ttTTtt...', '...t....t...'], pal: { t: '#ffffff', T: '#8fd3ff' } },
+    { id: 'field-vest', cat: 'top', name: 'Field vest', price: 35, unlock: 'trader', rows: ['.vvvvwwvvvv.', '.vPvvwwvvPv.', '.vvvvwwvvvv.', '.vPPvwwvPPv.', '...vvwwvv...'], y: 9, pal: { v: '#b58b4c', P: '#7a5a2c', w: '#f4f4f0' } },
     { id: 'hero-suit', cat: 'top', name: 'Hero suit', price: 40, y: 9, rows: ['.tttttttttt.', '.tttTTTTttt.', '.ttttTTtttt.', '.tttttttttt.', '...yyyyyy...'], pal: { t: '#d9433b', T: '#ffd43b', y: '#ffd43b' } },
     { id: 'space-top', cat: 'top', name: 'Space suit', price: 40, y: 9, rows: ['.tttttttttt.', '.tttOOOOttt.', '.tttObcOttt.', '.tttttttttt.', '...tttttt...'], pal: { t: '#f2f2f2', O: '#ff8c1a', b: '#2ee6d6', c: '#e53935' } },
     { id: 'tee-pink', cat: 'top', name: 'Pink tee', price: 10, y: 9, rows: ['.tttttttttt.', '.tttttttttt.', '...tttttt...', '...tttttt...', '...tttttt...'], pal: { t: '#ff7eb6' } },
@@ -135,6 +136,7 @@
     { id: 'nightcap', cat: 'hat', name: 'Sleepy nightcap', price: 30, rows: ['..........y.', '........cc..', '......cccc..', '...ccWccccc.', '..cccccccc..', '..CCCCCCCC..'], pal: { c: '#3d4fb5', W: '#ffd43b', C: '#ffffff', y: '#ffffff' } },
     { id: 'explorer-hat', cat: 'hat', name: 'Explorer hat', price: 0, unlock: 'wonder', rows: ['...cccccc...', '..cccccccc..', '..CCCCCCCC..', 'cccccccccccc'], pal: { c: '#d8b77a', C: '#7a5230' } },
     { id: 'straw-hat', cat: 'hat', name: "Gardener's straw hat", price: 0, unlock: 'gardener', rows: ['...cCcCcc...', '..cCcCcCcc..', '..rrrrrrpy..', 'cCcCcCcCcCcC'], pal: { c: '#f2d16b', C: '#d9b24a', r: '#e53935', p: '#ff7eb6', y: '#ffcc33' } },
+    { id: 'sunflower-hat', cat: 'hat', name: 'Sunflower hat', price: 0, unlock: 'npc', rows: ['...cCcCcyyy.', '..cCcCcCybyc', '..ggggggyyy.', 'cCcCcCcCcCcC'], pal: { c: '#f2d16b', C: '#d9b24a', g: '#2e9e3e', y: '#ffcc33', b: '#8a5a32' } },
     { id: 'pilot-cap', cat: 'hat', name: 'Pilot cap & goggles', price: 0, unlock: 'traveller', rows: ['...cccccc...', '..cccccccc..', '.ckkcccckkc.', '.kgGkcckgGk.', '.ckkcccckkc.', '.cc......cc.', '.cc......cc.'], pal: { c: '#7a4b2a', k: '#1b1b1b', g: '#7fd0ff', G: '#ffffff' } },
     { id: 'anpan-head', cat: 'hat', name: 'Anpanman head', price: 70, special: true, hideHair: true, y: 1, rows: ['...kkkkkk...', '..kbbbbbbk..', '.kbkkbbkkbk.', '.kbbkbbkbbk.', 'kbrrbrrbrrbk', 'kbrrbrrbrrbk', '.kbbkkkkbbk.', '..kbbbbbbk..', '...kkkkkk...'], pal: { k: '#5a3214', b: '#eba45a', r: '#e53935' } },
     { id: 'astro-helmet', cat: 'hat', name: 'Astronaut helmet', price: 60, special: true, hideHair: true, rows: ['...GGGGGG...', '..GwwwwwwG..', '.GwwwwwwwwG.', '.Gwgg....wG.', '.Gwg.....wG.', '.Gw......wG.', '.Gw......wG.', '.Gw......wG.', '.GwwwwwwwwG.', '..GGrwwbGG..'], pal: { w: '#f2f2f2', G: '#8e9aa8', g: '#bfe8ff', r: '#e53935', b: '#1f3c88' } },
@@ -149,6 +151,8 @@
     { id: 'extra-none', cat: 'extra', name: 'Nothing', price: 0, rows: [] },
     { id: 'shades', cat: 'extra', name: 'Cool shades', price: 20, y: 5, rows: ['..kwkkkkwk..'], pal: { k: '#1b1b1b', w: '#ffffff' } },
     { id: 'glasses', cat: 'extra', name: 'Glasses', price: 15, y: 4, rows: ['..kkk..kkk..', '..kWKkkKWk..'], pal: { k: '#1b1b1b', W: '#ffffff', K: '#1b1b1b' } },
+    { id: 'lab-goggles', cat: 'extra', name: 'Lab goggles', price: 0, unlock: 'npc', y: 4, rows: ['.kkkkkkkkkk.', '.kcWckkcWck.', '..kkk..kkk..'], pal: { k: '#2b2b2b', c: '#8fe3ff', W: '#ffffff' } },
+    { id: 'magnifier', cat: 'extra', name: 'Magnifying glass', price: 25, unlock: 'trader', y: 8, rows: ['.........kk.', '........kcWk', '........kcck', '.........kk.', '........n...', '.......n....'], pal: { k: '#1b1b1b', c: '#bfe8ff', W: '#ffffff', n: '#8a5a32' } },
     { id: 'glasses-3d', cat: 'extra', name: '3D glasses', price: 0, unlock: 'video', y: 4, rows: ['..kkkkkkkk..', '..kRRkkBBk..'], pal: { k: '#ffffff', R: '#e53935', B: '#2ee6d6' } },
     { id: 'cape-red', cat: 'extra', name: 'Hero cape', price: 50, behind: true, y: 9, rows: ['.cccccccccc.', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', '.cccccccccc.'], pal: { c: '#d9433b' } },
     { id: 'cape-gold', cat: 'extra', name: 'Champion cape', price: 0, unlock: 'perfect', behind: true, y: 9, rows: ['.cccccccccc.', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', 'cccccccccccc', '.cccccccccc.'], pal: { c: '#ffb800' } },
@@ -187,6 +191,8 @@
     { id: 'pet-octopus', cat: 'pet', name: 'An octopus', price: 100, special: true, rows: ['..oooo..', '.oooooo.', 'owkoowko', 'oooooooo', '.oooooo.', 'o.o.o.o.', '.o.o.o.o', 'o.o.o.o.'], pal: { o: '#ff6f91', w: '#ffffff', k: '#1b1b1b' } },
     { id: 'pet-eagle', cat: 'pet', name: 'Bald eagle', price: 80, special: true, rows: ['..wwww..', '.wwwwkw.', '.wwwwwyy', '..bbbbb.', '.bbbbbbb', 'bbbbbbb.', '.bbbbb..', '..y..y..'], pal: { w: '#ffffff', k: '#1b1b1b', y: '#ffb300', b: '#5a3214' } },
     { id: 'pet-bee', cat: 'pet', eyes: [[1, 3]], name: 'Busy bee', price: 60, rows: ['..cc.cc.', '..ccccc.', '.kkkkkk.', 'kwkyykyk', 'kkkyykyk', 'kkkyykyk', '.kkkkkk.', '.k....k.'], pal: { k: '#1b1b1b', y: '#ffd43b', c: '#cfefff', w: '#ffffff' } },
+    { id: 'pet-ladybird', cat: 'pet', eyes: [[2, 2], [5, 2]], name: 'Lucky ladybird', price: 0, unlock: 'npc', rows: ['.k....k.', '..kkkk..', '.kwkkwk.', '.rrkkrr.', 'rrkrrkrr', 'rrrkkrrr', 'rkrrrrkr', '.rrrrrr.'], pal: { r: '#e53935', k: '#1b1b1b', w: '#ffffff' } },
+    { id: 'pet-worm', cat: 'pet', eyes: [[6, 4]], name: 'Wiggly worm', price: 40, unlock: 'trader', rows: ['........', '........', '........', '.....ppp', '....ppkp', 'pp..pp..', 'Pppppp..', '.PPPP...'], pal: { p: '#ff8fb1', P: '#d6457a', k: '#1b1b1b' } },
     { id: 'pet-snail', cat: 'pet', eyes: [[5, 1], [7, 1]], name: 'Speedy snail', price: 60, rows: ['.....k.k', '.....y.y', '.kkk.k.k', 'kOoOkkgk', 'kokOkggk', 'kOooOggk', '.kkkkggk', 'gggggggk'], pal: { k: '#1b1b1b', O: '#b85a00', o: '#ff8c1a', g: '#9be15d', y: '#ffd43b' } },
     // ----- level rewards: unlocked by reaching a player level (see LEVEL_REWARDS) -----
     { id: 'pet-bunny', cat: 'pet', name: 'Bouncy bunny', price: 0, unlock: 'lvl:3', rows: ['.w....w.', '.wp..pw.', '.wp..pw.', '.wwwwww.', 'wwkwwkww', 'wwwppwww', '.wwwwww.', '.ww..ww.'], pal: { w: '#f4f4f4', p: '#ffb3cf', k: '#1b1b1b' } },
@@ -329,6 +335,8 @@
   const markSeen = (level = levelInfo().level) => store.set(SEENKEY, Math.max(level, store.get(SEENKEY, 1)));
 
   const UNLOCK_TEXT = {
+    npc: 'A thank-you from someone on the quest map',
+    trader: 'Sold by Market Mo on the Science quest map',
     boss: 'Beat any boss to unlock',
     artist: 'Finish Pixel Art Studio to unlock',
     designer: 'Finish Design a Poster to unlock',
@@ -392,6 +400,9 @@
     save({ owned: a.owned });
     return true;
   }
+  // the quest map's NPCs: give(id) hands over an item for free (a reward); spend(n) pays n gems (a trader) if there are enough
+  function give(id) { const a = load(); if (!a.owned.includes(id)) { a.owned.push(id); save({ owned: a.owned }); } }
+  function spend(n) { const w = wallet(); if (w.balance < n) return false; store.set(WKEY, { earned: w.earned, spent: w.spent + n }); return true; }
   function wear(id) {
     const it = byId(id); if (!it) return;
     if (it.parts) { const a = load(); Object.assign(a.look, it.parts); save({ look: a.look }); return; }
@@ -605,7 +616,7 @@
     ask();
     document.body.append(ov);
   }
-  window.Avatar = { ITEMS, SKINS, HAIR_COLOURS, SCENES, COSTUMES, CATS, UNLOCK_TEXT, LEVEL_REWARDS, levelInfo, levelOfUnlock, unlockText, newRewards, markSeen, DEFAULT_LOOK, byId, load, save, wallet, earn, achievements, owns, priceOf, buy, wear, draw, animate, movePose, dataURL, isFree, applyScene, sceneBox, sceneDef, STARTERS, needsStarter, pickStarter, showPicker };
+  window.Avatar = { ITEMS, SKINS, HAIR_COLOURS, SCENES, COSTUMES, CATS, UNLOCK_TEXT, LEVEL_REWARDS, levelInfo, levelOfUnlock, unlockText, newRewards, markSeen, DEFAULT_LOOK, byId, load, save, wallet, earn, achievements, owns, priceOf, buy, give, spend, wear, draw, animate, movePose, dataURL, isFree, applyScene, sceneBox, sceneDef, STARTERS, needsStarter, pickStarter, showPicker };
   // every page that loads this file shows the player's chosen scene
   applyScene(load().look.scene);
 })();

@@ -8,6 +8,8 @@
   <script src="shared/pixel.js"></script>
   <script src="shared/pixel-icons.js"></script>
   <script src="shared/avatar.js"></script>
+  <script src="shared/question-bank.js"></script>
+  <script src="shared/npcs.js"></script>
   <style>
     /* header: the player stands in the world on a grass block (like a game's title screen), the title and HUD beside it */
     .lib-head { position: relative; z-index: 1; display: grid; grid-template-columns: auto auto; justify-content: center; align-items: end; gap: 40px; padding: 44px 16px 4px; }
@@ -61,6 +63,7 @@
       .hud-lvl { font-size: 1.1rem; }
       .hud-gems { width: 46px; height: 46px; font-size: 1.4rem; }
       .hud-gems b { font-size: .8rem; }
+      .hud-bag { font-size: 1.4rem; }
     }
     /* one row of worlds; scrolls sideways on a phone */
     .tabs { position: relative; z-index: 1; display: flex; gap: 8px; max-width: 1040px; margin: 22px auto 0; padding: 4px 16px 8px; overflow-x: auto; scrollbar-width: none; }
@@ -107,6 +110,15 @@
     .qdeco.big { font-size: 2.6rem; }
     .qdeco.small { font-size: 1.2rem; }
     /* a unit's landmark: a big set piece standing on its own patch of ground */
+    /* someone by the road: tap to talk. A bobbing ! means they have something for you, ? that they want what you carry */
+    .qnpc { position: absolute; z-index: 2; transform: translate(-50%, -100%); display: grid; justify-items: center; padding: 0; background: none; border: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .qnpc canvas { display: block; image-rendering: pixelated; filter: drop-shadow(3px 3px 0 rgba(0,0,0,.25)); }
+    .qnpc:hover canvas, .qnpc:focus-visible canvas { filter: drop-shadow(0 0 0 #fff) drop-shadow(3px 3px 0 rgba(0,0,0,.25)); outline: 3px solid #fff; outline-offset: 2px; }
+    .qnpc-mark { position: absolute; top: -26px; min-width: 24px; padding: 0 4px; text-align: center; font-family: var(--pixel); font-weight: 700; font-size: 1rem; line-height: 22px; color: #000; background: #fff; border: 2px solid #000; }
+    .qnpc-mark.ask { color: #000; background: #ffd43b; animation: qbob 1s steps(2) infinite; }
+    .qnpc-name { position: absolute; top: 100%; margin-top: 2px; white-space: nowrap; padding: 0 5px; background: rgba(0,0,0,.55); color: #fff; font-family: var(--pixel); font-weight: 700; font-size: .7rem; }
+    .hud-bag { padding: 0; cursor: pointer; font: inherit; font-size: 2rem; color: inherit; }
+    .hud-bag:hover, .hud-bag:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
     .qmark { position: absolute; transform: translate(-50%, -60%); font-size: 4.4rem; line-height: 1; pointer-events: none; filter: drop-shadow(5px 5px 0 rgba(0,0,0,.25)); }
     .qmark::after { content: ""; position: absolute; left: 10%; right: 10%; bottom: -6px; height: 12px; background: rgba(0,0,0,.18); z-index: -1; }
     /* fog over the stretches of road still being built: blocky pixel clouds; the stops inside it show through faintly */
@@ -169,6 +181,7 @@
       .qsign { font-size: .78rem; padding: 3px 7px; }
       .qdeco { font-size: 1.5rem; }
       .qdeco.big { font-size: 2rem; }
+      .qnpc-name { display: none; } /* narrow lanes: the name shows in their text box instead */
       .qmark { font-size: 3.2rem; }
       .qcard { flex-direction: column; align-items: center; text-align: center; }
       .qc-body { align-items: center; }
@@ -198,6 +211,7 @@
           <div class="hud-name" id="lvlname"></div>
         </div>
         <div class="hud-gems" id="gems" title="Gems to spend">💎<b></b></div>
+        <button class="hud-gems hud-bag" id="bag" type="button" title="My backpack">🎒<b></b></button>
       </div>
     </div>
   </header>
@@ -407,7 +421,15 @@ if (window.Avatar) {
 }
 
 // gems to spend, in a hotbar slot
-document.getElementById('gems').querySelector('b').textContent = wal.balance;
+// gems and the backpack, in hotbar slots (refreshed after an NPC gives or sells something)
+function refreshHud() {
+  document.getElementById('gems').querySelector('b').textContent = window.Avatar ? Avatar.wallet().balance : wal.balance;
+  const bag = document.getElementById('bag');
+  bag.hidden = !window.NPC;
+  if (window.NPC) bag.querySelector('b').textContent = NPC.bagCount() || '';
+}
+refreshHud();
+document.getElementById('bag').addEventListener('click', () => window.NPC && NPC.backpack());
 
 const tabs = document.getElementById('tabs');
 // Around the World: the passport shows a stamp for every country lesson finished
@@ -606,6 +628,33 @@ function drawMap(key, lessons, stateOf) {
   for (let y = 30; y < H - 20; y += 24) for (let x = 20; x < W - 10; x += 24) spots.push({ x: x + (rnd() - 0.5) * 10, y: y + (rnd() - 0.5) * 10 });
   const nearest = (x, y) => stops.reduce((b, s) => (!b || Math.hypot(s.x - x, s.y - y) < Math.hypot(b.x - x, b.y - y) ? s : b), null);
   const items = [];
+
+  // people by the road (shared/npcs.js): each one turns up once the stop they live by is cleared
+  if (window.NPC && window.Avatar) NPC.forWorld(key).forEach(n => {
+    const home = n.at ? stops.find(s => s.l.title === n.at) : null;
+    if (n.at && !cleared(home)) return;
+    const base = home || start;
+    let best = null, br = -1;
+    spots.forEach(p => {
+      const d = Math.hypot(p.x - base.x, p.y - base.y);
+      if (d < 70 || d > 240 || p.y < base.y - 30) return;
+      const r = Math.min(room(p.x, p.y), 60) - d * 0.08; // roomy, but close to home
+      if (r > br) { br = r; best = p; }
+    });
+    if (!best || br < 4) best = { x: base.x + (base.x < W / 2 ? 100 : -100), y: base.y + 50 };
+    boxes.push([best.x - 40, best.y - 20 * S - 14, best.x + 40, best.y + 30]);
+    const pool = []; // the lessons cleared on the road up to here: what a challenger asks about
+    for (let s = home; s; s = s.parent) if (cleared(s) && s.l.id) pool.push(s.l.id);
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'qnpc'; b.style.left = best.x + 'px'; b.style.top = best.y + 'px';
+    b.setAttribute('aria-label', `Talk to ${n.name}`);
+    b.append(Avatar.draw(NPC.look(n), { scale: S })); // the same size as the hero
+    const mk = NPC.marker(n);
+    if (mk) { const m = document.createElement('span'); m.className = 'qnpc-mark' + (mk === '!' || mk === '?' ? ' ask' : ''); m.textContent = mk; b.append(m); }
+    const tag = document.createElement('span'); tag.className = 'qnpc-name'; tag.textContent = n.name; b.append(tag);
+    b.onclick = () => NPC.talk(n, { pool, changed() { refreshHud(); render(); } });
+    map.append(b);
+  });
 
   // landmarks first: the roomiest spot inside each unit's stretch of its lane
   signs.forEach(s => {
