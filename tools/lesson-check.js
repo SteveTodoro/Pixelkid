@@ -161,6 +161,7 @@ function checkTeach(s, at, err) {
     const tokens = String(l.text).split(/\s+/);
     const wi = l.wrongAt != null ? l.wrongAt : tokens.findIndex(t => bare(t) === String(l.wrong).toLowerCase());
     if (wi < 0 || wi >= tokens.length) err(`${where}: the wrong word isn't in the sentence (use wrongAt for numbers)`);
+    else if (l.wrongAt != null && l.wrong != null && tokens[wi].replace(/[.,!?;:]+$/, '') !== String(l.wrong).replace(/[.,!?;:]+$/, '')) err(`${where}: wrongAt ${wi} points at "${tokens[wi]}", not "${l.wrong}" (count the words from 0)`);
     if (!l.fix) err(`${where}: no fix`);
     if ((l.options || []).includes(l.fix)) err(`${where}: options repeat the fix`);
     if (!l.why) err(`${where}: no why`);

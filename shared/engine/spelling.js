@@ -1,5 +1,5 @@
 /* Pixelkid lesson engine – the Spell Test (listen / look-cover-write-check / fix the mistake), with its scenes,
- * and Speech Marks (tap the gaps where the speech marks go).
+ * Speech Marks (tap the gaps where the speech marks go) and the Syllable Drum (tap a beat for each syllable).
  * One part of shared/engine.js, which loads it only when a lesson uses it. E is the engine's shared helpers
  * (E.state and E.stageCard are live). See the top of shared/engine.js for how the parts fit together.
  */
@@ -13,6 +13,7 @@ PixelkidEngine.part('spelling', E => {
   // r.scene: 'potion' (default: each word adds an ingredient to a cauldron) | 'egg' (each word cracks a dragon egg)
   //   | 'castle' (each word builds a row of a castle tower) | 'rocket' (each word fuels a rocket, which blasts off at the end)
   //   | 'train' (each word couples a carriage) | 'balloon' (each word fills a hot-air balloon, which floats away at the end)
+  //   | 'snowman' (each word builds a snowman from the bottom up, hat last)
   // r.prize: the name of the finished potion / dragon. First-try spellings earn a gem; two misses show the word to copy.
   const SP_LIQUID = ['#7cfc3a', '#2ee6d6', '#b44dff', '#ff7eb6', '#ffb800', '#4fc3ff'];
   function cauldronSVG(p, n) {
@@ -79,6 +80,10 @@ PixelkidEngine.part('spelling', E => {
     return Pixel.svg(BALLOON.map(r => r.replace(/[A-F]/g, c => (filled.has(c) ? c : 'g'))),
       { k: '#1b1b1b', g: '#dfe3e8', b: '#8a5a32', A: '#e53935', B: '#ff8c1a', C: '#ffd43b', D: '#4caf2a', E: '#2b6fd6', F: '#8e5cff' });
   }
+  // snowman: each word packs on another row of snow, from the bottom up; the hat goes on last
+  const SNOWMAN = ['.....kkkk.....', '.....kHHk.....', '.....kHHk.....', '...kkkkkkkk...', '....kwwwwk....', '...kwkwwkwk...', '...kwwoowwk...', '....kwwwwk....', '..kkrrrrrrkk..', '..kwwrwwwwwk..', '.kwwwwkwwwwwk.', '.kwwwwwwwwwwk.', '.kwwwwkwwwwwk.', '..kwwwwwwwwk..', '.kwwwwwwwwwwk.', 'kwwwwwkwwwwwwk', 'kwwwwwwwwwwwwk', 'kwwwwwkwwwwwwk', '.kwwwwwwwwwwk.', '..kkkkkkkkkk..'];
+  const snowmanSVG = p => { const built = Math.round(p * SNOWMAN.length);
+    return Pixel.svg(SNOWMAN.map((r, y) => (y >= SNOWMAN.length - built ? r : r.replace(/[^.]/g, 'g'))), { k: '#1b1b1b', w: '#ffffff', H: '#2b2f3a', o: '#ff8c1a', r: '#e53935', g: '#dfe8f2' }); };
   // r.scene → how the picture, caption and finish banner look
   const SP_SCENES = {
     potion: { prize: 'the magic potion', draw: (p, n, full) => (full ? POTION : cauldronSVG(p, n)), cap: (n, of, prize) => `🧪 ${n}/${of} ingredients in ${prize}`, made: prize => `🧪 ${prize} is ready!`, done: '🧪 POTION BREWED!', anim: 'bubbling' },
@@ -86,6 +91,7 @@ PixelkidEngine.part('spelling', E => {
     castle: { prize: 'your word castle', draw: (p, n, full) => (full ? CASTLE_DONE : castleSVG(p)), cap: (n, of) => `🧱 ${n}/${of} words · each one builds a row of stones`, made: prize => `🏰 ${prize} is built!`, done: '🏰 CASTLE BUILT!' },
     train: { prize: 'the word train', draw: (p, n, full) => trainSVG(p, full), cap: (n, of) => `🚃 ${n}/${of} words · each one couples a carriage`, made: prize => `🚂 ${prize} is full steam ahead!`, done: '🚂 ALL ABOARD!' },
     balloon: { prize: 'your hot-air balloon', draw: p => balloonSVG(p), cap: (n, of) => `🎈 ${n}/${of} words · each one fills the balloon`, made: prize => `🎈 ${prize} is floating away!`, done: '🎈 UP, UP AND AWAY!', anim: 'launch' },
+    snowman: { prize: 'your snowman', draw: p => snowmanSVG(p), cap: (n, of) => `⛄ ${n}/${of} words · each one packs on more snow`, made: prize => `⛄ ${prize} is finished!`, done: '⛄ SNOWMAN BUILT!', anim: 'wobble' },
     rocket: { prize: 'your rocket', draw: (p, n, full) => rocketSVG(p, full), cap: (n, of) => `⛽ ${n}/${of} words · each one adds fuel`, made: prize => `🚀 ${prize} has blasted off!`, done: '🚀 BLAST OFF!', anim: 'launch' },
   };
 
@@ -391,6 +397,56 @@ PixelkidEngine.part('spelling', E => {
         h('div', { class: 'btn-row' }, checkBtn, noneBtn, nextBtn));
       paint();
       root._test = { gaps, answer, check, none: () => check(true), get over() { return over; }, next: () => nextBtn.click() };
+    }
+    show();
+    return root;
+  };
+
+  // ===== Syllable Drum: tap the drum once for every syllable (beat) in a word or a line of a poem =====
+  // r.items: [{ word: 'butterfly', parts: ['but', 'ter', 'fly'], emoji }] – the word (or a short line) and its syllables.
+  // Tap the drum (or press the space bar) for each beat, then check. Two misses show the beats.
+  GAMES.syllables = function (r, key, done) {
+    const root = h('div', { class: 'game syllables' });
+    let ii = 0;
+    function show() {
+      const it = r.items[ii], want = it.parts.length;
+      let taps = 0, tries = 0, over = false;
+      const dots = h('div', { class: 'sy-dots' });
+      const why = h('div', { class: 'why', hidden: true });
+      const nextBtn = h('button', { class: 'btn big ready', type: 'button', hidden: true, onclick() { sfx.tap(); ii++; show(); } }, 'Next ▶');
+      const drum = h('button', { class: 'sy-drum', type: 'button', 'aria-label': 'Tap the drum' }, '🥁');
+      const paint = () => put(dots, Array.from({ length: Math.max(taps, 1) }, (_, k) => h('i', { class: k < taps ? 'on' : '' })));
+      const beat = () => { if (over) return; taps = Math.min(taps + 1, 12); sfx.tap(); drum.classList.remove('hit'); void drum.offsetWidth; drum.classList.add('hit'); paint(); };
+      drum.addEventListener('pointerdown', e => { e.preventDefault(); beat(); });
+      drum.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); beat(); } });
+      const again = h('button', { class: 'btn ghost', type: 'button', onclick() { if (!over) { taps = 0; paint(); } } }, '↺ Start again');
+      const check = h('button', { class: 'btn green', type: 'button', onclick() {
+        if (over) return;
+        if (!taps) { say('Tap the drum once for every beat!'); return; }
+        tries++;
+        if (taps === want) return finish(tries === 1);
+        sfx.bad(); shake(dots);
+        if (tries >= 2) return finish(false);
+        say(`💡 Not quite – you tapped ${taps}. Say "${it.word}" slowly and clap it… then tap again.`);
+        speak(it.parts.join(' - '), { rate: 0.6 });
+        taps = 0; paint();
+      } }, '✔ Check');
+      function finish(first) {
+        over = true;
+        track('Syllables', { q: `How many syllables in "${it.word}"?`, type: 'type', answer: String(want) }, first);
+        if (first) { sfx.good(); award(`${key}:${ii}`, drum); say(praise()); } else say(`It has ${want} beat${want > 1 ? 's' : ''}. Clap along!`);
+        why.innerHTML = `${first ? '✔' : '👀'} <b>${it.parts.join(' · ')}</b> – ${want} syllable${want > 1 ? 's' : ''}`;
+        why.hidden = false;
+        speak(it.parts.join(' - '), { rate: 0.7 });
+        check.hidden = true; again.hidden = true;
+        if (ii < r.items.length - 1) nextBtn.hidden = false; else { confetti(70); done(); }
+      }
+      put(root, h('div', { class: 'tf-count' }, `${ii + 1} of ${r.items.length}`),
+        h('div', { class: 'sy-word' }, it.emoji ? h('span', { class: 'sy-emoji' }, it.emoji) : null, h('span', null, it.word)),
+        h('div', { class: 'btn-row' }, h('button', { class: 'btn', type: 'button', onclick() { speak(it.word, { force: true, rate: 0.8 }); } }, '🔊 Hear it')),
+        drum, dots, why, h('div', { class: 'btn-row' }, again, check, nextBtn));
+      paint();
+      root._test = { tap: n => { for (let k = 0; k < n; k++) beat(); }, check: () => check.click(), want, get over() { return over; }, next: () => nextBtn.click() };
     }
     show();
     return root;

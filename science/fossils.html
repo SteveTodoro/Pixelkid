@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fossil Hunters</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <script src="../shared/pixel.js"></script>
+  <script src="../shared/pixel-icons.js"></script>
+  <script src="../shared/avatar.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// ---------- blocky pictures for this lesson ----------
+// an ammonite fossil in a slab of rock
+const AMMONITE = Pixel.svg([
+  'ssssssssssssss',
+  'sssskkkkkkssss',
+  'sskkaaaaaakkss',
+  'skaakkkkkkaaks',
+  'skakbbbbbbkaks',
+  'kakbkkkkkbbkak',
+  'kakbkaakkbbkak',
+  'kakbkakbbbkaak',
+  'skakbkkkbkaaks',
+  'skaakbbbkaakss',
+  'sskkaaaaakksss',
+  'sssskkkkkkssss',
+  'ssssssssssssss',
+], { s: '#c9b48c', k: '#4a3a2a', a: '#efe2c4', b: '#d8c39a' });
+
+// layers of rock with a fossil in each: the deepest is the oldest
+const DIGLAYERS = Pixel.svg([
+  'gggggggggggggggggggg',
+  'yyyyyyyyyyyyyyyyyyyy',
+  'yyyykkyyyyyyyyyyyyyy',
+  'yyykaakyyyyyyyyyyyyy',
+  'kkkkkkkkkkkkkkkkkkkk',
+  'mmmmmmmmmmmmmkkmmmmm',
+  'mmmmmmmmmmmmkaakmmmm',
+  'mmmmmmmmmmmmmkkmmmmm',
+  'kkkkkkkkkkkkkkkkkkkk',
+  'llllllkkkllllllllll',
+  'lllllkaaakllllllllll',
+  'llllllkkklllllllllll',
+], { g: '#5bbf3a', y: '#e3b872', m: '#9c8a78', l: '#ddd6c2', k: '#4a3a2a', a: '#efe2c4' });
+
+// the boss: Pterry, a pterosaur who snatches fossils for her nest
+const PTERRY = Pixel.svg([
+  '.........kk...',
+  '........kppk..',
+  '.kkk...kppwkk.',
+  'kpppk..kpppppk',
+  '.kpppkkppkkkk.',
+  '..kpppppppk...',
+  '.kpppppppppk..',
+  'kppkkpppkkppk.',
+  'kpk..kpk..kpk.',
+  '.k...kyk...k..',
+  '.....k.k......',
+], { k: '#1b1b1b', p: '#8e5cff', w: '#ffffff', y: '#ffd43b' });
+
+// ---------- the lesson ----------
+window.LESSON = {
+  id: 'science-fossils',
+  subject: 'science',
+  title: 'Fossil Hunters',
+  emoji: '🦖',
+  home: '../index.html',
+  mascot: {
+    name: 'Professor Bolt',
+    sprite: Pixel.sprites.robot,
+    praise: ['Dino-mite!', 'Fossil-tastic!', 'Rock solid!', 'Critical hit!', 'Jurassic genius!', 'Nailed it!', 'You dig it!'],
+    oops: ['Oops! Think about the layers.', 'Not quite – how did it get buried?', 'Hmm, think again!', 'So close! One more try.'],
+  },
+  glossary: {
+    fossil: { emoji: '🦴', def: 'The remains or trace of a plant or animal from long, long ago, kept in rock.' },
+    sediment: { emoji: '🏖️', def: 'Sand, mud and tiny bits of rock that settle in layers, often under water.' },
+    minerals: { emoji: '💧', def: 'Natural stony stuff dissolved in water. It can slowly turn bones and shells into stone.' },
+    extinct: { emoji: '🦕', def: 'When a kind of animal or plant has died out completely – there are none left alive.' },
+    palaeontologist: { emoji: '🔍', def: 'A scientist who studies fossils. Say it "pay-lee-on-TOL-oh-jist".' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'Fossil Hunters', short: 'Start', minutes: 1,
+      pic: AMMONITE,
+      hello: 'Welcome back, rock star! Today we hunt for clues from millions of years ago, hidden inside rocks. But watch the sky: Pterry the pterosaur is swooping in to snatch our fossils!',
+      question: 'How could a dinosaur that lived millions of years ago end up inside a rock?',
+      intro: 'Recap, read, watch, dig up real fossils at the **Dig Site**, investigate the layers – then save the fossils from Pterry!',
+      nameLabel: 'Player name:',
+    },
+
+    {
+      type: 'review', title: 'Last time…', short: 'Recap', minutes: 4,
+      from: { title: 'Rock Stars', emoji: '🪨', url: 'rocks.html' },
+      facts: [
+        'Igneous rock forms when melted rock cools down (granite, pumice).',
+        'Sedimentary rock forms from layers of sand, mud and shells squashed together (sandstone, chalk).',
+        'Metamorphic rock has been changed by heat and squeezing (marble, slate).',
+        'Permeable rocks soak up water; impermeable rocks keep it out.',
+      ],
+      questions: [
+        { type: 'mcq', q: 'A rock has stripes of layers and tiny bits of shell in it. What kind of rock is it?', options: ['sedimentary', 'igneous', 'metamorphic'], answer: 0 },
+        { type: 'type', q: 'Which rock floats on water because it is full of holes?', answer: ['pumice'], placeholder: 'a rock', hint: 'It comes from frothy lava.' },
+        { type: 'oddone', q: 'Which rock is the odd one out?', items: ['slate', 'marble', 'chalk'], answer: 2, why: 'Why is chalk the odd one out?', reasons: ['It is sedimentary – the others are metamorphic', 'It is the hardest', 'It is made by people'], reason: 0 },
+        { type: 'tf', q: 'Slate makes good roof tiles because it keeps water out.', answer: true },
+      ],
+      game: {
+        game: 'rocklab', title: 'Quick test', rocks: ['chalk', 'granite'], tests: ['scratch', 'water'],
+        intro: 'One quick test to warm up your geologist skills!',
+        missions: [
+          { text: 'Do the 💧 water drop test on the chalk and the granite.', need: ['chalk:water', 'granite:water'], yes: 'Chalk soaks it up – granite keeps it out!' },
+        ],
+      },
+    },
+
+    {
+      type: 'read', title: 'Clues in the rocks', short: 'Read 1', minutes: 6,
+      say: 'Read each page carefully – the checks test if you really understood. Tap the yellow words for a 💎.',
+      cards: [
+        {
+          title: 'What is a fossil?', pic: AMMONITE,
+          text: [
+            'A [[fossil]] is what is left of a plant or animal that lived millions of years ago, kept safe in rock.',
+            'It might be a bone, a tooth, a shell or a leaf – or even a footprint the animal left behind.',
+          ],
+          check: { type: 'oddone', q: 'Which one is NOT a fossil?', items: ['a shell turned to stone', 'a dinosaur footprint in rock', 'a leaf print in rock', 'a plastic dinosaur toy'], answer: 3, why: 'Why is the toy the odd one out?', reasons: ['It was never alive – it is made by people', 'It is the biggest', 'It is the newest colour'], reason: 0, hint: 'A fossil comes from something that was once alive.' },
+        },
+        {
+          title: 'Buried in layers', pic: '🦕💀🏖️',
+          text: [
+            'When an animal dies, its soft parts rot away. If the bones are quickly buried by mud or sand ([[sediment]]), they can last.',
+            'Over millions of years, more layers pile on top and squash the layers below into sedimentary rock.',
+          ],
+          check: { q: 'Most fossils are of sea creatures like shellfish and sharks. Why?', options: ['Sand and mud on the sea floor buried them quickly', 'Sea creatures have no bones', 'Fish are made of stone'], answer: 0, hint: 'What has to happen quickly after something dies?' },
+        },
+        {
+          title: 'Bones turn to stone', pic: '💧🦴➡️🪨',
+          text: [
+            'Water seeps slowly through the rock. It leaves behind [[minerals]] that turn the bone into stone, bit by bit.',
+            'Much later, the rock is lifted up and wind, rain and waves wear it away – until the fossil peeps out.',
+          ],
+          check: { q: 'A fossil hunter finds a dinosaur bone. Why is it heavy and hard like a rock?', options: ['Minerals from water slowly turned it into stone', 'Dinosaur bones were always made of stone', 'It was frozen in ice'], answer: 0 },
+        },
+        {
+          title: 'Deeper means older', pic: DIGLAYERS,
+          text: [
+            'Layers of rock build up one on top of another, like a pile of pancakes. The ones at the bottom were made first.',
+            'So fossils deep down are usually older than fossils near the top.',
+          ],
+          check: { q: 'A trilobite is found in a layer BELOW an ammonite. Which one is older?', options: ['the trilobite', 'the ammonite', 'they are exactly the same age'], answer: 0, hint: 'Which layer was made first?' },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'How Do Dinosaur Fossils Form?', short: 'Video 1', minutes: 6,
+      video: { id: '87E8bQrX4Wg', title: 'How do dinosaur fossils form? | Natural History Museum', channel: 'Natural History Museum', duration: '3:49' },
+      say: 'The Natural History Museum shows how a dinosaur became a fossil. Watch, then answer my questions.',
+      clues: [
+        'What happened to the dinosaur\'s skin and muscles?',
+        'What turned the bones to stone?',
+        'What is "uplift"?',
+        'Which two dinosaurs were found fighting?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'What happened to the dinosaur\'s skin and muscles after it died?', options: ['they rotted away (or were eaten)', 'they turned into stone', 'they stayed the same'], answer: 0 },
+        { type: 'mcq', q: 'Which layers landed on top of the bones?', options: ['mud, sand and volcanic ash', 'snow and ice', 'leaves and grass'], answer: 0 },
+        { type: 'mcq', q: 'Rocks that were deep underground rose up to the surface. What does the video call this?', options: ['uplift', 'sinking', 'melting'], answer: 0 },
+        { type: 'slider', q: 'About what percentage of the fossils we find come from sea animals? Drag the marker.', min: 0, max: 100, step: 1, answer: 99, tolerance: 3, unit: '%', hint: 'Nearly all of them!' },
+        { type: 'mcq', q: 'Which two dinosaurs were buried by a sand dune while they were fighting?', options: ['Protoceratops and Velociraptor', 'T. rex and Triceratops', 'Stegosaurus and Diplodocus'], answer: 0 },
+        { type: 'tf', q: 'The video says footprints and skin prints can be fossils too, not just bones.', answer: true },
+      ],
+    },
+
+    {
+      type: 'game', title: 'The Dig Site', short: 'Game 1', minutes: 12,
+      rounds: [
+        {
+          game: 'fossildig', title: 'Fossil dig',
+          intro: 'A cliff by the sea is full of fossils! **Drag your finger** over the rock to brush the rubble away, gently, and uncover each one.',
+          layers: [
+            { rock: 'sandstone', age: 'about 100 million years ago' },
+            { rock: 'mudstone', age: 'about 180 million years ago' },
+            { rock: 'limestone', age: 'about 300 million years ago' },
+          ],
+          missions: [
+            { text: 'Brush away the rubble to find the 🐚 ammonite in the mudstone.', fossils: [{ kind: 'ammonite', layer: 1, x: 0.35 }], need: ['ammonite'],
+              yes: 'An ammonite! A sea creature with a spiral shell, which died out with the dinosaurs.' },
+            { text: 'Find the 🦈 shark tooth and the 🌿 fern leaf. Which layers are they in?', fossils: [{ kind: 'tooth', layer: 0, x: 0.7 }, { kind: 'fern', layer: 2, x: 0.2 }], need: ['tooth', 'fern'],
+              yes: 'Both found! Check your table to see which layer each was in.', ask: [
+                { q: 'Which of these two fossils is older?', options: ['the fern – it is in a deeper layer', 'the shark tooth – it is nearer the top', 'you can\'t tell'], answer: 0 },
+              ] },
+          ],
+        },
+        {
+          game: 'order', title: 'How a fossil forms',
+          intro: 'Put the story of a fossil in order, from the animal dying to someone finding it.',
+          say: 'What happens first? What happens last?',
+          ends: ['FIRST', 'LAST'],
+          items: ['🦕 A dinosaur dies by a river', '🌊 A flood covers its bones in mud', '🪨 Layers pile on top and turn to rock', '💧 Minerals turn the bones to stone', '🔍 Rain wears the rock away and a fossil hunter finds it'],
+          hint: 'The bones have to be buried before they can turn to stone.',
+        },
+        {
+          game: 'runner', title: 'Fossil Dash',
+          intro: 'Your hero runs by itself! Pick the lane with a **real fossil** – leave everything else behind.',
+          say: 'Tap the top or bottom lane. Collect the FOSSILS!',
+          prompt: 'Collect the real fossils!',
+          items: [
+            { label: 'ammonite', ok: true },
+            { label: 'dino footprint', ok: true },
+            { label: 'trilobite', ok: true },
+            { label: 'shark tooth fossil', ok: true },
+            { label: 'plastic dinosaur', ok: false, why: 'A toy was never alive, so it can\'t be a fossil.' },
+            { label: 'granite', ok: false, why: 'Granite is an igneous rock – fossils don\'t form in it.' },
+            { label: 'a glass marble', ok: false, why: 'A marble was made by people, not a living thing.' },
+          ],
+          done: 'FOSSIL DASH COMPLETE! You know a real fossil when you see one!',
+        },
+      ],
+    },
+
+    {
+      type: 'investigate', title: 'Which fossils are oldest?', short: 'Investigate', minutes: 8,
+      say: 'A real scientist question! Make a prediction, dig to find out, then explain what you found.',
+      question: 'A cliff has three layers of rock, with a fossil in each. Which fossil is the oldest?',
+      predict: { q: 'Which layer do you think holds the OLDEST fossil?', options: ['the bottom layer', 'the top layer', 'the middle layer'], answer: 0 },
+      test: {
+        game: 'fossildig', title: 'The three-layer cliff',
+        intro: 'Dig up all three fossils, then look at your finds table: which layer is each one in, and how old is it?',
+        layers: [
+          { rock: 'chalk', age: 'about 80 million years ago' },
+          { rock: 'shale', age: 'about 200 million years ago' },
+          { rock: 'limestone', age: 'about 450 million years ago' },
+        ],
+        missions: [
+          { text: 'Uncover all three fossils: one in each layer.', fossils: [{ kind: 'shell', layer: 0, x: 0.6 }, { kind: 'fish', layer: 1, x: 0.25 }, { kind: 'trilobite', layer: 2, x: 0.55 }], need: ['shell', 'fish', 'trilobite'], yes: 'All three found!' },
+        ],
+      },
+      explain: [
+        { q: 'Which fossil was the oldest?', options: ['the trilobite, in the bottom layer', 'the shell, in the top layer', 'the fish, in the middle layer'], answer: 0 },
+        { q: 'Why are the deepest layers the oldest?', options: ['They were laid down first, and newer layers piled on top', 'Heavy things sink to the bottom over time', 'Rocks get older when they are underground'], answer: 0 },
+        { type: 'predict', q: 'A new layer of sand settles on top of the cliff today. What do you predict about any shells in it?', options: ['They will be the youngest fossils – if they ever become fossils', 'They will be the oldest fossils', 'They will turn into dinosaurs'], answer: 0, reveal: 'Anything buried today is the newest layer of all. In millions of years, it might become the youngest fossils in the cliff!', then: { q: 'So the top layer of a cliff is usually…', options: ['the newest', 'the oldest', 'made of fossils only'], answer: 0 } },
+      ],
+      result: [
+        'Rock layers stack up like a pile of pancakes: the bottom ones are made first. So the **deeper the layer, the older the fossils** in it.',
+        'The trilobite in the limestone at the bottom is about 450 million years old – much older than the dinosaurs!',
+      ],
+    },
+
+    {
+      type: 'video', title: 'Mary Anning: Fossil Hunter', short: 'Video 2', minutes: 6,
+      video: { id: 'koota_lwU_4', title: 'Mary Anning: Fossil Hunter | Science for Kids', channel: 'SciShow Kids', duration: '4:14' },
+      say: 'Meet Mary Anning, one of the greatest fossil hunters ever – who never even went to school! Watch, then answer my questions.',
+      clues: [
+        'Where did Mary Anning live?',
+        'What did she find when she was 12?',
+        'Why didn\'t some scientists believe her?',
+        'What were the strange little stones?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'Mary Anning lived in England, near…', options: ['the sea, with cliffs to explore', 'a big city with no cliffs', 'a volcano'], answer: 0 },
+        { type: 'mcq', q: 'What did Mary sell to visitors?', options: ['shells (and fossils) she collected', 'ice creams', 'books'], answer: 0 },
+        { type: 'type', q: 'At what age did Mary and her brother find a whole ichthyosaur skeleton?', answer: ['12', 'twelve'], placeholder: 'a number', hint: 'She was still a child!' },
+        { type: 'mcq', q: 'An ichthyosaur had fins and flippers, but it was not a fish. What was it?', options: ['a reptile', 'a mammal', 'an insect'], answer: 0 },
+        { type: 'mcq', q: 'Why did some scientists not take Mary seriously?', options: ['she hadn\'t studied science at school', 'her fossils were fake', 'she lived too far away'], answer: 0 },
+        { type: 'mcq', q: 'Mary broke open some strange little stones. What were they?', options: ['fossilised poo!', 'dinosaur eggs', 'gold nuggets'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Museum Curator', short: 'Game 2', minutes: 8,
+      rounds: [
+        {
+          game: 'mystery', title: 'Mystery fossil words',
+          intro: 'Read the clues one at a time and guess the word. Guess on the first clue for 3 💎!',
+          words: [
+            { word: 'FOSSIL', clues: ['It can be a bone, a shell or even a footprint.', 'It is kept safe in rock for millions of years.', 'Mary Anning hunted for them.'], explain: 'A fossil is the remains or trace of a living thing from long ago.' },
+            { word: 'EXTINCT', clues: ['Dinosaurs and ammonites are this.', 'It means there are none left alive at all.', 'It starts with EX…'], explain: 'Extinct means a kind of living thing has died out completely.' },
+            { word: 'AMMONITE', clues: ['It lived in the sea and died out with the dinosaurs.', 'Its fossil has a beautiful spiral shell.', 'It starts with AMMO…'], explain: 'Ammonites were sea creatures with spiral shells.' },
+            { word: 'SEDIMENT', clues: ['It settles at the bottom of seas and rivers.', 'It buries remains so they can become fossils.', 'Sand and mud are this.'], explain: 'Sediment is sand, mud and bits of rock that settle in layers.' },
+          ],
+        },
+        {
+          game: 'truefalse', title: 'Fossil fact or fiction?',
+          intro: 'Is each fossil fact true or false? Think like a palaeontologist!',
+          statements: [
+            { text: 'Dinosaur fossils have been found that show the animals sitting on their nests.', answer: true, why: 'The Citipati fossil was buried by a sandstorm while it sat on its eggs.' },
+            { text: 'Every animal that dies becomes a fossil.', answer: false, why: 'Most never do – the remains have to be buried quickly, and even then most fossils are lost.' },
+            { text: 'Fossils are usually found in igneous rock, like granite.', answer: false, why: 'They form in sedimentary rock, made from layers of sand and mud.' },
+            { text: 'Ammonites died out at about the same time as the dinosaurs.', answer: true, why: 'Both became extinct around 66 million years ago.' },
+            { text: 'Mary Anning found the first whole plesiosaur skeleton.', answer: true, why: 'She did – some people didn\'t believe it was real at first!' },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
+      say: 'Dinosaur moves! Do each one for a few seconds.',
+      wiggle: {
+        title: '🦖 Dino Moves!',
+        seconds: 60,
+        moves: [
+          '🦖 Stomp like a T. rex with tiny arms!',
+          '🦕 Stretch your long neck up high like a Diplodocus!',
+          '🪽 Flap your wings and swoop like a pterosaur!',
+          '🐚 Curl up small like an ammonite shell!',
+          '🖌️ Brush the floor gently like a fossil hunter!',
+          '🌋 Jump up – the volcano is erupting!',
+        ],
+      },
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: Pterry the Fossil Snatcher', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      say: 'PTERRY THE PTEROSAUR is swooping off with the museum\'s fossils to decorate her nest! Every right answer saves one. Go, {name}!',
+      boss: {
+        name: 'Pterry', sprite: PTERRY, attack: ['🦴', '🪶'], spin: true,
+        lines: {
+          intro: 'SKREEEE! I am Pterry the pterosaur! Shiny fossils make the BEST nest decorations. Finders keepers!',
+          hurt: ['SKREE! My feathers – I mean, my wing skin!', 'Drop the bone! Drop the bone!', 'That answer was rock solid. OW!', 'You\'re digging too deep for me!'],
+          taunt: ['Wrong! Another fossil for my nest!', 'SKREE-hee-hee! Pebble-brain!', 'That answer is extinct!', 'You\'re a million years behind!'],
+          angry: 'ENOUGH! Pterry is in a JURASSIC RAGE! Fossils EVERYWHERE!',
+          dodge: 'Bone storm! Dodge my falling fossils!',
+          miss: 'You dodged every bone? You must be a fossil hunter!',
+          last: 'Please… just let me keep one tiny trilobite…',
+          defeat: 'SKREEEEE! My nest… is going back… to the museum…',
+          win: 'SKREE-hee-hee! My nest is FULL of fossils. Finders keepers!',
+          stunned: 'Seeing… ammonites… spinning round and round…',
+          beg: ['Wait! I\'ll decorate my nest with twigs instead!', 'Mercy! I\'ll be a museum guard, honest!', 'I\'ll give back the footprints – they didn\'t fit anyway!'],
+        },
+      },
+      bonus: {
+        title: '⭐ Bonus quest (for a grown-up to help with)',
+        text: 'Want more? Watch BBC Ideas\' "The true story of Mary Anning" (4 min). Then look closely at stone walls, pebbles and paving – sometimes you can spot real fossil shells in limestone!',
+        url: 'https://www.youtube.com/watch?v=BEbgTpdwRgI',
+        button: 'Watch the bonus video ▶',
+      },
+      questions: [
+        { type: 'mcq', q: 'A fossil is…', options: ['the remains or trace of a living thing from long ago, kept in rock', 'any old rock', 'a kind of crystal'], answer: 0 },
+        { type: 'mcq', q: 'In which kind of rock are fossils usually found?', options: ['sedimentary', 'igneous', 'metamorphic'], answer: 0 },
+        { type: 'order', q: 'Put these in order: how a fossil forms.', items: ['🐟 a fish dies', '🏖️ it is buried by sand', '💧 minerals turn it to stone', '🔍 the rock wears away and it is found'], ends: ['FIRST', 'LAST'], hint: 'It has to be buried before it can turn to stone.' },
+        { type: 'mcq', q: 'Pterry finds a fossil in the top layer and one in the bottom layer. Which is older?', options: ['the one in the bottom layer', 'the one in the top layer', 'they are the same age'], answer: 0 },
+        { type: 'type', q: 'What do we call a scientist who studies fossils?', answer: ['palaeontologist', 'paleontologist', 'a palaeontologist', 'a paleontologist'], placeholder: 'one long word', hint: 'pay-lee-on-TOL-oh-jist' },
+        { type: 'tf', q: 'A footprint can be a fossil.', answer: true },
+        { type: 'mcq', q: 'Why are so many fossils from sea animals?', options: ['Sand and mud buried them quickly on the sea floor', 'Sea animals lived longer', 'Fossils only form in salty water'], answer: 0 },
+        { type: 'type', q: 'Who was the girl from England who found an ichthyosaur when she was 12?', answer: ['mary anning', 'mary', 'anning'], placeholder: 'her name', hint: 'Mary A…' },
+        { type: 'gap', q: 'Dinosaurs and ammonites are ___ – there are none left alive.', options: ['extinct', 'invisible', 'asleep'], answer: 0 },
+        { type: 'oddone', q: 'Which could NOT become a fossil?', items: ['a seashell', 'a fern leaf', 'a plastic bottle', 'a shark tooth'], answer: 2, why: 'Why is the plastic bottle the odd one out?', reasons: ['It was never part of a living thing', 'It is too light', 'It is see-through'], reason: 0 },
+        { type: 'mcq', q: 'What turns bones into stone?', options: ['minerals left behind by water seeping through', 'lightning', 'the dinosaur\'s own skin'], answer: 0 },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>

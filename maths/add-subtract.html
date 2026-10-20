@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>3-Digit Add &amp; Subtract</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <script src="../shared/pixel.js"></script>
+  <script src="../shared/pixel-icons.js"></script>
+  <script src="../shared/avatar.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// ---------- blocky pictures for this lesson ----------
+// a column sum chalked on a board: 268 + 145
+const SUMBOARD = Pixel.svg([
+  'kkkkkkkkkkkkkkkkkk',
+  'kggggggggggggggggk',
+  'kggggwwgwwgwwggggk',
+  'kggggggggggggggggk',
+  'kggwggwwgwwgwwgggk',
+  'kgwwwggggggggggggk',
+  'kggwgggggggggggggk',
+  'kggwwwwwwwwwwwwggk',
+  'kggggyygyygyyggggk',
+  'kggggggggggggggggk',
+  'kkkkkkkkkkkkkkkkkk',
+  '.....nn....nn.....',
+], { k: '#1b1b1b', g: '#2f5d3a', w: '#ffffff', y: '#ffd43b', n: '#8a5a32' });
+
+// the boss: Captain Carryless, a pirate who never carries his tens (and loses all his treasure)
+const CAPTAIN = Pixel.svg([
+  '...kkkkkkkk...',
+  '..kkkkwkkkkk..',
+  '.kkkkkkkkkkkk.',
+  '...kssssssk...',
+  '...kskkssssk..',
+  '...ksssssssk..',
+  '...kssrrsssk..',
+  '..kkrrrrrrkk..',
+  '.krrwrrrrwrrk.',
+  '.krrrrrrrrrrk.',
+  '..kbbbkkbbbk..',
+  '..kbbk..kbbk..',
+  '..kkk....kkk..',
+], { k: '#1b1b1b', w: '#ffffff', s: '#f2c39b', r: '#e53935', b: '#2b6fd6' });
+
+// ---------- the lesson ----------
+window.LESSON = {
+  id: 'maths-add-subtract',
+  subject: 'maths',
+  title: '3-Digit Add & Subtract',
+  emoji: '➕',
+  home: '../index.html',
+  finishAch: 'miner',
+  mascot: {
+    name: 'Professor Bolt',
+    sprite: Pixel.sprites.robot,
+    praise: ['Sum-thing special!', 'Add-mirable!', 'Exchange-tastic!', 'Critical hit!', 'You nailed it!', 'Brilliant!', 'Column champion!'],
+    oops: ['Oops! Start with the ones.', 'Not quite – do you need to exchange?', 'Hmm, check that column again.', 'So close! One more try.'],
+  },
+  glossary: {
+    column: { emoji: '🏛️', def: 'A line of digits going down: the hundreds, the tens or the ones.' },
+    exchange: { emoji: '🔁', def: 'Swap 10 ones for 1 ten (or 1 ten for 10 ones). The number stays the same.' },
+    estimate: { emoji: '🤔', def: 'A sensible guess, often made by rounding the numbers first.' },
+    inverse: { emoji: '↩️', def: 'The opposite. Subtraction is the inverse of addition – it undoes it.' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: '3-Digit Add & Subtract', short: 'Start', minutes: 1,
+      pic: SUMBOARD,
+      hello: 'Ahoy, number crew! Captain Carryless has buried treasure all over the Maths Mine… but he never carries his tens, so all his maps are WRONG. Can you add it up properly?',
+      question: 'If you add 8 ones and 5 ones, you get 13 ones. How could you write that in just one column?',
+      intro: 'Warm up, add in your head, master the **column method** with exchanging, teach the robot – then sink Captain Carryless!',
+      nameLabel: 'Player name:',
+    },
+
+    {
+      type: 'review', title: 'Warm-up', short: 'Warm-up', minutes: 4,
+      from: { title: 'Adding and taking away you already know', emoji: '➕' },
+      facts: [
+        'Number bonds to 10: 7 + 3 = 10, so 70 + 30 = 100.',
+        'Adding 10 only changes the tens digit: 56 + 10 = 66.',
+        'Ten ones make one ten. Ten tens make one hundred.',
+        'Taking away undoes adding: 8 + 5 = 13, so 13 − 5 = 8.',
+      ],
+      questions: [
+        { type: 'type', q: '8 + 7 = ?', answer: ['15'], placeholder: 'a number', hint: '8 + 2 makes 10, then 5 more.' },
+        { type: 'type', q: '60 + 40 = ?', answer: ['100'], placeholder: 'a number', hint: '6 + 4 = 10, so 6 tens + 4 tens = 10 tens.' },
+        { type: 'mcq', q: '13 − 5 = ?', options: ['8', '7', '18'], answer: 0, hint: '5 + 8 = 13.' },
+        { type: 'slider', q: '100 − 35 = ? Drag the marker.', min: 0, max: 100, step: 5, answer: 65, ticks: 20, hint: '35 + ? = 100' },
+      ],
+      game: {
+        game: 'placeblocks', title: 'Warm-up blocks',
+        intro: 'Use the blocks: add, then tidy up!',
+        missions: [
+          { text: 'The mat shows 47. Add 6 more ones, then swap 10 ones for a ten.', start: 47, make: 53, add: true, yes: '47 + 6 = 53: 13 ones became 1 ten and 3 ones.' },
+        ],
+      },
+    },
+
+    {
+      type: 'read', title: 'Adding in your head', short: 'Read 1', minutes: 6,
+      say: 'Read each page carefully – the checks test if you really understood. Tap the yellow words for a 💎.',
+      cards: [
+        {
+          title: 'Add ones, tens or hundreds', pic: '💯 🔟 1️⃣',
+          text: [
+            'When you add tens to a number, only the tens digit changes: 345 + 30 = 375.',
+            'Adding hundreds only changes the hundreds digit: 345 + 200 = 545.',
+          ],
+          check: { type: 'type', q: 'A school has 426 children. 50 more join. How many now?', answer: ['476'], placeholder: 'a number', hint: 'Only the tens digit changes.' },
+        },
+        {
+          title: 'Crossing a ten', pic: '🔟',
+          text: [
+            'Sometimes the ones make a new ten: 348 + 5. Use 2 of the 5 to reach 350, then add the other 3.',
+            '348 + 5 = 353.',
+          ],
+          check: { type: 'type', q: 'A cake shop has 267 cupcakes and bakes 6 more. How many now?', answer: ['273'], placeholder: 'a number', hint: '267 + 3 = 270, then 3 more.' },
+        },
+        {
+          title: 'Estimate first', pic: '🤔',
+          text: [
+            'An [[estimate]] is a sensible guess. Round the numbers to the nearest hundred, then add: 298 + 405 is about 300 + 400 = 700.',
+            'If your answer is nowhere near your estimate, check your working!',
+          ],
+          check: { type: 'slider', q: 'About how much is 502 + 296? Drag the marker to your estimate.', min: 0, max: 1000, step: 100, answer: 800, ticks: 10, endsOnly: true, hint: '502 is about 500. 296 is about 300.' },
+        },
+        {
+          title: 'Check with the inverse', pic: '↩️',
+          text: [
+            'Subtraction is the [[inverse]] of addition – it undoes it. So you can check a subtraction by adding.',
+            '423 − 158 = 265, and 265 + 158 = 423 ✔',
+          ],
+          check: { q: 'Bea works out 500 − 120 = 380. Which sum checks her answer?', options: ['380 + 120 = 500', '500 + 120 = 620', '380 − 120 = 260'], answer: 0, hint: 'Add the answer back on.' },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'Column Addition with Exchanging', short: 'Video 1', minutes: 7,
+      video: { id: 'hwxyheQNXBU', title: 'Column Addition with Exchanging | Year 3 Maths KS2', channel: 'CENTURY Tech', duration: '5:40' },
+      say: 'This video shows the column method for adding – and what to do when a column makes 10 or more. Watch, then answer my questions.',
+      clues: [
+        'Which column do you always start with?',
+        'What do you do with 11 ones?',
+        'What is 552 + 239?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'In the column method, which column do you ALWAYS start with?', options: ['the ones', 'the hundreds', 'whichever is biggest'], answer: 0 },
+        { type: 'type', q: '341 + 213 = ?', answer: ['554'], placeholder: 'a number', hint: 'No exchanging needed: 1 + 3, then 4 + 1, then 3 + 2.' },
+        { type: 'mcq', q: '552 + 239: the ones make 2 + 9 = 11. What do you do?', options: ['write 1 in the ones and exchange the ten into the tens column', 'write 11 in the ones column', 'cross it out and start again'], answer: 0 },
+        { type: 'type', q: 'So what is 552 + 239?', answer: ['791'], placeholder: 'a number', hint: '1 in the ones; 5 + 3 + the exchanged 1 = 9 tens; 5 + 2 hundreds.' },
+        { type: 'tf', q: 'When you add the tens, you must remember to add the extra ten you exchanged.', answer: true },
+        { type: 'mcq', q: '239 + 112 = 351. How many ones were there to begin with, before exchanging?', options: ['11', '1', '9'], answer: 0, hint: '9 + 2 = ?' },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Column Crew', short: 'Game 1', minutes: 11,
+      rounds: [
+        {
+          game: 'placeblocks', title: 'Add with blocks',
+          intro: 'Add the blocks to the mat. When a column fills up with 10 or more, **swap** them for one of the next block!',
+          missions: [
+            { text: 'Captain Carryless has 268 gold coins. He finds 25 more. Start at 268 and add 2 tens and 5 ones.', start: 268, make: 293, add: true, yes: '268 + 25 = 293. The 13 ones became 1 ten and 3 ones!' },
+            { text: 'Now 156 + 172. Start at 156 and add 1 hundred, 7 tens and 2 ones.', start: 156, make: 328, add: true, yes: '156 + 172 = 328. 12 tens became 1 hundred and 2 tens!', ask: [
+              { q: 'Which column needed exchanging in 156 + 172?', options: ['the tens (5 + 7 = 12 tens)', 'the ones', 'the hundreds'], answer: 0 },
+            ] },
+          ],
+        },
+        {
+          game: 'columnsum', title: 'Column addition',
+          intro: 'Now write it the column way! Start with the ones. When a column makes 10 or more, write the ones digit and **carry the ten** into the next column.',
+          sums: [
+            { a: 341, b: 213, op: '+' },
+            { a: 552, b: 239, op: '+' },
+            { a: 268, b: 145, op: '+' },
+            { a: 374, b: 58, op: '+' },
+          ],
+        },
+        {
+          game: 'runner', title: 'Treasure Dash',
+          intro: 'Your hero runs by itself! Pick the lane with a sum that is **right** – leave the wrong ones behind.',
+          say: 'Check each sum in your head!',
+          prompt: 'Collect the RIGHT sums!',
+          items: [
+            { label: '345 + 30 = 375', ok: true },
+            { label: '250 + 250 = 500', ok: true },
+            { label: '348 + 5 = 353', ok: true },
+            { label: '600 − 200 = 400', ok: true },
+            { label: '345 + 30 = 645', ok: false, why: 'Adding 30 only changes the tens: 375.' },
+            { label: '348 + 5 = 343', ok: false, why: '8 + 5 = 13, so it crosses the ten: 353.' },
+            { label: '600 − 200 = 800', ok: false, why: 'Taking away makes it smaller: 400.' },
+          ],
+          done: 'TREASURE DASH COMPLETE! Your mental maths is shipshape!',
+        },
+      ],
+    },
+
+    {
+      type: 'teach', title: 'Teach Professor Bolt: column subtraction', short: 'Teach', minutes: 6,
+      say: 'Professor Bolt has been learning column subtraction from Captain Carryless. Uh-oh… Fix his mistakes!',
+      robot: { name: 'Professor Bolt', emoji: '🤖' },
+      intro: 'Greetings! I am Professor Bolt. A pirate taught me column subtraction, so I know EVERYTHING. (Arr?)',
+      lines: [
+        { text: 'Always start with the hundreds column.', wrong: 'hundreds', fix: 'ones', options: ['middle'], why: 'Start with the ones, then the tens, then the hundreds.' },
+        { text: 'Put the bigger number on top.', ok: true, why: 'Right – the number you are taking away from goes on top.' },
+        { text: 'If the top digit is too small, exchange one ten for ten ones.', ok: true, why: 'Right – that is exchanging.' },
+        { text: 'In 52 take away 7, the 2 becomes 12 and the 5 becomes 6.', wrongAt: 13, wrong: '6.', fix: '4', options: ['5'], why: 'One ten moves across, so 5 tens become 4 tens.' },
+        { text: 'Exchanging changes the value of the number.', wrong: 'changes', fix: 'keeps', options: ['doubles'], why: '4 tens and 12 ones is still 52 – the value stays the same.' },
+        { text: 'To check 400 take away 150 = 250, add 250 + 150 and see if you get 500.', wrongAt: 17, wrong: '500.', fix: '400', options: ['250'], why: 'Adding back should get you to the number you started with: 400.' },
+        { text: 'Subtraction is the inverse of multiplication.', wrong: 'multiplication', fix: 'addition', options: ['division'], why: 'Subtraction undoes addition.' },
+      ],
+      outro: 'Thank you! My notes are fixed. I am never taking maths lessons from a pirate again!',
+    },
+
+    {
+      type: 'video', title: '3-Digit Column Subtraction', short: 'Video 2', minutes: 6,
+      video: { id: 'V-L9cuCd_kE', title: 'Year 3 Maths: 3-Digit Column Subtraction with Exchanging', channel: 'British Learning Centre', duration: '3:57' },
+      say: 'Column subtraction with exchanging – including the big mistake to avoid! Watch, then answer my questions.',
+      clues: [
+        'What do you do when the top digit is too small?',
+        'What is the common mistake?',
+        'How can you check your answer?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'In column subtraction, what do you do when the top digit is too small (like 5 take away 8)?', options: ['exchange a ten from the next column', 'just swap it to 8 take away 5', 'write a minus number'], answer: 0 },
+        { type: 'mcq', q: 'After exchanging, the 5 ones become…', options: ['15 ones', '50 ones', '6 ones'], answer: 0 },
+        { type: 'type', q: '15 − 8 = ?', answer: ['7'], placeholder: 'a number' },
+        { type: 'mcq', q: 'What is the common mistake the video warns about?', options: ['doing the bottom digit take away the top digit instead of exchanging', 'starting with the ones', 'checking your answer'], answer: 0 },
+        { type: 'mcq', q: 'How does the video say you can check 423 − 158 = 265?', options: ['add 265 + 158 and see if you get 423', 'do it again exactly the same way', 'ask a friend'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Treasure Takeaway', short: 'Game 2', minutes: 10,
+      rounds: [
+        {
+          game: 'placeblocks', title: 'Take away with blocks', break: true,
+          intro: 'Take blocks away from the mat. Not enough ones? Use 🔨 **Break** to swap a ten for 10 ones first!',
+          missions: [
+            { text: 'The captain has 352 coins and spends 127. Start at 352 and take away 1 hundred, 2 tens and 7 ones.', start: 352, make: 225, yes: '352 − 127 = 225. You had to break a ten to take away 7 ones!' },
+          ],
+        },
+        {
+          game: 'columnsum', title: 'Column subtraction',
+          intro: 'Now the column way! Start with the ones. If the top digit is too small, **tap the digit to its left** to exchange.',
+          sums: [
+            { a: 487, b: 235, op: '-' },
+            { a: 352, b: 127, op: '-' },
+            { a: 541, b: 27, op: '-' },
+            { a: 423, b: 158, op: '-' },
+          ],
+        },
+        {
+          game: 'questions', title: 'Treasure problems',
+          intro: 'Solve the captain\'s treasure problems. Estimate first, then work it out!',
+          say: 'Is it adding or taking away?',
+          questions: [
+            { type: 'type', q: 'The ship carries 238 barrels. 145 more are loaded on. How many barrels now?', answer: ['383'], placeholder: 'a number', hint: '8 + 5 = 13 – exchange!' },
+            { type: 'type', q: 'There were 500 parrots on the island. 260 flew away. How many are left?', answer: ['240'], placeholder: 'a number', hint: '500 − 200 = 300, then take away 60.' },
+            { type: 'slider', q: 'Estimate: 397 + 198 is about…', min: 0, max: 1000, step: 100, answer: 600, ticks: 10, endsOnly: true, hideValue: true, hint: 'About 400 + 200.' },
+            { type: 'oddone', q: 'Which sum is the odd one out?', items: ['300 + 200', '450 + 50', '250 + 250', '400 + 200'], answer: 3, why: 'Why is 400 + 200 the odd one out?', reasons: ['It makes 600 – the others make 500', 'It has no tens', 'It is a take-away'], reason: 0 },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
+      say: 'All hands on deck! Do each pirate move.',
+      wiggle: {
+        title: '🏴‍☠️ Pirate Moves!',
+        seconds: 60,
+        moves: [
+          '⚓ Pull up the anchor – heave, heave, heave!',
+          '🔭 Look through your telescope… LAND AHOY!',
+          '🦜 Flap your arms like the captain\'s parrot!',
+          '🌊 Sway side to side like a ship on the waves!',
+          '💰 Dig for treasure – faster, faster!',
+          '🏴‍☠️ Strike a proud pirate pose!',
+        ],
+      },
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: Captain Carryless', short: 'Boss', kind: 'Boss battle', minutes: 7,
+      say: 'CAPTAIN CARRYLESS refuses to carry his tens, and his treasure maps are all wrong! Every right answer fixes one. Go, {name}!',
+      boss: {
+        name: 'Captain Carryless', sprite: CAPTAIN, attack: ['💰', '⚓'], spin: true,
+        lines: {
+          intro: 'Arr! I be Captain Carryless! Carry the ten? Pah! Too heavy! 8 + 5 be 3, says I. Arr-ithmetic is for landlubbers!',
+          hurt: ['Arr! Ye carried the ten!', 'Shiver me timbers – that be correct!', 'Me treasure map be fixin\' itself!', 'Walk the plank? Me? Never!'],
+          taunt: ['Arr! Wrong! Into the brig with ye!', 'Ha! Ye forgot to exchange, matey!', 'Yo ho ho, a wrong answer for me!', 'Arr, that sum be sunk!'],
+          angry: 'ENOUGH! All cannons fire! Arr-mageddon!',
+          dodge: 'Cannon balls away! Dodge me doubloons!',
+          miss: 'Ye dodged every cannon ball?! Ye be a true sea dog!',
+          last: 'Please, matey… just let me keep one wrong answer…',
+          defeat: 'Arrrr… me tens… they be carried at last… glug glug…',
+          win: 'Arr har har! Every sum be wrong and all the treasure be MINE!',
+          stunned: 'Seein\'… stars… and… exchanged tens…',
+          beg: ['Wait! I\'ll carry the ten – I\'ll carry ALL the tens!', 'Mercy, matey! Ye can have me parrot!', 'I\'ll start with the ones from now on, I swear on me hat!'],
+        },
+      },
+      bonus: {
+        title: '⭐ Bonus quest (for a grown-up to help with)',
+        text: 'Want more? Watch Netley\'s "Column Addition Explained – Regrouping Tens" (2 min). Then make up a sum for a grown-up and check their answer with the inverse!',
+        url: 'https://www.youtube.com/watch?v=DTZqgYRoxYU',
+        button: 'Watch the bonus video ▶',
+      },
+      questions: [
+        { type: 'type', q: '453 + 30 = ?', answer: ['483'], placeholder: 'a number', hint: 'Only the tens change.' },
+        { type: 'type', q: '628 + 200 = ?', answer: ['828'], placeholder: 'a number' },
+        { type: 'mcq', q: '268 + 145: the ones make 8 + 5 = 13. What goes in the ones column of the answer?', options: ['3 (and carry 1 ten)', '13', '1'], answer: 0 },
+        { type: 'type', q: '268 + 145 = ?', answer: ['413'], placeholder: 'a number', hint: 'Carry in the ones AND the tens!' },
+        { type: 'type', q: '352 − 127 = ?', answer: ['225'], placeholder: 'a number', hint: 'Exchange a ten: 12 − 7.' },
+        { type: 'mcq', q: 'Captain Carryless writes 46 − 8 = 42 (he did 8 − 6). What should he have done?', options: ['exchange a ten: 16 − 8 = 8, so 38', 'nothing – 42 is right', 'add instead'], answer: 0 },
+        { type: 'slider', q: 'Estimate 502 + 297. Drag the marker.', min: 0, max: 1000, step: 100, answer: 800, ticks: 10, endsOnly: true, hint: 'About 500 + 300.' },
+        { type: 'tf', q: 'You can check 600 − 250 = 350 by adding 350 + 250.', answer: true, explain: '350 + 250 = 600 ✔' },
+        { type: 'gap', q: '348 + 5 = ___', options: ['353', '343', '398'], answer: 0 },
+        { type: 'type', q: '700 − 1 = ?', answer: ['699'], placeholder: 'a number', hint: 'One less than 700.' },
+        { type: 'oddone', q: 'Which sum needs exchanging?', items: ['421 + 352', '614 + 175', '237 + 148', '503 + 290'], answer: 2, why: 'Why does 237 + 148 need exchanging?', reasons: ['7 + 8 = 15 ones – too many for one column', 'It has the biggest hundreds', 'It is a take-away'], reason: 0 },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>

@@ -1310,3 +1310,34 @@ a { color: var(--brand-dark); }
   .pv-h { width: 44px; height: 44px; background-size: 4.4px 4.4px; } .pv-t { width: 11px; height: 44px; background-size: 11px 4.4px; } .pv-o { width: 13px; height: 13px; }
   .pv-take span { font-size: .85rem; }
 }
+
+/* ---------- Column Sums (the written method, with exchanging) ---------- */
+.colsum { text-align: center; }
+.cs-grid { display: inline-grid; grid-template-columns: 40px repeat(calc(var(--n) - 1), 64px); gap: 4px 6px; align-items: center; margin: 10px auto 14px; padding: 12px 18px; background: #fff; border: 3px solid #000; box-shadow: 0 3px 0 #000; color: #000; font-family: Lexend, sans-serif; }
+.cs-head { font-family: var(--pixel); font-size: .8rem; color: #555; }
+.cs-op { font: 700 2.2rem/1 Lexend, sans-serif; }
+.cs-digit { font: 700 2.4rem/1 Lexend, sans-serif; min-height: 52px; display: grid; place-items: center; padding: 0; background: none; border: 0; color: #000; }
+.cs-digit.top:not(:disabled) { cursor: pointer; border-bottom: 3px dotted #b7b7b7; }
+.cs-digit.top:not(:disabled):hover { background: #fffbe0; }
+.cs-digit s { color: #999; text-decoration-thickness: 3px; text-decoration-color: var(--bad, #e53935); }
+.cs-digit sup { font-size: .5em; color: #2b6fd6; margin: 0 1px; }
+.cs-carry { width: 28px; height: 26px; margin: 0 auto; padding: 0; font: 700 1.1rem Lexend, sans-serif; color: #2b6fd6; background: #f3f6fb; border: 2px dashed #9aa3ad; }
+.cs-carry:disabled { visibility: hidden; }
+.cs-carry.want { border: 3px solid #ff8c1a; background: #fff3a8; animation: pop .4s steps(3) infinite alternate; }
+.cs-line { grid-column: 1 / -1; height: 4px; background: #000; }
+.cs-ans { font: 700 2.4rem/1 Lexend, sans-serif; min-height: 56px; display: grid; place-items: center; border: 3px solid transparent; color: #2e9e3e; }
+.cs-ans.now { border-color: #ff8c1a; background: #fff8d6; }
+.cs-keys { display: grid; grid-template-columns: repeat(5, 54px); gap: 6px; justify-content: center; margin: 0 auto 10px; }
+.cs-keys .cw-key { height: 50px; font: 700 1.4rem Lexend, sans-serif; }
+@media (max-width: 480px) { .cs-grid { grid-template-columns: 30px repeat(calc(var(--n) - 1), 50px); padding: 10px; } .cs-digit, .cs-ans { font-size: 2rem; } }
+
+/* ---------- Syllable Drum ---------- */
+.syllables { text-align: center; }
+.sy-word { display: inline-flex; align-items: center; gap: 10px; margin: 6px auto 8px; padding: 8px 16px; font: 700 2rem Lexend, sans-serif; background: #fff; color: #000; border: 3px solid #000; box-shadow: 0 3px 0 #000; }
+.sy-emoji { font-size: 2.2rem; }
+.sy-drum { display: block; width: 130px; height: 130px; margin: 12px auto 6px; font-size: 80px; line-height: 1; background: #ffd43b; border: 4px solid #000; border-radius: 50%; box-shadow: inset -6px -6px 0 rgba(0,0,0,.2), 0 6px 0 #000; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+.sy-drum.hit { animation: syhit .18s steps(2); }
+@keyframes syhit { 50% { transform: translateY(5px) scale(.94); box-shadow: inset -6px -6px 0 rgba(0,0,0,.2), 0 1px 0 #000; } }
+.sy-dots { display: flex; justify-content: center; gap: 10px; min-height: 26px; margin: 8px auto 12px; }
+.sy-dots i { width: 22px; height: 22px; border: 3px solid #000; background: #fff; }
+.sy-dots i.on { background: #2e9e3e; }

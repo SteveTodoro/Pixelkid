@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Poetry Playground</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <script src="../shared/pixel.js"></script>
+  <script src="../shared/pixel-icons.js"></script>
+  <script src="../shared/avatar.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// ---------- blocky pictures for this lesson ----------
+// an open poem book with music notes floating up
+const POEMBOOK = Pixel.svg([
+  '.......y.........y..',
+  '......yy....y...yy..',
+  '......y....yy...y...',
+  '....yyy....y..yyy...',
+  '....yy...yyy..yy....',
+  'kkkkkkkkkk.kkkkkkkkk',
+  'kwwwwwwwwk.kwwwwwwwk',
+  'kwggggwwwkkkwgggggwk',
+  'kwwwwwwwwkbkwwwwwwwk',
+  'kwgggggwwkbkwggggwwk',
+  'kwwwwwwwwkbkwwwwwwwk',
+  'kwggggggwkbkwgggggwk',
+  'kwwwwwwwwkbkwwwwwwwk',
+  'kkkkkkkkkkkkkkkkkkkk',
+], { k: '#1b1b1b', w: '#fff8e6', g: '#9aa3ad', b: '#8e5cff', y: '#ffd43b' });
+
+// the boss: Prosey, a grey troll who turns every poem into dull, plain sentences
+const PROSEY = Pixel.svg([
+  '...kkkkkkkk...',
+  '..kggggggggk..',
+  '.kggwwggwwggk.',
+  '.kggkwggkwggk.',
+  '.kggggggggggk.',
+  'kkggkkkkkkggkk',
+  'kgkgggggggggkg',
+  '.kgkkkkkkkkgk.',
+  '..kggggggggk..',
+  '.kgggkkkkgggk.',
+  '.kggk....kggk.',
+  '.kkk......kkk.',
+], { k: '#1b1b1b', g: '#8e9aa8', w: '#ffffff' });
+
+// ---------- the lesson ----------
+window.LESSON = {
+  id: 'english-poetry',
+  subject: 'english',
+  title: 'Poetry Playground',
+  emoji: '🎵',
+  home: '../index.html',
+  finishAch: 'speller',
+  mascot: {
+    name: 'Quill the Wizard',
+    sprite: Pixel.sprites.wizard,
+    praise: ['Poetry in motion!', 'Rhyme-tastic!', 'Word wizardry!', 'Critical hit!', 'You\'re a poet and you know it!', 'Nailed it!', 'Spell-binding!'],
+    oops: ['Oops! Say it out loud.', 'Not quite – listen to the sounds.', 'Hmm, think again!', 'So close! One more try.'],
+  },
+  glossary: {
+    rhyme: { emoji: '🔔', def: 'Words rhyme when they end with the same sound: cat, hat, flat.' },
+    rhythm: { emoji: '🥁', def: 'The beat of a poem, like the beat in a song.' },
+    syllable: { emoji: '👏', def: 'A beat in a word. "Butterfly" has 3 syllables: but-ter-fly.' },
+    verse: { emoji: '📜', def: 'A group of lines in a poem, with a gap before the next group.' },
+    simile: { emoji: '🦁', def: 'Comparing two things using "like" or "as": as brave as a lion.' },
+    onomatopoeia: { emoji: '💥', def: 'A word that sounds like the noise it describes: buzz, crash, sizzle.' },
+    alliteration: { emoji: '🐍', def: 'Words close together that start with the same sound: silly snakes slither.' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'Poetry Playground', short: 'Start', minutes: 1,
+      pic: POEMBOOK,
+      hello: 'Welcome to the snowy WORD KINGDOM! Prosey the Plain-Word Troll hates poems. He is turning every poem in the Kingdom into dull, boring sentences. The end. Yawn.',
+      question: 'What makes a poem different from a story?',
+      intro: 'Warm up, read, watch, drum the beats, crack the case of the missing line, build a **snowman** with your spelling – then stop Prosey!',
+      nameLabel: 'Player name:',
+    },
+
+    {
+      type: 'review', title: 'Warm-up', short: 'Warm-up', minutes: 3,
+      from: { title: 'Rhymes and songs you already know', emoji: '🎵' },
+      facts: [
+        'Nursery rhymes and songs have a beat you can clap along to.',
+        'Rhyming words end with the same sound: star and are, sun and fun.',
+        'Some words sound like noises: moo, woof, tick-tock.',
+        'Poems and songs are written in short lines.',
+      ],
+      questions: [
+        { type: 'gap', q: 'Twinkle, twinkle, little star, how I wonder what you ___.', options: ['are', 'be', 'see'], answer: 0, hint: 'Which word rhymes with star?' },
+        { type: 'oddone', q: 'Which word does NOT rhyme with the others?', items: ['cat', 'hat', 'mat', 'cap'], answer: 3, why: 'Why is cap the odd one out?', reasons: ['It ends with a different sound', 'It is the longest word', 'It is not a real word'], reason: 0 },
+        { type: 'mcq', q: 'Which word sounds like the noise a clock makes?', options: ['tick-tock', 'clock', 'time'], answer: 0 },
+        { type: 'type', q: 'Write a word that rhymes with "sun".', answer: ['fun', 'run', 'bun', 'done', 'one', 'won', 'none', 'ton', 'spun', 'nun', 'gun', 'stun', 'shun', 'son'], placeholder: 'a rhyming word', hint: 'Change the first sound: s-un → f-un?' },
+      ],
+    },
+
+    {
+      type: 'read', title: 'What makes a poem?', short: 'Read 1', minutes: 6,
+      say: 'Read each page carefully – the checks test if you really understood. Tap the yellow words for a 💎.',
+      cards: [
+        {
+          title: 'Playing with words', pic: POEMBOOK,
+          text: [
+            'Poems are written in short lines. A group of lines is called a [[verse]].',
+            'Poets play with the sound of words: their beat, their [[rhyme]] and the noises they make.',
+          ],
+          check: { q: 'A poem has three groups of four lines, with a gap after each group. How many verses does it have?', options: ['3', '4', '12'], answer: 0, hint: 'Each GROUP of lines is one verse.' },
+        },
+        {
+          title: 'Rhyme', pic: '🌙 🪁',
+          text: [
+            'Words rhyme when they end with the same sound: night and kite, bear and chair.',
+            'Listen, don\'t look! Night and kite rhyme even though they are spelt differently.',
+          ],
+          check: { type: 'oddone', q: 'Which word does NOT rhyme?', items: ['light', 'kite', 'bite', 'late'], answer: 3, why: 'Why is late the odd one out?', reasons: ['It ends with a different sound', 'It has no letter i', 'It is a doing word'], reason: 0, hint: 'Say them out loud.' },
+        },
+        {
+          title: 'Rhythm and syllables', pic: '🥁',
+          text: [
+            'Poems have a [[rhythm]] – a beat you can clap. Each beat in a word is a [[syllable]].',
+            'cat (1 beat) · mon-key (2 beats) · el-e-phant (3 beats)',
+          ],
+          check: { type: 'type', q: 'Clap it: how many syllables in "dinosaur"?', answer: ['3', 'three'], placeholder: 'a number', hint: 'di - no - saur' },
+        },
+        {
+          title: 'Sound words', pic: '💥 🐝',
+          text: [
+            '[[onomatopoeia]] means words that sound like their noise: buzz, crash, sizzle, splash.',
+            '[[alliteration]] means words close together starting with the same sound: six slippery snails.',
+          ],
+          check: { q: 'Which line uses alliteration?', options: ['Bouncy brown bears bounce on beds.', 'The bear went to sleep.', 'Buzz went the bee.'], answer: 0, hint: 'Look at the first sound of each word.' },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'What Is Onomatopoeia?', short: 'Video 1', minutes: 6,
+      video: { id: 'go_ld7lOpGA', title: 'What Is An Onomatopoeia? | Onomatopoeic Words for Kids', channel: 'Tutoring Hour', duration: '3:42' },
+      say: 'Trevor\'s toys come to life at night – and they are NOISY! Listen for the sound words. Then answer my questions.',
+      clues: [
+        'What sound word shows Trevor is asleep?',
+        'What sound did the toy box make?',
+        'Which words show the cars racing?',
+        'How did the bus stop?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'Which sound word shows that Trevor was asleep?', options: ['Zzz', 'Bam', 'Honk'], answer: 0 },
+        { type: 'mcq', q: 'The toy box fell over with a loud…', options: ['thud', 'whisper', 'tweet'], answer: 0 },
+        { type: 'type', q: 'Which sound word did the racing cars make? (It starts with v.)', answer: ['vroom', 'vroom vroom', 'vrooom'], placeholder: 'a sound word', hint: 'v-r-oo-m' },
+        { type: 'mcq', q: 'The bus came to a stop with a loud…', options: ['screech', 'boing', 'zoom'], answer: 0 },
+        { type: 'tf', q: 'Onomatopoeic words sound like the noise they describe.', answer: true },
+        { type: 'mcq', q: 'What hit Trevor on the face at the end?', options: ['the ball – BANG!', 'the toy plane', 'the teddy bear'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Rhythm & Rhyme', short: 'Game 1', minutes: 10,
+      rounds: [
+        {
+          game: 'syllables', title: 'Syllable Drum',
+          intro: 'Say each word out loud and **tap the drum once for every beat**. Then check!',
+          items: [
+            { word: 'snow', parts: ['snow'], emoji: '❄️' },
+            { word: 'penguin', parts: ['pen', 'guin'], emoji: '🐧' },
+            { word: 'snowman', parts: ['snow', 'man'], emoji: '⛄' },
+            { word: 'butterfly', parts: ['but', 'ter', 'fly'], emoji: '🦋' },
+            { word: 'caterpillar', parts: ['cat', 'er', 'pil', 'lar'], emoji: '🐛' },
+            { word: 'Jack and Jill went up the hill', parts: ['Jack', 'and', 'Jill', 'went', 'up', 'the', 'hill'] },
+          ],
+        },
+        {
+          game: 'match', title: 'Rhyme time',
+          intro: 'Match each word to the word it rhymes with. **Listen** to the end sound, not the spelling!',
+          say: 'Say both words out loud. Do they end the same?',
+          hint: 'Say them aloud – night and kite rhyme even though they are spelt differently.',
+          pairs: [
+            { a: '🌙 night', b: 'kite' },
+            { a: '🐻 bear', b: 'chair' },
+            { a: '❄️ snow', b: 'go' },
+            { a: '🐝 bee', b: 'tree' },
+            { a: '👑 crown', b: 'down' },
+            { a: '🐟 fish', b: 'dish' },
+          ],
+        },
+        {
+          game: 'runner', title: 'Sound Word Sprint',
+          intro: 'Your hero runs by itself! Pick the lane with a **sound word** (onomatopoeia) – leave the others behind.',
+          say: 'Does the word SOUND like its noise?',
+          prompt: 'Collect the sound words!',
+          items: [
+            { label: 'buzz', ok: true },
+            { label: 'crash', ok: true },
+            { label: 'sizzle', ok: true },
+            { label: 'splash', ok: true },
+            { label: 'pop', ok: true },
+            { label: 'table', ok: false, why: 'A table doesn\'t make that sound – it\'s a naming word.' },
+            { label: 'happy', ok: false, why: 'happy is a describing word, not a noise.' },
+            { label: 'garden', ok: false, why: 'garden is a place, not a sound.' },
+          ],
+          done: 'SPRINT COMPLETE! WHOOSH – you know your sound words!',
+        },
+      ],
+    },
+
+    {
+      type: 'case', title: 'The Case of the Missing Last Line', short: 'Case', minutes: 7,
+      say: 'Prosey has stolen the last line of a poem! Answer each question to uncover a clue. Then work out which line is the real one.',
+      mystery: [
+        'This poem was pinned up in the castle, until Prosey tore off its last line:',
+        '**The moon is a lantern, round and bright,** / **It hangs in my window every night.** / **It watches the owls as they swoop and fly,** / **…?**',
+        'Three animals say they found the missing line. 🦊 **Fox:** "And twinkles like a diamond in the sky." 🐻 **Bear:** "And then it goes away in the morning." 🐰 **Rabbit:** "It is like a big cheese, round and yellow."',
+      ],
+      clues: [
+        { icon: '🔔', clue: 'In this poem, the lines rhyme in pairs: bright and night rhyme, so the last line must rhyme with fly.',
+          q: { type: 'type', q: 'Write a word that rhymes with "fly".', answer: ['sky', 'high', 'my', 'by', 'try', 'cry', 'pie', 'eye', 'why', 'buy', 'tie', 'dry', 'shy', 'spy', 'bye', 'lie', 'die', 'sly', 'fry', 'goodbye', 'hi', 'sigh'], placeholder: 'a rhyming word', hint: 'Something up above… s _ _' } },
+        { icon: '🥁', clue: 'Each line has about the same number of beats, so the poem has a steady rhythm.',
+          q: { q: 'Which line has a beat that matches "It watches the owls as they swoop and fly"?', options: ['And sails through the dark like a ship in the sky', 'Moon', 'And then the moon very slowly went down behind all the houses and the trees'], answer: 0, hint: 'Clap them. Which one is about the same length?' } },
+        { icon: '🦁', clue: 'A simile compares two things using "like" or "as". The poet loves similes.',
+          q: { q: 'Which of these is a simile?', options: ['twinkles like a diamond', 'the moon is bright', 'it goes away'], answer: 0, hint: 'Look for "like" or "as".' } },
+        { icon: '🔁', clue: 'Every line in the poem is about what the moon does or looks like.',
+          q: { q: 'What is the whole poem about?', options: ['the moon at night', 'owls hunting for food', 'a lantern shop'], answer: 0 } },
+      ],
+      solve: {
+        q: 'Which animal found the real last line?',
+        options: ['🦊 Fox – "sky" rhymes with "fly", it has the same beat, and it uses a simile', '🐻 Bear – "morning" is when the moon goes', '🐰 Rabbit – the moon really is round and yellow'],
+        answer: 0, hint: 'Which line rhymes with fly?',
+        explain: 'Only Fox\'s line rhymes with "fly" and keeps the beat. Bear\'s and Rabbit\'s lines don\'t rhyme at all.',
+      },
+      closed: 'Case closed! The poem is pinned back up, whole again – and Prosey is fuming that it still rhymes.',
+    },
+
+    {
+      type: 'video', title: 'Similes for Kids', short: 'Video 2', minutes: 5,
+      video: { id: 'CEwJ6QXbpJA', title: 'Similes for Kids', channel: 'Learn and Play Online!', duration: '3:45' },
+      say: 'Similes help readers see a picture in their mind. Watch, then answer my questions.',
+      clues: [
+        'Which two words make a simile?',
+        'How quiet was Amy?',
+        'How did Tim swim?',
+        'How brave was Pam?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'Similes compare two different things using the words…', options: ['like or as', 'and or but', 'the or a'], answer: 0 },
+        { type: 'mcq', q: 'Amy was painting at school. She was as quiet as a…', options: ['mouse', 'lion', 'bee'], answer: 0 },
+        { type: 'mcq', q: 'It was Tim\'s first swimming lesson, but he swam like a…', options: ['fish in the sea', 'rock', 'cat'], answer: 0 },
+        { type: 'mcq', q: 'Why is Dad "as busy as a bee"?', options: ['he worked really hard all day', 'he likes honey', 'he was buzzing'], answer: 0 },
+        { type: 'type', q: 'Pam felt as brave as a ___ walking through the forest.', answer: ['lion', 'a lion'], placeholder: 'an animal', hint: 'The king of the jungle!' },
+        { type: 'tf', q: 'Similes help readers make a picture in their minds.', answer: true },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Poet\'s Workshop', short: 'Game 2', minutes: 8,
+      rounds: [
+        {
+          game: 'fixit', title: 'Fix the rhyme',
+          intro: 'Prosey swapped the last word of each rhyme for a dull one! Tap the word that spoils the rhyme, then tap the word that fixes it.',
+          say: 'Read it aloud. Which last word should rhyme?',
+          noOk: true,
+          sentences: [
+            { text: 'The dog ran after the ball, and jumped right over the fence.', wrong: 'fence.', fix: 'wall', options: ['gate'], why: 'ball and wall rhyme!' },
+            { text: 'I like to play out in the snow, and watch the frosty rivers flow.', ok: true, why: 'snow and flow already rhyme!' },
+            { text: 'A spider spun a silver web, then sat inside and went to sleep.', wrong: 'sleep.', fix: 'bed', options: ['nap'], why: 'web and bed nearly rhyme – close enough for a poet!' },
+            { text: 'The little cat sat on a mat, and wore a fancy cap.', wrong: 'cap.', fix: 'hat', options: ['coat'], why: 'cat, mat and hat all rhyme.' },
+          ],
+        },
+        {
+          game: 'questions', title: 'Make a simile',
+          intro: 'Build your own similes and sound words. Tap the tiles in order!',
+          say: 'like or as… what does it remind you of?',
+          questions: [
+            { type: 'build', q: 'Build a simile for a very cold day.', answer: ['as', 'cold', 'as', 'ice'], extra: ['hot', 'fire'], join: ' ', hint: 'What is the coldest thing you know?' },
+            { type: 'build', q: 'Build a simile for someone who runs very fast.', answer: ['ran', 'like', 'the', 'wind'], extra: ['snail', 'slow'], join: ' ', hint: 'Something that whooshes past.' },
+            { type: 'type', q: 'Finish the alliteration: "Silly snakes ___ slowly." Use a word starting with s.', answer: ['slither', 'slide', 'sleep', 'sing', 'swim', 'slip', 'sneak', 'sway', 'sniff', 'sit', 'skip', 'smile', 'sneeze', 'spin', 'slurp', 'snooze', 'stomp', 'shuffle', 'slink', 'swing'], placeholder: 'an s word', hint: 'What do snakes do?' },
+            { type: 'oddone', q: 'Which one is NOT onomatopoeia?', items: ['crunch', 'whoosh', 'bang', 'jump'], answer: 3, why: 'Why is jump the odd one out?', reasons: ['It doesn\'t sound like a noise', 'It is too short', 'It has a j'], reason: 0 },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'game', title: 'The Spell Test: Build a Snowman!', short: 'Spell test', icon: '🪄', kind: 'Spelling test', minutes: 10,
+      rounds: [
+        {
+          game: 'spelltest', mode: 'fix', title: 'Muddled Poem Words', scene: 'snowman', prize: 'the test snowman',
+          intro: 'Prosey has muddled the poem words! Write each red word correctly. Every word packs more snow onto the snowman.',
+          say: 'Uh-oh, Prosey got here! Write the red word correctly.',
+          words: [
+            { word: 'poem', wrong: 'pome', sentence: 'I wrote a ___ about snow.', hint: 'p-o-e-m: the o comes before the e.' },
+            { word: 'rhyme', wrong: 'ryme', sentence: 'Cat and hat ___.', hint: 'There is a silent h after the r: rh-y-me.' },
+            { word: 'verse', wrong: 'virse', sentence: 'The poem has three ___s.', hint: 'It has "er" in the middle, like her.' },
+            { word: 'simile', wrong: 'similee', sentence: 'As cold as ice is a ___.', hint: 'It ends in -ile: sim-i-le.' },
+            { word: 'splash', wrong: 'splach', sentence: 'The frog landed with a ___.', hint: 'It ends in sh.' },
+          ],
+        },
+        {
+          game: 'spelltest', mode: 'listen', title: 'The Real Spell Test', scene: 'snowman', prize: 'your snowman',
+          intro: 'The real test! Press 🔊 to hear each word in a sentence, then spell it. Every word adds to your snowman – finish it to put his hat on!',
+          say: 'Listen carefully… then type the word!',
+          words: [
+            { word: 'poem', sentence: 'She read a ___ to the class.', clue: 'a piece of writing with lines', hint: 'p-o-e-m' },
+            { word: 'poet', sentence: 'The ___ wrote about the sea.', clue: 'a person who writes poems', hint: 'p-o-e-t' },
+            { word: 'rhyme', sentence: 'Moon and spoon ___.', clue: 'end with the same sound', hint: 'Silent h: rh-y-me.' },
+            { word: 'rhythm', sentence: 'Clap along to the ___.', clue: 'the beat', hint: 'rh-y-th-m – no vowels except y!' },
+            { word: 'verse', sentence: 'Read the first ___ again.', clue: 'a group of lines', hint: 'v-er-se' },
+            { word: 'simile', sentence: 'As brave as a lion is a ___.', clue: 'a comparison using like or as', hint: 'sim-i-le' },
+            { word: 'syllable', sentence: 'Cat has one ___.', clue: 'a beat in a word', hint: 'syl-la-ble: double l!' },
+            { word: 'splash', sentence: 'The stone fell in with a ___.', clue: 'a watery noise', hint: 'spl-a-sh' },
+            { word: 'crunch', sentence: 'The snow went ___ under my boots.', clue: 'a crushing noise', hint: 'cr-u-nch' },
+            { word: 'buzz', sentence: 'The bees ___ round the flowers.', clue: 'a bee noise', hint: 'Double z!' },
+          ],
+        },
+        {
+          game: 'invaders', title: 'Letter Blaster',
+          intro: 'Bonus arcade round! Read the clue at the top, then **shoot the letters in order** to spell the word. Press 🔊 to hear it.',
+          say: 'Shoot the letters IN ORDER!',
+          waves: [
+            { spell: 'buzz', clue: 'The noise a bee makes', decoys: 'sa' },
+            { spell: 'poem', clue: 'A piece of writing in lines', decoys: 'au' },
+            { spell: 'rhyme', clue: 'Cat and hat do this (silent h!)', decoys: 'io' },
+          ],
+          done: 'LETTER BLASTER CLEAR! Your spelling is pure poetry!',
+        },
+      ],
+    },
+
+    {
+      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
+      say: 'Perform the poem! Do the actions as you say each line.',
+      wiggle: {
+        title: '🎤 Poem Actions!',
+        seconds: 60,
+        moves: [
+          '❄️ "Snowflakes falling, soft and slow" – flutter your fingers down!',
+          '⛄ "Roll a snowman, row by row" – roll your arms round and round!',
+          '🐧 "Penguins waddle, to and fro" – waddle on the spot!',
+          '💨 "Hear the wild wind WHOOSH and blow" – sway and whoosh!',
+          '🥶 "Brrr! My nose is cold, you know" – shiver all over!',
+          '🌟 "Take a bow – it\'s time to go!" – take a big bow!',
+        ],
+      },
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: Prosey the Plain-Word Troll', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      say: 'PROSEY THE PLAIN-WORD TROLL is turning every poem into dull sentences! Every right answer brings a poem back to life. Go, {name}!',
+      boss: {
+        name: 'Prosey', sprite: PROSEY, attack: ['💤', '📃'], spin: true,
+        lines: {
+          intro: 'I am Prosey. I do not like poems. Rhymes are silly. Beats are noisy. All words should be plain. The end.',
+          hurt: ['Ow. That was quite… rhythmic.', 'Stop rhyming! It makes my ears ring!', 'No similes! I am NOT as grumpy as a bear!', 'That word went BANG! I hate sound words!'],
+          taunt: ['Wrong. Boring. Plain. Good.', 'Ha. That did not rhyme. Excellent.', 'Your poem is now a shopping list.', 'Yawn. Yawn. Yawn.'],
+          angry: 'NOW I AM CROSS! CROSS AS A… NO! I WILL NOT USE A SIMILE!',
+          dodge: 'Plain words incoming! Dodge my dull paperwork!',
+          miss: 'You dodged them all? That is… quite… exciting. I do not like it.',
+          last: 'Please… no more rhymes… my troll toes are tapping to the beat…',
+          defeat: 'Nooo… I feel a poem coming on… "Roses are red, trolls are grey"… oh dear…',
+          win: 'Every poem is plain now. No rhymes. No beats. Perfectly boring. The end.',
+          stunned: 'My head… is going… boom… boom… BOOM-tish…',
+          beg: ['Wait! I\'ll write a limerick! A short one!', 'Mercy! I\'ll let ONE word rhyme… with "troll"… um… "roll"!', 'I promise to clap along to every poem!'],
+        },
+      },
+      bonus: {
+        title: '⭐ Bonus quest (for a grown-up to help with)',
+        text: 'Want more? Watch Scratch Garden\'s "Rhyming Words" (5 min). Then write a 4-line poem together about snow – make lines 2 and 4 rhyme, and perform it with actions!',
+        url: 'https://www.youtube.com/watch?v=4PW3_LErVZk',
+        button: 'Watch the bonus video ▶',
+      },
+      questions: [
+        { type: 'mcq', q: 'Which pair of words rhymes?', options: ['night and kite', 'night and day', 'kite and kitten'], answer: 0 },
+        { type: 'type', q: 'How many syllables in "elephant"?', answer: ['3', 'three'], placeholder: 'a number', hint: 'el - e - phant' },
+        { type: 'mcq', q: 'Which of these is a simile?', options: ['as cold as ice', 'the ice was cold', 'ice and snow'], answer: 0 },
+        { type: 'oddone', q: 'Which word is NOT onomatopoeia?', items: ['sizzle', 'pop', 'crash', 'sleep'], answer: 3, why: 'Why is sleep the odd one out?', reasons: ['It doesn\'t sound like a noise', 'It has two e\'s', 'It is a long word'], reason: 0 },
+        { type: 'mcq', q: 'A group of lines in a poem is called a…', options: ['verse', 'chapter', 'paragraph'], answer: 0 },
+        { type: 'gap', q: 'Prosey\'s poem says: "The big brown bear ___ by the bins." Which word keeps the alliteration?', options: ['bounced', 'walked', 'ran'], answer: 0 },
+        { type: 'tf', q: 'Words must be spelt the same at the end to rhyme.', answer: false, explain: 'It\'s the SOUND that counts: night and kite rhyme.' },
+        { type: 'build', q: 'Build a simile: the snowman was very white.', answer: ['as', 'white', 'as', 'snow'], extra: ['mud', 'black'], join: ' ' },
+        { type: 'type', q: 'Write a word that rhymes with "snow".', answer: ['go', 'blow', 'flow', 'grow', 'slow', 'show', 'throw', 'know', 'low', 'row', 'toe', 'no', 'so', 'glow', 'crow', 'bow', 'mow', 'though', 'below', 'yo-yo', 'hello', 'oh'], placeholder: 'a rhyming word' },
+        { type: 'mcq', q: 'Why do poets use sound words like "crunch" and "whoosh"?', options: ['so the reader can almost hear the poem', 'to make the poem longer', 'because they are easy to spell'], answer: 0 },
+        { type: 'mcq', q: 'Which word has 2 syllables?', options: ['penguin', 'snow', 'caterpillar'], answer: 0, hint: 'Clap them!' },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>

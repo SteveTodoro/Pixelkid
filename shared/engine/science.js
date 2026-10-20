@@ -1,4 +1,4 @@
-/* Pixelkid lesson engine – simulated science experiments: Force Lab, Ramp Lab, Seed Garden, Wind Test, Bee Flight and Rock Lab.
+/* Pixelkid lesson engine – simulated science experiments: Force Lab, Ramp Lab, Seed Garden, Wind Test, Bee Flight, Rock Lab and Fossil Dig.
  * One part of shared/engine.js, which loads it only when a lesson uses it. E is the engine's shared helpers
  * (E.state and E.stageCard are live). See the top of shared/engine.js for how the parts fit together.
  */
@@ -1040,6 +1040,137 @@ PixelkidEngine.part('science', E => {
       pick(id) { rock = rocks.find(rk => rk.id === id); scratches = []; wet = 0; sync(); },
       tool(t) { tool = t; sync(); }, run,
       get busy() { return busy; }, get mission() { return missions.i; },
+    };
+    root._stop = stopLoop;
+    missions.next();
+    return root;
+  };
+
+  // ===== Fossil Dig: brush away the rubble on a cliff of rock layers to uncover fossils =====
+  // r.layers: [{ rock: 'soil' | 'sandstone' | 'mudstone' | 'limestone' | 'chalk' | 'shale', age: 'about 10 million years ago' }] – top to bottom
+  //   (the top layer is the newest; each layer below is older).
+  // r.missions: [{ text, fossils: [{ kind: 'ammonite' | 'trilobite' | 'fern' | 'fish' | 'tooth' | 'footprint' | 'bone' | 'shell', layer, x (0–1) }],
+  //   need: [kinds to find], yes, ask: [questions] }]
+  // Drag (or rub) on the cliff to brush the loose rubble away. A fossil counts as found once most of it is showing:
+  // it goes in the finds table with its layer and how old that layer is.
+  const ROCK_COL = { soil: ['#7a5230', '#5e3d22'], sandstone: ['#e3b872', '#c4964f'], mudstone: ['#9c8a78', '#7a6a5a'], limestone: ['#ddd6c2', '#bdb49c'],
+    chalk: ['#f4f1e8', '#d9d4c4'], shale: ['#6c7380', '#525866'] };
+  const FOSSIL_ART = { // little pixel fossils (k: dark stone, a: pale fossil, b: mid)
+    ammonite: ['..kkkkkk..', '.kaaaaaak.', 'kaakkkkaak', 'kakbbbbkak', 'kakbkkbkak', 'kakbkabkak', 'kakbbbbkak', 'kaakkkkaak', '.kaaaaaak.', '..kkkkkk..'],
+    trilobite: ['...kkkk...', '..kaaaak..', '.kaakkaak.', 'kakkaakkak', 'kakaaaakak', 'kakkaakkak', 'kakaaaakak', 'kakkaakkak', '.kakaakak.', '..kkaakk..', '...kkkk...'],
+    fern: ['....k.....', '...kak....', '.k.kak.k..', 'kak.ka.kak', '.kakaakak.', '..k.kak.k.', '.kakaakak.', 'kak.ka.kak', '.k.kak.k..', '....ak....', '....ak....', '....kk....'],
+    fish: ['..........', '.kk....kk.', 'kaak..kaak', 'kaakkkkaak', 'kabababaak', 'kaakkkkaak', 'kaak..kaak', '.kk....kk.'],
+    tooth: ['kkkkkkkk', 'kaaaaaak', 'kaaaaaak', '.kaaaak.', '.kaaaak.', '..kaak..', '..kaak..', '...kk...'],
+    footprint: ['k...k...k', 'ak.kak.ka', 'kak.a.kak', '.kakakak.', '..kaaak..', '..kaaak..', '...kak...', '....k....'],
+    bone: ['kk......kk', 'kak....kak', '.kakkkkak.', '..kaaaak..', '.kakkkkak.', 'kak....kak', 'kk......kk'],
+    shell: ['...kkkk...', '..kababk..', '.kabababk.', 'kabababak.', 'kabababak.', '.kababak..', '..kkkkk...'],
+  };
+  const FOSSIL_NAME = { ammonite: '🐚 Ammonite', trilobite: '🪲 Trilobite', fern: '🌿 Fern leaf', fish: '🐟 Fish', tooth: '🦈 Shark tooth', footprint: '🦖 Dinosaur footprint', bone: '🦴 Dinosaur bone', shell: '🐚 Sea shell' };
+  GAMES.fossildig = function (r, key, done) {
+    const W = 640, H = 360, TOP = 34, CELL = 8, FS = 4; // FS: fossil pixel size
+    const { cv, ctx } = arcadeCanvas(W, H);
+    const layers = r.layers, LH = (H - TOP) / layers.length;
+    const cover = document.createElement('canvas'); cover.width = W; cover.height = H;
+    const cg = cover.getContext('2d');
+    let fossils = [], cleared = new Set(), found = new Set(), brushing = false, last = null, time = 0, flash = 0, runN = 0, won = false;
+    const table = resultsTable(r.caption || '🦴 Our fossil finds', ['Find', 'Fossil', 'Rock layer', 'How old?']);
+    const missions = missionRunner(r, key, done, m => setup(m));
+    const rand = (x, y) => { const n = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453; return n - Math.floor(n); };
+    function setup(m) {
+      cleared = new Set(); found = new Set(); flash = 0; won = false;
+      fossils = (m.fossils || []).map(f => {
+        const art = FOSSIL_ART[f.kind] || FOSSIL_ART.shell, w = art[0].length * FS, h = art.length * FS;
+        const x = Math.round((40 + f.x * (W - 80 - w)) / CELL) * CELL, y = Math.round((TOP + (f.layer + 0.5) * LH - h / 2) / CELL) * CELL;
+        return Object.assign({}, f, { art, x, y, w, h });
+      });
+      // the rubble: rough, darker bits of each layer's rock over everything
+      cg.clearRect(0, 0, W, H);
+      for (let y = TOP; y < H; y += CELL) {
+        const L = layers[Math.min(layers.length - 1, Math.floor((y - TOP) / LH))], col = ROCK_COL[L.rock] || ROCK_COL.sandstone;
+        for (let x = 0; x < W; x += CELL) {
+          const n = rand(x, y);
+          cg.fillStyle = n < 0.5 ? col[1] : n < 0.8 ? col[0] : 'rgba(0,0,0,.35)'; cg.fillRect(x, y, CELL, CELL);
+          if (n > 0.9) { cg.fillStyle = 'rgba(255,255,255,.25)'; cg.fillRect(x, y, CELL / 2, CELL / 2); }
+        }
+      }
+      sync();
+    }
+    const cellKey = (x, y) => (Math.floor(x / CELL)) + ',' + (Math.floor(y / CELL));
+    function brush(x, y) {
+      const R = 22;
+      for (let yy = y - R; yy <= y + R; yy += CELL) for (let xx = x - R; xx <= x + R; xx += CELL) {
+        if (yy < TOP || yy >= H || xx < 0 || xx >= W || Math.hypot(xx - x, yy - y) > R) continue;
+        const k = cellKey(xx, yy);
+        if (cleared.has(k)) continue;
+        cleared.add(k);
+        cg.clearRect(Math.floor(xx / CELL) * CELL, Math.floor(yy / CELL) * CELL, CELL, CELL);
+      }
+      check();
+    }
+    function shown(f) { // how much of a fossil is uncovered
+      let n = 0, all = 0;
+      for (let y = f.y; y < f.y + f.h; y += CELL) for (let x = f.x; x < f.x + f.w; x += CELL) { all++; if (cleared.has(cellKey(x, y))) n++; }
+      return n / all;
+    }
+    function check() {
+      fossils.forEach((f, i) => {
+        if (found.has(i) || shown(f) < 0.65) return;
+        found.add(i); runN++; flash = 1; sfx.good();
+        const L = layers[f.layer];
+        table.add([runN, FOSSIL_NAME[f.kind] || f.kind, `${L.rock[0].toUpperCase() + L.rock.slice(1)} (layer ${f.layer + 1} from the top)`, L.age || '']);
+        say(`You found ${(FOSSIL_NAME[f.kind] || f.kind).replace(/^\S+\s/, 'a ').toLowerCase()} in the ${L.rock}! ${L.age ? 'That layer formed ' + L.age + '.' : ''}`);
+      });
+      const m = missions.m;
+      if (m && !won) {
+        const want = m.need || fossils.map(f => f.kind);
+        if (want.every(k => fossils.some((f, i) => f.kind === k && found.has(i)))) { won = true; setTimeout(() => missions.win(cv), 700); }
+      }
+    }
+    cv.addEventListener('pointerdown', e => { e.preventDefault(); try { cv.setPointerCapture(e.pointerId); } catch (_) { /* ignore */ } brushing = true; last = toGame(cv, W, H, e); brush(...last); sfx.tap(); });
+    cv.addEventListener('pointermove', e => {
+      if (!brushing) return;
+      const p = toGame(cv, W, H, e), d = Math.hypot(p[0] - last[0], p[1] - last[1]);
+      for (let t = CELL; t < d; t += CELL) brush(last[0] + (p[0] - last[0]) * t / d, last[1] + (p[1] - last[1]) * t / d);
+      brush(...p); last = p;
+    });
+    const stop = () => { brushing = false; };
+    cv.addEventListener('pointerup', stop); cv.addEventListener('pointercancel', stop);
+
+    function step(dt) { time += dt; flash = Math.max(0, flash - dt); draw(); }
+    function draw() {
+      // the sky and grass on top, then the layers of rock (smooth where brushed), the fossils, and the rubble over them
+      ctx.fillStyle = '#9fd8ff'; ctx.fillRect(0, 0, W, TOP); ctx.fillStyle = '#5bbf3a'; ctx.fillRect(0, TOP - 8, W, 8);
+      layers.forEach((L, i) => {
+        const col = ROCK_COL[L.rock] || ROCK_COL.sandstone, y = TOP + i * LH;
+        ctx.fillStyle = col[0]; ctx.fillRect(0, y, W, LH);
+        ctx.fillStyle = 'rgba(0,0,0,.08)'; for (let x = (i * 37) % 40; x < W; x += 40) ctx.fillRect(x, y + LH * 0.4, 18, 3);
+        ctx.fillStyle = '#000'; ctx.fillRect(0, y, W, 2);
+      });
+      fossils.forEach((f, i) => {
+        const pal = { k: '#4a3a2a', a: '#efe2c4', b: '#c9b48c' };
+        f.art.forEach((row, yy) => [...row].forEach((c, xx) => { if (pal[c]) { ctx.fillStyle = pal[c]; ctx.fillRect(f.x + xx * FS, f.y + yy * FS, FS, FS); } }));
+        if (found.has(i)) { ctx.strokeStyle = `rgba(255,212,59,${0.6 + Math.sin(time * 6) * 0.3})`; ctx.lineWidth = 3; ctx.strokeRect(f.x - 4, f.y - 4, f.w + 8, f.h + 8); }
+      });
+      ctx.drawImage(cover, 0, 0);
+      // the age of each layer, down the side: newest at the top, oldest at the bottom
+      layers.forEach((L, i) => {
+        const y = TOP + i * LH + LH / 2;
+        ctx.fillStyle = 'rgba(0,0,0,.55)'; ctx.fillRect(W - 168, y - 11, 164, 22);
+        pxText(ctx, `${L.rock.toUpperCase()}${i === 0 ? ' · newest' : i === layers.length - 1 ? ' · oldest' : ''}`, W - 86, y, 11, '#fff');
+      });
+      if (flash) { ctx.fillStyle = `rgba(255,255,255,${flash * 0.3})`; ctx.fillRect(0, 0, W, H); }
+      pxText(ctx, `🖌️ Brush the rubble away · ${found.size}/${fossils.length} found`, W / 2, 16, 14, '#000');
+    }
+    function sync() { draw(); }
+    const stopLoop = gameLoop(cv, step);
+    const root = h('div', { class: 'game arcade lab fossildig' },
+      missions.box, h('div', { class: 'arc-screen' }, cv),
+      h('p', { class: 'arc-tip' }, '🖌️ Drag your finger over the cliff to brush the rubble away – gently, like a real fossil hunter!'),
+      missions.ask, table.el);
+    root._test = {
+      frames(n) { for (let i = 0; i < n; i++) step(1 / 60); },
+      reveal(kind) { const f = fossils.find(x => x.kind === kind); for (let y = f.y; y < f.y + f.h; y += CELL) for (let x = f.x; x < f.x + f.w; x += CELL) brush(x + 4, y + 4); },
+      get found() { return found.size; }, get mission() { return missions.i; },
     };
     root._stop = stopLoop;
     missions.next();
