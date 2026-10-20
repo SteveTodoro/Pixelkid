@@ -106,7 +106,7 @@ function drawMap(key, lessons, stateOf) {
   // width is split and the branches go on side by side, each starting on the side nearest the fork. START is the first
   // spot in the first row, and a topic's landmark takes the spot after its last stop when the row has room for it.
   const start = { x: 0, y: 0 }, spots4marks = [], pad = art ? (small ? 12 : 28) : small ? 8 : 24;
-  const rowBoxes = []; // each row's strip of ground (for the landscape's terraces)
+  const rowBoxes = [], rivers = []; // each row's strip of ground (for the landscape's terraces), and where the forks' rivers run
   let bottom = 0;
   const lane = (first, x0, x1, y, from) => {
     const fit = Math.max(1, Math.floor((x1 - x0) / CELL));
@@ -136,7 +136,7 @@ function drawMap(key, lessons, stateOf) {
       dir = -dir; y += ROW;
     });
     const last = run[run.length - 1], w = (x1 - x0) / (last.kids.length || 1);
-    last.kids.forEach((c, j) => lane(c, x0 + j * w, x0 + (j + 1) * w, y, last));
+    last.kids.forEach((c, j) => { if (j) rivers.push({ x: x0 + j * w, top: y - ROW / 2 }); lane(c, x0 + j * w, x0 + (j + 1) * w, y, last); }); // (a river runs between the branches)
   };
   const roots = stops.filter(s => !s.parent), Y0 = HALF + HERO_H + 34;
   if (roots.length === 1) lane(roots[0], pad, W - pad, Y0, null);
@@ -314,7 +314,7 @@ function drawMap(key, lessons, stateOf) {
       left--;
     }
     items.forEach(it => { if (it.card) scenery.push({ kind: 'mountain', x: it.x, y: it.y + 34 }); }); // each topic's landmark is a mountain
-    MapArt.live(map, MapArt.paint(ground, T, key, scenery, W, H, rnd), W, H, rnd);
+    MapArt.live(map, MapArt.paint(ground, T, key, scenery, W, H, rnd), W, H, rnd, rivers.map(r => Object.assign({ bot: goalTop }, r)));
     for (let k = 0, n = 1 + Math.floor(rnd() * 2); k < n; k++) {
       const p = spots[Math.floor(rnd() * spots.length)];
       if (p && room(p.x, p.y) > 20) put('qdeco small qflutter', p.x, p.y - 20, '🦋').style.animationDelay = -(rnd() * 3).toFixed(1) + 's';

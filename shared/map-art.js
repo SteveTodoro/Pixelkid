@@ -8,7 +8,8 @@
  *   MapArt.scenery(world, rnd) → a scenery kind ('hill', 'trees', …); MapArt.FOOT[kind] = its footprint { rx, ry }
  *   MapArt.paint(canvas, T, world, items, W, H, rnd) → the hill eyes [{ x, y, gap }] (painted once)
  *   MapArt.paths(edges, T, world, W, H) → SVG markup for the road; edges: [{ pts, fresh }] (fresh ones draw themselves in)
- *   MapArt.live(map, eyes, W, H, rnd) → adds the water, clouds and eyes layers
+ *   MapArt.live(map, eyes, W, H, rnd, rivers) → adds the water, clouds and eyes layers; rivers: [{ x, top, bot }] (between a fork's
+ *     branches) get falling water and a foam splash where they reach the land below
  */
 (function () {
   'use strict';
@@ -223,9 +224,16 @@
   }
 
   // ---------- the living layers: the sea, drifting clouds, blinking hill eyes ----------
-  function live(map, eyes, W, H, rnd) {
+  function live(map, eyes, W, H, rnd, rivers = []) {
     const add = (cls, x, y) => { const d = document.createElement('div'); d.className = cls; d.style.left = x + 'px'; d.style.top = y + 'px'; map.append(d); return d; };
     const sea = document.createElement('div'); sea.className = 'qsea'; sea.innerHTML = '<i class="qglint"></i>'; map.prepend(sea);
+    // a river between a fork's branches: water streaming down (under the land, so it only shows in the gap), foam where it lands
+    rivers.forEach(r => {
+      const d = document.createElement('div'); d.className = 'qriver';
+      Object.assign(d.style, { left: snap(r.x) + 'px', top: snap(r.top) + 'px', height: snap(r.bot - r.top) + 'px' });
+      sea.after(d);
+      add('qsplash', snap(r.x), snap(r.bot));
+    });
     eyes.forEach(e => {
       const d = add('qeyes', e.x, e.y);
       d.style.setProperty('--gap', e.gap + 'px'); d.style.animationDelay = -(rnd() * 6).toFixed(2) + 's';
