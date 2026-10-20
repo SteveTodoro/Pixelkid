@@ -501,7 +501,7 @@
   .npc-face { flex: none; width: 76px; height: 76px; overflow: hidden; display: grid; place-items: start center; border: 3px solid #fff; background: #2a2a2a; }
   .npc-face canvas { image-rendering: pixelated; margin-top: 2px; }
   .npc-face-icon { place-self: center; font-size: 2.6rem; }
-  .npc-main { flex: 1; min-width: 0; }
+  .npc-main { flex: 1; min-width: 0; padding-right: 34px; }
   .npc-name { margin-bottom: 4px; color: #ffd43b; font-weight: 700; font-size: .95rem; }
   .npc-text { min-height: 3.6em; white-space: pre-wrap; font-size: 1.15rem; font-weight: 700; line-height: 1.4; }
   .npc-act { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px; }
@@ -512,7 +512,7 @@
   .npc-btn.wrong { color: #ff8a80; border-color: #ff8a80; text-decoration: line-through; opacity: .7; }
   .npc-btn.npc-more { margin-left: auto; animation: npc-blink 1s steps(2) infinite; }
   @keyframes npc-blink { 50% { opacity: .35; } }
-  .npc-x { position: absolute; top: -18px; right: -14px; width: 34px; height: 34px; font-size: 1rem; font-weight: 700; color: #fff; background: #000; border: 3px solid #fff; cursor: pointer; }
+  .npc-x { position: absolute; top: 6px; right: 6px; width: 34px; height: 34px; font-size: 1rem; font-weight: 700; color: #fff; background: #000; border: 3px solid #fff; cursor: pointer; }
   .npc-input { flex: 1; min-width: 140px; padding: 6px 10px; font: inherit; font-size: 1.1rem; color: #fff; background: #111; border: 3px solid #fff; }
   .npc-prize { display: flex; align-items: center; gap: 12px; width: 100%; padding: 8px; border: 3px dashed #ffd43b; }
   .npc-prize canvas { image-rendering: pixelated; }
