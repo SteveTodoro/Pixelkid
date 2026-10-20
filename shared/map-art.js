@@ -1,31 +1,69 @@
 /* Pixelkid quest map – the landscape kit: a Super Mario World–style overworld drawn from the map's own layout.
- * Each row of a lane becomes a terrace (grass on top, a cliff face below), so the road winds down an island. Where the
- * road drops down a cliff it becomes a ladder, and where it crosses water it becomes a bridge. The sea shows round the
- * edge and between the lanes of a fork. Scenery (hills with eyes, trees, flowers…) is painted once onto one canvas; the
- * only moving parts are light CSS animations (drifting clouds, waves, blinking hill eyes).
- * ART[world] switches the look on for a world; shared/map.js keeps the older look for the others.
+ * Each row of a lane becomes a terrace (ground on top, a cliff face below), so the road winds down an island. Where the
+ * road drops down a cliff it becomes a ladder, and where it crosses water it becomes a bridge. Water shows round the
+ * edge and between the lanes of a fork. Scenery (hills with eyes, trees, houses…) is painted once onto one canvas; the
+ * only moving parts are light CSS animations (drifting clouds, waves, blinking hill eyes, boats bobbing).
+ * Every world is its own biome (ART[world]): its colours, cliffs, path, scenery, what floats in its water, and whether
+ * its "sea" is water or space.
  *   MapArt.terrain(world, rows, goalRow, W, H, small, rnd) → { ts, at(x, y), land(x, y, rx, ry), pond(x, y, w, h), CH }
  *   MapArt.scenery(world, rnd) → a scenery kind ('hill', 'trees', …); MapArt.FOOT[kind] = its footprint { rx, ry }
  *   MapArt.paint(canvas, T, world, items, W, H, rnd) → the hill eyes [{ x, y, gap }] (painted once)
  *   MapArt.paths(edges, T, world, W, H) → SVG markup for the road; edges: [{ pts, fresh }] (fresh ones draw themselves in)
- *   MapArt.live(map, eyes, W, H, rnd, rivers) → adds the water, clouds and eyes layers; rivers: [{ x, top, bot }] (between a fork's
- *     branches) get falling water and a foam splash where they reach the land below
+ *   MapArt.live(map, eyes, W, H, rnd, rivers, world, T) → adds the water, clouds, eyes and floating things; rivers: [{ x, top, bot }]
+ *     (between a fork's branches) get falling water and a foam splash where they reach the land below
  */
 (function () {
   'use strict';
   const P = 4; // one art pixel, in CSS pixels
   const snap = v => Math.round(v / P) * P;
 
+  // ground / cliff / hill / mountain: [light, main, shade(, dark)]. peak: the mountain top (snow, sand…). path: dirt | rail | cobble |
+  // circuit | boardwalk | flight. scenery: how often each kind appears. floaters: things in the water (or space). ponds: how many.
   const ART = {
-    science: {
-      ground: ['#b6ee6a', '#6cc644', '#3f9a2c', '#2a6b1a'], // light, grass, shade, dark
-      cliff: ['#e0a05a', '#b0692e', '#713c15'], // light, face, dark
-      hill: ['#a6e86e', '#4fbf3f', '#2e8a26'], mountain: ['#e2e6ea', '#a3abb5', '#6b7480'],
-      path: 'dirt', sea: '#3d8fe4',
+    science: { // green hills by the sea
+      ground: ['#b6ee6a', '#6cc644', '#3f9a2c', '#2a6b1a'], cliff: ['#e0a05a', '#b0692e', '#713c15'],
+      hill: ['#a6e86e', '#4fbf3f', '#2e8a26'], mountain: ['#e2e6ea', '#a3abb5', '#6b7480'], peak: ['#ffffff', '#cfe6ff'],
+      path: 'dirt', sea: '#3d8fe4', ponds: 2,
       scenery: { hill: 4, trees: 4, bush: 2, flowers: 2, mushroom: 1, rocks: 1 },
       trees: ['🌳', '🌲'], flowers: ['🌷', '🌼', '🌸', '🌻'],
     },
+    maths: { // a mine: dusty rock ledges over dark underground pools, a minecart track, lanterns and timber
+      ground: ['#f0c88f', '#d29a5c', '#a46c38', '#6e4722'], cliff: ['#9a6a48', '#6b4630', '#3d271a'], strata: true,
+      hill: ['#d8c8b8', '#9c8b7a', '#64584c'], mountain: ['#e3bf8f', '#b07f50', '#734d2e'], peak: ['#f3dcaf', '#d7b783'],
+      path: 'rail', sea: '#1d3560', ponds: 1, clouds: false,
+      scenery: { hill: 3, rocks: 4, props: 3, mushroom: 2, bush: 1 },
+      props: ['⛏️', '🪵', '🕯️', '🪨'], floaters: [],
+    },
+    english: { // a storybook kingdom: bright meadows on stone walls, cottages, wheat fields and a moat
+      ground: ['#d8f590', '#93d65c', '#62aa3c', '#3f7a25'], cliff: ['#d8d2c6', '#9c9588', '#615b51'], bricks: true,
+      hill: ['#bdf08a', '#6fc84a', '#3f9a2c'], mountain: ['#e2e6ea', '#a3abb5', '#6b7480'], peak: ['#ffffff', '#cfe6ff'],
+      path: 'cobble', sea: '#3a7fd0', ponds: 1,
+      scenery: { hill: 3, trees: 4, houses: 2, fields: 3, flowers: 2 },
+      trees: ['🌳', '🌲'], houses: ['🏠', '🏡'], flowers: ['🌷', '🌼'], floaters: ['⛵'],
+    },
+    future: { // floating asteroid islands in space, joined by a glowing circuit line
+      ground: ['#e4dff7', '#b2a8dd', '#8579bb', '#5d5293'], cliff: ['#6a58b0', '#46388a', '#271c57'], strata: true,
+      hill: ['#d6d0ee', '#a097cf', '#71689f'], mountain: ['#efe6ff', '#b9a2f2', '#7a5fd0'], peak: ['#ffffff', '#e2d8ff'],
+      path: 'circuit', sea: '#120e2e', space: true, ponds: 0, clouds: false,
+      scenery: { hill: 3, crater: 4, rocks: 2, props: 2 },
+      props: ['🚀', '🔭', '🤖'], floaters: ['🪐', '🌙'],
+    },
+    wonders: { // sandy islands in a turquoise lagoon: palms, shells and a boardwalk
+      ground: ['#fff3c4', '#f2d684', '#d8b354', '#a8862e'], cliff: ['#f2a983', '#cc7552', '#8a4a30'],
+      hill: ['#98e47e', '#3fb05a', '#21803a'], mountain: ['#a6dc8c', '#5aa05a', '#2f6a3a'], peak: ['#7cd06a', '#58b04c'],
+      path: 'boardwalk', sea: '#1fb5c4', ponds: 0,
+      scenery: { trees: 5, hill: 2, props: 2, flowers: 1 },
+      trees: ['🌴'], props: ['🐚', '🪨'], flowers: ['🌺', '🌸'], floaters: ['🐠', '🐬', '🐢'],
+    },
+    world: { // green islands with sandy beaches in a deep blue sea, joined by a dotted flight path
+      ground: ['#c8f28e', '#82d052', '#519f34', '#30691f'], cliff: ['#bcc6d2', '#808c9b', '#4e5967'], beach: '#f4d98c',
+      hill: ['#b2ec7e', '#58bf3f', '#2e8a26'], mountain: ['#e2e6ea', '#a3abb5', '#6b7480'], peak: ['#ffffff', '#cfe6ff'],
+      path: 'flight', sea: '#1e5fbf', ponds: 1,
+      scenery: { trees: 3, houses: 2, hill: 2, flowers: 1, props: 1 },
+      trees: ['🌳', '🌴'], houses: ['🏠'], flowers: ['🌼'], props: ['⛲', '🗿'], floaters: ['⛵', '🐳', '🐬'],
+    },
   };
+  const art = key => ART[key] || ART.science;
 
   // ---------- the ground: terraces ----------
   function terrain(key, rows, goalRow, W, H, small, rnd) {
@@ -74,11 +112,19 @@
   function terrace(g, t, A, rnd) {
     const { top, bot, cb } = t;
     g.fillStyle = '#000'; rowsOf(g, t, top, cb, 0); // the outline
-    g.fillStyle = A.cliff[1]; rowsOf(g, t, bot, cb - P, P); // the cliff face, with layers of rock
-    for (let y = bot + 2 * P; y < cb - P; y += 2 * P) {
-      for (let x = t.lx(y) + 2 * P; x < t.rx(y) - 2 * P; x += P) {
-        const n = rnd();
-        if (n < 0.4) { g.fillStyle = A.cliff[0]; g.fillRect(x, y - P, P, P); } else if (n < 0.55) { g.fillStyle = A.cliff[2]; g.fillRect(x, y, P, P); }
+    g.fillStyle = A.cliff[1]; rowsOf(g, t, bot, cb - P, P); // the cliff face: stone blocks, long layers of rock, or speckled earth
+    if (A.bricks) {
+      for (let y = bot + P, row = 0; y < cb - 2 * P; y += 3 * P, row++) {
+        g.fillStyle = A.cliff[2]; g.fillRect(t.lx(y) + P, y + 2 * P, t.rx(y) - t.lx(y) - 2 * P, P);
+        for (let x = t.lx(y) + (row % 2 ? 3 : 6) * P; x < t.rx(y) - 2 * P; x += 6 * P) g.fillRect(x, y, P, 2 * P);
+        g.fillStyle = A.cliff[0]; for (let x = t.lx(y) + 2 * P; x < t.rx(y) - 2 * P; x += 6 * P) g.fillRect(x + (row % 2 ? 3 : 0) * P, y, 2 * P, P);
+      }
+    } else {
+      for (let y = bot + 2 * P; y < cb - P; y += 2 * P) {
+        for (let x = t.lx(y) + 2 * P; x < t.rx(y) - 2 * P; x += P) {
+          const n = rnd();
+          if (A.strata) { if (n < 0.75) { g.fillStyle = (y / (2 * P)) % 2 ? A.cliff[0] : A.cliff[2]; g.fillRect(x, y - P, P, P); } } else if (n < 0.4) { g.fillStyle = A.cliff[0]; g.fillRect(x, y - P, P, P); } else if (n < 0.55) { g.fillStyle = A.cliff[2]; g.fillRect(x, y, P, P); }
+        }
       }
     }
     g.fillStyle = A.cliff[2]; rowsOf(g, t, cb - 2 * P, cb - P, P); // a dark foot where the cliff meets the ground below
@@ -97,16 +143,17 @@
   function pondArt(g, p, A) {
     g.fillStyle = '#000'; block(g, p.x - P, p.y - P, p.w + 2 * P, p.h + 2 * P, 3);
     g.fillStyle = 'rgba(255,255,255,.85)'; block(g, p.x, p.y, p.w, p.h, 2);
-    g.fillStyle = A.sea || '#3d8fe4'; block(g, p.x + P, p.y + P, p.w - 2 * P, p.h - 2 * P, 2);
+    g.fillStyle = A.sea; block(g, p.x + P, p.y + P, p.w - 2 * P, p.h - 2 * P, 2);
     g.fillStyle = A.cliff[1]; g.fillRect(p.x + 3 * P, p.y + P, p.w - 6 * P, P); // its far bank
     g.fillStyle = '#a9d6ff'; g.fillRect(p.x + p.w * 0.3, p.y + p.h * 0.5, 3 * P, P); g.fillRect(p.x + p.w * 0.6, p.y + p.h * 0.7, 2 * P, P);
   }
 
   // ---------- scenery ----------
   // how much open grass each kind of scenery needs round its spot (the spot is its base)
-  const FOOT = { hill: { rx: 36, ry: 24 }, trees: { rx: 34, ry: 22 }, bush: { rx: 20, ry: 12 }, flowers: { rx: 20, ry: 12 }, mushroom: { rx: 14, ry: 14 }, rocks: { rx: 16, ry: 12 } };
+  const FOOT = { hill: { rx: 36, ry: 24 }, trees: { rx: 34, ry: 22 }, bush: { rx: 20, ry: 12 }, flowers: { rx: 20, ry: 12 }, mushroom: { rx: 14, ry: 14 }, rocks: { rx: 16, ry: 12 },
+    props: { rx: 16, ry: 14 }, houses: { rx: 30, ry: 20 }, fields: { rx: 26, ry: 14 }, crater: { rx: 24, ry: 12 } };
   function scenery(key, rnd) {
-    const S = (ART[key] || ART.science).scenery, all = Object.entries(S), sum = all.reduce((n, [, w]) => n + w, 0);
+    const S = art(key).scenery, all = Object.entries(S), sum = all.reduce((n, [, w]) => n + w, 0);
     let r = rnd() * sum;
     for (const [k, w] of all) { if ((r -= w) < 0) return k; }
     return all[0][0];
@@ -135,18 +182,18 @@
   // a big rocky mountain with a snowy top (a topic's landmark), with a smaller peak behind it
   function peak(g, cx, base, wu, hu, A) {
     cx = snap(cx); base = snap(base);
-    const M = A.mountain || ['#e2e6ea', '#a3abb5', '#6b7480'], half = r => Math.round(wu / 2 * Math.pow(1 - r / hu, 0.8)) + (r >= hu - 1 ? 1 : 0);
+    const M = A.mountain, top = A.peak || ['#ffffff', '#cfe6ff'], half = r => Math.round(wu / 2 * Math.pow(1 - r / hu, 0.8)) + (r >= hu - 1 ? 1 : 0);
     g.fillStyle = 'rgba(0,0,0,.25)'; g.fillRect(cx - (half(0) + 1) * P, base, (half(0) + 1) * 2 * P, P);
     g.fillStyle = '#000';
     for (let r = 0; r <= hu; r++) { const hw = half(Math.min(r, hu - 1)) + 1; g.fillRect(cx - hw * P, base - (r + 1) * P, hw * 2 * P, P); }
     for (let r = 0; r < hu; r++) {
       const hw = half(r), y = base - (r + 1) * P, snow = r > hu * 0.68;
-      g.fillStyle = snow ? '#ffffff' : M[1]; g.fillRect(cx - hw * P, y, hw * 2 * P, P);
-      g.fillStyle = snow ? '#cfe6ff' : M[2]; g.fillRect(cx + Math.max(0, Math.floor(hw / 3)) * P, y, Math.ceil(hw * 2 / 3) * P, P); // shade on the right
+      g.fillStyle = snow ? top[0] : M[1]; g.fillRect(cx - hw * P, y, hw * 2 * P, P);
+      g.fillStyle = snow ? top[1] : M[2]; g.fillRect(cx + Math.max(0, Math.floor(hw / 3)) * P, y, Math.ceil(hw * 2 / 3) * P, P); // shade on the right
       if (!snow && r % 3 === 1 && hw > 3) { g.fillStyle = M[0]; g.fillRect(cx - (hw - 1) * P, y, 2 * P, P); } // light ledges on the left
     }
     for (let x = -half(Math.ceil(hu * 0.68)); x < half(Math.ceil(hu * 0.68)); x += 2) { // the snow's jagged lower edge
-      g.fillStyle = '#ffffff'; g.fillRect(cx + x * P, base - Math.ceil(hu * 0.68) * P, P, P);
+      g.fillStyle = top[0]; g.fillRect(cx + x * P, base - Math.ceil(hu * 0.68) * P, P, P);
     }
   }
   const PAINT = {
@@ -164,18 +211,32 @@
     },
     mushroom(g, it, A, rnd) { shadow(g, it.x, it.y + 2, 18); emoji(g, '🍄', it.x, it.y, 22); if (rnd() < 0.5) emoji(g, '🍄', it.x + 14, it.y + 4, 14); },
     rocks(g, it, A, rnd) { shadow(g, it.x, it.y + 2, 20); emoji(g, '🪨', it.x, it.y, 22); if (rnd() < 0.6) emoji(g, '🪨', it.x - 14, it.y + 3, 14); },
+    props(g, it, A, rnd) { const e = A.props[Math.floor(rnd() * A.props.length)]; shadow(g, it.x, it.y + 2, 20); emoji(g, e, it.x, it.y, 26); },
+    houses(g, it, A, rnd) {
+      const n = 1 + Math.floor(rnd() * 2);
+      for (let k = 0; k < n; k++) { const x = it.x + (k - (n - 1) / 2) * 30, y = it.y - k * 6; shadow(g, x, y + 2, 26); emoji(g, A.houses[Math.floor(rnd() * A.houses.length)], x, y, 30); }
+    },
+    fields(g, it, A, rnd) { for (let k = 0; k < 5; k++) emoji(g, '🌾', it.x + (k - 2) * 11 + (rnd() - 0.5) * 4, it.y - (k % 2) * 6, 20); },
+    crater(g, it, A, rnd) { // a crater: a dark dip with a light rim
+      const cx = snap(it.x), cy = snap(it.y - 8), w = 4 + Math.floor(rnd() * 2), h = 3;
+      g.fillStyle = '#000'; block(g, cx - (w + 1) * P, cy - (h + 1) * P, (w + 1) * 2 * P, (h + 1) * 2 * P, 2);
+      g.fillStyle = A.ground[0]; block(g, cx - w * P, cy - h * P, w * 2 * P, h * 2 * P, 2);
+      g.fillStyle = A.ground[2]; block(g, cx - (w - 1) * P, cy - (h - 1) * P, (w - 1) * 2 * P, (h - 1) * 2 * P, 1);
+      g.fillStyle = A.ground[3]; g.fillRect(cx - (w - 2) * P, cy - (h - 1) * P, (w - 2) * 2 * P, P); // shadow inside its far rim
+    },
   };
 
   function paint(cv, T, key, items, W, H, rnd) {
-    const A = ART[key] || ART.science, dpr = Math.min(2, window.devicePixelRatio || 1);
+    const A = art(key), dpr = Math.min(2, window.devicePixelRatio || 1);
     cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
     cv.style.width = W + 'px'; cv.style.height = H + 'px';
     const g = cv.getContext('2d');
     if (!g || !g.fillRect) return [];
     g.setTransform(dpr, 0, 0, dpr, 0, 0); g.imageSmoothingEnabled = false;
-    // white foam where the land meets the sea, then the terraces from the back to the front
-    g.fillStyle = 'rgba(255,255,255,.6)';
-    T.ts.forEach(t => { for (let y = t.top - P; y < t.cb + P; y += P) { const yy = Math.min(t.cb - P, Math.max(t.top, y)); g.fillRect(t.lx(yy) - P, y, t.rx(yy) - t.lx(yy) + 2 * P, P); } });
+    // round each island: white foam where it meets the sea (a soft glow in space), and a sandy beach if the world has one
+    const ring = (k, col) => { g.fillStyle = col; T.ts.forEach(t => { for (let y = t.top - k; y < t.cb + k; y += P) { const yy = Math.min(t.cb - P, Math.max(t.top, y)); g.fillRect(t.lx(yy) - k, y, t.rx(yy) - t.lx(yy) + 2 * k, P); } }); };
+    if (A.space) ring(2 * P, 'rgba(160,140,255,.18)');
+    else { ring(A.beach ? 3 * P : P, 'rgba(255,255,255,.6)'); if (A.beach) ring(2 * P, A.beach); }
     T.ts.forEach(t => terrace(g, t, A, rnd));
     T.ponds.forEach(p => pondArt(g, p, A));
     const eyes = [];
@@ -185,8 +246,19 @@
 
   // ---------- the road ----------
   // Each edge is split into runs: over a terrace top it is the path, down a cliff a ladder, over water a bridge.
+  // Each world has its own path; a circuit line or a flight path just carries on over cliffs and water.
+  const STYLE = {
+    dirt: L => L('stroke="#000" stroke-width="14"') + L('stroke="#b8793a" stroke-width="10"') + L('stroke="#f1cd7c" stroke-width="6"'),
+    rail: L => L('stroke="#000" stroke-width="16"') + L('stroke="#4a3b2c" stroke-width="12"') + L('stroke="#a8763f" stroke-width="12" stroke-dasharray="3 5" stroke-linecap="butt"')
+      + L('stroke="#d5dae2" stroke-width="10"') + L('stroke="#4a3b2c" stroke-width="6"') + L('stroke="#a8763f" stroke-width="6" stroke-dasharray="3 5" stroke-linecap="butt"'),
+    cobble: L => L('stroke="#000" stroke-width="14"') + L('stroke="#77736c" stroke-width="10"') + L('stroke="#c2bdb3" stroke-width="10" stroke-dasharray="4 2" stroke-linecap="butt"'),
+    circuit: L => L('stroke="#2ee6d6" stroke-opacity=".25" stroke-width="16"') + L('stroke="#000" stroke-width="8"') + L('stroke="#2ee6d6" stroke-width="4"') + L('stroke="#e6fffd" stroke-width="2" stroke-dasharray="3 9" stroke-linecap="butt"'),
+    boardwalk: L => L('stroke="#000" stroke-width="16"') + L('stroke="#6b4425" stroke-width="12"') + L('stroke="#d29a5c" stroke-width="12" stroke-dasharray="6 2" stroke-linecap="butt"'),
+    flight: L => L('stroke="rgba(0,0,0,.35)" stroke-width="8" stroke-dasharray="10 8" stroke-linecap="butt"') + L('stroke="#fff" stroke-width="4" stroke-dasharray="10 8" stroke-linecap="butt"'),
+  };
+  const OVER = { circuit: 1, flight: 1 }; // paths that need no ladders or bridges
   function paths(edges, T, key, W, H) {
-    const A = ART[key] || ART.science;
+    const A = art(key), style = STYLE[A.path] || STYLE.dirt, over = OVER[A.path];
     let defs = '', out = '';
     edges.forEach((e, k) => {
       const land = [], ladders = [], bridges = [];
@@ -194,7 +266,7 @@
         const a = e.pts[i - 1], b = e.pts[i], len = Math.hypot(b.x - a.x, b.y - a.y);
         if (!len) continue;
         const vert = a.x === b.x, n = Math.ceil(len / 2);
-        const kind = (x, y) => { const t = T.at(x, y); return t === 'water' ? 'bridge' : t === 'cliff' && vert ? 'ladder' : 'land'; };
+        const kind = (x, y) => { if (over) return 'land'; const t = T.at(x, y); return t === 'water' ? 'bridge' : t === 'cliff' && vert ? 'ladder' : 'land'; };
         let type = kind(a.x, a.y), sx = a.x, sy = a.y;
         const close = (x, y) => (type === 'land' ? land : type === 'ladder' ? ladders : bridges).push([sx, sy, x, y]);
         for (let j = 1; j <= n; j++) {
@@ -206,7 +278,7 @@
       const d = list => list.map(([x1, y1, x2, y2]) => `M${x1} ${y1}L${x2} ${y2}`).join('');
       const S = (dd, a) => (dd ? `<path d="${dd}" ${a}/>` : '');
       let g = '';
-      if (land.length) g += S(d(land), 'stroke="#000" stroke-width="14"') + S(d(land), 'stroke="#b8793a" stroke-width="10"') + S(d(land), 'stroke="#f1cd7c" stroke-width="6"');
+      if (land.length) g += style(a => S(d(land), a));
       if (bridges.length) g += S(d(bridges), 'stroke="#000" stroke-width="20" stroke-linecap="butt"') + S(d(bridges), 'stroke="#8a5a32" stroke-width="16" stroke-linecap="butt"')
         + S(d(bridges), 'stroke="#e0a85e" stroke-width="16" stroke-dasharray="6 2" stroke-linecap="butt"');
       ladders.forEach(([x, y1, , y2]) => {
@@ -224,8 +296,10 @@
   }
 
   // ---------- the living layers: the sea, drifting clouds, blinking hill eyes ----------
-  function live(map, eyes, W, H, rnd, rivers = []) {
+  function live(map, eyes, W, H, rnd, rivers = [], key, T) {
+    const A = art(key);
     const add = (cls, x, y) => { const d = document.createElement('div'); d.className = cls; d.style.left = x + 'px'; d.style.top = y + 'px'; map.append(d); return d; };
+    map.style.setProperty('--sea', A.sea); map.classList.add('b-' + key, A.space ? 'space' : 'water');
     const sea = document.createElement('div'); sea.className = 'qsea'; sea.innerHTML = '<i class="qglint"></i>'; map.prepend(sea);
     // a river between a fork's branches: water streaming down (under the land, so it only shows in the gap), foam where it lands
     rivers.forEach(r => {
@@ -239,7 +313,19 @@
       d.style.setProperty('--gap', e.gap + 'px'); d.style.animationDelay = -(rnd() * 6).toFixed(2) + 's';
       d.innerHTML = '<i></i><i></i>';
     });
-    for (let k = 0, n = H > 900 ? 4 : 3; k < n; k++) {
+    // things in the water (boats, fish, turtles) or floating in space (planets, a moon), bobbing gently
+    if (T && A.floaters && A.floaters.length) {
+      let left = Math.max(2, Math.round(W * H / 260000)), tries = 0;
+      while (left > 0 && tries++ < 400) {
+        const x = 30 + rnd() * (W - 60), y = 30 + rnd() * (H - 60);
+        if (![[0, 0], [-26, 0], [26, 0], [0, -22], [0, 18]].every(([dx, dy]) => T.at(x + dx, y + dy) === 'water')) continue;
+        if (rivers.some(r => Math.abs(x - r.x) < 44)) continue; // not in a river
+        const f = add('qfloat', snap(x), snap(y)); f.textContent = A.floaters[Math.floor(rnd() * A.floaters.length)];
+        f.style.animationDelay = -(rnd() * 3).toFixed(1) + 's';
+        left--;
+      }
+    }
+    if (A.clouds !== false) for (let k = 0, n = H > 900 ? 4 : 3; k < n; k++) {
       const c = add('qcloud', 0, snap(30 + (k + rnd() * 0.8) * (H - 120) / n));
       c.style.setProperty('--w', W + 'px'); c.style.setProperty('--s', (0.7 + rnd() * 0.5).toFixed(2));
       const dur = 80 + rnd() * 60;
@@ -249,5 +335,5 @@
   // everything stops moving while the page is hidden
   document.addEventListener('visibilitychange', () => document.documentElement.classList.toggle('q-paused', document.hidden));
 
-  window.MapArt = { has: key => !!ART[key], ART, P, FOOT, terrain, scenery, paint, paths, live };
+  window.MapArt = { has: key => !!ART[key], ART, P, FOOT, terrain, scenery, paint, paths, live, ponds: key => art(key).ponds ?? 1 };
 })();

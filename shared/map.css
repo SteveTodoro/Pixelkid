@@ -1,22 +1,9 @@
 /* Pixelkid quest map – the home page's overworld: each world's lessons are stops on a road from START to the world's goal.
  * Used by index.html with shared/map.js and shared/map-art.js. */
-/* ---------- the quest map: each world's lessons are stops on a road from START to the world's castle ---------- */
 .qmap-wrap { position: relative; z-index: 1; max-width: 1040px; margin: 16px auto 0; padding: 0 16px 90px; }
-/* the ground: a colour with a small pixel texture on top (--mtex); each world sets its own below */
-.qmap { --m1: #6cc644; --mtex: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2048%2048'%20shape-rendering='crispEdges'%3E%3Cg%20fill='%23fff'%20opacity='.14'%3E%3Crect%20x='6'%20y='6'%20width='6'%20height='6'/%3E%3Crect%20x='30'%20y='26'%20width='6'%20height='6'/%3E%3C/g%3E%3Cg%20fill='%232d7a1f'%20opacity='.35'%3E%3Crect%20x='16'%20y='34'%20width='3'%20height='6'/%3E%3Crect%20x='20'%20y='31'%20width='3'%20height='9'/%3E%3Crect%20x='24'%20y='35'%20width='3'%20height='5'/%3E%3Crect%20x='38'%20y='8'%20width='3'%20height='5'/%3E%3Crect%20x='42'%20y='5'%20width='3'%20height='8'/%3E%3C/g%3E%3C/svg%3E");
-  position: relative; overflow: hidden; border: 4px solid #000; box-shadow: var(--bevel), 0 6px 0 rgba(0,0,0,.25);
-  background: var(--mtex) 0 0 / 48px 48px, var(--m1); }
-/* each world is its own biome: ground colour + texture (science: meadow, maths: mine, english: a storybook map,
-   future: space, wonders: a tropical lagoon, world: the deep ocean) */
-body.maths .qmap { --m1: #7a5c43; --mtex: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2048%2048'%20shape-rendering='crispEdges'%3E%3Cg%20fill='%23000'%20opacity='.16'%3E%3Crect%20x='18'%20y='36'%20width='6'%20height='6'/%3E%3Crect%20x='36'%20y='8'%20width='6'%20height='6'/%3E%3Crect%20x='12'%20y='22'%20width='6'%20height='3'/%3E%3C/g%3E%3Cg%20fill='%23d9c3a5'%20opacity='.22'%3E%3Crect%20x='6'%20y='6'%20width='6'%20height='4'/%3E%3Crect%20x='30'%20y='26'%20width='4'%20height='4'/%3E%3Crect%20x='42'%20y='40'%20width='4'%20height='3'/%3E%3C/g%3E%3C/svg%3E"); }
-body.english .qmap { --m1: #e8d4a2; --mtex: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2048%2048'%20shape-rendering='crispEdges'%3E%3Cg%20fill='%237a5230'%20opacity='.18'%3E%3Crect%20x='5'%20y='9'%20width='3'%20height='3'/%3E%3Crect%20x='33'%20y='27'%20width='2'%20height='2'/%3E%3Crect%20x='19'%20y='40'%20width='12'%20height='1'/%3E%3Crect%20x='40'%20y='14'%20width='1'%20height='7'/%3E%3Crect%20x='10'%20y='30'%20width='2'%20height='2'/%3E%3C/g%3E%3Cg%20fill='%23fff8e6'%20opacity='.45'%3E%3Crect%20x='26'%20y='6'%20width='8'%20height='2'/%3E%3Crect%20x='2'%20y='44'%20width='6'%20height='2'/%3E%3C/g%3E%3C/svg%3E"); }
-body.future .qmap { --m1: #2b2463; --mtex: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2048%2048'%20shape-rendering='crispEdges'%3E%3Cg%20fill='%23fff'%20opacity='.55'%3E%3Crect%20x='7'%20y='9'%20width='2'%20height='2'/%3E%3Crect%20x='33'%20y='30'%20width='2'%20height='2'/%3E%3Crect%20x='20'%20y='41'%20width='1'%20height='1'/%3E%3Crect%20x='44'%20y='4'%20width='1'%20height='1'/%3E%3C/g%3E%3Cg%20fill='%23b9a8ff'%20opacity='.35'%3E%3Crect%20x='14'%20y='22'%20width='2'%20height='2'/%3E%3Crect%20x='40'%20y='18'%20width='1'%20height='1'/%3E%3C/g%3E%3C/svg%3E"); }
-body.wonders .qmap { --m1: #2bbfb0; --mtex: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2048%2048'%20shape-rendering='crispEdges'%3E%3Cg%20fill='%23fff'%20opacity='.35'%3E%3Crect%20x='9'%20y='8'%20width='4'%20height='1'/%3E%3Crect%20x='8'%20y='9'%20width='1'%20height='3'/%3E%3Crect%20x='13'%20y='9'%20width='1'%20height='3'/%3E%3Crect%20x='9'%20y='12'%20width='4'%20height='1'/%3E%3Crect%20x='34'%20y='30'%20width='3'%20height='1'/%3E%3Crect%20x='33'%20y='31'%20width='1'%20height='2'/%3E%3Crect%20x='37'%20y='31'%20width='1'%20height='2'/%3E%3Crect%20x='34'%20y='33'%20width='3'%20height='1'/%3E%3Crect%20x='22'%20y='40'%20width='2'%20height='2'/%3E%3C/g%3E%3Cg%20fill='%23d6fff6'%20opacity='.25'%3E%3Crect%20x='28'%20y='12'%20width='10'%20height='2'/%3E%3Crect%20x='4'%20y='28'%20width='10'%20height='2'/%3E%3C/g%3E%3C/svg%3E"); }
-body.world .qmap { --m1: #2457ad; --mtex: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2048%2048'%20shape-rendering='crispEdges'%3E%3Cg%20fill='%23fff'%20opacity='.28'%3E%3Crect%20x='6'%20y='10'%20width='4'%20height='2'/%3E%3Crect%20x='10'%20y='8'%20width='4'%20height='2'/%3E%3Crect%20x='14'%20y='10'%20width='4'%20height='2'/%3E%3Crect%20x='28'%20y='32'%20width='4'%20height='2'/%3E%3Crect%20x='32'%20y='30'%20width='4'%20height='2'/%3E%3Crect%20x='36'%20y='32'%20width='4'%20height='2'/%3E%3C/g%3E%3Cg%20fill='%230b2f6b'%20opacity='.35'%3E%3Crect%20x='18'%20y='22'%20width='6'%20height='2'/%3E%3Crect%20x='40'%20y='44'%20width='6'%20height='2'/%3E%3C/g%3E%3C/svg%3E"); }
-body.english .qmap { box-shadow: var(--bevel), inset 0 0 70px rgba(122,82,48,.45), 0 6px 0 rgba(0,0,0,.25); } /* old paper goes darker at the edges */
+.qmap { position: relative; overflow: hidden; border: 4px solid #000; box-shadow: var(--bevel), 0 6px 0 rgba(0,0,0,.25); background: var(--sea, #3d8fe4); }
 .qmap > svg { position: absolute; inset: 0; }
 .qdeco { position: absolute; transform: translate(-50%, -50%) scale(var(--s, 1)); font-size: 1.9rem; line-height: 1; pointer-events: none; filter: drop-shadow(3px 3px 0 rgba(0,0,0,.25)); }
-.qdeco.big { font-size: 2.6rem; }
 .qdeco.small { font-size: 1.2rem; }
 /* someone by the road: tap to talk. A bobbing ! means they have something for you, ? that they want what you carry */
 .qnpc { position: absolute; z-index: 2; transform: translate(-50%, -100%); display: grid; justify-items: center; padding: 0; background: none; border: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
@@ -24,35 +11,12 @@ body.english .qmap { box-shadow: var(--bevel), inset 0 0 70px rgba(122,82,48,.45
 .qnpc:hover canvas, .qnpc:focus-visible canvas { filter: drop-shadow(0 0 0 #fff) drop-shadow(3px 3px 0 rgba(0,0,0,.25)); outline: 3px solid #fff; outline-offset: 2px; }
 .qnpc-mark { position: absolute; top: -26px; min-width: 24px; padding: 0 4px; text-align: center; font-family: var(--pixel); font-weight: 700; font-size: 1rem; line-height: 22px; color: #000; background: #fff; border: 2px solid #000; }
 .qnpc-mark.ask { color: #000; background: #ffd43b; animation: qbob 1s steps(2) infinite; }
-/* a topic's landmark: a big set piece at the end of the topic's row. Tap it for the topic's name */
+/* a topic's landmark (a mountain painted on the ground, see .qmark.peak below). Tap it for the topic's name */
 .qmark { position: absolute; z-index: 1; transform: translate(-50%, -60%); padding: 0; font-size: 3.6rem; line-height: 1; background: none; border: 0; cursor: pointer; filter: drop-shadow(5px 5px 0 rgba(0,0,0,.25)); -webkit-tap-highlight-color: transparent; }
 .qmark:hover, .qmark:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
 .qmark::after { content: ""; position: absolute; left: 10%; right: 10%; bottom: -6px; height: 12px; background: rgba(0,0,0,.18); z-index: -1; }
-.qnode { z-index: 2; }
-.qnode.soon { opacity: .75; }
-/* a stop on the road: a big block with the lesson's icon, its name on a tag underneath */
-.qnode { position: absolute; width: 76px; height: 76px; transform: translate(-50%, -50%); display: grid; place-items: center; padding: 0; cursor: pointer;
-  font-size: 2.5rem; background: var(--brand); border: 4px solid #000; box-shadow: var(--bevel), 0 5px 0 #000; -webkit-tap-highlight-color: transparent; }
-.qnode:hover, .qnode:focus-visible { outline: 4px solid #fff; outline-offset: 2px; }
-.qnode:active { transform: translate(-50%, calc(-50% + 3px)); box-shadow: var(--bevel), 0 2px 0 #000; }
-.qnode.done { background: var(--gold); }
-.qnode.going { background: #e09a00; }
-.qnode.soon { background: #9a9a9a; cursor: pointer; }
-.qnode.soon .qi { filter: grayscale(1); opacity: .55; }
-.qnode.locked { background: #9a9a9a; }
-.qnode.locked .qi { filter: grayscale(.7); opacity: .8; }
-.qnode.locked .qbadge { background: #555; color: #fff; }
-.qnode.end { background: #8a5a32; }
-.qnode.start { width: 64px; height: 64px; font-size: 2rem; background: #fff; }
-/* the next quest glows, so the eye finds it straight away */
-.qnode.next { animation: qglow 1.2s steps(2) infinite; }
-@keyframes qglow { 50% { box-shadow: var(--bevel), 0 5px 0 #000, 0 0 0 6px #fff, 0 0 0 10px rgba(0,0,0,.6); } }
-.qbadge { position: absolute; bottom: -12px; right: -26px; width: max-content; padding: 1px 6px; z-index: 1; white-space: nowrap; font-family: var(--pixel); font-weight: 700; font-size: .8rem; color: #000; background: #fff; border: 2px solid #000; }
-.qnode.done .qbadge { background: var(--gold); }
-.qnode.soon .qbadge { background: #555; color: #fff; }
 .qlabel { position: absolute; top: calc(100% + 14px); left: 50%; transform: translateX(-50%); width: max-content; max-width: 150px; padding: 2px 7px; text-align: center;
   background: rgba(0,0,0,.78); color: #fff; font-family: var(--pixel); font-weight: 700; font-size: .85rem; line-height: 1.15; pointer-events: none; }
-.qnode.soon .qlabel, .qnode.locked .qlabel { color: #ddd; background: rgba(0,0,0,.4); }
 /* the player's hero stands on the road at the next stop (and walks there after finishing a quest) */
 .qhero { position: absolute; z-index: 3; pointer-events: none; image-rendering: pixelated; }
 .qhero-tag { position: absolute; z-index: 4; transform: translate(-50%, -100%); padding: 2px 8px; white-space: nowrap; background: #000; color: #ffd43b; font-family: var(--pixel); font-weight: 700; font-size: .8rem; pointer-events: none; animation: qbob 1s steps(2) infinite; }
@@ -73,29 +37,25 @@ body.english .qmap { box-shadow: var(--bevel), inset 0 0 70px rgba(122,82,48,.45
 .qc-btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
 @media (max-width: 479px) {
   .qmap-wrap { padding: 0 10px 70px; }
-  .qnode { width: 64px; height: 64px; font-size: 2.1rem; }
   .qlabel { max-width: 120px; font-size: .78rem; }
   .qdeco { font-size: 1.5rem; }
-  .qdeco.big { font-size: 2rem; }
-  .qmark { font-size: 2.8rem; }
   .qcard { flex-direction: column; align-items: center; text-align: center; }
   .qc-body { align-items: center; }
   .qc-btns { justify-content: center; }
 }
 
-/* ---------- the Super Mario World–style landscape (worlds with a look in shared/map-art.js) ---------- */
-.qmap.art { --sea: #3d8fe4; background: var(--sea); }
+/* ---------- the Super Mario World–style landscape (shared/map-art.js draws it; --sea is set per world) ---------- */
 .qsea { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
 .qglint { position: absolute; inset: 0; z-index: 1; background: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2012'%20shape-rendering='crispEdges'%3E%3Crect%20x='4'%20y='1'%20width='1'%20height='1'%20fill='%23ffffff'/%3E%3Crect%20x='14'%20y='3'%20width='1'%20height='1'%20fill='%23ffffff'/%3E%3Crect%20x='1'%20y='6'%20width='1'%20height='1'%20fill='%23ffffff'/%3E%3Crect%20x='19'%20y='7'%20width='1'%20height='1'%20fill='%23ffffff'/%3E%3Crect%20x='9'%20y='9'%20width='1'%20height='1'%20fill='%23ffffff'/%3E%3C/svg%3E") 0 0 / 96px 48px; animation: qtwinkle 4.8s steps(4) infinite; background-size: 144px 72px; } /* sparkles that twinkle */
 /* the sea: dark swells and light curling crests drift past each other at different speeds (in 4px steps, so it stays pixel art) */
 .qsea::before, .qsea::after { content: ""; position: absolute; top: 0; bottom: 0; left: -192px; right: -192px; animation: qflow 9s steps(48) infinite; opacity: .55; }
-.qsea::before { background: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2048%2024'%20shape-rendering='crispEdges'%3E%3Crect%20x='5'%20y='2'%20width='6'%20height='1'%20fill='%232f7fd6'/%3E%3Crect%20x='27'%20y='5'%20width='9'%20height='1'%20fill='%232f7fd6'/%3E%3Crect%20x='2'%20y='9'%20width='4'%20height='1'%20fill='%232f7fd6'/%3E%3Crect%20x='19'%20y='11'%20width='7'%20height='1'%20fill='%232f7fd6'/%3E%3Crect%20x='40'%20y='14'%20width='5'%20height='1'%20fill='%232f7fd6'/%3E%3Crect%20x='9'%20y='17'%20width='8'%20height='1'%20fill='%232f7fd6'/%3E%3Crect%20x='31'%20y='20'%20width='5'%20height='1'%20fill='%232f7fd6'/%3E%3C/svg%3E") 0 0 / 192px 96px; animation-duration: 26s; animation-direction: reverse; }
+.qsea::before { background: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2048%2024'%20shape-rendering='crispEdges'%3E%3Crect%20x='5'%20y='2'%20width='6'%20height='1'%20fill='rgba(0%2C0%2C0%2C.2)'/%3E%3Crect%20x='27'%20y='5'%20width='9'%20height='1'%20fill='rgba(0%2C0%2C0%2C.2)'/%3E%3Crect%20x='2'%20y='9'%20width='4'%20height='1'%20fill='rgba(0%2C0%2C0%2C.2)'/%3E%3Crect%20x='19'%20y='11'%20width='7'%20height='1'%20fill='rgba(0%2C0%2C0%2C.2)'/%3E%3Crect%20x='40'%20y='14'%20width='5'%20height='1'%20fill='rgba(0%2C0%2C0%2C.2)'/%3E%3Crect%20x='9'%20y='17'%20width='8'%20height='1'%20fill='rgba(0%2C0%2C0%2C.2)'/%3E%3Crect%20x='31'%20y='20'%20width='5'%20height='1'%20fill='rgba(0%2C0%2C0%2C.2)'/%3E%3C/svg%3E") 0 0 / 192px 96px; animation-duration: 26s; animation-direction: reverse; }
 .qsea::after { background: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2016'%20shape-rendering='crispEdges'%3E%3Crect%20x='3'%20y='1'%20width='3'%20height='1'%20fill='%23b9e0ff'/%3E%3Crect%20x='2'%20y='2'%20width='1'%20height='1'%20fill='%23b9e0ff'/%3E%3Crect%20x='6'%20y='2'%20width='2'%20height='1'%20fill='%23b9e0ff'/%3E%3Crect%20x='21'%20y='5'%20width='3'%20height='1'%20fill='%23b9e0ff'/%3E%3Crect%20x='20'%20y='6'%20width='1'%20height='1'%20fill='%23b9e0ff'/%3E%3Crect%20x='24'%20y='6'%20width='2'%20height='1'%20fill='%23b9e0ff'/%3E%3Crect%20x='10'%20y='9'%20width='3'%20height='1'%20fill='%23b9e0ff'/%3E%3Crect%20x='9'%20y='10'%20width='1'%20height='1'%20fill='%23b9e0ff'/%3E%3Crect%20x='13'%20y='10'%20width='2'%20height='1'%20fill='%23b9e0ff'/%3E%3Crect%20x='27'%20y='13'%20width='3'%20height='1'%20fill='%23b9e0ff'/%3E%3Crect%20x='26'%20y='14'%20width='1'%20height='1'%20fill='%23b9e0ff'/%3E%3Crect%20x='30'%20y='14'%20width='2'%20height='1'%20fill='%23b9e0ff'/%3E%3C/svg%3E") 0 0 / 128px 64px; animation-name: qflow2; animation-duration: 16s; animation-timing-function: steps(32); opacity: .7; }
 @keyframes qflow { to { transform: translateX(192px); } }
 @keyframes qflow2 { to { transform: translateX(128px); } }
 @keyframes qtwinkle { 0%, 100% { opacity: 0; } 50% { opacity: .5; } }
 .qground { position: absolute; left: 0; top: 0; image-rendering: pixelated; pointer-events: none; }
-.qmap.art > svg { z-index: 0; }
+.qmap > svg { z-index: 0; }
 /* SMW's banner: the stop the hero is on, or the one you pointed at */
 .qbanner { position: sticky; top: 8px; z-index: 6; display: flex; align-items: center; gap: 10px; width: fit-content; max-width: 100%; min-height: 48px; margin: 0 auto 10px; padding: 6px 16px 6px 10px;
   background: #000; color: #fff; border: 3px solid #fff; outline: 3px solid #000; box-shadow: 0 6px 0 rgba(0,0,0,.3); }
@@ -164,3 +124,15 @@ html.q-paused .qmap *, html.q-paused .qmap, html.q-paused .qsea::before, html.q-
 @keyframes qsplash { 50% { background-position: -56px 0; } }
 @media (prefers-reduced-motion: reduce) { .qriver::before, .qsplash { animation: none; } }
 html.q-paused .qriver::before { animation-play-state: paused !important; }
+/* things floating in the water (boats, fish, a turtle) or in space (planets, a moon), bobbing gently */
+.qfloat { position: absolute; z-index: 1; font-size: 26px; line-height: 1; transform: translate(-50%, -50%); pointer-events: none; filter: drop-shadow(2px 3px 0 rgba(0,0,0,.25)); animation: qbobf 3.2s steps(4) infinite alternate; }
+@keyframes qbobf { to { transform: translate(-50%, calc(-50% - 6px)); } }
+/* Future's "sea" is space: two layers of stars drifting slowly at different speeds, stars twinkling, a moon and planets */
+.qmap.space .qsea::before { background: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2048%2024'%20shape-rendering='crispEdges'%3E%3Crect%20x='13'%20y='1'%20width='1'%20height='1'%20fill='%23ffffff'/%3E%3Crect%20x='27'%20y='1'%20width='1'%20height='1'%20fill='%23b9a8ff'/%3E%3Crect%20x='37'%20y='1'%20width='1'%20height='1'%20fill='%23b9a8ff'/%3E%3Crect%20x='41'%20y='1'%20width='1'%20height='1'%20fill='%23ffffff'/%3E%3Crect%20x='15'%20y='2'%20width='1'%20height='1'%20fill='%23b9a8ff'/%3E%3Crect%20x='34'%20y='3'%20width='1'%20height='1'%20fill='%23ffffff'/%3E%3Crect%20x='20'%20y='4'%20width='1'%20height='1'%20fill='%23ffffff'/%3E%3Crect%20x='7'%20y='7'%20width='1'%20height='1'%20fill='%23b9a8ff'/%3E%3Crect%20x='27'%20y='13'%20width='1'%20height='1'%20fill='%23ffffff'/%3E%3Crect%20x='40'%20y='18'%20width='1'%20height='1'%20fill='%23ffffff'/%3E%3C/svg%3E") 0 0 / 192px 96px; opacity: 1; animation-duration: 90s; }
+.qmap.space .qsea::after { background: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2016'%20shape-rendering='crispEdges'%3E%3Crect%20x='25'%20y='1'%20width='1'%20height='1'%20fill='%23e6e0ff'/%3E%3Crect%20x='2'%20y='4'%20width='1'%20height='1'%20fill='%23ffe9a8'/%3E%3Crect%20x='26'%20y='4'%20width='1'%20height='1'%20fill='%23e6e0ff'/%3E%3Crect%20x='19'%20y='5'%20width='1'%20height='1'%20fill='%23e6e0ff'/%3E%3Crect%20x='12'%20y='11'%20width='1'%20height='1'%20fill='%23e6e0ff'/%3E%3C/svg%3E") 0 0 / 128px 64px; opacity: .9; animation-duration: 55s; }
+.qmap.space .qglint { background-size: 96px 48px; animation-duration: 2.4s; }
+.qmap.space .qfloat { font-size: 34px; animation-duration: 6s; }
+.qmap.space .qriver { background: transparent; }
+.qmap.space .qriver::before { opacity: .7; animation-duration: 2.4s; } /* a stream of falling stars between the branches */
+.qmap.space .qsplash { display: none; }
+@media (prefers-reduced-motion: reduce) { .qfloat { animation: none; } }

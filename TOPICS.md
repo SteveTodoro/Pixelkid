@@ -128,6 +128,24 @@ One country per lesson: find it on the map, then the history and culture childre
 
 **Roads, recaps and warm-ups (the home page quest map):** each world on index.html is a road. A lesson follows the one listed before it in `LIBRARY`, or the lesson named by `after: '<title>'`, which starts a branch (a fork splits the road into two lanes that meet again at the world's goal). A stop unlocks once the stop before it is cleared. A lesson in the **same unit** as the stop before it opens with a recap of that lesson (`from.url` set). A lesson that **starts a new unit** (including the first lesson after a fork into a new unit) opens with a **warm-up** instead: a `review` stage whose `from` names what the child already knows (no url), e.g. `{ title: 'Living things you already know', emoji: '🌳' }`. Its facts and questions draw on everyday or earlier knowledge the lesson builds on, without giving away the lesson's content. `tools/lesson-check.js` checks both rules.
 
+**The quest map's look (`shared/map-art.js`):** a Super Mario World–style overworld drawn from the road's layout.
+- **Shape:** each row of stops is a terrace with a cliff. The road drops down cliffs on ladders and crosses water on bridges, and a river with falling water runs between a fork's branches.
+- **Stops:** small round dots with a name tag. The banner shows the stop the hero is on.
+- **Hidden road:** the road only shows as far as the open stops; a newly opened stretch draws itself in with a sparkle (`y3:mapSeen`, saved silently on a first visit).
+- **Landmarks:** each topic's landmark is a mountain with a sign on top showing its `LANDMARK` icon (in `shared/map.js`); tap it for the topic card.
+- **Biomes:** each world is a biome in `ART[world]`:
+  - Science: hills by the sea
+  - Maths: a mine with a minecart rail
+  - English: a storybook kingdom with stone walls and cobbles
+  - Future: asteroid islands in space with a circuit path
+  - Wonders: a sandy lagoon with a boardwalk
+  - World: beach islands with a flight path
+
+  Each biome sets ground/cliff/hill/mountain colours, `peak`, `bricks`/`strata`, `beach`, `path`, `scenery` weights (hill, trees, bush, flowers, mushroom, rocks, props, houses, fields, crater) with their emoji lists, `floaters` (things in the water), `space`, `clouds` and `ponds`.
+- **Scenery rules:**
+  - Scenery emoji need pixel icons.
+  - Nothing collectable-looking (gems, coins, stars, keys).
+
 **Quest-map NPCs (`shared/npcs.js`):** people by the road on the home page map, who talk in an Undertale-style text box. Every world has the same cast, written as data in `NPCS[world]`: `{ id, name, role, at: '<lesson title>' (null = by START), look, say: { lines } }`. They appear once the stop they live by is cleared. Roles: a **trader** (by START) sells 3 items with `unlock: 'trader-<world>'`. A **challenger** asks 3 questions from the lessons cleared on the road up to them (from `shared/question-bank.js`). The first win gives their `prize`; after that a daily rematch pays 3 💎. A **side quest** (`QUESTS`) has a **giver** ("Could you help me?" YES/NO) who wants an item from a **helper** standing earlier on the same road. The helper hands it over after 3 questions (it goes in the 🎒 backpack). Handing it to the giver ends with one `check` question, then the `rewards` (items with `unlock: 'npc'`). Lines a NPC leaves out come from `DEFAULT_SAY`. Reward and trader items live in `avatar.js` and can't be bought in the shop. Cast: Science: Market Mo, Professor Pip, Tinker Max → Gardener Rosa. Maths: Digger Dee, Clockmaker Clara, Night-Owl Nell → Miner Moss. English: Pedlar Penny, Dame Spellalot, Bellmaker Bea → Town Crier Tom. Future: Nova, Coder Kai, Inventor Ivy → Designer Dex. Wonders: Captain Coral, Dr Deep, Mossy Meg → Professor Mara. World: Globetrotter Gus, Pilot Priya, Guide Kenji → Grandma Malee. A new quest or NPC must stand by a lesson that is already built. **After adding or changing a lesson, run `node tools/build-question-bank.js`** so the challengers can ask about it. It collects the boss-battle questions that work without a picture.
 
 **What he finds tricky (`parents.html`):** `shared/engine.js` saves the first try at every question in `y3:tries` (`track(kind, q, first)`): reading checks, recaps and warm-ups, video quests, quizzes, boss battles, questions inside games (`runQuestions`) and spelling-test words (with his first wrong spelling). The parent page shows what is still tricky, each lesson's first-try score and what he has since got right. Challenger NPCs put up to 2 of his last-time misses into their 3 questions. New question flows should call `track` too.

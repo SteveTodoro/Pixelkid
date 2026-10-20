@@ -1726,7 +1726,7 @@
     '.......kkk......',
     '................',
   ]);
-  def('🌳 🌲 🌴', [
+  def('🌳 🌲', [
     '.....kkkkkk.....',
     '...kkeeeeeekk...',
     '..keeleeeeeeek..',
@@ -5891,6 +5891,24 @@
     '..krrrryyrrrrk..',
     '...krrrrrrrrk...',
     '....kkkkkkkk....',
+  ]);
+  def('🌴', [ // a palm tree: fronds over a curved trunk, on a little sand mound
+    '................',
+    '..eee......eee..',
+    '.elllee..eellle.',
+    'el...leeeel...le',
+    'e...eelNNlee...e',
+    '...el..NN..le...',
+    '..el...nN...le..',
+    '.......nN.......',
+    '.......nN.......',
+    '......nN........',
+    '......nN........',
+    '......nN........',
+    '.....nN.........',
+    '.....nN.........',
+    '....tTTTt.......',
+    '...tTTTTTt......',
   ]);
 
 })();

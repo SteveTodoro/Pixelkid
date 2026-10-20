@@ -61,12 +61,11 @@ Privacy: the repo is public. Never put the child's name in files, URLs or commit
 - **Waiting on the parent:**
   - playtest feedback on the newest lessons (Speech Marks, Place Value, Rock Stars) and on the quest-map NPCs, tap-to-walk and biomes
   - a decision on the map's terrain/topography and icon redesign
-- **Quest map redesign (in progress):** a Super Mario World–style overworld. The map code now lives in `shared/map.js` and `shared/map.css`, and the landscape kit in `shared/map-art.js`:
-  - terraces, cliffs with ladders, bridges, ponds, hills with blinking eyes, drifting clouds
-  - small round stage dots and a name banner
-  - road hidden until unlocked, then drawn in (`y3:mapSeen`)
-
-  **Science is the pilot** (`ART.science`); the other worlds keep the old look until the parent approves. Then add an `ART` palette for each world and delete the old road/emoji-scenery code.
+- **Quest map:** a Super Mario World–style overworld, live in every world.
+  - **Code:** `shared/map.js` (layout, reveal, hero, NPCs, cards, banner), `shared/map-art.js` (the landscape kit) and `shared/map.css`.
+  - **Biomes:** each world has one in `ART[world]` in map-art.js: colours, cliff texture, beach, path style, scenery, things floating in the water, sea or space. A new world needs an `ART` entry.
+  - **Road:** the road is hidden until unlocked, then drawn in (`y3:mapSeen`).
+  - **Living layers:** waves, clouds, blinking hill eyes and a falling river at forks, all as light CSS animation.
 - **Open cleanup:**
   - move `LIBRARY` out of index.html into `shared/library.js` (the tools parse it there)
   - add a file-size warning to the tools
