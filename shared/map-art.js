@@ -10,7 +10,7 @@
  *   MapArt.paint(canvas, T, world, items, W, H, rnd) → the hill eyes [{ x, y, gap }] (painted once)
  *   MapArt.paths(edges, T, world, W, H) → SVG markup for the road; edges: [{ pts, fresh }] (fresh ones draw themselves in)
  *   MapArt.live(map, eyes, W, H, rnd, rivers, world, T) → adds the water, clouds, eyes and floating things; rivers: [{ x, top, bot }]
- *     (between a fork's branches) get falling water and a foam splash where they reach the land below
+ *     (between a fork's branches) get falling water and a foam splash where they reach the land below, in a world with waterfall: true
  */
 (function () {
   'use strict';
@@ -19,11 +19,12 @@
 
   // ground / cliff / hill / mountain: [light, main, shade(, dark)]. peak: the mountain top (snow, sand…). path: dirt | rail | cobble |
   // circuit | boardwalk | flight. scenery: how often each kind appears. floaters: things in the water (or space). ponds: how many.
+  // waterfall: the gap between a fork's branches gets falling water and a splash (elsewhere it is just open water).
   const ART = {
     science: { // green hills by the sea
       ground: ['#b6ee6a', '#6cc644', '#3f9a2c', '#2a6b1a'], cliff: ['#e0a05a', '#b0692e', '#713c15'],
       hill: ['#a6e86e', '#4fbf3f', '#2e8a26'], mountain: ['#e2e6ea', '#a3abb5', '#6b7480'], peak: ['#ffffff', '#cfe6ff'],
-      path: 'dirt', sea: '#3d8fe4', ponds: 2,
+      path: 'dirt', sea: '#3d8fe4', ponds: 2, waterfall: true, // (the river between a fork's branches falls like a waterfall)
       scenery: { hill: 4, trees: 4, bush: 2, flowers: 2, mushroom: 1, rocks: 1 },
       trees: ['🌳', '🌲'], flowers: ['🌷', '🌼', '🌸', '🌻'],
     },
@@ -302,7 +303,7 @@
     map.style.setProperty('--sea', A.sea); map.classList.add('b-' + key, A.space ? 'space' : 'water');
     const sea = document.createElement('div'); sea.className = 'qsea'; sea.innerHTML = '<i class="qglint"></i>'; map.prepend(sea);
     // a river between a fork's branches: water streaming down (under the land, so it only shows in the gap), foam where it lands
-    rivers.forEach(r => {
+    if (A.waterfall) rivers.forEach(r => {
       const d = document.createElement('div'); d.className = 'qriver';
       Object.assign(d.style, { left: snap(r.x) + 'px', top: snap(r.top) + 'px', height: snap(r.bot - r.top) + 'px' });
       sea.after(d);

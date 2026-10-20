@@ -129,7 +129,7 @@ One country per lesson: find it on the map, then the history and culture childre
 **Roads, recaps and warm-ups (the home page quest map):** each world on index.html is a road. A lesson follows the one listed before it in `LIBRARY`, or the lesson named by `after: '<title>'`, which starts a branch (a fork splits the road into two lanes that meet again at the world's goal). A stop unlocks once the stop before it is cleared. A lesson in the **same unit** as the stop before it opens with a recap of that lesson (`from.url` set). A lesson that **starts a new unit** (including the first lesson after a fork into a new unit) opens with a **warm-up** instead: a `review` stage whose `from` names what the child already knows (no url), e.g. `{ title: 'Living things you already know', emoji: '🌳' }`. Its facts and questions draw on everyday or earlier knowledge the lesson builds on, without giving away the lesson's content. `tools/lesson-check.js` checks both rules.
 
 **The quest map's look (`shared/map-art.js`):** a Super Mario World–style overworld drawn from the road's layout.
-- **Shape:** each row of stops is a terrace with a cliff. The road drops down cliffs on ladders and crosses water on bridges, and a river with falling water runs between a fork's branches.
+- **Shape:** each row of stops is a terrace with a cliff. The road drops down cliffs on ladders and crosses water on bridges, and in Science a waterfall river runs between a fork's branches (`waterfall: true`).
 - **Stops:** small round dots with a name tag. The banner shows the stop the hero is on.
 - **Hidden road:** the road only shows as far as the open stops; a newly opened stretch draws itself in with a sparkle (`y3:mapSeen`, saved silently on a first visit).
 - **Landmarks:** each topic's landmark is a mountain with a sign on top showing its `LANDMARK` icon (in `shared/map.js`); tap it for the topic card.
@@ -141,7 +141,7 @@ One country per lesson: find it on the map, then the history and culture childre
   - Wonders: a sandy lagoon with a boardwalk
   - World: beach islands with a flight path
 
-  Each biome sets ground/cliff/hill/mountain colours, `peak`, `bricks`/`strata`, `beach`, `path`, `scenery` weights (hill, trees, bush, flowers, mushroom, rocks, props, houses, fields, crater) with their emoji lists, `floaters` (things in the water), `space`, `clouds` and `ponds`.
+  Each biome sets ground/cliff/hill/mountain colours, `peak`, `bricks`/`strata`, `beach`, `path`, `scenery` weights (hill, trees, bush, flowers, mushroom, rocks, props, houses, fields, crater) with their emoji lists, `floaters` (things in the water), `space`, `clouds`, `ponds` and `waterfall`.
 - **Scenery rules:**
   - Scenery emoji need pixel icons.
   - Nothing collectable-looking (gems, coins, stars, keys).

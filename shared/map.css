@@ -132,7 +132,4 @@ html.q-paused .qriver::before { animation-play-state: paused !important; }
 .qmap.space .qsea::after { background: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2016'%20shape-rendering='crispEdges'%3E%3Crect%20x='25'%20y='1'%20width='1'%20height='1'%20fill='%23e6e0ff'/%3E%3Crect%20x='2'%20y='4'%20width='1'%20height='1'%20fill='%23ffe9a8'/%3E%3Crect%20x='26'%20y='4'%20width='1'%20height='1'%20fill='%23e6e0ff'/%3E%3Crect%20x='19'%20y='5'%20width='1'%20height='1'%20fill='%23e6e0ff'/%3E%3Crect%20x='12'%20y='11'%20width='1'%20height='1'%20fill='%23e6e0ff'/%3E%3C/svg%3E") 0 0 / 128px 64px; opacity: .9; animation-duration: 55s; }
 .qmap.space .qglint { background-size: 96px 48px; animation-duration: 2.4s; }
 .qmap.space .qfloat { font-size: 34px; animation-duration: 6s; }
-.qmap.space .qriver { background: transparent; }
-.qmap.space .qriver::before { opacity: .7; animation-duration: 2.4s; } /* a stream of falling stars between the branches */
-.qmap.space .qsplash { display: none; }
 @media (prefers-reduced-motion: reduce) { .qfloat { animation: none; } }

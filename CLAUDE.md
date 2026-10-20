@@ -65,7 +65,7 @@ Privacy: the repo is public. Never put the child's name in files, URLs or commit
   - **Code:** `shared/map.js` (layout, reveal, hero, NPCs, cards, banner), `shared/map-art.js` (the landscape kit) and `shared/map.css`.
   - **Biomes:** each world has one in `ART[world]` in map-art.js: colours, cliff texture, beach, path style, scenery, things floating in the water, sea or space. A new world needs an `ART` entry.
   - **Road:** the road is hidden until unlocked, then drawn in (`y3:mapSeen`).
-  - **Living layers:** waves, clouds, blinking hill eyes and a falling river at forks, all as light CSS animation.
+  - **Living layers:** waves, clouds, blinking hill eyes, and (Science only) a waterfall river at forks, all as light CSS animation.
 - **Open cleanup:**
   - move `LIBRARY` out of index.html into `shared/library.js` (the tools parse it there)
   - add a file-size warning to the tools
