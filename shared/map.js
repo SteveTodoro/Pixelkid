@@ -239,7 +239,7 @@ function drawMap(key, lessons, stateOf) {
   }
   landmarks.forEach(it => scenery.push({ kind: 'mountain', x: it.x, y: it.y + 34 }));
   MapArt.live(map, MapArt.paint(ground, T, key, scenery, W, H, rnd), W, H, rnd, rivers.map(r => Object.assign({ bot: goalTop }, r)), key, T);
-  if (!MapArt.ART[key] || !MapArt.ART[key].space) for (let k = 0, n = 1 + Math.floor(rnd() * 2); k < n; k++) { // a butterfly or two
+  if ((MapArt.ART[key] || {}).critters !== false) for (let k = 0, n = 1 + Math.floor(rnd() * 2); k < n; k++) { // a butterfly or two
     const p = spots[Math.floor(rnd() * spots.length)];
     if (p && room(p.x, p.y) > 20) put('qdeco small qflutter', p.x, p.y - 20, '🦋').style.animationDelay = -(rnd() * 3).toFixed(1) + 's';
   }

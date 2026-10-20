@@ -20,6 +20,7 @@
   // ground / cliff / hill / mountain: [light, main, shade(, dark)]. peak: the mountain top (snow, sand…). path: dirt | rail | cobble |
   // circuit | boardwalk | flight. scenery: how often each kind appears. floaters: things in the water (or space). ponds: how many.
   // waterfall: the gap between a fork's branches gets falling water and a splash (elsewhere it is just open water).
+  // pond: a frozen pond's colour. snowfall: snow drifts down over the map. critters: false – no butterflies.
   const ART = {
     science: { // green hills by the sea
       ground: ['#b6ee6a', '#6cc644', '#3f9a2c', '#2a6b1a'], cliff: ['#e0a05a', '#b0692e', '#713c15'],
@@ -35,17 +36,17 @@
       scenery: { hill: 3, rocks: 4, props: 3, mushroom: 2, bush: 1 },
       props: ['⛏️', '🪵', '🕯️', '🪨'], floaters: [],
     },
-    english: { // a storybook kingdom: bright meadows on stone walls, cottages, wheat fields and a moat
-      ground: ['#d8f590', '#93d65c', '#62aa3c', '#3f7a25'], cliff: ['#d8d2c6', '#9c9588', '#615b51'], bricks: true,
-      hill: ['#bdf08a', '#6fc84a', '#3f9a2c'], mountain: ['#e2e6ea', '#a3abb5', '#6b7480'], peak: ['#ffffff', '#cfe6ff'],
-      path: 'cobble', sea: '#3a7fd0', ponds: 1,
-      scenery: { hill: 3, trees: 4, houses: 2, fields: 3, flowers: 2 },
-      trees: ['🌳', '🌲'], houses: ['🏠', '🏡'], flowers: ['🌷', '🌼'], floaters: ['⛵'],
+    english: { // a snowy storybook kingdom: snow-covered meadows on walls of ice blocks, snowy pines, cottages, snowmen, falling snow
+      ground: ['#ffffff', '#eef6ff', '#c9def2', '#9dbad8'], cliff: ['#e4f6ff', '#9fd3f2', '#5a9cc8'], bricks: true,
+      hill: ['#ffffff', '#e3eef9', '#b3cbe3'], mountain: ['#e8f0f8', '#a9bdd3', '#6f86a3'], peak: ['#ffffff', '#dceeff'],
+      path: 'cobble', sea: '#2f6fb5', pond: '#bfe7ff', ponds: 1, snowfall: true, critters: false,
+      scenery: { hill: 3, pines: 6, houses: 2, props: 1, rocks: 1 },
+      houses: ['🏠', '🏡'], props: ['⛄', '🛷'], floaters: ['🧊', '🐧'],
     },
     future: { // floating asteroid islands in space, joined by a glowing circuit line
       ground: ['#e4dff7', '#b2a8dd', '#8579bb', '#5d5293'], cliff: ['#6a58b0', '#46388a', '#271c57'], strata: true,
       hill: ['#d6d0ee', '#a097cf', '#71689f'], mountain: ['#efe6ff', '#b9a2f2', '#7a5fd0'], peak: ['#ffffff', '#e2d8ff'],
-      path: 'circuit', sea: '#120e2e', space: true, ponds: 0, clouds: false,
+      path: 'circuit', sea: '#120e2e', space: true, ponds: 0, clouds: false, critters: false,
       scenery: { hill: 3, crater: 4, rocks: 2, props: 2 },
       props: ['🚀', '🔭', '🤖'], floaters: ['🪐', '🌙'],
     },
@@ -144,14 +145,14 @@
   function pondArt(g, p, A) {
     g.fillStyle = '#000'; block(g, p.x - P, p.y - P, p.w + 2 * P, p.h + 2 * P, 3);
     g.fillStyle = 'rgba(255,255,255,.85)'; block(g, p.x, p.y, p.w, p.h, 2);
-    g.fillStyle = A.sea; block(g, p.x + P, p.y + P, p.w - 2 * P, p.h - 2 * P, 2);
+    g.fillStyle = A.pond || A.sea; block(g, p.x + P, p.y + P, p.w - 2 * P, p.h - 2 * P, 2);
     g.fillStyle = A.cliff[1]; g.fillRect(p.x + 3 * P, p.y + P, p.w - 6 * P, P); // its far bank
-    g.fillStyle = '#a9d6ff'; g.fillRect(p.x + p.w * 0.3, p.y + p.h * 0.5, 3 * P, P); g.fillRect(p.x + p.w * 0.6, p.y + p.h * 0.7, 2 * P, P);
+    g.fillStyle = A.pond ? '#ffffff' : '#a9d6ff'; g.fillRect(snap(p.x + p.w * 0.3), snap(p.y + p.h * 0.5), 3 * P, P); g.fillRect(snap(p.x + p.w * 0.6), snap(p.y + p.h * 0.7), 2 * P, P);
   }
 
   // ---------- scenery ----------
   // how much open grass each kind of scenery needs round its spot (the spot is its base)
-  const FOOT = { hill: { rx: 36, ry: 24 }, trees: { rx: 34, ry: 22 }, bush: { rx: 20, ry: 12 }, flowers: { rx: 20, ry: 12 }, mushroom: { rx: 14, ry: 14 }, rocks: { rx: 16, ry: 12 },
+  const FOOT = { pines: { rx: 34, ry: 22 }, hill: { rx: 36, ry: 24 }, trees: { rx: 34, ry: 22 }, bush: { rx: 20, ry: 12 }, flowers: { rx: 20, ry: 12 }, mushroom: { rx: 14, ry: 14 }, rocks: { rx: 16, ry: 12 },
     props: { rx: 16, ry: 14 }, houses: { rx: 30, ry: 20 }, fields: { rx: 26, ry: 14 }, crater: { rx: 24, ry: 12 } };
   function scenery(key, rnd) {
     const S = art(key).scenery, all = Object.entries(S), sum = all.reduce((n, [, w]) => n + w, 0);
@@ -197,7 +198,24 @@
       g.fillStyle = top[0]; g.fillRect(cx + x * P, base - Math.ceil(hu * 0.68) * P, P, P);
     }
   }
+  // a snowy pine: three tiers of dark green, each with snow along its top, on a brown trunk
+  function pine(g, cx, base, s) {
+    cx = snap(cx); base = snap(base);
+    g.fillStyle = 'rgba(0,0,0,.18)'; g.fillRect(cx - 4 * P, base, 8 * P, P);
+    g.fillStyle = '#000'; g.fillRect(cx - 2 * P, base - 3 * P, 4 * P, 3 * P); g.fillStyle = '#8a5a32'; g.fillRect(cx - P, base - 3 * P, 2 * P, 2 * P);
+    for (let t = 0; t < 3; t++) {
+      const w = (5 - t) * s, top = base - 3 * P - (t + 1) * 4 * P;
+      for (let r = 0; r < 5; r++) {
+        const hw = Math.max(1, Math.round(w * (r + 1) / 5)), y = top + r * P;
+        g.fillStyle = '#000'; g.fillRect(cx - (hw + 1) * P, y, (hw + 1) * 2 * P, P);
+        g.fillStyle = r < 2 ? '#ffffff' : '#2f7a3c'; g.fillRect(cx - hw * P, y, hw * 2 * P, P);
+        if (r >= 2) { g.fillStyle = '#1f5a2a'; g.fillRect(cx + (hw - 1) * P, y, P, P); g.fillStyle = '#ffffff'; g.fillRect(cx - hw * P, y, P, P); }
+      }
+    }
+    g.fillStyle = '#000'; g.fillRect(cx - P, base - 3 * P - 13 * P, 2 * P, P);
+  }
   const PAINT = {
+    pines(g, it, A, rnd) { const n = 1 + Math.floor(rnd() * 3); for (let k = 0; k < n; k++) pine(g, it.x + (k - (n - 1) / 2) * 22 + (rnd() - 0.5) * 6, it.y - (k % 2) * 8, 1); },
     mountain(g, it, A) { peak(g, it.x - 26, it.y - 10, 14, 10, A); peak(g, it.x + 6, it.y, 22, 16, A); },
     hill(g, it, A, rnd, eyes) { mound(g, it.x, it.y, 14 + Math.floor(rnd() * 3) * 2, 9 + Math.floor(rnd() * 3), A.hill, eyes); },
     bush(g, it, A, rnd) { mound(g, it.x - 8, it.y, 6, 3, [A.ground[1], A.ground[2], A.ground[3]]); mound(g, it.x + 8, it.y, 7, 4, [A.ground[1], A.ground[2], A.ground[3]]); },
@@ -326,6 +344,7 @@
         left--;
       }
     }
+    if (A.snowfall) { const f = document.createElement('div'); f.className = 'qsnowfall'; map.append(f); } // snow drifting down
     if (A.clouds !== false) for (let k = 0, n = H > 900 ? 4 : 3; k < n; k++) {
       const c = add('qcloud', 0, snap(30 + (k + rnd() * 0.8) * (H - 120) / n));
       c.style.setProperty('--w', W + 'px'); c.style.setProperty('--s', (0.7 + rnd() * 0.5).toFixed(2));

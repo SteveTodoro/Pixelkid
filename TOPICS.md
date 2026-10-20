@@ -136,12 +136,12 @@ One country per lesson: find it on the map, then the history and culture childre
 - **Biomes:** each world is a biome in `ART[world]`:
   - Science: hills by the sea
   - Maths: a mine with a minecart rail
-  - English: a storybook kingdom with stone walls and cobbles
+  - English: a snowy storybook kingdom with ice-block walls, snowy pines, snowmen, penguins and falling snow
   - Future: asteroid islands in space with a circuit path
   - Wonders: a sandy lagoon with a boardwalk
   - World: beach islands with a flight path
 
-  Each biome sets ground/cliff/hill/mountain colours, `peak`, `bricks`/`strata`, `beach`, `path`, `scenery` weights (hill, trees, bush, flowers, mushroom, rocks, props, houses, fields, crater) with their emoji lists, `floaters` (things in the water), `space`, `clouds`, `ponds` and `waterfall`.
+  Each biome sets ground/cliff/hill/mountain colours, `peak`, `bricks`/`strata`, `beach`, `path`, `scenery` weights (hill, trees, pines, bush, flowers, mushroom, rocks, props, houses, fields, crater) with their emoji lists, `floaters` (things in the water), `space`, `clouds`, `ponds`, `pond` (a frozen pond's colour), `snowfall`, `critters` and `waterfall`.
 - **Scenery rules:**
   - Scenery emoji need pixel icons.
   - Nothing collectable-looking (gems, coins, stars, keys).
