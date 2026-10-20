@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rock Stars</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <script src="../shared/pixel.js"></script>
+  <script src="../shared/pixel-icons.js"></script>
+  <script src="../shared/avatar.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// ---------- blocky pictures for this lesson ----------
+// three rock samples: speckly granite, stripy sandstone and dark slate
+const ROCKS = Pixel.svg([
+  '..kkkk..........................',
+  '.kpgpgk.........................',
+  'kgpbpgpk.........kkkkk..........',
+  'kpgpgpbk.......kkyyyyykk........',
+  'kgbpgpgk......kyyyyyyyyyk.......',
+  '.kpgpbk......koooooooooook...kkk',
+  '..kkkk.......kyyyyyyyyyyyk.kkssk',
+  '.............kooooooooooookkssssk',
+  '..............kyyyyyyyyyykkkkkkkk',
+  '...............kkkkkkkkkkkSSSSSSk',
+  '.........................kkkkkkkk',
+], { k: '#1b1b1b', p: '#d9a3a0', g: '#8e8e8e', b: '#2b2b2b', y: '#e0b46c', o: '#c9974f', s: '#5a6272', S: '#3b414d' });
+
+// layers of a sedimentary rock, with a little shell inside
+const LAYERS = Pixel.svg([
+  'kkkkkkkkkkkkkkkkkkkk',
+  'kyyyyyyyyyyyyyyyyyyk',
+  'koooooooooooooooooook',
+  'kwwwwwwwwwwwwwwwwwwk',
+  'kyyyyyyyyyykkkyyyyyk',
+  'kyyyyyyyyykwwwkyyyyk',
+  'koooooooooookoooooook',
+  'krrrrrrrrrrrrrrrrrrk',
+  'kyyyyyyyyyyyyyyyyyyk',
+  'kkkkkkkkkkkkkkkkkkkk',
+], { k: '#1b1b1b', y: '#e0b46c', o: '#c9974f', w: '#f4efe2', r: '#b0623e' });
+
+// the boss: Gnash the Gravel Gobbler, a rock monster who munches every rock he can find
+const GNASH = Pixel.svg([
+  '...kkkkkkkk...',
+  '..kggGgggGgk..',
+  '.kgGgggGgggGk.',
+  'kggwwgggGwwggk',
+  'kgGwkgGggwkgGk',
+  'kggggggGgggggk',
+  'kgkwkwkwkwkwgk',
+  'kgkrrrrrrrrkgk',
+  'kgkwkwkwkwkwgk',
+  'kgggGggggGgggk',
+  '.kgggggGggggk.',
+  '..kkk....kkk..',
+], { k: '#1b1b1b', g: '#8e9aa8', G: '#6b7480', w: '#ffffff', r: '#e53935' });
+
+// ---------- the lesson ----------
+window.LESSON = {
+  id: 'science-rocks',
+  subject: 'science',
+  title: 'Rock Stars',
+  emoji: '🪨',
+  home: '../index.html',
+  mascot: {
+    name: 'Professor Bolt',
+    sprite: Pixel.sprites.robot,
+    praise: ['You ROCK!', 'Rock-solid answer!', 'Geology genius!', 'Critical hit!', 'Boulder-ific!', 'Nailed it!', 'Rock star!'],
+    oops: ['Oops! Think about how that rock was made.', 'Not quite – what did the test show?', 'Hmm, think again!', 'So close! One more try.'],
+  },
+  glossary: {
+    geologist: { emoji: '🔍', def: 'A scientist who studies rocks.' },
+    igneous: { emoji: '🌋', def: 'Rock made when hot, melted rock cools down and goes hard. Granite and pumice are igneous.' },
+    sedimentary: { emoji: '🏖️', def: 'Rock made from layers of sand, mud or shells, squashed together over millions of years. Sandstone and chalk are sedimentary.' },
+    metamorphic: { emoji: '🔥', def: 'Rock that has been changed by heat and squeezing deep underground. Marble and slate are metamorphic.' },
+    magma: { emoji: '🔴', def: 'Hot, melted rock deep under the ground. When it comes out of a volcano, it is called lava.' },
+    permeable: { emoji: '💧', def: 'Lets water soak in or pass through. Rocks that keep water out are impermeable.' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'Rock Stars', short: 'Start', minutes: 1,
+      pic: ROCKS,
+      hello: 'Welcome back to the Science Lab! Today you are a geologist – a rock scientist. But watch out: Gnash the Gravel Gobbler is munching every rock he can find!',
+      question: 'Are all rocks the same? How could you tell two rocks apart?',
+      intro: 'Warm up, read, watch, test real rocks in the **Rock Lab**, solve a stormy mystery – then stop Gnash the Gravel Gobbler!',
+      nameLabel: 'Player name:',
+    },
+
+    {
+      type: 'review', title: 'Warm-up', short: 'Warm-up', minutes: 3,
+      from: { title: 'Materials you already know', emoji: '🧱' },
+      facts: [
+        'Everything is made of materials: wood, metal, plastic, glass, fabric, rock…',
+        'Some materials are natural, like wood, wool and stone. Others are made by people, like plastic and glass.',
+        'A waterproof material keeps water out – that is why raincoats and umbrellas use it.',
+        'Hard materials are difficult to scratch, squash or bend.',
+      ],
+      questions: [
+        { type: 'oddone', q: 'Which material is the odd one out?', items: ['wood', 'wool', 'stone', 'plastic'], answer: 3, why: 'Why is plastic the odd one out?', reasons: ['It is made by people – the others are natural', 'It is the hardest', 'It is the only one you can see'], reason: 0 },
+        { type: 'mcq', q: 'You need a material for a tent that keeps the rain out. It must be…', options: ['waterproof', 'see-through', 'soft and fluffy'], answer: 0 },
+        { type: 'tf', q: 'A metal spoon is harder to bend than a paper straw.', answer: true },
+        { type: 'mcq', q: 'Which of these is natural – made by nature, not by people?', options: ['a pebble', 'a glass jar', 'a plastic cup'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'read', title: 'Three kinds of rock', short: 'Read 1', minutes: 6,
+      say: 'Read each page carefully – the checks test if you really understood. Tap the yellow words for a 💎.',
+      cards: [
+        {
+          title: 'Rocks are natural', pic: ROCKS,
+          text: [
+            'Rocks are made by nature, slowly, over millions of years. Mountains, cliffs and pebbles on the beach are all rock.',
+            'Brick and concrete look a bit like rock, but they are made by people in factories.',
+          ],
+          check: { type: 'oddone', q: 'Which one is the odd one out?', items: ['granite', 'chalk', 'brick', 'slate'], answer: 2, why: 'Why is brick the odd one out?', reasons: ['It is made by people – the others are natural rocks', 'It is red', 'It is the softest'], reason: 0, hint: 'Which one is made in a factory?' },
+        },
+        {
+          title: 'Igneous: born in fire', pic: '🌋',
+          text: [
+            'Deep underground, rock is so hot it melts into [[magma]]. When it cools and goes hard, it makes [[igneous]] rock.',
+            'Igneous rocks like granite are made of crystals locked tightly together.',
+          ],
+          check: { q: 'A volcano erupts and runny lava pours down the mountain. A year later it has cooled down. What is it now?', options: ['igneous rock', 'sedimentary rock', 'soil'], answer: 0, hint: 'It was melted rock that cooled and went hard.' },
+        },
+        {
+          title: 'Sedimentary: layer by layer', pic: LAYERS,
+          text: [
+            'Sand, mud and shells settle in layers at the bottom of seas and lakes. Over millions of years the layers get squashed into [[sedimentary]] rock.',
+            'Sandstone and chalk are sedimentary. You can often see their stripy layers.',
+          ],
+          check: { q: 'You find a rock with stripes and a tiny shell inside it. Which kind of rock is it most likely to be?', options: ['sedimentary', 'igneous', 'metamorphic'], answer: 0, hint: 'Shells and layers settle at the bottom of the sea…' },
+        },
+        {
+          title: 'Metamorphic: changed rock', pic: '🔥⬇️',
+          text: [
+            'When rock gets buried deep, the heat and squeezing slowly change it into a new rock. That is [[metamorphic]] rock.',
+            'Limestone changes into marble. Mudstone changes into slate.',
+          ],
+          check: { q: 'Some limestone is buried very deep, squeezed and heated for a very long time. What happens to it?', options: ['it changes into a new rock: marble', 'it melts and shoots out of a volcano straight away', 'it turns back into sand'], answer: 0, hint: 'It doesn\'t melt – it changes.' },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'Types of Rocks', short: 'Video 1', minutes: 6,
+      video: { id: 'CeuYx-AbZdo', title: 'Types Of Rocks | The Dr. Binocs Show', channel: 'Peekaboo Kidz', duration: '3:52' },
+      say: 'Dr. Binocs zooms in on the three kinds of rock. Watch, then answer my questions.',
+      clues: [
+        'What does the word "ignis" mean?',
+        'Which two igneous rocks does he name?',
+        'What makes metamorphic rocks?',
+        'Which famous building is made of marble?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'The name igneous comes from the Latin word "ignis". What does ignis mean?', options: ['fire', 'water', 'stone'], answer: 0 },
+        { type: 'mcq', q: 'Which two rocks does the video say are igneous?', options: ['pumice and granite', 'sandstone and coal', 'slate and marble'], answer: 0 },
+        { type: 'mcq', q: 'Where does the video say sedimentary rocks are often found?', options: ['on ocean and lake beds', 'inside volcanoes', 'on the Moon'], answer: 0 },
+        { type: 'tf', q: 'The video says metamorphic rocks are made when rocks MELT completely.', answer: false, explain: 'Heat and pressure change them – but they don\'t melt.' },
+        { type: 'type', q: 'The Taj Mahal in India is made from which metamorphic rock?', answer: ['marble'], placeholder: 'a rock', hint: 'It starts with m.' },
+        { type: 'mcq', q: 'About how much of the top part of the Earth\'s crust is igneous rock?', options: ['about 95%', 'about 5%', 'none of it'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'game', title: 'The Rock Lab', short: 'Game 1', minutes: 12,
+      rounds: [
+        {
+          game: 'rocklab', title: 'Rock Lab', rocks: ['granite', 'marble', 'slate', 'sandstone', 'chalk', 'pumice'],
+          intro: 'Welcome to the Rock Lab! Pick a rock and a test. Every result goes in your table – just like a real geologist.',
+          missions: [
+            { text: 'Look closely at the granite and the sandstone with the 🔍 magnifying glass.', need: ['granite:look', 'sandstone:look'], yes: 'Granite has crystals locked together. Sandstone has grains with tiny gaps.', ask: [
+              { type: 'predict', q: 'Which rock do you think will soak up a drop of water?', options: ['sandstone – water can get into the gaps', 'granite – the crystals drink it', 'neither of them'], answer: 0, reveal: 'Let\'s find out in the next mission!', then: { q: 'What could water squeeze into?', options: ['the gaps between the sand grains', 'the shiny crystals', 'nowhere at all'], answer: 0 } },
+            ] },
+            { text: 'Do the 💧 water drop test on the sandstone, the slate and the chalk.', need: ['sandstone:water', 'slate:water', 'chalk:water'], yes: 'Sandstone and chalk soaked it up. Slate kept it out!', ask: [
+              { q: 'Which rock was impermeable – it kept the water out?', options: ['slate', 'sandstone', 'chalk'], answer: 0 },
+            ] },
+            { text: 'Do the 📎 scratch test on the chalk and the granite. Drag the paper clip right across the rock!', need: ['chalk:scratch', 'granite:scratch'], yes: 'Chalk is very soft. Granite didn\'t even get a mark!', ask: [
+              { q: 'Which rock would you use for a kitchen worktop that gets knives and hot pans on it?', options: ['granite', 'chalk', 'it doesn\'t matter'], answer: 0, hint: 'Which rock didn\'t scratch?' },
+            ] },
+            { text: 'Try the 🪣 sink or float test on the pumice and the slate.', need: ['pumice:float', 'slate:float'], yes: 'A rock that FLOATS! Pumice is full of air bubbles.', ask: [
+              { q: 'Why can pumice float?', options: ['it is full of holes that hold air', 'it is made of wood', 'the water pushes all rocks up'], answer: 0 },
+            ] },
+          ],
+        },
+        {
+          game: 'sort', title: 'Rock families',
+          intro: 'Sort each rock into its family. Read the clue – how was it made?',
+          say: 'Fire, layers or changed?',
+          tapHint: 'Now tap the family it belongs to!',
+          buckets: [
+            { id: 'ig', label: 'Igneous', emoji: '🌋' },
+            { id: 'sed', label: 'Sedimentary', emoji: '🏖️' },
+            { id: 'met', label: 'Metamorphic', emoji: '🔥' },
+          ],
+          items: [
+            { label: 'Granite: crystals from cooled magma', emoji: '🪨', bucket: 'ig', hint: 'Cooled magma = born in fire.' },
+            { label: 'Pumice: frothy lava that cooled fast', emoji: '🌋', bucket: 'ig', hint: 'Lava is melted rock.' },
+            { label: 'Sandstone: grains of sand squashed together', emoji: '🏖️', bucket: 'sed', hint: 'Sand settles in layers.' },
+            { label: 'Chalk: tiny sea shells in layers', emoji: '🐚', bucket: 'sed', hint: 'Shells settle at the bottom of the sea.' },
+            { label: 'Marble: limestone changed by heat', emoji: '🏛️', bucket: 'met', hint: 'It was changed into a new rock.' },
+            { label: 'Slate: mudstone squeezed hard underground', emoji: '🏠', bucket: 'met', hint: 'Squeezing changed it.' },
+          ],
+        },
+        {
+          game: 'invaders', title: 'Rock Blaster',
+          intro: 'Arcade round! Read the target at the top and **shoot only the rocks that match it**.',
+          say: 'Think about your Rock Lab results!',
+          waves: [
+            { prompt: 'Shoot the PERMEABLE rocks (they soak up water)!', items: [{ label: 'chalk', ok: true }, { label: 'sandstone', ok: true }, { label: 'pumice', ok: true }, { label: 'slate', ok: false, why: 'Slate kept the water out – impermeable.' }, { label: 'granite', ok: false, why: 'Granite\'s crystals are locked tight – no gaps.' }] },
+            { prompt: 'Shoot the IGNEOUS rocks!', items: [{ label: 'granite', ok: true }, { label: 'pumice', ok: true }, { label: 'chalk', ok: false, why: 'Chalk is sedimentary – made of shells.' }, { label: 'marble', ok: false, why: 'Marble is metamorphic – changed limestone.' }] },
+            { prompt: 'Shoot the things that are NATURAL rock!', items: [{ label: 'slate', ok: true }, { label: 'marble', ok: true }, { label: 'brick', ok: false, why: 'Brick is made by people from baked clay.' }, { label: 'concrete', ok: false, why: 'Concrete is mixed by people.' }] },
+          ],
+          done: 'ROCK BLASTER CLEAR! You\'re a real rock star!',
+        },
+      ],
+    },
+
+    {
+      type: 'case', title: 'The Case of the Soggy Sheds', short: 'Case', minutes: 7,
+      say: 'A rocky mystery! Answer each question to uncover a clue. Then solve the case!',
+      mystery: [
+        'Three little pigs each built a garden shed, with a roof made of a different rock. 🐷 **Percy** used chalk. 🐷 **Poppy** used sandstone. 🐷 **Pip** used thin tiles of slate.',
+        'Then a huge storm rained all night long. In the morning, two of the sheds were soaked inside – and one was perfectly dry.',
+        'Uncover the clues to find out whose shed stayed dry, and why.',
+      ],
+      clues: [
+        { icon: '💧', clue: 'A permeable rock soaks water in, and the water can seep right through it. An impermeable rock keeps water out.',
+          q: { q: 'You drip water on a rock and it sits on top as a little round drop. What does that tell you?', options: ['the rock keeps water out', 'the rock soaks water up', 'the rock is very soft'], answer: 0 } },
+        { icon: '🖍️', clue: 'Chalk is so soft you can draw with it. Rain slowly soaks into it and wears it away.',
+          q: { type: 'predict', q: 'A chalk statue stands outside in the rain for 100 years. What do you predict?', options: ['it slowly wears away and goes blobby', 'it stays exactly the same', 'it turns into marble'], answer: 0, reveal: 'Chalk is soft and permeable – rain slowly wears it away.', then: { q: 'So is chalk a good rock for a roof?', options: ['no – it soaks up rain and wears away', 'yes – it is the best', 'only on sunny days'], answer: 0 } } },
+        { icon: '🏖️', clue: 'Sandstone is made of sand grains with tiny gaps between them. Water seeps into the gaps.',
+          q: { q: 'Why does water soak into sandstone?', options: ['there are tiny gaps between its grains', 'it is very hard', 'it is made of crystals'], answer: 0 } },
+        { icon: '🏠', clue: 'Slate splits into thin, flat sheets – and it is impermeable. Builders have used slate tiles on roofs for hundreds of years.',
+          q: { type: 'oddone', q: 'Which rock is the odd one out?', items: ['chalk', 'sandstone', 'pumice', 'slate'], answer: 3, why: 'Why is slate the odd one out?', reasons: ['It is impermeable – the others soak up water', 'It is the softest', 'It floats'], reason: 0 } },
+      ],
+      solve: {
+        q: 'After the storm, whose shed stayed dry?',
+        options: ['🐷 Pip – slate keeps water out', '🐷 Percy – chalk is white, so it stays clean', '🐷 Poppy – sandstone has gaps that let the rain out again'],
+        answer: 0, hint: 'Which rock is impermeable?',
+        explain: 'Chalk and sandstone are permeable: the rain soaked in and dripped through. Slate is impermeable, so the rain ran off Pip\'s roof.',
+      },
+      closed: 'Pip\'s slate roof kept the storm out! Percy and Poppy have ordered slate tiles too – and the Big Bad Wolf has been told to stay away from all three sheds.',
+    },
+
+    {
+      type: 'video', title: 'Testing Rocks', short: 'Video 2', minutes: 5,
+      video: { id: 'do-GLQY1wGk', title: 'Science, Year 3, Week 2 – Testing Rocks', channel: 'Harris Garrard Academy', duration: '3:27' },
+      say: 'A real teacher tests real rocks – the same tests as your Rock Lab! Watch, then answer my questions.',
+      clues: [
+        'Which four rocks are tested?',
+        'What does the teacher scratch them with?',
+        'What does permeable mean?',
+        'Which rock does something surprising in the water?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'Which four rocks does the teacher test?', options: ['sandstone, chalk, slate and pumice', 'granite, marble, coal and slate', 'chalk, brick, glass and sand'], answer: 0 },
+        { type: 'mcq', q: 'What does the teacher use for the scratch test?', options: ['a paper clip', 'a hammer', 'a toothbrush'], answer: 0 },
+        { type: 'mcq', q: 'Which rock seemed very soft and easy to scratch?', options: ['chalk', 'slate', 'all of them were the same'], answer: 0 },
+        { type: 'tf', q: 'On the slate, the water stayed as a droplet – so slate is impermeable.', answer: true },
+        { type: 'type', q: 'Which rock FLOATED in the beaker of water?', answer: ['pumice'], placeholder: 'a rock', hint: 'It is full of holes.' },
+        { type: 'mcq', q: 'The teacher says permeable means…', options: ['water is absorbed into the rock and can go through it', 'the rock floats', 'the rock is very hard'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Rocks at Work', short: 'Game 2', minutes: 8,
+      rounds: [
+        {
+          game: 'match', title: 'The right rock for the job',
+          intro: 'People choose rocks because of their properties. Match each job to the best rock.',
+          say: 'Think: hard? soft? waterproof? pretty?',
+          hint: 'Remember your Rock Lab results!',
+          pairs: [
+            { a: '🏠 Roof tiles that keep rain out', b: 'slate' },
+            { a: '🍳 A kitchen worktop that never scratches', b: 'granite' },
+            { a: '🗿 A smooth, shiny statue', b: 'marble' },
+            { a: '🖍️ Drawing on the playground', b: 'chalk' },
+            { a: '🦶 Rubbing hard skin off your feet', b: 'pumice' },
+          ],
+        },
+        {
+          game: 'questions', title: 'Geologist\'s notebook',
+          intro: 'A geologist found these rocks on a walk. Use what you know to answer her notes.',
+          say: 'Think about how each rock was made and what it can do.',
+          questions: [
+            { type: 'type', q: 'This rock was made from tiny sea shells in layers, and you can draw with it. What is it?', answer: ['chalk'], placeholder: 'a rock', hint: 'You might use it on a blackboard.' },
+            { type: 'oddone', q: 'Which rock is the odd one out?', items: ['sandstone', 'chalk', 'limestone', 'granite'], answer: 3, why: 'Why is granite the odd one out?', reasons: ['It is igneous – the others are sedimentary', 'It is the softest', 'It is made by people'], reason: 0 },
+            { type: 'predict', q: 'You drop a granite pebble and a pumice stone into a bucket of water. What do you predict?', options: ['pumice floats, granite sinks', 'they both float', 'they both sink'], answer: 0, reveal: 'The pumice bobs on top, full of air bubbles. The granite sinks straight to the bottom.', then: { q: 'So most rocks…', options: ['sink in water', 'float in water', 'dissolve in water'], answer: 0 } },
+            { type: 'mcq', q: 'Old gravestones made of sandstone often have words that are hard to read. Why?', options: ['rain soaked in and wore the soft rock away', 'someone rubbed the words out', 'sandstone grows moss on purpose'], answer: 0 },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
+      say: 'Time to move like the rocks! Do each move.',
+      wiggle: {
+        title: '🌋 Rock and Roll Moves!',
+        seconds: 60,
+        moves: [
+          '🌋 Crouch down low… then ERUPT like a volcano!',
+          '🏖️ Lie flat like a layer of sand – then another on top!',
+          '🔥 Squeeze yourself tiny like metamorphic rock!',
+          '🪨 Freeze like a statue made of marble!',
+          '🎸 Rock and roll! Play an air guitar!',
+          '🪶 Float like pumice – tiptoe very lightly!',
+        ],
+      },
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: Gnash the Gravel Gobbler', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      say: 'GNASH THE GRAVEL GOBBLER wants to munch every rock in the Kingdom! Every right answer cracks his rocky armour. Go, {name}!',
+      boss: {
+        name: 'Gnash', sprite: GNASH, attack: ['🪨', '💥'], spin: true,
+        lines: {
+          intro: 'CRUNCH! MUNCH! I am GNASH THE GRAVEL GOBBLER! Granite for breakfast, slate for lunch, chalk for pudding! Rocks are all the same anyway – just CRUNCHY!',
+          hurt: ['Ow! That answer was rock solid!', 'My teeth! You cracked my teeth!', 'Stop knowing so much about rocks!', 'That hit was boulder than I thought!'],
+          taunt: ['Ha! Pebble-brain!', 'Wrong! You\'re between a rock and a hard place!', 'Crunch! Another wrong answer for my tummy!', 'Ha ha! Sedimental mistake!'],
+          angry: 'NOW I\'M ERUPTING! I\'m an igneous-ly ANGRY rock monster!',
+          dodge: 'Rockslide! Dodge my boulders!',
+          miss: 'You dodged EVERY rock? I\'m stone-cold shocked!',
+          last: 'Please… I\'m starting to crumble… like chalk in the rain…',
+          defeat: 'Nooo! I\'m wearing away… layer… by… layer…',
+          win: 'CRUNCH! I ate every rock in the Kingdom! Now there\'s only gravel left – delicious!',
+          stunned: 'Pebbles… everywhere… I feel all metamorphic…',
+          beg: ['Wait! I\'ll only eat rock cakes from now on!', 'Mercy! You really are a rock star!', 'I\'ll leave the slate roofs alone – promise!'],
+        },
+      },
+      bonus: {
+        title: '⭐ Bonus quest (for a grown-up to help with)',
+        text: 'Want more? Watch Advisory Science\'s "Characteristics of Rocks" (2 min) about porous rocks, the scratch test and what we use rocks for. Then go on a rock hunt outside and test what you find!',
+        url: 'https://www.youtube.com/watch?v=r9ZEAXdngcU',
+        button: 'Watch the bonus video ▶',
+      },
+      questions: [
+        { type: 'mcq', q: 'Igneous rocks are made when…', options: ['hot melted rock cools down and goes hard', 'layers of sand get squashed together', 'plants grow on top of rocks'], answer: 0 },
+        { type: 'type', q: 'Which rock can float on water because it is full of holes?', answer: ['pumice'], placeholder: 'a rock', hint: 'It comes from frothy lava.' },
+        { type: 'mcq', q: 'Gnash wants to build a roof. Which rock should he use?', options: ['slate', 'chalk', 'sandstone'], answer: 0, hint: 'Which rock is impermeable and splits into thin sheets?' },
+        { type: 'tf', q: 'Brick is a natural rock.', answer: false, explain: 'Brick is made by people, from clay baked in a hot oven.' },
+        { type: 'gap', q: 'Marble is a ___ rock – limestone changed by heat and squeezing.', options: ['metamorphic', 'igneous', 'sedimentary'], answer: 0 },
+        { type: 'mcq', q: 'A geologist scratches a rock with a paper clip and white powder goes everywhere. The rock is…', options: ['soft, like chalk', 'very hard, like granite', 'magnetic'], answer: 0 },
+        { type: 'oddone', q: 'Which rock is the odd one out?', items: ['granite', 'pumice', 'chalk'], answer: 2, why: 'Why is chalk the odd one out?', reasons: ['It is sedimentary – the others are igneous', 'It is the hardest', 'It floats'], reason: 0 },
+        { type: 'order', q: 'Put these rocks from SOFTEST to HARDEST, using your Rock Lab scratch tests.', items: ['chalk', 'sandstone', 'granite'], ends: ['SOFTEST', 'HARDEST'], hint: 'Which one got the deepest scratch?' },
+        { type: 'mcq', q: 'Why do sedimentary rocks often have stripes?', options: ['sand and mud settled in layers, one on top of another', 'lava cooled in stripes', 'they were painted'], answer: 0 },
+        { type: 'predict', q: 'You drip water onto a piece of granite. What do you predict?', options: ['the drop stays on top', 'it soaks straight in', 'the granite melts'], answer: 0, reveal: 'The drop sits on top – granite\'s crystals are locked tightly together.', then: { q: 'So granite is…', options: ['impermeable', 'permeable', 'soft'], answer: 0 } },
+        { type: 'type', q: 'Which kind of scientist studies rocks?', answer: ['geologist', 'a geologist'], placeholder: 'one word', hint: 'You have been one all lesson! It starts with g.' },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>

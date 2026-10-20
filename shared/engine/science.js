@@ -1,4 +1,4 @@
-/* Pixelkid lesson engine – simulated science experiments: Force Lab, Ramp Lab, Seed Garden, Wind Test and Bee Flight.
+/* Pixelkid lesson engine – simulated science experiments: Force Lab, Ramp Lab, Seed Garden, Wind Test, Bee Flight and Rock Lab.
  * One part of shared/engine.js, which loads it only when a lesson uses it. E is the engine's shared helpers
  * (E.state and E.stageCard are live). See the top of shared/engine.js for how the parts fit together.
  */
@@ -823,6 +823,223 @@ PixelkidEngine.part('science', E => {
       frames(n) { for (let i = 0; i < n; i++) step(1 / 60); },
       fly(i) { bee.x = bee.tx = flowers[i].x; bee.y = bee.ty = flowers[i].y; for (let k = 0; k < 30; k++) step(1 / 60); },
       get flowers() { return flowers; }, get bee() { return bee; }, get mission() { return missions.i; },
+    };
+    root._stop = stopLoop;
+    missions.next();
+    return root;
+  };
+
+  // ===== Rock Lab: test rock samples like a geologist =====
+  // r.rocks: ids from ROCKS (granite, marble, slate, sandstone, chalk, pumice) – the samples on the bench.
+  // r.tests: which tools to offer (default all): 'look' (magnifying glass: crystals, grains, layers or holes),
+  //   'scratch' (drag the paper clip across the rock – soft rocks scratch and crumble), 'water' (drip water on it –
+  //   permeable rocks soak it up, impermeable ones leave a droplet) and 'float' (drop it in a tank of water).
+  // r.missions: [{ text, need: ['chalk:scratch', 'granite:scratch'], yes, ask: [questions] }] – the tests to do.
+  // Every test adds a row to the results table.
+  const ROCKS = {
+    granite: { name: 'Granite', type: 'igneous', c: ['#d9a3a0', '#8e8e8e', '#2b2b2b', '#f1e3d3'], look: 'crystals', hard: 3, soak: false, float: false,
+      lookTxt: 'big speckly crystals, locked tightly together' },
+    marble: { name: 'Marble', type: 'metamorphic', c: ['#f4f4f0', '#ffffff', '#c9c9c9', '#9aa3ad'], look: 'veins', hard: 2, soak: false, float: false,
+      lookTxt: 'tiny shiny crystals with grey swirly lines' },
+    slate: { name: 'Slate', type: 'metamorphic', c: ['#4a5160', '#5a6272', '#3b414d', '#6b7480'], look: 'layers', hard: 2, soak: false, float: false,
+      lookTxt: 'thin flat layers, squashed tightly together' },
+    sandstone: { name: 'Sandstone', type: 'sedimentary', c: ['#e0b46c', '#c9974f', '#f0cf8f', '#b07f3e'], look: 'grains', hard: 1, soak: true, float: false,
+      lookTxt: 'round grains of sand, stuck together with little gaps between them' },
+    chalk: { name: 'Chalk', type: 'sedimentary', c: ['#fbfbf6', '#ecece4', '#ffffff', '#dcdccf'], look: 'powder', hard: 0, soak: true, float: false,
+      lookTxt: 'fine powdery bits, made from tiny sea shells long ago' },
+    pumice: { name: 'Pumice', type: 'igneous', c: ['#c8c6bd', '#b3b0a6', '#dedcd3', '#3f3d38'], look: 'holes', hard: 1, soak: true, float: true,
+      lookTxt: 'full of holes – bubbles of gas trapped when lava cooled fast' },
+  };
+  const ROCK_TOOLS = { look: '🔍 Look closely', scratch: '📎 Scratch test', water: '💧 Water drop', float: '🪣 Sink or float?' };
+  const SCRATCH_TXT = ['a deep scratch and lots of powder – very soft', 'scratched easily, and grains rub off – soft', 'only a thin scratch line – quite hard', 'no scratch at all – very hard'];
+  GAMES.rocklab = function (r, key, done) {
+    const W = 640, H = 340, RX = 220, RY = 190, TANK = { x: 450, y: 110, w: 150, h: 180 };
+    const { cv, ctx } = arcadeCanvas(W, H);
+    const rocks = (r.rocks || Object.keys(ROCKS)).map(id => Object.assign({ id }, ROCKS[id]));
+    const tools = r.tests || Object.keys(ROCK_TOOLS);
+    let rock = rocks[0], tool = tools[0], busy = false, anim = null, scratches = [], dragPath = null, crumbs = [], wet = 0, drop = null, done_ = new Set(), runN = 0, time = 0;
+    const table = resultsTable(r.caption || '🪨 Our rock test results', ['Test', 'Rock', 'What we tested', 'What happened']);
+    const missions = missionRunner(r, key, done, () => { done_ = new Set(); busy = false; sync(); });
+    // each rock is a lumpy pixel blob, its cells coloured by its texture
+    const CELL = 8, rand = (x, y, k) => { const n = Math.sin(x * 12.9898 + y * 78.233 + k * 37.719) * 43758.5453; return n - Math.floor(n); };
+    function inRock(x, y, rk) { // a lumpy ellipse, a little different for every rock
+      const k = Object.keys(ROCKS).indexOf(rk.id);
+      const a = Math.atan2(y, x), rad = 1 + 0.12 * Math.sin(a * 3 + k) + 0.07 * Math.sin(a * 5 + k * 2);
+      return (x / 120) ** 2 + (y / 80) ** 2 < rad * rad;
+    }
+    function cellColour(rk, gx, gy) {
+      const c = rk.c, n = rand(gx, gy, 1);
+      switch (rk.look) {
+        case 'crystals': return n < 0.4 ? c[0] : n < 0.75 ? c[1] : n < 0.9 ? c[3] : c[2];
+        case 'veins': return Math.abs(Math.sin(gx * 0.5 + gy * 0.9) + Math.sin(gy * 0.3)) < 0.12 ? c[3] : n < 0.7 ? c[0] : n < 0.9 ? c[1] : c[2];
+        case 'layers': return gy % 3 === 0 ? c[2] : n < 0.6 ? c[0] : c[1];
+        case 'grains': return n < 0.5 ? c[0] : n < 0.8 ? c[1] : n < 0.92 ? c[2] : c[3];
+        case 'powder': return n < 0.7 ? c[0] : n < 0.9 ? c[1] : c[3];
+        case 'holes': return n < 0.18 ? c[3] : n < 0.6 ? c[0] : n < 0.85 ? c[1] : c[2];
+      }
+      return c[0];
+    }
+    function drawRock(rk, cx, cy, scale = 1) {
+      for (let gy = -12; gy <= 12; gy++) for (let gx = -16; gx <= 16; gx++) {
+        const x = gx * CELL, y = gy * CELL;
+        if (!inRock(x, y, rk)) continue;
+        ctx.fillStyle = cellColour(rk, gx, gy);
+        ctx.fillRect(cx + x * scale, cy + y * scale, CELL * scale + 0.5, CELL * scale + 0.5);
+      }
+      // a black outline: any cell next to an empty one
+      ctx.fillStyle = '#000';
+      for (let gy = -13; gy <= 13; gy++) for (let gx = -17; gx <= 17; gx++) {
+        const x = gx * CELL, y = gy * CELL;
+        if (inRock(x, y, rk)) continue;
+        if ([[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => inRock(x + dx * CELL, y + dy * CELL, rk))) ctx.fillRect(cx + x * scale, cy + y * scale, CELL * scale, CELL * scale);
+      }
+    }
+    function record(result) {
+      runN++; done_.add(`${rock.id}:${tool}`);
+      table.add([runN, rock.name, ROCK_TOOLS[tool].replace(/^\S+\s/, ''), result]);
+      say(`${rock.name}: ${result}.`);
+      const m = missions.m, need = (m && m.need) || [];
+      const left = need.filter(n => !done_.has(n));
+      busy = false;
+      if (m && need.length && !left.length) { busy = true; setTimeout(() => missions.win(cv), 600); }
+      else if (left.length) setTimeout(() => { if (!busy) say(`${rock.name}: ${result}. Next: ${left.map(n => { const [rid, t] = n.split(':'); return `${ROCK_TOOLS[t].replace(/^\S+\s/, '').toLowerCase()} on the ${ROCKS[rid].name.toLowerCase()}`; }).join(', then ')}.`); }, 1600);
+      sync();
+    }
+    // the tests
+    function look() { busy = true; anim = { kind: 'look', t: 0, T: 1.8 }; sfx.tap(); sync(); }
+    function water() { busy = true; drop = { y: 40, vy: 0, landed: false, t: 0 }; anim = { kind: 'water', t: 0, T: 2.6 }; sfx.tap(); sync(); }
+    function sinkFloat() { busy = true; anim = { kind: 'float', t: 0, T: 2.4 }; sfx.zap(); sync(); }
+    function scratchDone() {
+      const marks = SCRATCH_TXT[rock.hard];
+      if (rock.hard <= 1) for (let i = 0; i < (rock.hard ? 10 : 22); i++) crumbs.push({ x: dragPath[dragPath.length - 1][0], y: dragPath[dragPath.length - 1][1], vx: (Math.random() - 0.5) * 120, vy: -Math.random() * 80, life: 1, c: rock.c[1] });
+      if (rock.hard < 3) scratches.push({ path: dragPath, w: [5, 3.5, 1.5][rock.hard], a: [0.85, 0.65, 0.3][rock.hard] });
+      dragPath = null;
+      rock.hard < 3 ? sfx.good() : sfx.bad();
+      record(marks);
+    }
+    function run() { // the current tool, used straight away (taps on the bench, or the test hook)
+      if (busy) return;
+      if (tool === 'look') look();
+      else if (tool === 'water') water();
+      else if (tool === 'float') sinkFloat();
+      else { dragPath = [[RX - 80, RY - 10], [RX + 80, RY + 14]]; scratchDone(); }
+    }
+    // the paper clip is dragged across the rock
+    cv.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      if (busy) return;
+      const [x, y] = toGame(cv, W, H, e);
+      if (tool !== 'scratch') { if (Math.abs(x - RX) < 150 && Math.abs(y - RY) < 110) run(); return; }
+      if (!inRock(x - RX, y - RY, rock)) { say('Put the paper clip ON the rock, then drag it across!'); return; }
+      try { cv.setPointerCapture(e.pointerId); } catch (_) { /* ignore */ }
+      dragPath = [[x, y]];
+    });
+    cv.addEventListener('pointermove', e => {
+      if (!dragPath || busy) return;
+      const [x, y] = toGame(cv, W, H, e);
+      if (inRock(x - RX, y - RY, rock)) dragPath.push([x, y]);
+      if (dragPath.length % 6 === 0) sfx.tap();
+    });
+    cv.addEventListener('pointerup', () => {
+      if (!dragPath || busy) return;
+      const len = dragPath.slice(1).reduce((s, p, i) => s + Math.hypot(p[0] - dragPath[i][0], p[1] - dragPath[i][1]), 0);
+      if (len < 60) { dragPath = null; say('Drag the paper clip right across the rock – press hard!'); return; }
+      scratchDone();
+    });
+
+    function step(dt) {
+      time += dt;
+      crumbs.forEach(c => { c.x += c.vx * dt; c.y += c.vy * dt; c.vy += 300 * dt; c.life -= dt * 0.8; });
+      crumbs = crumbs.filter(c => c.life > 0);
+      if (anim) {
+        anim.t += dt;
+        if (anim.kind === 'water' && drop) {
+          const top = RY - 70;
+          if (!drop.landed) { drop.vy += 600 * dt; drop.y += drop.vy * dt; if (drop.y >= top) { drop.y = top; drop.landed = true; sfx.tap(); } }
+          else { drop.t += dt; if (rock.soak) wet = Math.min(1, drop.t / 1.2); }
+        }
+        if (anim.t >= anim.T) {
+          const k = anim.kind; anim = null;
+          if (k === 'look') record(rock.lookTxt);
+          else if (k === 'water') { record(rock.soak ? 'the water soaked in – permeable' : 'the water stayed as a droplet – impermeable'); }
+          else if (k === 'float') { (rock.float ? sfx.good : sfx.tap)(); record(rock.float ? 'it FLOATS!' : 'it sinks to the bottom'); }
+        }
+      }
+      draw();
+    }
+    function draw() {
+      // the lab bench
+      ctx.fillStyle = '#2b3a55'; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = '#34476a'; for (let y = 0; y < 270; y += 30) ctx.fillRect(0, y, W, 2);
+      ctx.fillStyle = '#8a5a32'; ctx.fillRect(0, 280, W, H - 280); ctx.fillStyle = '#6b4425'; ctx.fillRect(0, 280, W, 6);
+      // the tank of water
+      ctx.fillStyle = '#000'; ctx.fillRect(TANK.x - 4, TANK.y - 4, TANK.w + 8, TANK.h + 8);
+      ctx.fillStyle = '#cfe9ff'; ctx.fillRect(TANK.x, TANK.y, TANK.w, TANK.h);
+      ctx.fillStyle = '#4fa3e8'; ctx.fillRect(TANK.x, TANK.y + 40, TANK.w, TANK.h - 40);
+      ctx.fillStyle = '#7cc0f5'; ctx.fillRect(TANK.x, TANK.y + 40, TANK.w, 6);
+      // the rock (or, in the float test, the rock falling into the tank)
+      const fl = anim && anim.kind === 'float' ? Math.min(1, anim.t / 1.6) : 0;
+      if (fl > 0) {
+        const tx = TANK.x + TANK.w / 2, endY = rock.float ? TANK.y + 46 + Math.sin(time * 4) * 3 : TANK.y + TANK.h - 22;
+        const x = RX + (tx - RX) * Math.min(1, fl * 1.6), arc = Math.sin(Math.min(1, fl * 1.6) * Math.PI) * -60;
+        const y = fl < 0.62 ? RY + (TANK.y + 30 - RY) * (fl / 0.62) + arc : rock.float ? endY : TANK.y + 30 + (endY - TANK.y - 30) * Math.min(1, (fl - 0.62) / 0.38);
+        drawRock(rock, x, y, 0.28);
+      } else {
+        drawRock(rock, RX, RY);
+        if (wet > 0) { ctx.fillStyle = `rgba(30,50,90,${0.35 * wet})`; ctx.beginPath(); ctx.ellipse(RX, RY - 50, 24 + wet * 26, 10 + wet * 10, 0, 0, Math.PI * 2); ctx.fill(); }
+        scratches.forEach(s => {
+          ctx.strokeStyle = `rgba(255,255,255,${s.a})`; ctx.lineWidth = s.w; ctx.lineCap = 'round'; ctx.beginPath();
+          s.path.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.stroke();
+        });
+        if (dragPath && dragPath.length > 1) { ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.lineWidth = 2; ctx.beginPath(); dragPath.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.stroke(); }
+        if (tool === 'scratch' && !busy) emojiAt(ctx, '📎', dragPath ? dragPath[dragPath.length - 1][0] : RX + 120, dragPath ? dragPath[dragPath.length - 1][1] : RY - 90, 34);
+      }
+      crumbs.forEach(c => { ctx.fillStyle = c.c; ctx.fillRect(c.x, c.y, 5, 5); });
+      // the water dropper
+      if (anim && anim.kind === 'water' && drop) {
+        emojiAt(ctx, '💧', RX, 34, 30);
+        const sz = rock.soak && drop.landed ? Math.max(0, 1 - drop.t / 1.1) : 1;
+        if (sz > 0) { ctx.fillStyle = '#000'; ctx.fillRect(RX - 9 * sz - 2, drop.y - 12 * sz - 2, 18 * sz + 4, 16 * sz + 4); ctx.fillStyle = '#4fc3ff'; ctx.fillRect(RX - 9 * sz, drop.y - 12 * sz, 18 * sz, 16 * sz); ctx.fillStyle = '#fff'; ctx.fillRect(RX - 5 * sz, drop.y - 9 * sz, 4 * sz, 4 * sz); }
+      }
+      // the magnifying glass: a big circle showing the rock up close
+      if (anim && anim.kind === 'look') {
+        const g = Math.min(1, anim.t / 0.4), R = 84 * g;
+        ctx.save(); ctx.beginPath(); ctx.arc(RX, RY - 10, R, 0, Math.PI * 2); ctx.clip();
+        ctx.fillStyle = '#fff'; ctx.fillRect(RX - R, RY - 10 - R, R * 2, R * 2);
+        for (let gy = -6; gy <= 6; gy++) for (let gx = -6; gx <= 6; gx++) { ctx.fillStyle = cellColour(rock, gx * 3 + 1, gy * 3 + 2); ctx.fillRect(RX + gx * 14 - 7, RY - 10 + gy * 14 - 7, 14, 14); }
+        ctx.restore();
+        ctx.strokeStyle = '#000'; ctx.lineWidth = 8; ctx.beginPath(); ctx.arc(RX, RY - 10, R, 0, Math.PI * 2); ctx.stroke();
+        ctx.strokeStyle = '#c9a25a'; ctx.lineWidth = 4; ctx.stroke();
+        ctx.fillStyle = '#000'; ctx.save(); ctx.translate(RX + R * 0.7, RY - 10 + R * 0.7); ctx.rotate(Math.PI / 4); ctx.fillRect(0, -8, 60 * g, 16); ctx.fillStyle = '#8a5a32'; ctx.fillRect(4, -5, 54 * g, 10); ctx.restore();
+      }
+      ctx.fillStyle = 'rgba(0,0,0,.6)'; ctx.fillRect(0, 0, W, 30);
+      pxText(ctx, `🪨 ${rock.name} · ${ROCK_TOOLS[tool]}`, W / 2, 16, 15, '#ffd43b');
+      if (tool === 'scratch' && !busy && !dragPath) pxText(ctx, 'Drag the paper clip across the rock!', RX, 300, 13, '#fff');
+      else if (!busy && tool !== 'scratch') pxText(ctx, 'Tap the rock to test it!', RX, 300, 13, '#fff');
+    }
+
+    const rockBtns = rocks.map(rk => h('button', { class: 'lab-chip', type: 'button', onclick() { if (busy) return; rock = rk; scratches = []; wet = 0; crumbs = []; sfx.tap(); sync(); } }, rk.name));
+    const toolBtns = tools.map(t => h('button', { class: 'lab-chip', type: 'button', onclick() { if (busy) return; tool = t; sfx.tap(); sync(); } }, ROCK_TOOLS[t]));
+    const goBtn = h('button', { class: 'btn big green', type: 'button', onclick: () => { if (tool === 'scratch') say('Drag the paper clip across the rock on the screen!'); else run(); } }, '🧪 Test it!');
+    function sync() {
+      rockBtns.forEach((b, k) => { b.classList.toggle('on', rocks[k] === rock); b.disabled = busy; });
+      toolBtns.forEach((b, k) => { b.classList.toggle('on', tools[k] === tool); b.disabled = busy; });
+      goBtn.disabled = busy; goBtn.hidden = tool === 'scratch';
+    }
+    sync();
+    const stopLoop = gameLoop(cv, step);
+    const root = h('div', { class: 'game arcade lab rocklab' },
+      missions.box,
+      h('div', { class: 'arc-screen' }, cv),
+      h('div', { class: 'lab-controls' }, h('span', { class: 'lab-label' }, 'Rock:'), ...rockBtns),
+      h('div', { class: 'lab-controls' }, h('span', { class: 'lab-label' }, 'Test:'), ...toolBtns),
+      h('div', { class: 'btn-row' }, goBtn),
+      missions.ask, table.el);
+    root._test = {
+      frames(n) { for (let i = 0; i < n; i++) step(1 / 60); },
+      pick(id) { rock = rocks.find(rk => rk.id === id); scratches = []; wet = 0; sync(); },
+      tool(t) { tool = t; sync(); }, run,
+      get busy() { return busy; }, get mission() { return missions.i; },
     };
     root._stop = stopLoop;
     missions.next();

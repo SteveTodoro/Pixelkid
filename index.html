@@ -231,7 +231,7 @@ const LIBRARY = {
       { id: 'science-plant-parts', title: 'Plant Detectives', emoji: '🌱', unit: 'Plants', file: 'science/plant-parts.html' },
       { id: 'science-plant-needs', title: 'What Do Plants Need?', emoji: '🌻', unit: 'Plants', file: 'science/plant-needs.html' },
       { id: 'science-flower-life-cycle', title: 'Flower Power Life Cycle', emoji: '🌸', unit: 'Plants', file: 'science/flower-life-cycle.html' },
-      { title: 'Rock Stars', emoji: '🪨', unit: 'Rocks' },
+      { id: 'science-rocks', title: 'Rock Stars', emoji: '🪨', unit: 'Rocks', file: 'science/rocks.html' },
       { title: 'Fossil Hunters', emoji: '🦖', unit: 'Rocks' },
       { title: 'Super Soil', emoji: '🪱', unit: 'Rocks' },
       // the road forks after Friction: Plants → Rocks one way, Animals → Light the other
@@ -248,7 +248,7 @@ const LIBRARY = {
       { id: 'maths-clock-quest', title: 'Clock Quest: To the Minute', emoji: '🕰️', unit: 'Time', file: 'maths/clock-quest.html' },
       { id: 'maths-24-hour', title: 'Night & Day: The 24-Hour Clock', emoji: '🌙', unit: 'Time', file: 'maths/24-hour.html' },
       { id: 'maths-how-long', title: 'How Long? Time Hops', emoji: '⏳', unit: 'Time', file: 'maths/how-long.html' },
-      { title: 'Place Value Party', emoji: '🎉', unit: 'Numbers to 1,000' },
+      { id: 'maths-place-value', title: 'Place Value Party', emoji: '🎉', unit: 'Numbers to 1,000', file: 'maths/place-value.html' },
       { title: '3-Digit Add & Subtract', emoji: '➕', unit: 'Addition & Subtraction' },
       { title: 'Money Market', emoji: '💷', unit: 'Measurement' },
       { title: 'Measure It!', emoji: '📏', unit: 'Measurement' },
@@ -269,7 +269,7 @@ const LIBRARY = {
       { id: 'english-homophones', title: 'Homophone Hunters', emoji: '👂', unit: 'Spelling & Vocabulary', file: 'english/homophones.html' },
       { id: 'english-a-or-an', title: 'A or An?', emoji: '🍎', unit: 'Grammar', file: 'english/a-or-an.html' },
       { id: 'english-conjunctions', title: 'Conjunction Junction', emoji: '🚂', unit: 'Grammar', file: 'english/conjunctions.html' },
-      { title: 'Speech Marks Squad', emoji: '💬', unit: 'Punctuation' },
+      { id: 'english-speech-marks', title: 'Speech Marks Squad', emoji: '💬', unit: 'Punctuation', file: 'english/speech-marks.html' },
       { title: 'Poetry Playground', emoji: '🎵', unit: 'Poetry' },
       // the road forks after Homophones: writing (grammar & punctuation) one way, reading (stories & facts) the other
       { title: 'Theseus & the Minotaur', emoji: '🐂', unit: 'Myths & Legends', after: 'Homophone Hunters' },
@@ -683,6 +683,7 @@ function drawMap(key, lessons, stateOf) {
       const d = Math.hypot(p.x - base.x, p.y - base.y), r = clear(p) - d * 0.03;
       if (p.y >= 20 * S + 46 && d < 420 && r > br) { br = r; best = p; }
     });
+    if (!best) best = { x: Math.min(W - 30, base.x + 60), y: Math.max(base.y, 20 * S + 46) }; // no room anywhere: just beside their stop
     boxes.push([best.x - 40, best.y - 20 * S - 40, best.x + 40, best.y + 20]); // their marker too, and a gap before the next person
     const pool = []; // the lessons cleared on the road up to here: what a challenger asks about
     for (let s = home; s; s = s.parent) if (cleared(s) && s.l.id) pool.push(s.l.id);

@@ -1,16 +1,18 @@
-/* Pixelkid lesson engine – the Spell Test (listen / look-cover-write-check / fix the mistake), with its scenes.
+/* Pixelkid lesson engine – the Spell Test (listen / look-cover-write-check / fix the mistake), with its scenes,
+ * and Speech Marks (tap the gaps where the speech marks go).
  * One part of shared/engine.js, which loads it only when a lesson uses it. E is the engine's shared helpers
  * (E.state and E.stageCard are live). See the top of shared/engine.js for how the parts fit together.
  */
 PixelkidEngine.part('spelling', E => {
   'use strict';
-  const { GAMES, award, canSpeak, confetti, h, praise, put, say, sfx, shake, shuffle, speak, track } = E;
+  const { GAMES, award, canSpeak, confetti, fmt, h, pic, praise, put, say, sfx, shake, shuffle, speak, track } = E;
 
   // ===== Spell test: hear (or look at) a word, then spell it on the pixel keyboard =====
   // r.words: [{ word, sentence ('… ___ …', read aloud with the word filled in), clue, hint, wrong (mode 'fix'), emoji }]
   // r.mode: 'listen' (default: hear the word and a sentence) | 'peek' (look, cover, write, check) | 'fix' (correct a misspelt word)
   // r.scene: 'potion' (default: each word adds an ingredient to a cauldron) | 'egg' (each word cracks a dragon egg)
   //   | 'castle' (each word builds a row of a castle tower) | 'rocket' (each word fuels a rocket, which blasts off at the end)
+  //   | 'train' (each word couples a carriage) | 'balloon' (each word fills a hot-air balloon, which floats away at the end)
   // r.prize: the name of the finished potion / dragon. First-try spellings earn a gem; two misses show the word to copy.
   const SP_LIQUID = ['#7cfc3a', '#2ee6d6', '#b44dff', '#ff7eb6', '#ffb800', '#4fc3ff'];
   function cauldronSVG(p, n) {
@@ -68,12 +70,22 @@ PixelkidEngine.part('spelling', E => {
     return Pixel.svg(top.concat(rows), { k: '#1b1b1b', w: '#e8eef5', c: '#9fd8ff', r: '#e53935', o: '#ff8c1a', y: '#ffd43b', g: '#dfe3e8', s: '#c9ced6',
       B: '#2b6fd6', G: '#2e9e3e', P: '#8e5cff', O: '#ff8c1a' });
   }
+  // balloon: each word fills the hot-air balloon with another band of colour, bottom up; full = it floats away
+  const BALLOON = ['....kkkkkk....', '..kkAAAAAAkk..', '.kAAAAAAAAAAk.', '.kBBBBBBBBBBk.', 'kBBBBBBBBBBBBk', 'kCCCCCCCCCCCCk', 'kCCCCCCCCCCCCk',
+    'kDDDDDDDDDDDDk', '.kDDDDDDDDDDk.', '.kEEEEEEEEEEk.', '..kEEEEEEEEk..', '...kFFFFFFk...', '....kFFFFk....', '....k....k....', '....k....k....', '....kbbbbk....', '....kbbbbk....', '.....kkkk.....'];
+  const BALLOON_BANDS = ['F', 'E', 'D', 'C', 'B', 'A']; // filled from the bottom
+  function balloonSVG(p) {
+    const filled = new Set(BALLOON_BANDS.slice(0, Math.round(p * BALLOON_BANDS.length)));
+    return Pixel.svg(BALLOON.map(r => r.replace(/[A-F]/g, c => (filled.has(c) ? c : 'g'))),
+      { k: '#1b1b1b', g: '#dfe3e8', b: '#8a5a32', A: '#e53935', B: '#ff8c1a', C: '#ffd43b', D: '#4caf2a', E: '#2b6fd6', F: '#8e5cff' });
+  }
   // r.scene → how the picture, caption and finish banner look
   const SP_SCENES = {
     potion: { prize: 'the magic potion', draw: (p, n, full) => (full ? POTION : cauldronSVG(p, n)), cap: (n, of, prize) => `🧪 ${n}/${of} ingredients in ${prize}`, made: prize => `🧪 ${prize} is ready!`, done: '🧪 POTION BREWED!', anim: 'bubbling' },
     egg: { prize: 'your baby dragon', draw: (p, n, full) => (full ? BABY_DRAGON : eggSVG(p)), cap: (n, of) => `🥚 ${n}/${of} words · each one cracks the egg`, made: prize => `🐲 ${prize} has hatched!`, done: '🐲 IT HATCHED!', anim: 'wobble' },
     castle: { prize: 'your word castle', draw: (p, n, full) => (full ? CASTLE_DONE : castleSVG(p)), cap: (n, of) => `🧱 ${n}/${of} words · each one builds a row of stones`, made: prize => `🏰 ${prize} is built!`, done: '🏰 CASTLE BUILT!' },
     train: { prize: 'the word train', draw: (p, n, full) => trainSVG(p, full), cap: (n, of) => `🚃 ${n}/${of} words · each one couples a carriage`, made: prize => `🚂 ${prize} is full steam ahead!`, done: '🚂 ALL ABOARD!' },
+    balloon: { prize: 'your hot-air balloon', draw: p => balloonSVG(p), cap: (n, of) => `🎈 ${n}/${of} words · each one fills the balloon`, made: prize => `🎈 ${prize} is floating away!`, done: '🎈 UP, UP AND AWAY!', anim: 'launch' },
     rocket: { prize: 'your rocket', draw: (p, n, full) => rocketSVG(p, full), cap: (n, of) => `⛽ ${n}/${of} words · each one adds fuel`, made: prize => `🚀 ${prize} has blasted off!`, done: '🚀 BLAST OFF!', anim: 'launch' },
   };
 
@@ -276,6 +288,111 @@ PixelkidEngine.part('spelling', E => {
 
     drawScene();
     runList(r.shuffle === false ? words : shuffle(words), false, report);
+    return root;
+  };
+
+  // ===== Speech Marks: tap the gaps where the speech marks go =====
+  // r.items: [{ text: '“Look out!” shouted Sam.' (the right answer, written with curly marks “ ”), who (emoji, svg or 'me'),
+  //   bubble: true (show the spoken words in a speech bubble first), hint, why }]
+  //   or { text: 'Sam said that he was hungry.', none: true, why } – reported speech, which needs no speech marks.
+  // The sentence is shown without its speech marks, with a gap between every word and every punctuation mark. Tap a gap
+  // to put a speech mark in it (tap again to take it out); the first mark opens “ and the next one closes ”. Two wrong
+  // tries show the answer. Wrong answers get a hint about the rule they broke (pairs, only the spoken words, punctuation inside).
+  GAMES.speechmarks = function (r, key, done) {
+    const root = h('div', { class: 'game speechmarks' });
+    const anyNone = r.items.some(it => it.none);
+    let ii = 0;
+    function parse(text) { // pieces (words and punctuation, each knowing if a space comes before it) + the gaps the marks sit in
+      const pieces = [], marks = [];
+      let space = false;
+      for (const m of text.matchAll(/\s+|[“”"]|[A-Za-z0-9'’-]+|[^\sA-Za-z0-9'’“”"-]/g)) {
+        const t = m[0];
+        if (/^\s+$/.test(t)) { space = true; continue; }
+        if (/^[“”"]$/.test(t)) { marks.push(pieces.length); continue; } // a mark sits in the gap before piece n
+        pieces.push({ t, space: space && pieces.length > 0, word: /[A-Za-z0-9]/.test(t) });
+        space = false;
+      }
+      return { pieces, marks };
+    }
+    function show() {
+      const it = r.items[ii];
+      const { pieces, marks: answer } = parse(it.text);
+      let placed = [], tries = 0, over = false;
+      const why = h('div', { class: 'why', hidden: true });
+      const nextBtn = h('button', { class: 'btn big ready', type: 'button', hidden: true, onclick() { sfx.tap(); ii++; if (ii < r.items.length) show(); } }, 'Next sentence ▶');
+      const line = h('p', { class: 'sm-line' });
+      const gaps = [];
+      function paint(final) {
+        const on = (final || placed).slice().sort((a, b) => a - b);
+        gaps.forEach((g, k) => {
+          const n = on.indexOf(k);
+          g.textContent = n < 0 ? '' : n % 2 ? '”' : '“';
+          g.classList.toggle('on', n >= 0);
+        });
+        checkBtn.disabled = over || (!placed.length && !anyNone);
+      }
+      function gap(k) {
+        const tight = k > 0 && k < pieces.length && !pieces[k].space; // between a word and its punctuation
+        const g = h('button', { class: 'sm-gap' + (tight ? ' tight' : ''), type: 'button', 'aria-label': `gap ${k + 1}` });
+        g.addEventListener('click', () => {
+          if (over) return;
+          const at = placed.indexOf(k);
+          if (at >= 0) placed.splice(at, 1); else placed.push(k);
+          sfx.tap(); paint();
+        });
+        gaps.push(g);
+        return g;
+      }
+      pieces.forEach((pc, k) => line.append(h('span', { class: 'sm-unit' }, // a gap and the piece after it never split across lines
+        gap(k), h('span', { class: 'sm-piece' + (pc.word ? '' : ' punct') }, pc.t), k === pieces.length - 1 && gap(k + 1))));
+      // why a guess is wrong: the first rule it breaks
+      function hint(got) {
+        if (it.none) return it.hint || 'Look closely: are these the EXACT words someone said, or is the sentence just telling us about what they said?';
+        if (!got.length) return 'Someone is speaking in this sentence! Which words come out of their mouth?';
+        if (got.length % 2) return 'Speech marks come in pairs – one to open the speech and one to close it.';
+        if (got.length !== answer.length) return it.hint || 'Put speech marks round ONLY the words that are spoken.';
+        const [o, c] = got, [O, C] = answer;
+        const NAME = { ',': 'comma', '.': 'full stop', '?': 'question mark', '!': 'exclamation mark' };
+        if (c === C - 1 && !pieces[C - 1].word) return `The ${NAME[pieces[C - 1].t] || 'punctuation'} belongs INSIDE the speech marks – close them after it.`;
+        if (o < O) return it.hint || 'Too much! Only the words that are actually SAID go inside – not who said them.';
+        if (o > O || c < C) return it.hint || 'Some of the spoken words are left outside the speech marks. Where does the speaking start and end?';
+        return it.hint || 'Not quite. Speech marks go round only the words that are spoken, with their punctuation inside.';
+      }
+      function finish(first) {
+        over = true;
+        if (first) { sfx.good(); award(`${key}:${ii}`, line); say(praise()); }
+        track('Speech marks', { q: 'Speech marks: ' + it.text.replace(/[“”"]/g, ''), type: 'type', answer: it.text }, first);
+        paint(answer);
+        line.classList.add('done');
+        why.innerHTML = (first ? '✔ ' : '👀 ') + fmt(it.why || (it.none ? 'No speech marks needed – this sentence only TELLS us what was said.' : it.text), false);
+        why.hidden = false;
+        checkBtn.hidden = true; noneBtn.hidden = true;
+        if (ii < r.items.length - 1) nextBtn.hidden = false; else { confetti(80); done(); }
+      }
+      function check(sayNone) {
+        if (over) return;
+        const got = sayNone ? [] : placed.slice().sort((a, b) => a - b);
+        const right = got.length === answer.length && got.every((g, k) => g === answer[k]);
+        tries++;
+        if (right) return finish(tries === 1);
+        sfx.bad(); shake(line);
+        if (tries >= 2) { say('Here is where they go. Have a good look!'); return finish(false); }
+        say('💡 ' + hint(got));
+      }
+      const checkBtn = h('button', { class: 'btn green', type: 'button', onclick: () => check(false) }, '✔ Check');
+      const noneBtn = h('button', { class: 'btn ghost', type: 'button', hidden: !anyNone, onclick: () => check(true) }, '🚫 No speech marks needed');
+      const who = it.who === 'me' ? E.heroImg('sm-who') : it.who && pic(it.who, 'sm-who');
+      const spoken = !it.none && answer.length >= 2 && pieces.slice(answer[0], answer[1]).map((pc, k) => (k && pc.space ? ' ' : '') + pc.t).join('');
+      put(root,
+        h('div', { class: 'tf-count' }, `${ii + 1} of ${r.items.length}`),
+        it.bubble && spoken && h('div', { class: 'sm-comic' }, who, h('div', { class: 'sm-bubble' }, spoken)),
+        h('div', { class: 'fx-label' }, r.label || '👆 Tap the gaps where the speech marks go'),
+        line, why,
+        h('div', { class: 'btn-row' }, checkBtn, noneBtn, nextBtn));
+      paint();
+      root._test = { gaps, answer, check, none: () => check(true), get over() { return over; }, next: () => nextBtn.click() };
+    }
+    show();
     return root;
   };
 });

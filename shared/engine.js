@@ -9,11 +9,13 @@
  * Brain breaks also get mini games (boss tic-tac-toe, steady hand, maze, hangman) unless the stage sets games: false.
  * A quick 'Games' break is added after the first game stage automatically (L.midBreak: false turns it off).
  * Game types: sort, match, label, order, truefalse, questions, wordsearch, crossword, trainai, pixelcopy, pixelstudio, poster,
- *   spelltest (spelling test: listen / look-cover-write-check / fix the mistake),
+ *   spelltest (spelling test: listen / look-cover-write-check / fix the mistake), speechmarks (tap the gaps for speech marks),
  *   and arcade games: invaders, runner (two-lane word runner), platformer, blocks.
- *   Simulated experiments (with missions): forces, ramp, garden, pollinate, windtest (how far the wind carries seeds).
+ *   Simulated experiments (with missions): forces, ramp, garden, pollinate, windtest (how far the wind carries seeds),
+ *   rocklab (test rocks: look closely, scratch, water drop, sink or float).
  *   clock (needs shared/clock.js): set the clock by dragging the hands, or read a clock and type the time.
  *   daydial (24-hour Day Dial), timehops (durations on a time line), knuckles (days in each month).
+ *   placeblocks (Place Value Blocks: build, read and swap hundreds, tens and ones).
  *   Around the World: worldmap (needs shared/world-map.js + shared/world.js), cook (Chef), phrases (Say it! greetings).
  * Questions can set optionsHtml: true to show pictures (HTML) as the answer buttons.
  * Question types (quiz, video, questions game): mcq, tf, gap, order (ends: ['FIRST', 'LAST'] labels, start: true pre-fills item 1),
@@ -2118,10 +2120,11 @@
   });
   const PARTS = {
     future: ['trainai', 'pixelcopy', 'pixelstudio', 'poster'],
-    spelling: ['spelltest'],
+    spelling: ['spelltest', 'speechmarks'],
     arcade: ['invaders', 'platformer', 'runner', 'blocks'],
-    science: ['forces', 'ramp', 'garden', 'windtest', 'pollinate'],
+    science: ['forces', 'ramp', 'garden', 'windtest', 'pollinate', 'rocklab'],
     time: ['clock', 'daydial', 'timehops', 'knuckles'],
+    number: ['placeblocks'],
     world: ['worldmap', 'cook', 'phrases'],
   };
   function partsFor(lesson) {
