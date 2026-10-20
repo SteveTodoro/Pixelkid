@@ -313,6 +313,7 @@ function drawMap(key, lessons, stateOf) {
       boxes.push([p.x - f.rx - 6, p.y - f.ry - 10, p.x + f.rx + 6, p.y + f.ry + 6]);
       left--;
     }
+    items.forEach(it => { if (it.card) scenery.push({ kind: 'mountain', x: it.x, y: it.y + 34 }); }); // each topic's landmark is a mountain
     MapArt.live(map, MapArt.paint(ground, T, key, scenery, W, H, rnd), W, H, rnd);
     for (let k = 0, n = 1 + Math.floor(rnd() * 2); k < n; k++) {
       const p = spots[Math.floor(rnd() * spots.length)];
@@ -347,8 +348,10 @@ function drawMap(key, lessons, stateOf) {
   items.sort((a, b) => a.y - b.y).forEach(it => {
     let d;
     if (it.card) { // a landmark: tap it for its topic
-      d = document.createElement('button'); d.type = 'button'; d.className = it.cls; d.style.left = it.x + 'px'; d.style.top = it.y + 'px';
-      d.textContent = it.icon; d.setAttribute('aria-label', it.title); d.onclick = it.card; map.append(d);
+      d = document.createElement('button'); d.type = 'button'; d.className = it.cls + (art ? ' peak' : ''); d.style.left = it.x + 'px'; d.style.top = it.y + 'px';
+      if (art) { const sign = document.createElement('span'); sign.className = 'qpk'; sign.textContent = it.icon; d.append(sign); } // a little sign on the mountain top
+      else d.textContent = it.icon;
+      d.setAttribute('aria-label', it.title); d.onclick = it.card; map.append(d);
     } else d = put(it.cls, it.x, it.y, it.icon);
     if (it.s) d.style.setProperty('--s', it.s);
     if (it.title) d.title = it.title;

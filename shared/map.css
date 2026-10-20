@@ -85,8 +85,15 @@ body.english .qmap { box-shadow: var(--bevel), inset 0 0 70px rgba(122,82,48,.45
 
 /* ---------- the Super Mario World–style landscape (worlds with a look in shared/map-art.js) ---------- */
 .qmap.art { --sea: #3d8fe4; background: var(--sea); }
-.qsea { position: absolute; inset: 0; background: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2016'%20shape-rendering='crispEdges'%3E%3Crect%20x='2'%20y='1'%20width='4'%20height='1'%20fill='%23a9d6ff'/%3E%3Crect%20x='1'%20y='2'%20width='1'%20height='1'%20fill='%23a9d6ff'/%3E%3Crect%20x='6'%20y='2'%20width='1'%20height='1'%20fill='%23a9d6ff'/%3E%3Crect%20x='21'%20y='5'%20width='4'%20height='1'%20fill='%23a9d6ff'/%3E%3Crect%20x='20'%20y='6'%20width='1'%20height='1'%20fill='%23a9d6ff'/%3E%3Crect%20x='25'%20y='6'%20width='1'%20height='1'%20fill='%23a9d6ff'/%3E%3Crect%20x='10'%20y='8'%20width='1'%20height='1'%20fill='%23ffffff'/%3E%3Crect%20x='26'%20y='11'%20width='1'%20height='1'%20fill='%23ffffff'/%3E%3Crect%20x='8'%20y='12'%20width='4'%20height='1'%20fill='%23a9d6ff'/%3E%3Crect%20x='7'%20y='13'%20width='1'%20height='1'%20fill='%23a9d6ff'/%3E%3Crect%20x='12'%20y='13'%20width='1'%20height='1'%20fill='%23a9d6ff'/%3E%3C/svg%3E") 0 0 / 128px 64px; animation: qwaves 1.6s steps(1) infinite; pointer-events: none; }
-@keyframes qwaves { 50% { background-position: 16px 0; } }
+.qsea { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.qglint { position: absolute; inset: 0; z-index: 1; background: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2012'%20shape-rendering='crispEdges'%3E%3Crect%20x='4'%20y='1'%20width='1'%20height='1'%20fill='%23ffffff'/%3E%3Crect%20x='14'%20y='3'%20width='1'%20height='1'%20fill='%23ffffff'/%3E%3Crect%20x='1'%20y='6'%20width='1'%20height='1'%20fill='%23ffffff'/%3E%3Crect%20x='19'%20y='7'%20width='1'%20height='1'%20fill='%23ffffff'/%3E%3Crect%20x='9'%20y='9'%20width='1'%20height='1'%20fill='%23ffffff'/%3E%3C/svg%3E") 0 0 / 96px 48px; animation: qtwinkle 3.2s steps(4) infinite; } /* sparkles that twinkle */
+/* the sea: dark swells and light curling crests drift past each other at different speeds (in 4px steps, so it stays pixel art) */
+.qsea::before, .qsea::after { content: ""; position: absolute; top: 0; bottom: 0; left: -192px; right: -192px; animation: qflow 9s steps(48) infinite; }
+.qsea::before { background: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2048%2024'%20shape-rendering='crispEdges'%3E%3Crect%20x='5'%20y='2'%20width='6'%20height='1'%20fill='%232f7fd6'/%3E%3Crect%20x='27'%20y='5'%20width='9'%20height='1'%20fill='%232f7fd6'/%3E%3Crect%20x='2'%20y='9'%20width='4'%20height='1'%20fill='%232f7fd6'/%3E%3Crect%20x='19'%20y='11'%20width='7'%20height='1'%20fill='%232f7fd6'/%3E%3Crect%20x='40'%20y='14'%20width='5'%20height='1'%20fill='%232f7fd6'/%3E%3Crect%20x='9'%20y='17'%20width='8'%20height='1'%20fill='%232f7fd6'/%3E%3Crect%20x='31'%20y='20'%20width='5'%20height='1'%20fill='%232f7fd6'/%3E%3C/svg%3E") 0 0 / 192px 96px; animation-duration: 14s; animation-direction: reverse; }
+.qsea::after { background: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2016'%20shape-rendering='crispEdges'%3E%3Crect%20x='3'%20y='1'%20width='3'%20height='1'%20fill='%23b9e0ff'/%3E%3Crect%20x='2'%20y='2'%20width='1'%20height='1'%20fill='%23b9e0ff'/%3E%3Crect%20x='6'%20y='2'%20width='2'%20height='1'%20fill='%23b9e0ff'/%3E%3Crect%20x='21'%20y='5'%20width='3'%20height='1'%20fill='%23b9e0ff'/%3E%3Crect%20x='20'%20y='6'%20width='1'%20height='1'%20fill='%23b9e0ff'/%3E%3Crect%20x='24'%20y='6'%20width='2'%20height='1'%20fill='%23b9e0ff'/%3E%3Crect%20x='10'%20y='9'%20width='3'%20height='1'%20fill='%23b9e0ff'/%3E%3Crect%20x='9'%20y='10'%20width='1'%20height='1'%20fill='%23b9e0ff'/%3E%3Crect%20x='13'%20y='10'%20width='2'%20height='1'%20fill='%23b9e0ff'/%3E%3Crect%20x='27'%20y='13'%20width='3'%20height='1'%20fill='%23b9e0ff'/%3E%3Crect%20x='26'%20y='14'%20width='1'%20height='1'%20fill='%23b9e0ff'/%3E%3Crect%20x='30'%20y='14'%20width='2'%20height='1'%20fill='%23b9e0ff'/%3E%3C/svg%3E") 0 0 / 128px 64px; animation-name: qflow2; animation-duration: 8s; animation-timing-function: steps(32); }
+@keyframes qflow { to { transform: translateX(192px); } }
+@keyframes qflow2 { to { transform: translateX(128px); } }
+@keyframes qtwinkle { 0%, 100% { opacity: .1; } 50% { opacity: .9; } }
 .qground { position: absolute; left: 0; top: 0; image-rendering: pixelated; pointer-events: none; }
 .qmap.art > svg { z-index: 0; }
 /* SMW's banner: the stop the hero is on, or the one you pointed at */
@@ -135,8 +142,8 @@ body.english .qmap { box-shadow: var(--bevel), inset 0 0 70px rgba(122,82,48,.45
 @keyframes qdrift { to { transform: translateX(calc(var(--w) + 20px)) scale(var(--s, 1)); } }
 .qflutter { z-index: 1; animation: qflap .6s steps(2) infinite; }
 @keyframes qflap { 50% { transform: translate(-50%, -60%) scaleX(.6); } }
-html.q-paused .qmap *, html.q-paused .qmap { animation-play-state: paused !important; }
-@media (prefers-reduced-motion: reduce) { .qsea, .qcloud, .qeyes, .qflutter, .qdot.next { animation: none; } }
+html.q-paused .qmap *, html.q-paused .qmap, html.q-paused .qsea::before, html.q-paused .qsea::after { animation-play-state: paused !important; }
+@media (prefers-reduced-motion: reduce) { .qglint, .qsea::before, .qsea::after, .qcloud, .qeyes, .qflutter, .qdot.next { animation: none; } }
 @media (max-width: 479px) {
   .qdot { width: 28px; height: 28px; }
   .qdot .qi { font-size: 15px; }
@@ -144,3 +151,8 @@ html.q-paused .qmap *, html.q-paused .qmap { animation-play-state: paused !impor
   .qdot.goal { width: 58px; height: 58px; } .qdot.goal .qi { font-size: 44px; }
   .qbanner b { font-size: .95rem; } .qb-icon { font-size: 1.5rem; }
 }
+/* a topic's landmark in the landscape: a painted mountain, with a little sign on top to tap for the topic */
+.qmark.peak { width: 100px; height: 80px; font-size: 0; transform: translate(-50%, -62%); filter: none; }
+.qmark.peak::after { display: none; }
+.qpk { position: absolute; left: 50%; top: -6px; transform: translateX(-30%); display: grid; place-items: center; width: 34px; height: 30px; font-size: 20px; background: #fff8e0; border: 3px solid #000; box-shadow: 0 3px 0 rgba(0,0,0,.3); }
+.qpk::after { content: ""; position: absolute; left: 50%; top: 100%; width: 4px; height: 12px; margin-left: -2px; background: #6b4425; border: solid #000; border-width: 0 2px 2px; }

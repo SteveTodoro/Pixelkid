@@ -19,7 +19,7 @@
     science: {
       ground: ['#b6ee6a', '#6cc644', '#3f9a2c', '#2a6b1a'], // light, grass, shade, dark
       cliff: ['#e0a05a', '#b0692e', '#713c15'], // light, face, dark
-      hill: ['#a6e86e', '#4fbf3f', '#2e8a26'],
+      hill: ['#a6e86e', '#4fbf3f', '#2e8a26'], mountain: ['#e2e6ea', '#a3abb5', '#6b7480'],
       path: 'dirt', sea: '#3d8fe4',
       scenery: { hill: 4, trees: 4, bush: 2, flowers: 2, mushroom: 1, rocks: 1 },
       trees: ['🌳', '🌲'], flowers: ['🌷', '🌼', '🌸', '🌻'],
@@ -131,7 +131,25 @@
     }
     if (eyes) eyes.push({ x: cx, y: base - Math.round(hu * 0.55) * P, gap: Math.max(10, Math.round(wu * 0.22) * P) });
   }
+  // a big rocky mountain with a snowy top (a topic's landmark), with a smaller peak behind it
+  function peak(g, cx, base, wu, hu, A) {
+    cx = snap(cx); base = snap(base);
+    const M = A.mountain || ['#e2e6ea', '#a3abb5', '#6b7480'], half = r => Math.round(wu / 2 * Math.pow(1 - r / hu, 0.8)) + (r >= hu - 1 ? 1 : 0);
+    g.fillStyle = 'rgba(0,0,0,.25)'; g.fillRect(cx - (half(0) + 1) * P, base, (half(0) + 1) * 2 * P, P);
+    g.fillStyle = '#000';
+    for (let r = 0; r <= hu; r++) { const hw = half(Math.min(r, hu - 1)) + 1; g.fillRect(cx - hw * P, base - (r + 1) * P, hw * 2 * P, P); }
+    for (let r = 0; r < hu; r++) {
+      const hw = half(r), y = base - (r + 1) * P, snow = r > hu * 0.68;
+      g.fillStyle = snow ? '#ffffff' : M[1]; g.fillRect(cx - hw * P, y, hw * 2 * P, P);
+      g.fillStyle = snow ? '#cfe6ff' : M[2]; g.fillRect(cx + Math.max(0, Math.floor(hw / 3)) * P, y, Math.ceil(hw * 2 / 3) * P, P); // shade on the right
+      if (!snow && r % 3 === 1 && hw > 3) { g.fillStyle = M[0]; g.fillRect(cx - (hw - 1) * P, y, 2 * P, P); } // light ledges on the left
+    }
+    for (let x = -half(Math.ceil(hu * 0.68)); x < half(Math.ceil(hu * 0.68)); x += 2) { // the snow's jagged lower edge
+      g.fillStyle = '#ffffff'; g.fillRect(cx + x * P, base - Math.ceil(hu * 0.68) * P, P, P);
+    }
+  }
   const PAINT = {
+    mountain(g, it, A) { peak(g, it.x - 26, it.y - 10, 14, 10, A); peak(g, it.x + 6, it.y, 22, 16, A); },
     hill(g, it, A, rnd, eyes) { mound(g, it.x, it.y, 14 + Math.floor(rnd() * 3) * 2, 9 + Math.floor(rnd() * 3), A.hill, eyes); },
     bush(g, it, A, rnd) { mound(g, it.x - 8, it.y, 6, 3, [A.ground[1], A.ground[2], A.ground[3]]); mound(g, it.x + 8, it.y, 7, 4, [A.ground[1], A.ground[2], A.ground[3]]); },
     trees(g, it, A, rnd) {
@@ -207,7 +225,7 @@
   // ---------- the living layers: the sea, drifting clouds, blinking hill eyes ----------
   function live(map, eyes, W, H, rnd) {
     const add = (cls, x, y) => { const d = document.createElement('div'); d.className = cls; d.style.left = x + 'px'; d.style.top = y + 'px'; map.append(d); return d; };
-    const sea = document.createElement('div'); sea.className = 'qsea'; map.prepend(sea);
+    const sea = document.createElement('div'); sea.className = 'qsea'; sea.innerHTML = '<i class="qglint"></i>'; map.prepend(sea);
     eyes.forEach(e => {
       const d = add('qeyes', e.x, e.y);
       d.style.setProperty('--gap', e.gap + 'px'); d.style.animationDelay = -(rnd() * 6).toFixed(2) + 's';
