@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Theseus &amp; the Minotaur</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <script src="../shared/pixel.js"></script>
+  <script src="../shared/pixel-icons.js"></script>
+  <script src="../shared/avatar.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// ---------- blocky pictures for this lesson ----------
+// a stone maze with Ariadne's red thread winding into it
+const MAZE = Pixel.svg([
+  'ssssssssssssss',
+  's....s.......s',
+  's.ss.s.sssss.s',
+  's.s..s.s...s.s',
+  's.s.ss.s.s.s.s',
+  's.s....s.s...s',
+  's.ssssss.sss.s',
+  's........s...s',
+  'ssssssss.s.sss',
+  'srrrrrr..s...s',
+  'srssssssss.s.s',
+  'sr.........s.s',
+  'srssssssssss.s',
+  'sr............',
+  'ssssssssssssss',
+], { s: '#8a8a99', r: '#e53935' });
+
+// the Minotaur: the head and horns of a bull on a strong body
+const MINOTAUR = Pixel.svg([
+  'w............w',
+  'ww..........ww',
+  '.ww.bbbbbb.ww.',
+  '..wbbbbbbbbw..',
+  '...bbrbbrbb...',
+  '...bbbbbbbb...',
+  '....bppppb....',
+  '....bpkkpb....',
+  '.....yppy.....',
+  '..bbbbbbbbbb..',
+  '.bbbBbbbbBbbb.',
+  '.bb.bbbbbb.bb.',
+  '.pp.kkkkkk.pp.',
+  '....bb..bb....',
+  '...kkk..kkk...',
+], { w: '#f2ead3', b: '#6b4423', B: '#4a2e17', r: '#ff3b3b', p: '#c49a6c', k: '#1b1b1b', y: '#ffd43b' });
+
+// ---------- the lesson ----------
+window.LESSON = {
+  id: 'english-theseus',
+  subject: 'english',
+  title: 'Theseus & the Minotaur',
+  emoji: '🐂',
+  home: '../index.html',
+  finishAch: 'speller',
+  mascot: {
+    name: 'Quill the Wizard',
+    sprite: Pixel.sprites.wizard,
+    praise: ['Legendary!', 'Heroic reading!', 'Brave as Theseus!', 'Critical hit!', 'Myth-tastic!', 'Nailed it!', 'You found the way!'],
+    oops: ['Oops! Look back at the story.', 'Not quite – what does the story say?', 'Hmm, think again!', 'So close! One more try.'],
+  },
+  glossary: {
+    myth: { emoji: '📜', def: 'A very old story, told for thousands of years, with heroes, monsters or gods in it.' },
+    hero: { emoji: '🦸', def: 'The brave main character who sets out to fix a problem.' },
+    labyrinth: { emoji: '🌀', def: 'A huge, twisty maze. It is very hard to find the way out.' },
+    minotaur: { emoji: '🐂', def: 'A monster from Greek myths with the body of a man and the head of a bull.' },
+    athens: { emoji: '🏛️', def: 'A city in Greece. Theseus was its prince.' },
+    crete: { emoji: '🏝️', def: 'A big Greek island. King Minos ruled it.' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'Theseus & the Minotaur', short: 'Start', minutes: 1,
+      pic: MAZE,
+      hello: 'Welcome to the READING road of the Word Kingdom! Today you\'ll read one of the most famous stories ever told – a myth that is about 3,000 years old. It has a prince, a princess, a maze… and a monster.',
+      question: 'How would YOU find your way out of a giant maze?',
+      intro: 'Warm up, read the myth, watch, teach a muddled robot, walk the **labyrinth** yourself, build a ship with your spelling – then face the Minotaur!',
+      nameLabel: 'Player name:',
+    },
+
+    {
+      type: 'review', title: 'Warm-up', short: 'Warm-up', minutes: 3,
+      from: { title: 'Stories you already know', emoji: '📖' },
+      facts: [
+        'Every story has a beginning, a middle and an end.',
+        'The hero is the main character who has to solve a problem.',
+        'Many stories have a baddie or a monster who causes the trouble.',
+        'Good readers use clues in the words to work out how characters feel.',
+      ],
+      questions: [
+        { type: 'mcq', q: 'In "Jack and the Beanstalk", who causes the trouble?', options: ['the giant', 'Jack\'s mum', 'the cow'], answer: 0 },
+        { type: 'oddone', q: 'Which one is NOT a character?', items: ['a brave knight', 'a wicked witch', 'a clever fox', 'a dark forest'], answer: 3, why: 'Why is the dark forest the odd one out?', reasons: ['It is a place, not someone in the story', 'It is not scary', 'It has no name'], reason: 0 },
+        { type: 'mcq', q: 'Sam\'s knees wobbled and he hid behind the door. How did Sam feel?', options: ['scared', 'sleepy', 'proud'], answer: 0, hint: 'Why would your knees wobble?' },
+        { type: 'type', q: 'Fairy tales often begin with "Once upon a ___".', answer: ['time'], placeholder: 'one word' },
+      ],
+    },
+
+    {
+      type: 'read', title: 'The Myth of Theseus', short: 'Read', minutes: 10,
+      say: 'This is a real story from Ancient Greece. Read each part carefully – the checks test if you really understood. Tap the yellow words for a 💎.',
+      cards: [
+        {
+          title: 'What is a myth?', pic: '📜🏛️',
+          text: [
+            'A [[myth]] is a very old story. People told myths out loud for hundreds of years before anyone wrote them down.',
+            'Myths have a [[hero]], monsters and gods. Many myths explain how something came to be, like how a sea got its name.',
+          ],
+          check: { q: 'Which of these is most likely a myth?', options: ['An old story about a god who makes thunder by throwing lightning bolts', 'A leaflet about when the bins are collected', 'A diary about a trip to the shops last week'], answer: 0, hint: 'Myths are very old and have gods, heroes or monsters.' },
+        },
+        {
+          title: 'Part 1: The monster in the maze', pic: MINOTAUR,
+          text: [
+            'Long ago, King Minos ruled the island of [[Crete]]. Deep under his palace was the [[labyrinth]], a maze so twisty that nobody who went in ever found the way out.',
+            'In the middle of the maze lived the [[Minotaur]], a monster with the body of a man and the head of a bull.',
+          ],
+          check: { type: 'evidence', q: 'Tap the words that show how hard it was to escape from the maze.', answer: 'nobody who went in ever found the way out' },
+        },
+        {
+          title: 'Part 2: A ship with black sails', pic: '⛵🌊',
+          text: [
+            'Every year, the city of [[Athens]] had to send fourteen young people to Crete, to be fed to the Minotaur.',
+            'The people of Athens wept as the ship with black sails left the harbour. Then Prince Theseus stood up. "This year I will go," he said, "and I will stop the Minotaur."',
+          ],
+          check: { q: 'The people "wept" as the ship left. What does that tell you?', options: ['They cried because they were so sad and afraid', 'They waved because they were excited', 'They cheered because the ship was fast'], answer: 0, hint: 'Weeping is a word for what you do when you are very upset.' },
+        },
+        {
+          title: 'Part 3: A promise to his father', pic: '👑⚫⚪',
+          text: [
+            'Theseus\'s father, King Aegeus, was afraid he would never see his son again.',
+            '"If I win, I will change the black sail to a white one," Theseus promised, "so you will know I am safe." Every day, the old king watched the sea from the top of a cliff.',
+          ],
+          check: { q: 'Why did Theseus promise to change the sail?', options: ['So his father could tell from far away that he was safe', 'Because the black sail was old and torn', 'So the ship would sail faster'], answer: 0, hint: 'The king watched from a cliff. What could he see from there?' },
+        },
+        {
+          title: 'Part 4: Ariadne\'s secret', pic: '👸🧶',
+          text: [
+            'In Crete, King Minos\'s daughter Ariadne saw Theseus and wanted to help him. She waited until nobody was looking.',
+            'Then she pressed a ball of red thread into his hand. "Tie one end to the door," she whispered, "and unroll it as you go."',
+          ],
+          check: {
+            type: 'predict', q: 'Predict! What do you think the thread is for?',
+            options: ['Finding the way back out of the maze', 'Tying up the Minotaur', 'Sewing a new sail'], answer: 0,
+            reveal: 'Good thinking! Keep the thread in mind – you\'ll find out on the next page.',
+            then: { q: 'Why did Ariadne wait until nobody was looking?', options: ['She was helping her father\'s enemy, so she had to keep it secret', 'She was too shy to talk to anyone', 'The thread was a birthday present'], answer: 0, hint: 'Who was her father? Would he want Theseus to win?' },
+          },
+        },
+        {
+          title: 'Part 5: Into the dark', pic: MAZE,
+          text: [
+            'Theseus crept into the dark tunnels, unrolling the thread behind him. Left, right, right, left… the maze went on and on.',
+            'At last he heard a great roar. Theseus fought the Minotaur with all his strength, and he won. Then he followed the red thread, step by step, all the way back to the door.',
+          ],
+          check: { type: 'evidence', q: 'Tap the sentence that shows Ariadne\'s plan worked.', answer: 'followed the red thread' },
+        },
+        {
+          title: 'Part 6: The forgotten sail', pic: '⚫⛵',
+          text: [
+            'Theseus sailed home, but the happy crew were so busy celebrating that they forgot to change the sail.',
+            'From his cliff, King Aegeus saw the black sail and thought his son was lost. He was so heartbroken that he fell into the sea. That sea is still called the Aegean Sea today.',
+          ],
+          check: { q: 'How do you think Theseus felt when he got home?', options: ['Proud that he won, but very sad about his father', 'Only happy, because he had won', 'Cross with Ariadne for helping him'], answer: 0, hint: 'He won… but what happened to his dad?' },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'The Myth of Theseus', short: 'Video 1', minutes: 7,
+      video: { id: '6C07Wbsxu_M', title: 'Greek Mythology: Theseus | Learn a fun story about Theseus and the Minotaur', channel: 'Learn Bright', duration: '6:10' },
+      say: 'Myths were told by lots of different storytellers, so each version is a little different. Watch this one – and spot what is the same and what is different!',
+      clues: [
+        'Who built the labyrinth in this version?',
+        'How many young men and maidens were sent?',
+        'What did Ariadne\'s thread do in the dark?',
+        'Which part of our story is missing?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'In the video, who built the labyrinth to hide the Minotaur?', options: ['King Minos', 'Theseus', 'Ariadne'], answer: 0 },
+        { type: 'type', q: 'Athens sent seven young men and how many maidens?', answer: ['7', 'seven'], placeholder: 'a number' },
+        { type: 'tf', q: 'In this version, Ariadne\'s thread glowed and lit up the dark tunnels.', answer: true },
+        { type: 'mcq', q: 'Which word LEAST describes the labyrinth in the video?', options: ['inviting', 'dark', 'confusing'], answer: 0, hint: 'Inviting means it makes you want to go in!' },
+        { type: 'mcq', q: 'Why did Theseus decide to go into the labyrinth?', options: ['He could not bear to see his people suffer any longer', 'King Minos asked him to', 'He wanted the Minotaur as a pet'], answer: 0 },
+        { type: 'mcq', q: 'Which part of OUR story is NOT in the video?', options: ['the black and white sails', 'Ariadne\'s thread', 'the Minotaur'], answer: 0, explain: 'Different storytellers tell myths in different ways – that\'s normal for myths!' },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Story Workshop', short: 'Game 1', minutes: 8,
+      rounds: [
+        {
+          game: 'match', title: 'Who\'s who?',
+          intro: 'Match each character to what they did in the myth.',
+          say: 'Think back to the story. Who did what?',
+          pairs: [
+            { a: '🦸 Theseus', b: 'the brave prince who went into the maze' },
+            { a: '👸 Ariadne', b: 'the princess who gave him the thread' },
+            { a: '👑 King Minos', b: 'the king of Crete who kept the monster' },
+            { a: '⛰️ King Aegeus', b: 'the father who watched the sea' },
+            { a: '🐂 The Minotaur', b: 'half man, half bull' },
+          ],
+        },
+        {
+          game: 'questions', title: 'Feelings detective',
+          intro: 'Authors don\'t always TELL you how a character feels – they SHOW you. Read each new scene and find the clues.',
+          say: 'Look for what the character DOES. It shows how they feel.',
+          questions: [
+            { type: 'evidence', q: 'Tap the sentence that shows Theseus was frightened.', passage: ['Theseus stood by the door of the labyrinth.', 'His hands shook as he tied the thread to the door.', 'He took a deep breath and stepped into the dark.'], answer: 'hands shook' },
+            { type: 'mcq', q: 'In the same scene, "He took a deep breath and stepped into the dark." What does that show?', options: ['He was scared, but brave enough to go anyway', 'He was bored of waiting', 'He wanted to go home'], answer: 0 },
+            { type: 'mcq', q: 'Ariadne kept looking over her shoulder as she passed Theseus the thread. Why?', options: ['She was worried someone would see her', 'She had a sore neck', 'She was looking for her cat'], answer: 0 },
+            { type: 'type', q: 'King Aegeus stood on the cliff every single day, staring at the sea. Write ONE word for how he felt.', answer: ['worried', 'nervous', 'anxious', 'scared', 'afraid', 'sad', 'hopeful', 'lonely', 'frightened', 'upset', 'fearful', 'unhappy', 'stressed', 'concerned', 'missing', 'tense', 'desperate', 'miserable'], placeholder: 'a feeling word', hint: 'His son had gone to fight a monster…' },
+          ],
+        },
+        {
+          game: 'order', title: 'Story in order',
+          intro: 'Put the big moments of the myth in the order they happened.',
+          say: 'Beginning, middle, end. What happened first?',
+          items: ['⛵ Theseus sails to Crete', '🧶 Ariadne gives him the thread', '🐂 He beats the Minotaur', '⚫ The crew forget to change the sail'],
+          ends: ['FIRST', 'LAST'],
+        },
+      ],
+    },
+
+    {
+      type: 'teach', title: 'Teach Professor Bolt: the myth', short: 'Teach', minutes: 6,
+      say: 'Professor Bolt heard the myth once, a very long time ago, and he has muddled it up. Fix his mistakes!',
+      robot: { name: 'Professor Bolt', emoji: '🤖' },
+      intro: 'Greetings! I know the myth of Theseus PERFECTLY. Well… nearly perfectly. Let me tell it to you!',
+      lines: [
+        { text: 'Long ago, King Minos ruled the island of Crete.', ok: true, why: 'Right – Crete is a big Greek island.' },
+        { text: 'The Minotaur had the body of a man and the head of a lion.', wrong: 'lion', fix: 'bull', options: ['horse'], why: 'The Minotaur had the head of a bull.' },
+        { text: 'Theseus promised to change the black sail to a red one if he won.', wrong: 'red', fix: 'white', options: ['blue'], why: 'A white sail would tell his father he was safe.' },
+        { text: 'Ariadne gave Theseus a sword to help him find his way out.', wrong: 'sword', fix: 'thread', options: ['map'], why: 'Ariadne gave him a ball of thread to unroll as he went.' },
+        { text: 'Theseus unrolled the thread as he crept through the dark tunnels.', ok: true, why: 'Right – then he could follow it back.' },
+        { text: 'On the way home, the crew remembered to change the sail.', wrong: 'remembered', fix: 'forgot', options: ['wanted'], why: 'They were so busy celebrating that they forgot.' },
+        { text: 'King Aegeus saw the white sail and thought his son was lost.', wrong: 'white', fix: 'black', options: ['red'], why: 'He saw the BLACK sail, so he thought Theseus had not survived.' },
+      ],
+      outro: 'Thank you! Now I can tell the myth properly. I shall tell it at every robot party!',
+    },
+
+    {
+      type: 'video', title: 'Greek Gods & Monsters', short: 'Video 2', minutes: 8,
+      video: { id: 'wTxW7sa2rtg', title: 'Greek Mythology for Kids | What is mythology? Learn all about Greek mythology', channel: 'Learn Bright', duration: '7:55' },
+      say: 'The Minotaur is just ONE monster from the Greek myths. Meet the gods and the other monsters, then answer my questions.',
+      clues: [
+        'Why did people long ago make up myths?',
+        'Which god made thunder and lightning?',
+        'Who was the goddess of Athens?',
+        'What happened if you looked at Medusa?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'Why did people long ago make up myths?', options: ['To explain things they didn\'t understand, like weather', 'To sell more books', 'Because they were bored of real stories'], answer: 0 },
+        { type: 'type', q: 'Which god threw lightning bolts with his bare hands?', answer: ['zeus'], placeholder: 'a god\'s name' },
+        { type: 'mcq', q: 'How did the Greeks explain the sun moving across the sky?', options: ['The god Helios drove it in a chariot', 'A giant rolled it like a ball', 'It was carried by birds'], answer: 0 },
+        { type: 'mcq', q: 'Athena was the goddess of Athens – Theseus\'s city! What was she the goddess of?', options: ['wisdom and courage', 'the sea', 'the underworld'], answer: 0 },
+        { type: 'mcq', q: 'What happened if you looked into Medusa\'s eyes?', options: ['You turned to stone', 'You fell asleep', 'You turned into a bird'], answer: 0 },
+        { type: 'tf', q: 'A griffin is part eagle and part lion.', answer: true },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Into the Labyrinth', short: 'Game 2', minutes: 10,
+      rounds: [
+        {
+          game: 'match', title: 'Monster mash',
+          intro: 'Greek myths are FULL of monsters. Match each one to what it looks like.',
+          say: 'Remember the video? Which monster is which?',
+          pairs: [
+            { a: '🐂 Minotaur', b: 'head of a bull, body of a man' },
+            { a: '🐴 centaur', b: 'half man, half horse' },
+            { a: '👁️ Cyclops', b: 'a giant with one eye' },
+            { a: '🐍 Medusa', b: 'snakes instead of hair' },
+            { a: '🦅 griffin', b: 'part eagle, part lion' },
+          ],
+        },
+        {
+          game: 'labyrinth', title: 'The Labyrinth',
+          intro: 'Now YOU are Theseus! Find your way through the dark maze to the Minotaur. Ariadne\'s **red thread** unrolls behind you. Gates block the way – answer to open them. Then follow the thread back out!',
+          say: 'Tap a square to walk there, or drag your hero. It\'s dark in here…',
+          monsterPic: MINOTAUR,
+          map: [
+            '#############',
+            '#...#.....#M#',
+            '#.#.#.###.#.#',
+            '#.#...#...#3#',
+            '#.#####.###.#',
+            '#...#...#...#',
+            '###.#.###.###',
+            '#...#.2...#.#',
+            '#####.#####.#',
+            '#.1.........#',
+            '#S###########',
+          ],
+          gates: [
+            { q: 'Gate 1 says: "Where did the Minotaur live?"', options: ['in the labyrinth under the palace on Crete', 'in a cave in Athens', 'on the top of a cliff'], answer: 0 },
+            { type: 'oddone', q: 'Gate 2 says: "Which one does NOT belong in a myth?"', items: ['a brave hero', 'a monster', 'a god', 'a bus timetable'], answer: 3, why: 'Why is the bus timetable the odd one out?', reasons: ['Myths are very old stories – there were no buses then!', 'Buses are too big', 'It has numbers in it'], reason: 0 },
+            { type: 'type', q: 'Gate 3 says: "What colour was the sail King Aegeus hoped to see?"', answer: ['white'], placeholder: 'a colour' },
+          ],
+          monster: { q: 'The Minotaur roars: "Nobody escapes my maze! How will YOU get out?"', options: ['I\'ll follow Ariadne\'s thread back to the door', 'I\'ll ask you for directions', 'I\'ll dig a tunnel'], answer: 0 },
+          monsterSay: 'ROAR! The Minotaur blocks the way! Answer to beat it!',
+          outSay: 'You beat the Minotaur! Now follow Ariadne\'s red thread all the way back to the entrance. Tap the 🏛️ door to run there!',
+          done: 'You escaped the labyrinth! Without that thread you\'d still be lost in the dark.',
+        },
+      ],
+    },
+
+    {
+      type: 'game', title: 'The Spell Test: Build Theseus\'s Ship!', short: 'Spell test', icon: '🪄', kind: 'Spelling test', minutes: 10,
+      rounds: [
+        {
+          game: 'spelltest', mode: 'peek', title: 'Look, Cover, Write', scene: 'ship',
+          intro: 'Look at each word, cover it, write it, then check. Every word adds a plank to Theseus\'s ship!',
+          say: 'Look carefully… then cover it and write it from memory.',
+          words: [
+            { word: 'myth', sentence: 'Theseus is a famous Greek ___.', hint: 'm-y-th: the y makes an i sound.' },
+            { word: 'hero', sentence: 'The ___ was very brave.', hint: 'h-e-r-o' },
+            { word: 'island', sentence: 'Crete is an ___.', hint: 'There is a silent s: is-land.' },
+            { word: 'heard', sentence: 'Theseus ___ a great roar.', hint: 'It has "ear" in it, but sounds like "herd".' },
+            { word: 'thread', sentence: 'Ariadne gave him a ball of ___.', hint: 'th-r-ea-d: ea makes a short e sound.' },
+          ],
+        },
+        {
+          game: 'spelltest', mode: 'listen', title: 'The Real Spell Test', scene: 'ship',
+          intro: 'The real test! Press 🔊 to hear each word in a sentence, then spell it. Finish the ship to raise the WHITE sail!',
+          say: 'Listen carefully… then type the word!',
+          words: [
+            { word: 'myth', sentence: 'A ___ is a very old story.', clue: 'a very old story with gods and heroes', hint: 'm-y-th' },
+            { word: 'hero', sentence: 'Theseus was the ___ of the story.', clue: 'the brave main character', hint: 'h-e-r-o' },
+            { word: 'monster', sentence: 'The ___ lived in the maze.', clue: 'a scary creature', hint: 'mon-ster' },
+            { word: 'island', sentence: 'They sailed to the ___ of Crete.', clue: 'land with sea all around it', hint: 'Silent s: is-land.' },
+            { word: 'ancient', sentence: 'This myth comes from ___ Greece.', clue: 'very, very old', hint: 'an-cient: the "sh" sound is spelt ci.' },
+            { word: 'heard', sentence: 'We ___ the Minotaur roar.', clue: 'listened to (in the past)', hint: 'h-ear-d' },
+            { word: 'strength', sentence: 'He fought with all his ___.', clue: 'how strong you are', hint: 'strong → str-e-ng-th' },
+            { word: 'thread', sentence: 'He followed the red ___.', clue: 'a long thin string', hint: 'th-r-ea-d' },
+            { word: 'brave', sentence: 'You have to be ___ to fight a monster.', clue: 'not afraid', hint: 'b-r-a-v-e: the e at the end makes the a say its name.' },
+            { word: 'princess', sentence: 'The ___ helped Theseus.', clue: 'the daughter of a king', hint: 'prince + ss' },
+          ],
+        },
+        {
+          game: 'invaders', title: 'Letter Blaster',
+          intro: 'Bonus arcade round! Read the clue at the top, then **shoot the letters in order** to spell the word. Press 🔊 to hear it.',
+          say: 'Shoot the letters IN ORDER!',
+          waves: [
+            { spell: 'myth', clue: 'A very old story', decoys: 'ie' },
+            { spell: 'hero', clue: 'The brave main character', decoys: 'au' },
+            { spell: 'sail', clue: 'It caught the wind on the ship', decoys: 'ey' },
+          ],
+          done: 'LETTER BLASTER CLEAR! Your spelling is legendary!',
+        },
+      ],
+    },
+
+    {
+      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
+      say: 'Hero training! Do each move as Theseus would.',
+      wiggle: {
+        title: '🦸 Hero Training!',
+        seconds: 60,
+        moves: [
+          '⛵ Row the ship to Crete – pull those oars!',
+          '🧶 Unroll the thread – roll your arms round and round!',
+          '🤫 Creep through the dark maze on tiptoe…',
+          '🐂 The Minotaur charges – jump out of the way!',
+          '💪 Show your hero strength – make big muscles!',
+          '🏃 Follow the thread back out – run on the spot!',
+        ],
+      },
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: The Minotaur', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      say: 'THE MINOTAUR wants the whole Word Kingdom lost in its maze! Every right answer pushes it back. Go, {name}!',
+      boss: {
+        name: 'The Minotaur', sprite: MINOTAUR, attack: ['🧱', '💨'], spin: true,
+        lines: {
+          intro: 'ROOOAR! Welcome to MY labyrinth, little hero. Nobody finds the way out. NOBODY!',
+          hurt: ['MOO-OW! That one stung!', 'How do you know the way?! Did someone give you a THREAD?', 'Stop reading so carefully! It makes my horns itch!', 'Grrr! You are cleverer than you look!'],
+          taunt: ['Lost already? Left, right, left… HA!', 'Wrong turn! Another dead end!', 'Maybe the maze is too twisty for you!', 'Snort! I can smell a muddle!'],
+          angry: 'NOW I\'M REALLY CROSS! I\'LL KNOCK DOWN THE WALLS!',
+          dodge: 'Here come the falling stones! Dodge them, if you can!',
+          miss: 'You dodged ALL my stones? You\'re as quick as Theseus!',
+          last: 'My horns are wobbling… I can see daylight… nooo…',
+          defeat: 'MOOO… you found the way out… just like that pesky prince did…',
+          win: 'Ha! Lost in the maze forever! Have a nice nap in the dark!',
+          stunned: 'Seeing stars… so many twisty little stars…',
+          beg: ['Wait! I\'ll draw you a map of the maze!', 'Mercy! I only roar because it echoes nicely in here!', 'I promise to be a gentle cow from now on! Moo?'],
+        },
+      },
+      questions: [
+        { type: 'mcq', q: 'What is a myth?', options: ['a very old story with heroes, monsters or gods', 'a true report from a newspaper', 'a list of rules'], answer: 0 },
+        { type: 'mcq', q: 'Where did the Minotaur live?', options: ['in the labyrinth on Crete', 'on a ship', 'in Athens'], answer: 0 },
+        { type: 'type', q: 'Who gave Theseus the ball of thread?', answer: ['ariadne', 'princess ariadne'], placeholder: 'a name', hint: 'She was King Minos\'s daughter. A-r-i…' },
+        { type: 'evidence', q: 'Tap the sentence that shows Theseus was worried.', passage: ['Theseus looked at the black waves.', 'He bit his lip and gripped the thread tightly.', 'The ship rocked gently in the wind.'], answer: 'bit his lip' },
+        { type: 'oddone', q: 'Which one is NOT a monster from the Greek myths?', items: ['Minotaur', 'Medusa', 'Cyclops', 'Theseus'], answer: 3, why: 'Why is Theseus the odd one out?', reasons: ['He is the hero, not a monster', 'His name is longest', 'He lived on Crete'], reason: 0 },
+        { type: 'mcq', q: 'Why did King Aegeus think his son was lost?', options: ['He saw the black sail', 'Theseus sent a letter', 'The ship never came back'], answer: 0 },
+        { type: 'order', q: 'Put the myth in order.', items: ['🏛️ Athens must send young people to Crete', '🧶 Ariadne gives Theseus the thread', '🐂 Theseus beats the Minotaur', '🌊 The sea gets its name'], ends: ['FIRST', 'LAST'] },
+        { type: 'tf', q: 'Everyone tells a myth in exactly the same way.', answer: false, explain: 'Myths were told by lots of storytellers, so there are different versions – like the video\'s glowing thread!' },
+        { type: 'gap', q: 'The Aegean Sea was named after King ___.', options: ['Aegeus', 'Minos', 'Theseus'], answer: 0 },
+        { type: 'mcq', q: 'The crew were so busy celebrating that they forgot the sail. What lesson could this myth teach?', options: ['Always keep your promises', 'Never go on a ship', 'Mazes are fun'], answer: 0 },
+        { type: 'build', q: 'Build a sentence about the hero.', answer: ['Theseus', 'was', 'very', 'brave'], extra: ['scared', 'Minotaur'], join: ' ' },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>

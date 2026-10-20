@@ -1,11 +1,11 @@
-/* Pixelkid lesson engine – arcade games: Answer Invaders, Platformer, Lane Runner and Block Builder.
+/* Pixelkid lesson engine – arcade games: Answer Invaders, Platformer, Lane Runner, Block Builder and Labyrinth.
  * One part of shared/engine.js, which loads it only when a lesson uses it. E is the engine's shared helpers
  * (E.state and E.stageCard are live). See the top of shared/engine.js for how the parts fit together.
  */
 PixelkidEngine.part('arcade', E => {
   'use strict';
   const { AV, GAMES, ROBOT_PAL, SPR, arcadeCanvas, award, canvasFont, confetti, emojiAt, gameLoop, h, holdButton,
-    keys, pick, praise, put, pxText, say, sfx, shuffle, speak, spriteCanvas, toGame } = E;
+    keys, pic, pick, praise, put, pxText, runQuestions, say, sfx, shuffle, speak, spriteCanvas, toGame } = E;
 
   // ===== Answer Invaders: shoot the aliens carrying the right answers =====
   // r.waves: [{ prompt, items: [{ label, ok, why }] }]
@@ -715,6 +715,148 @@ PixelkidEngine.part('arcade', E => {
         h('button', { class: 'btn ghost', type: 'button', onclick: reset }, '↺ Reset'),
         h('button', { class: 'btn big green', type: 'button', onclick: go }, '▶ GO, ROBOT!')));
     root._test = { tap: tapCell, go, select(id) { selId = id; drawInv(); }, get finished() { return finished; } };
+    return root;
+  };
+
+  // ===== Labyrinth: walk Theseus through a dark maze, unrolling Ariadne's thread, to the Minotaur and back out =====
+  // r.map: rows of '#' wall, '.' floor, 'S' the entrance (start and finish), 'M' the monster, '1'–'9' gates.
+  // r.gates: questions – gate 1 asks r.gates[0] … and opens once it's answered. r.monster: the question that beats the monster.
+  // r.monsterPic (emoji or svg, default 🐂), r.done. Walk by tapping a square (the hero walks there along squares
+  // already seen), dragging a finger, the arrow buttons or the arrow keys. Only squares near the hero are lit; the thread
+  // follows the hero (and rewinds when they walk back along it), so after the monster it shows the way out.
+  GAMES.labyrinth = function (r, key, done) {
+    const grid = r.map.map(row => [...row]), rows = grid.length, cols = Math.max(...r.map.map(x => x.length));
+    let start = null, monster = null;
+    const gates = {}; // "x,y" -> gate number
+    grid.forEach((row, y) => { while (row.length < cols) row.push('#'); row.forEach((ch, x) => {
+      if (ch === 'S') start = [x, y]; else if (ch === 'M') monster = [x, y]; else if (/[1-9]/.test(ch)) gates[x + ',' + y] = +ch;
+    }); });
+    const open = new Set(), seen = new Set();
+    let pos = start.slice(), trail = [start.slice()], phase = 'in', asking = false, walking = null, finished = false;
+    const wall = (x, y) => x < 0 || y < 0 || x >= cols || y >= rows || grid[y][x] === '#';
+    const locked = (x, y) => gates[x + ',' + y] && !open.has(gates[x + ',' + y]);
+    const atMonster = (x, y) => phase === 'in' && monster && x === monster[0] && y === monster[1];
+
+    const gridEl = h('div', { class: 'lb-grid', style: `--c:${cols};--r:${rows}` });
+    const cells = [];
+    for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
+      const g = gates[x + ',' + y];
+      cells.push(gridEl.appendChild(h('div', { class: 'lb-cell' + (grid[y][x] === '#' ? ' wall' : '') + (g ? ' gate' : '') }, g ? h('b', null, g) : null)));
+    }
+    const thread = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    thread.setAttribute('class', 'lb-thread'); thread.setAttribute('viewBox', `0 0 ${cols} ${rows}`); thread.setAttribute('preserveAspectRatio', 'none');
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+    thread.append(line);
+    const place = (el, x, y) => { el.style.left = `${x / cols * 100}%`; el.style.top = `${y / rows * 100}%`; el.style.width = `${100 / cols}%`; el.style.height = `${100 / rows}%`; };
+    const hero = h('div', { class: 'lb-hero' }, h('img', { src: AV ? AV.dataURL(AV.load().look, { scale: 4 }) : spriteCanvas(SPR.robot, ROBOT_PAL, 4).toDataURL(), alt: 'you' }));
+    const door = h('div', { class: 'lb-door' }, '🏛️');
+    const beast = h('div', { class: 'lb-beast', hidden: true }, pic(r.monsterPic || '🐂', 'lb-beast-pic'));
+    const board = h('div', { class: 'lb-board' }, gridEl, thread, door, beast, hero);
+    const status = h('div', { class: 'bb-status' });
+    const ask = h('div', { class: 'lb-ask' });
+    place(door, start[0], start[1]); if (monster) place(beast, monster[0], monster[1]);
+
+    function paint() {
+      for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
+        const lit = Math.abs(x - pos[0]) <= 2 && Math.abs(y - pos[1]) <= 2, k = x + ',' + y;
+        if (lit) seen.add(k);
+        const c = cells[y * cols + x];
+        c.classList.toggle('lit', lit); c.classList.toggle('seen', seen.has(k));
+        if (gates[k]) c.classList.toggle('opened', open.has(gates[k]));
+      }
+      if (monster) beast.hidden = !seen.has(monster.join(','));
+      place(hero, pos[0], pos[1]);
+      line.setAttribute('points', trail.map(([x, y]) => `${x + 0.5},${y + 0.5}`).join(' '));
+    }
+    // ask a question in the panel under the maze; the maze waits until it's answered
+    function question(q, k, label, then) {
+      asking = true; stopWalk();
+      runQuestions(ask, [q], { key: `${key}:${k}`, kind: 'Labyrinth', lastLabel: label, done: () => { asking = false; put(ask); then(); } });
+      ask.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    function step(dx, dy) {
+      if (asking || finished) return false;
+      const x = pos[0] + dx, y = pos[1] + dy;
+      if (wall(x, y)) { sfx.bad(); hero.classList.remove('bump'); void hero.offsetWidth; hero.classList.add('bump'); return false; }
+      if (locked(x, y)) {
+        const n = gates[x + ',' + y];
+        say(`🔒 Gate ${n} is locked! Answer the question to open it.`);
+        question(r.gates[n - 1], 'g' + n, 'Open the gate ▶', () => { open.add(n); sfx.good(); say('🔓 The gate creaks open!'); paint(); });
+        return false;
+      }
+      if (atMonster(x, y)) {
+        say(r.monsterSay || 'The Minotaur blocks the way! Answer to beat it!');
+        question(r.monster, 'monster', 'Beat the Minotaur! ▶', () => {
+          phase = 'out'; beast.classList.add('beaten'); sfx.win(); confetti(40);
+          say(r.outSay || 'You did it! Now follow Ariadne\'s red thread all the way back to the entrance.');
+          put(status, '🧵 Follow the thread back to the entrance 🏛️'); board.classList.add('glow');
+        });
+        return false;
+      }
+      const back = trail.length > 1 && trail[trail.length - 2][0] === x && trail[trail.length - 2][1] === y;
+      if (back) trail.pop(); else trail.push([x, y]);
+      pos = [x, y]; sfx.tap(); paint();
+      if (phase === 'out' && x === start[0] && y === start[1]) win();
+      return true;
+    }
+    function win() {
+      finished = true; stopWalk(); sfx.win(); confetti(90); award(key + ':done', board);
+      say(r.done || 'You escaped the labyrinth! Without the thread you would still be lost in there.');
+      put(status, '🏁 Out of the labyrinth!'); done();
+    }
+    // tap a square: walk there along squares already seen (breadth-first search), stopping at gates and the monster
+    function route(tx, ty) {
+      const prev = new Map([[pos.join(','), null]]), q = [pos.slice()];
+      while (q.length) {
+        const [x, y] = q.shift();
+        if (x === tx && y === ty) break;
+        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+          const nx = x + dx, ny = y + dy, k = nx + ',' + ny;
+          if (prev.has(k) || wall(nx, ny) || !seen.has(k)) continue;
+          prev.set(k, [x, y]);
+          if (!locked(nx, ny) && !atMonster(nx, ny)) q.push([nx, ny]); else if (nx === tx && ny === ty) q.push([nx, ny]);
+        }
+      }
+      if (!prev.has(tx + ',' + ty)) return null;
+      const path = [];
+      for (let c = [tx, ty]; c && c.join(',') !== pos.join(','); c = prev.get(c.join(','))) path.unshift(c);
+      return path;
+    }
+    function stopWalk() { clearInterval(walking); walking = null; }
+    function walkTo(tx, ty) {
+      stopWalk();
+      const path = route(tx, ty);
+      if (!path || !path.length) return;
+      walking = setInterval(() => {
+        const c = path.shift();
+        if (!c || !step(c[0] - pos[0], c[1] - pos[1]) || !path.length) stopWalk();
+      }, 140);
+    }
+    // finger: a tap walks to that square; dragging steps the hero square by square under the finger
+    const cellAt = e => { const b = gridEl.getBoundingClientRect(); return [Math.floor((e.clientX - b.left) / b.width * cols), Math.floor((e.clientY - b.top) / b.height * rows)]; };
+    let drag = null;
+    board.addEventListener('pointerdown', e => { e.preventDefault(); drag = { moved: false, at: cellAt(e) }; try { board.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ } });
+    board.addEventListener('pointermove', e => {
+      if (!drag) return;
+      const [x, y] = cellAt(e), dx = x - pos[0], dy = y - pos[1];
+      if (Math.abs(dx) + Math.abs(dy) === 1) { drag.moved = true; stopWalk(); step(dx, dy); }
+    });
+    board.addEventListener('pointerup', e => { if (drag && !drag.moved) { const [x, y] = cellAt(e); walkTo(x, y); } drag = null; });
+    board.addEventListener('pointercancel', () => { drag = null; });
+    const arrow = (label, dx, dy) => h('button', { class: 'btn lb-arrow', type: 'button', 'aria-label': label, onclick() { stopWalk(); step(dx, dy); } }, label);
+    const DIRS = { ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0] };
+    const onKey = e => {
+      if (!board.isConnected) return document.removeEventListener('keydown', onKey);
+      if (!DIRS[e.key] || asking || /INPUT|TEXTAREA/.test(e.target.tagName)) return;
+      e.preventDefault(); stopWalk(); step(...DIRS[e.key]);
+    };
+    document.addEventListener('keydown', onKey);
+
+    paint();
+    put(status, '👆 Tap a square to walk there, drag your hero, or use the arrows. Find the Minotaur!');
+    const root = h('div', { class: 'game labyrinth' }, board, status,
+      h('div', { class: 'lb-pad' }, arrow('⬆', 0, -1), arrow('⬅', -1, 0), arrow('➡', 1, 0), arrow('⬇', 0, 1)), ask);
+    root._test = { step, walkTo, route, get pos() { return pos.slice(); }, get phase() { return phase; }, get asking() { return asking; }, get finished() { return finished; }, get trail() { return trail.length; } };
     return root;
   };
 });

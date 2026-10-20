@@ -17,7 +17,7 @@ const ROOT = path.join(__dirname, '..');
 const STAGES = ['welcome', 'review', 'read', 'video', 'game', 'break', 'quiz', 'investigate', 'case', 'teach'];
 const QUESTIONS = ['mcq', 'tf', 'gap', 'order', 'evidence', 'hotspot', 'slider', 'oddone', 'build', 'type', 'predict'];
 const PUZZLES = ['crossword', 'wordsearch'];
-const ARCADE = ['invaders', 'runner', 'platformer', 'blocks'];
+const ARCADE = ['invaders', 'runner', 'platformer', 'blocks', 'labyrinth'];
 const MCQ_LIMIT = 0.6;
 
 // lessons in the order the library lists them, grouped by world

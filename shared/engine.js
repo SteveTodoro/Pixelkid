@@ -10,7 +10,7 @@
  * A quick 'Games' break is added after the first game stage automatically (L.midBreak: false turns it off).
  * Game types: sort, match, label, order, truefalse, questions, wordsearch, crossword, trainai, pixelcopy, pixelstudio, poster,
  *   spelltest (spelling test: listen / look-cover-write-check / fix the mistake), speechmarks (tap the gaps for speech marks), syllables (tap a drum for each syllable),
- *   and arcade games: invaders, runner (two-lane word runner), platformer, blocks.
+ *   and arcade games: invaders, runner (two-lane word runner), platformer, blocks, labyrinth (walk a dark maze unrolling a thread; questions open gates).
  *   Simulated experiments (with missions): forces, ramp, garden, pollinate, windtest (how far the wind carries seeds),
  *   rocklab (test rocks: look closely, scratch, water drop, sink or float), fossildig (brush rock layers to uncover fossils).
  *   clock (needs shared/clock.js): set the clock by dragging the hands, or read a clock and type the time.
@@ -2128,7 +2128,7 @@
   const PARTS = {
     future: ['trainai', 'pixelcopy', 'pixelstudio', 'poster'],
     spelling: ['spelltest', 'speechmarks', 'syllables'],
-    arcade: ['invaders', 'platformer', 'runner', 'blocks'],
+    arcade: ['invaders', 'platformer', 'runner', 'blocks', 'labyrinth'],
     science: ['forces', 'ramp', 'garden', 'windtest', 'pollinate', 'rocklab', 'fossildig'],
     time: ['clock', 'daydial', 'timehops', 'knuckles'],
     number: ['placeblocks', 'columnsum'],

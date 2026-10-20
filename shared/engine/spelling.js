@@ -14,6 +14,7 @@ PixelkidEngine.part('spelling', E => {
   //   | 'castle' (each word builds a row of a castle tower) | 'rocket' (each word fuels a rocket, which blasts off at the end)
   //   | 'train' (each word couples a carriage) | 'balloon' (each word fills a hot-air balloon, which floats away at the end)
   //   | 'snowman' (each word builds a snowman from the bottom up, hat last)
+  //   | 'ship' (each word builds Theseus's ship under a black sail, which turns white when it's finished)
   // r.prize: the name of the finished potion / dragon. First-try spellings earn a gem; two misses show the word to copy.
   const SP_LIQUID = ['#7cfc3a', '#2ee6d6', '#b44dff', '#ff7eb6', '#ffb800', '#4fc3ff'];
   function cauldronSVG(p, n) {
@@ -84,6 +85,13 @@ PixelkidEngine.part('spelling', E => {
   const SNOWMAN = ['.....kkkk.....', '.....kHHk.....', '.....kHHk.....', '...kkkkkkkk...', '....kwwwwk....', '...kwkwwkwk...', '...kwwoowwk...', '....kwwwwk....', '..kkrrrrrrkk..', '..kwwrwwwwwk..', '.kwwwwkwwwwwk.', '.kwwwwwwwwwwk.', '.kwwwwkwwwwwk.', '..kwwwwwwwwk..', '.kwwwwwwwwwwk.', 'kwwwwwkwwwwwwk', 'kwwwwwwwwwwwwk', 'kwwwwwkwwwwwwk', '.kwwwwwwwwwwk.', '..kkkkkkkkkk..'];
   const snowmanSVG = p => { const built = Math.round(p * SNOWMAN.length);
     return Pixel.svg(SNOWMAN.map((r, y) => (y >= SNOWMAN.length - built ? r : r.replace(/[^.]/g, 'g'))), { k: '#1b1b1b', w: '#ffffff', H: '#2b2f3a', o: '#ff8c1a', r: '#e53935', g: '#dfe8f2' }); };
+  // ship: each word builds Theseus's ship from the waterline up, under a black sail; full = the sail turns white (he's safe!)
+  const SHIP = ['.........k..........', '.........kr.........', '....kkkkkkkkkkk.....', '....kSSSSkSSSSk.....', '....kSSSSkSSSSk.....', '....kSSSSkSSSSk.....',
+    '....kSSSSkSSSSk.....', '....kkkkkkkkkkk.....', '.........k..........', 'kk.......k........kk', 'kHkkkkkkkkkkkkkkkkHk', '.kHHHHHHHHHHHHHHHHk.',
+    '.kHyHHyHHyHHyHHyHHk.', '..kHHHHHHHHHHHHHHk..', '...kkkkkkkkkkkkkk...', 'wwwwwwwwwwwwwwwwwwww', 'WwwwWwwwwWwwwwWwwwwW'];
+  const shipSVG = (p, full) => { const built = 2 + Math.round(p * (SHIP.length - 2)); // the sea is always there
+    return Pixel.svg(SHIP.map((r, y) => (y >= SHIP.length - built ? r : r.replace(/[^.]/g, 'g'))),
+      { k: '#1b1b1b', S: full ? '#ffffff' : '#2b2f3a', H: '#8a5a32', y: '#ffd43b', r: '#e53935', w: '#2f7fd8', W: '#7fc3ff', g: '#dfe3e8' }); };
   // r.scene → how the picture, caption and finish banner look
   const SP_SCENES = {
     potion: { prize: 'the magic potion', draw: (p, n, full) => (full ? POTION : cauldronSVG(p, n)), cap: (n, of, prize) => `🧪 ${n}/${of} ingredients in ${prize}`, made: prize => `🧪 ${prize} is ready!`, done: '🧪 POTION BREWED!', anim: 'bubbling' },
@@ -92,6 +100,7 @@ PixelkidEngine.part('spelling', E => {
     train: { prize: 'the word train', draw: (p, n, full) => trainSVG(p, full), cap: (n, of) => `🚃 ${n}/${of} words · each one couples a carriage`, made: prize => `🚂 ${prize} is full steam ahead!`, done: '🚂 ALL ABOARD!' },
     balloon: { prize: 'your hot-air balloon', draw: p => balloonSVG(p), cap: (n, of) => `🎈 ${n}/${of} words · each one fills the balloon`, made: prize => `🎈 ${prize} is floating away!`, done: '🎈 UP, UP AND AWAY!', anim: 'launch' },
     snowman: { prize: 'your snowman', draw: p => snowmanSVG(p), cap: (n, of) => `⛄ ${n}/${of} words · each one packs on more snow`, made: prize => `⛄ ${prize} is finished!`, done: '⛄ SNOWMAN BUILT!', anim: 'wobble' },
+    ship: { prize: 'Theseus\'s ship', draw: (p, n, full) => shipSVG(p, full), cap: (n, of) => `⛵ ${n}/${of} words · each one builds the ship`, made: prize => `⛵ ${prize} has its WHITE sail up – sail home safely!`, done: '⛵ WHITE SAIL UP!', anim: 'wobble' },
     rocket: { prize: 'your rocket', draw: (p, n, full) => rocketSVG(p, full), cap: (n, of) => `⛽ ${n}/${of} words · each one adds fuel`, made: prize => `🚀 ${prize} has blasted off!`, done: '🚀 BLAST OFF!', anim: 'launch' },
   };
 
