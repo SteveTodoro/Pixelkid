@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Super Soil</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <script src="../shared/pixel.js"></script>
+  <script src="../shared/pixel-icons.js"></script>
+  <script src="../shared/avatar.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// ---------- blocky pictures for this lesson ----------
+// a slice through the ground: grass, dark topsoil with roots and a worm, paler subsoil with stones, then bedrock
+const SOILPROFILE = Pixel.svg([
+  'g.g..g.g.g..g.g..g.g',
+  'gggggggggggggggggggg',
+  'ttttrttttttttrtttttt',
+  'tttrtttttwwwtrtttttt',
+  'ttrtttttwttttrtttttt',
+  'tttttttttttttttrtttt',
+  'ttttttttttttttttrttt',
+  'ssssssssssssssssssss',
+  'ssosssssssssosssssss',
+  'ssssssssosssssssssos',
+  'sossssssssssssosssss',
+  'ssssssosssssssssssss',
+  'bbbbbbbbbbbbbbbbbbbb',
+  'bbbbBbbbbbbbbBbbbbbb',
+  'bbbbbBbbbbbbbbBbbbbb',
+  'bbbbbbBbbbbBbbbbbbbb',
+  'bbBbbbbbbbbbBbbbbbbb',
+  'bbbbbbbbbbbbbbbbbbbb',
+], { g: '#5bbf3a', t: '#4a3220', r: '#c9a56c', w: '#ff8fb1', s: '#a8794a', o: '#8a8a99', b: '#7d7d8c', B: '#55555f' });
+
+// the boss: Cementor, a grumpy cement mixer who wants to pour concrete over every garden
+const CEMENTOR = Pixel.svg([
+  '....kkkkkkk.......',
+  '...kgGgGgGgk......',
+  '..kgGgGgGgGgk.....',
+  '..kGwkGgwkgGk.kkk.',
+  '..kgGgGgGgGgk.kyk.',
+  '..kGgkkkkkgGkkkyk.',
+  '...kgGgGgGgk.kkyk.',
+  'kkkkkkkkkkkkkkkkk.',
+  'kyyyyyyyyyyyyyyyk.',
+  'kyykkyyyyyyykkyyk.',
+  'kkkddkkkkkkkddkkk.',
+  '...kk.......kk....',
+], { k: '#1b1b1b', g: '#b5b5bf', G: '#8a8a99', w: '#ffffff', y: '#ffb800', d: '#4b4b4b' });
+
+// ---------- the lesson ----------
+window.LESSON = {
+  id: 'science-soil',
+  subject: 'science',
+  title: 'Super Soil',
+  emoji: '🪱',
+  home: '../index.html',
+  mascot: {
+    name: 'Professor Bolt',
+    sprite: Pixel.sprites.robot,
+    praise: ['Soil-tastic!', 'Dirt-y brilliant!', 'Rock solid!', 'Critical hit!', 'You really dig it!', 'Nailed it!', 'Worm-derful!'],
+    oops: ['Oops! Think about what soil is made of.', 'Not quite – how does water move through it?', 'Hmm, think again!', 'So close! One more try.'],
+  },
+  glossary: {
+    soil: { emoji: '🪱', def: 'The top layer of the ground: tiny bits of rock mixed with rotted plants, water, air and living things.' },
+    humus: { emoji: '🍂', def: 'The dark part of soil, made from dead plants and animals that have rotted away. Say it "HEW-mus".' },
+    weathering: { emoji: '🌧️', def: 'When rain, ice, wind or roots slowly break rocks into smaller and smaller pieces.' },
+    topsoil: { emoji: '🌱', def: 'The top layer of soil: dark, full of humus, roots and worms.' },
+    bedrock: { emoji: '🪨', def: 'The solid rock deep under the soil.' },
+    loam: { emoji: '🪴', def: 'A soil with a good mix of sand, clay and humus. Most plants love it.' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'Super Soil', short: 'Start', minutes: 1,
+      pic: SOILPROFILE,
+      hello: 'Welcome back, rock star! Today we dig into the stuff under your feet: SOIL. But listen… that rumbling is Cementor the cement mixer, and he wants to pour concrete over every garden!',
+      question: 'Rocks are hard and soil is soft. So how can soil be made from rock?',
+      intro: 'Recap, read, watch, solve the case of the soggy school field, shake soil in the **Soil Lab** – then stop Cementor!',
+      nameLabel: 'Player name:',
+    },
+
+    {
+      type: 'review', title: 'Last time…', short: 'Recap', minutes: 4,
+      from: { title: 'Fossil Hunters', emoji: '🦖', url: 'fossils.html' },
+      facts: [
+        'A fossil is what is left of a plant or animal from long ago, kept in rock.',
+        'Bones last when they are quickly buried by mud or sand (sediment).',
+        'Minerals in water slowly turn buried bones into stone.',
+        'Deeper layers of rock are usually older than the layers above them.',
+      ],
+      questions: [
+        { type: 'mcq', q: 'Two fossils are found in a cliff: a shell near the top and a fish much deeper down. Which is probably older?', options: ['the fish', 'the shell', 'they are the same age'], answer: 0 },
+        { type: 'type', q: 'Which fossil hunter found an ichthyosaur on the beach when she was a girl?', answer: ['mary anning', 'mary', 'anning'], placeholder: 'a name', hint: 'M… A…' },
+        { type: 'oddone', q: 'Which one would NOT become a fossil?', items: ['a dinosaur bone', 'a shark tooth', 'a seashell', 'a jellyfish washed up and left in the sun'], answer: 3, why: 'Why is the jellyfish the odd one out?', reasons: ['It is soft and was not buried, so it rots away', 'It is too small', 'It lives in the sea'], reason: 0 },
+        { type: 'tf', q: 'Wind, rain and waves wearing rock away can help a fossil peep out.', answer: true },
+      ],
+      game: {
+        game: 'fossildig', title: 'Quick dig',
+        intro: 'One quick dig to warm up your fossil-hunting fingers! **Drag** over the rock to brush the rubble away.',
+        layers: [
+          { rock: 'sandstone', age: 'about 100 million years ago' },
+          { rock: 'limestone', age: 'about 300 million years ago' },
+        ],
+        missions: [
+          { text: 'Brush away the rubble to find the 🐚 shell in the limestone.', fossils: [{ kind: 'shell', layer: 1, x: 0.4 }], need: ['shell'], yes: 'Found it – and it\'s about 300 million years old!' },
+        ],
+      },
+    },
+
+    {
+      type: 'read', title: 'What is soil?', short: 'Read', minutes: 6,
+      say: 'Read each page carefully – the checks test if you really understood. Tap the yellow words for a 💎.',
+      cards: [
+        {
+          title: 'A mixture', pic: '🪨🍂💧',
+          text: [
+            '[[soil]] is a mix of tiny bits of rock, rotted bits of dead plants and animals, water and air. It is full of living things too, like worms and beetles.',
+            'The rotted plant and animal bits are called [[humus]]. Humus is dark, and it is full of food for plants.',
+          ],
+          check: { q: 'One garden\'s soil is very dark, almost black. What does that tell you?', options: ['It has lots of humus, so it is good for plants', 'It has been burnt in a fire', 'It is made of black rocks only'], answer: 0, hint: 'Which part of soil is dark?' },
+        },
+        {
+          title: 'Soil starts as rock', pic: '🌧️🧊🪨',
+          text: [
+            'Rain, ice, wind and even plant roots slowly break rocks into smaller and smaller pieces. This is called [[weathering]].',
+            'It is very slow. Making just the top layer of soil can take about a hundred years.',
+          ],
+          check: { q: 'Rainwater gets into a crack in a rock, then freezes overnight. What happens to the crack?', options: ['The ice pushes it wider, until bits break off', 'The ice glues the rock back together', 'Nothing – ice can\'t change rock'], answer: 0, hint: 'Water gets bigger when it freezes.' },
+        },
+        {
+          title: 'Layers under your feet', pic: SOILPROFILE,
+          text: [
+            'Dig down and you find layers. [[topsoil]] is dark and full of humus, roots and worms. Below it, the subsoil is paler, with more stones.',
+            'Under that is solid rock, called [[bedrock]].',
+          ],
+          check: { type: 'hotspot', q: 'Tap the layer where a beetle would find the most food.', img: SOILPROFILE, spots: [{ x: 50, y: 25, r: 13, label: 'topsoil' }, { x: 50, y: 53, r: 13, label: 'subsoil – paler, with only a little humus' }, { x: 50, y: 83, r: 13, label: 'bedrock – solid rock, no food here' }], answer: 0, hint: 'Food for living things comes from the dark humus.' },
+        },
+        {
+          title: 'Sandy or clay?', pic: '🏖️🏺',
+          text: [
+            'Sandy soil has big, gritty grains with gaps between them, so water rushes straight through. Clay soil has tiny, sticky bits packed close together, so water drains away very slowly.',
+            'Most plants love [[loam]]: a mix of sand, clay and humus.',
+          ],
+          check: { q: 'After a storm, one garden stays full of puddles for days. Which soil does it most likely have?', options: ['clay soil', 'sandy soil', 'loam'], answer: 0, hint: 'Which soil lets water through slowly?' },
+        },
+        {
+          title: 'Wonderful worms', pic: '🪱',
+          text: [
+            'Earthworms eat dead leaves, and their poo adds food to the soil.',
+            'As they wriggle, their tunnels let air and water get down to plant roots.',
+          ],
+          check: { type: 'evidence', q: 'A gardener says, "My plants\' roots are thirsty, so I\'m glad of the worms." Tap the sentence that explains why.', answer: 'tunnels let air and water' },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'Where Does Soil Come From?', short: 'Video 1', minutes: 6,
+      video: { id: '5b9o7yM7YGE', title: 'Where Does Soil Come From?', channel: 'SciShow Kids', duration: '5:29' },
+      say: 'Squeaks wants to know where soil comes from. Watch, then answer my questions.',
+      clues: [
+        'What is soil mostly made of?',
+        'How can ice crack a rock?',
+        'Which rock makes sand, and which makes clay?',
+        'How can you tell if soil is full of organic matter?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'The video says soil is mostly made of…', options: ['tiny bits of rock', 'old leaves', 'water'], answer: 0 },
+        { type: 'type', q: 'When rocks are broken into small pieces by wind, water or ice, scientists call it…', answer: ['weathering'], placeholder: 'one word', hint: 'It sounds like the weather!' },
+        { type: 'mcq', q: 'How can animals like moles help to make soil?', options: ['They scratch up rocks as they dig', 'They eat rocks', 'They carry soil from the shop'], answer: 0 },
+        { type: 'mcq', q: 'Very hard rocks like quartz weather slowly and make…', options: ['grainy sand', 'sticky clay', 'humus'], answer: 0 },
+        { type: 'mcq', q: 'How can you tell a soil has lots of organic matter (dead plant and animal bits)?', options: ['It is dark, nearly black', 'It is bright orange', 'It smells of flowers'], answer: 0 },
+        { type: 'mcq', q: 'About how long does it take to make the top layer of soil?', options: ['about 100 years', 'about 1 week', 'about 1 day'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Dig Deeper', short: 'Game 1', minutes: 9,
+      rounds: [
+        {
+          game: 'sort', title: 'What\'s in the soil?',
+          intro: 'Where did each part of the soil come from? Sort them into the right bucket.',
+          say: 'Was it once a ROCK, or was it once ALIVE?',
+          buckets: [
+            { id: 'rock', label: 'FROM ROCK', emoji: '🪨' },
+            { id: 'alive', label: 'FROM LIVING THINGS', emoji: '🍂' },
+          ],
+          items: [
+            { label: 'grains of sand', bucket: 'rock' }, { label: 'tiny bits of clay', bucket: 'rock' }, { label: 'small stones', bucket: 'rock' },
+            { label: 'rotted leaves', bucket: 'alive' }, { label: 'worm poo', bucket: 'alive' }, { label: 'old bits of twig', bucket: 'alive' }, { label: 'humus', bucket: 'alive' },
+          ],
+        },
+        {
+          game: 'questions', title: 'Soil detective',
+          intro: 'Use what you read to work these out.',
+          say: 'Think about the layers and the grains!',
+          questions: [
+            { type: 'hotspot', q: 'Tap the layer you would reach last if you dug a very, very deep hole.', img: SOILPROFILE, spots: [{ x: 50, y: 25, r: 13, label: 'topsoil – that\'s the first layer you dig through' }, { x: 50, y: 53, r: 13, label: 'subsoil – keep digging!' }, { x: 50, y: 83, r: 13, label: 'bedrock' }], answer: 2 },
+            { type: 'oddone', q: 'Which one does NOT help to break rocks into soil?', items: ['ice in cracks', 'growing roots', 'crashing waves', 'a rainbow'], answer: 3, why: 'Why is the rainbow the odd one out?', reasons: ['It is only light – it can\'t push or scrape a rock', 'It is too colourful', 'It is far away'], reason: 0 },
+            { type: 'predict', q: 'Predict! You pour a cup of water onto sand and a cup onto clay. Which one will soak away first?', options: ['the sand', 'the clay', 'both the same'], answer: 0, reveal: 'The sand! Water slips through the big gaps between the grains. In clay, the tiny bits are packed tight, so water waits on top.',
+              then: { q: 'So which soil would suit a cactus, which likes dry ground?', options: ['sandy soil', 'clay soil', 'a bucket of water'], answer: 0 } },
+          ],
+        },
+        {
+          game: 'invaders', title: 'Soil Invaders',
+          intro: 'Arcade time! Read the mission at the top, then **shoot only the right answers**. Watch out for the falling bombs!',
+          say: 'Read the mission, then aim carefully!',
+          waves: [
+            { prompt: 'Shoot the things you find in healthy soil!', items: [
+              { label: 'bits of rock', ok: true }, { label: 'humus', ok: true }, { label: 'air', ok: true }, { label: 'worms', ok: true },
+              { label: 'plastic', ok: false, why: 'Plastic doesn\'t belong in soil – it never rots away.' }, { label: 'glass', ok: false, why: 'Glass is litter, not soil.' },
+            ] },
+            { prompt: 'Shoot the things that weather (break up) rocks!', items: [
+              { label: 'ice', ok: true }, { label: 'roots', ok: true }, { label: 'rain', ok: true }, { label: 'wind', ok: true },
+              { label: 'moonlight', ok: false, why: 'Moonlight is just light – it can\'t break rock.' }, { label: 'a song', ok: false, why: 'Even a very loud song won\'t make soil!' },
+            ] },
+            { prompt: 'Shoot the words that describe CLAY soil!', items: [
+              { label: 'sticky', ok: true }, { label: 'smooth', ok: true }, { label: 'drains slowly', ok: true },
+              { label: 'gritty', ok: false, why: 'Gritty is sandy soil – clay bits are tiny and smooth.' }, { label: 'drains fast', ok: false, why: 'That\'s sandy soil. Clay holds on to water.' },
+            ] },
+          ],
+          done: 'ALL WAVES CLEAR! You\'re a soil scientist!',
+        },
+      ],
+    },
+
+    {
+      type: 'case', title: 'The Case of the Soggy School Field', short: 'Case', minutes: 7,
+      say: 'A soil mystery! Answer each question to uncover a clue. Then work out what\'s wrong with the field.',
+      mystery: [
+        'Every time it rains, the school football field turns into a swamp, and the puddles stay for days. But the school garden right next to it drains in minutes.',
+        'Three friends have a theory. 🐦 **Robin** says: "More rain falls on the field." 🦔 **Hedgehog** says: "Someone has blocked the drains." 🪱 **Wiggle the worm** says: "It\'s the soil itself!"',
+      ],
+      clues: [
+        { icon: '🖐️', clue: 'The field soil feels smooth and sticky. You can squash it into a ball, like playdough.',
+          q: { q: 'Soil that is smooth, sticky and can be shaped like playdough is…', options: ['clay soil', 'sandy soil', 'loam'], answer: 0 } },
+        { icon: '💧', clue: 'In a drain test, only 10 ml of 100 ml of water came through the field soil.',
+          q: { type: 'slider', q: 'So how much of the 100 ml stayed IN the field soil?', min: 0, max: 100, step: 10, answer: 90, unit: ' ml', hint: '100 take away 10.' } },
+        { icon: '🌧️', clue: 'The rain gauge shows the same rain fell on the field and the garden, and the caretaker says the drains are clear.',
+          q: { q: 'What does this clue rule out?', options: ['Robin\'s and Hedgehog\'s theories', 'Wiggle\'s theory', 'nothing at all'], answer: 0, hint: 'Same rain, and the drains are fine…' } },
+        { icon: '🪱', clue: 'There are hardly any worm tunnels in the field soil.',
+          q: { q: 'Why does that make the puddles worse?', options: ['Without tunnels, water can\'t soak down so easily', 'Worms drink the puddles', 'Worms make it rain'], answer: 0 } },
+      ],
+      solve: {
+        q: 'Who was right about the soggy field?',
+        options: ['🪱 Wiggle – the field is thick clay soil with few worm tunnels, so water drains away very slowly', '🐦 Robin – more rain falls on the field', '🦔 Hedgehog – the drains are blocked'],
+        answer: 0, hint: 'Which theory do ALL the clues point to?',
+        explain: 'Clay soil holds on to water, and there are no worm tunnels to help it soak down. Same rain, clear drains – so it\'s the soil.',
+      },
+      closed: 'Case closed! The school digs sand and compost into the field to open it up – and invites more worms to move in.',
+    },
+
+    {
+      type: 'video', title: 'Why Different Soils Feel Different', short: 'Video 2', minutes: 7,
+      video: { id: 'qJ9fJU1X9mA', title: 'Why Different Soils Feel Different', channel: 'SciShow Kids', duration: '6:51' },
+      say: 'Squeaks moved his favourite flower, and now it\'s wilting. Watch how they solve it with a jar of soil and water!',
+      clues: [
+        'What do scientists call how soil feels?',
+        'Which layer settled at the very bottom of the jar?',
+        'Which layer was at the top, and why?',
+        'Why was the flower wilting?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'Scientists call the way soil feels its…', options: ['texture', 'colour', 'smell'], answer: 0 },
+        { type: 'mcq', q: 'Gritty soil feels rough because it is made of…', options: ['bigger bits of rock', 'smaller bits of rock', 'water'], answer: 0 },
+        { type: 'mcq', q: 'In the jar, which layer settled at the very BOTTOM?', options: ['sand – the biggest, heaviest grains', 'clay', 'silt'], answer: 0 },
+        { type: 'mcq', q: 'Why was clay the TOP layer in the jar?', options: ['Its bits are so tiny they take a long time to sink', 'It floats like a boat', 'Squeaks put it there'], answer: 0 },
+        { type: 'mcq', q: 'Why was Squeaks\'s flower wilting in its new spot?', options: ['The sandy soil let the water run away too fast', 'It had too much sun', 'A worm ate it'], answer: 0 },
+        { type: 'tf', q: 'Smooth soil is good for thirsty plants, because water takes a long time to pass through it.', answer: true },
+      ],
+    },
+
+    {
+      type: 'game', title: 'The Soil Lab', short: 'Game 2', minutes: 10,
+      rounds: [
+        {
+          game: 'soillab', title: 'Soil Lab',
+          intro: 'Your own soil lab! **Drag the jar** from side to side to shake it, then watch the soil settle. For the drain test, **drag the watering can** over the funnel. Every test goes in the results table.',
+          say: 'Pick a soil, pick a test – and be a soil scientist!',
+          missions: [
+            { text: 'Shake the garden soil in the jar, then watch it settle.', need: ['garden:shake'], yes: 'Look at those layers!', ask: [
+              { q: 'Which part settled at the very bottom?', options: ['the stones', 'the clay', 'the humus'], answer: 0 },
+              { q: 'What floated on top of the water?', options: ['bits of dead plants (humus)', 'the sand', 'the stones'], answer: 0 },
+            ] },
+            { text: 'Now shake the clay soil. Is its biggest layer different?', need: ['clay:shake'], yes: 'A very different jar!', ask: [
+              { q: 'Which layer was biggest in the clay soil jar?', options: ['clay', 'stones', 'sand'], answer: 0 },
+            ] },
+            { text: 'Drain test! Pour water through the sandy soil AND the clay soil.', need: ['sandy:drain', 'clay:drain'], yes: 'Check the results table!', ask: [
+              { type: 'slider', q: 'How many ml came through the SANDY soil? Look at your table.', min: 0, max: 100, step: 5, answer: 85, unit: ' ml' },
+              { q: 'Which soil would leave a puddle on top after the rain?', options: ['clay soil', 'sandy soil'], answer: 0 },
+            ] },
+            { text: 'Last test: pour water through the garden soil.', need: ['garden:drain'], yes: 'Every test done – brilliant science!', ask: [
+              { q: 'Garden soil let some water through, but held on to some too. Why is that good for most plants?', options: ['The roots get a drink, but don\'t sit in a puddle', 'Plants hate water', 'It makes the soil lighter'], answer: 0 },
+            ] },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
+      say: 'Worm workout! Do each move.',
+      wiggle: {
+        title: '🪱 Worm Workout!',
+        seconds: 60,
+        moves: [
+          '🪱 Wriggle like a worm – all the way down to the floor!',
+          '🌧️ Rain is coming – wiggle your fingers down like raindrops!',
+          '🧊 Freeze like ice in a rock crack – stay still… then CRACK!',
+          '🌱 Grow like a root – reach your arms deep down, then up high!',
+          '🫙 Shake the soil jar – shake your whole body!',
+          '😴 Now let it settle… slowly sit down and be still.',
+        ],
+      },
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: Cementor the Cement Mixer', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      say: 'CEMENTOR wants to pour concrete over every garden in the land! Every right answer saves a patch of soil. Go, {name}!',
+      boss: {
+        name: 'Cementor', sprite: CEMENTOR, attack: ['🧱', '🪨'], spin: true,
+        lines: {
+          intro: 'GRRR-RUMBLE! Soil is messy. Soil is muddy. Soil has WORMS in it! I shall cover it ALL in lovely grey concrete!',
+          hurt: ['My drum is spinning backwards!', 'Stop knowing about soil! It makes my concrete lumpy!', 'Ow! Did a worm just wriggle up my pipe?!', 'Grrr… a crack! I hate cracks!'],
+          taunt: ['Wrong! Pour, pour, POUR!', 'Ha! Another garden goes grey!', 'Concrete never needs watering. Admit it!', 'Rumble rumble – that was a muddle!'],
+          angry: 'NOW I\'M SETTING HARD! FULL SPEED SPIN!',
+          dodge: 'Here comes a load of bricks! Dodge them, if you can!',
+          miss: 'You dodged every brick?! You\'re as slippery as a worm!',
+          last: 'My mixer is… slowing down… I can smell… flowers…',
+          defeat: 'Rumble… rumble… fizzle. Maybe… a little garden… wouldn\'t hurt…',
+          win: 'All grey! All flat! Not a single worm in sight. PERFECT!',
+          stunned: 'Everything is going round and round… even more than usual…',
+          beg: ['Wait! I\'ll only pour concrete on car parks!', 'Mercy! I\'ll mix compost instead!', 'I promise to leave room for the worms!'],
+        },
+      },
+      bonus: {
+        title: '⭐ Bonus quest (for a grown-up to help with)',
+        text: 'Make your own soil jar! Put a few spoons of garden soil in a clear jar with a lid, fill it with water, shake it hard, then leave it overnight. Count the layers – and see what floats!',
+      },
+      questions: [
+        { type: 'mcq', q: 'What is soil mostly made of?', options: ['tiny bits of rock, humus, water and air', 'only mud', 'crushed concrete'], answer: 0 },
+        { type: 'type', q: 'Rain, ice, wind and roots breaking rock into tiny pieces is called…', answer: ['weathering'], placeholder: 'one word' },
+        { type: 'hotspot', q: 'Tap the topsoil.', img: SOILPROFILE, spots: [{ x: 50, y: 25, r: 13, label: 'topsoil' }, { x: 50, y: 53, r: 13, label: 'that\'s the subsoil – paler, with stones' }, { x: 50, y: 83, r: 13, label: 'that\'s the bedrock – solid rock' }], answer: 0 },
+        { type: 'mcq', q: 'Why is topsoil so good for plants?', options: ['It is full of humus – food for plants', 'It is the hardest layer', 'It has no water in it'], answer: 0 },
+        { type: 'oddone', q: 'Which one is NOT made from something that was once alive?', items: ['humus', 'rotted leaves', 'worm poo', 'grains of sand'], answer: 3, why: 'Why is sand the odd one out?', reasons: ['Sand comes from rock', 'Sand is yellow', 'Sand is at the beach'], reason: 0 },
+        { type: 'gap', q: 'Water rushes through ___ soil because there are big gaps between the grains.', options: ['sandy', 'clay', 'concrete'], answer: 0 },
+        { type: 'slider', q: '100 ml of water went into some clay soil, and only 20 ml came out. How much stayed in the soil?', min: 0, max: 100, step: 10, answer: 80, unit: ' ml' },
+        { type: 'mcq', q: 'In a shaken soil jar, why do stones settle first?', options: ['They are the biggest and heaviest', 'They are the lightest', 'They float'], answer: 0 },
+        { type: 'tf', q: 'Worm tunnels help air and water reach plant roots.', answer: true },
+        { type: 'order', q: 'Put the layers in order, from the top of the ground to deep down.', items: ['🌱 grass', '🟫 topsoil', '🟨 subsoil', '🪨 bedrock'], ends: ['TOP', 'DEEP DOWN'] },
+        { type: 'mcq', q: 'Why would covering a garden in concrete be bad for worms and plants?', options: ['No air, water or dead leaves could get into the soil', 'Concrete is too colourful', 'Worms like concrete'], answer: 0 },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>

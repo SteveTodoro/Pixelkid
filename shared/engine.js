@@ -12,7 +12,8 @@
  *   spelltest (spelling test: listen / look-cover-write-check / fix the mistake), speechmarks (tap the gaps for speech marks), syllables (tap a drum for each syllable),
  *   and arcade games: invaders, runner (two-lane word runner), platformer, blocks, labyrinth (walk a dark maze unrolling a thread; questions open gates).
  *   Simulated experiments (with missions): forces, ramp, garden, pollinate, windtest (how far the wind carries seeds),
- *   rocklab (test rocks: look closely, scratch, water drop, sink or float), fossildig (brush rock layers to uncover fossils).
+ *   rocklab (test rocks: look closely, scratch, water drop, sink or float), fossildig (brush rock layers to uncover fossils),
+ *   soillab (shake a soil in a jar of water to see its layers; pour water through it to see how much drains).
  *   clock (needs shared/clock.js): set the clock by dragging the hands, or read a clock and type the time.
  *   daydial (24-hour Day Dial), timehops (durations on a time line), knuckles (days in each month).
  *   placeblocks (Place Value Blocks: build, read and swap hundreds, tens and ones), columnsum (column method with exchanging).
@@ -2132,6 +2133,7 @@
     science: ['forces', 'ramp', 'garden', 'windtest', 'pollinate', 'rocklab', 'fossildig'],
     time: ['clock', 'daydial', 'timehops', 'knuckles'],
     number: ['placeblocks', 'columnsum'],
+    earth: ['soillab'],
     world: ['worldmap', 'cook', 'phrases'],
   };
   function partsFor(lesson) {

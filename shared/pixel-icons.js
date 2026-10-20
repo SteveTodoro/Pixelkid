@@ -2731,6 +2731,24 @@
     '................',
     '................',
   ]);
+  def('🦔', [
+    '................',
+    '................',
+    '.....k.k.k.k....',
+    '....kNkNkNkNk...',
+    '...kNHNHNHNHNk..',
+    '..kNHNHNHNHNHNk.',
+    '..kHNHNHNHNHNHk.',
+    '.kNHNHNHNHNHNtk.',
+    '.kHNHNHNHNHNttk.',
+    'kNHNHNHNHNHtktk.',
+    'kHNHNHNHNHtttttk',
+    'kNHNHNHNHtttttkk',
+    '.kkkttkkkkttkk..',
+    '...kSk....kSk...',
+    '...kk......kk...',
+    '................',
+  ]);
   def('🧶', [
     '................',
     '................',
