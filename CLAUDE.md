@@ -61,6 +61,7 @@ Privacy: the repo is public. Never put the child's name in files, URLs or commit
 - **Waiting on the parent:**
   - playtest feedback on the newest lessons (Speech Marks, Place Value, Rock Stars, Fossils, Add & Subtract, Poetry, Theseus, Super Soil, Money Market; the new Labyrinth, Soil Lab and Shop Till games) and on the quest-map NPCs, tap-to-walk and biomes
   - a decision on the map's terrain/topography and icon redesign
+- **Home modes:** a 🗺️ Adventure / 📚 Lessons switch under the world tabs (`y3:mode`, default Adventure). Lesson mode (`shared/lesson-grid.js` + `.css`) shows the same lessons as tiles grouped by topic, with no map or NPCs; the avatar, gems and shop stay. Both modes get lock state from `questStops()` in map.js, so they always agree.
 - **Quest map:** a Super Mario World–style overworld, live in every world.
   - **Code:** `shared/map.js` (layout, reveal, hero, NPCs, cards, banner), `shared/map-art.js` (the landscape kit) and `shared/map.css`.
   - **Biomes:** each world has one in `ART[world]` in map-art.js: colours, cliff texture, beach, path style, scenery, things floating in the water, sea or space. A new world needs an `ART` entry.

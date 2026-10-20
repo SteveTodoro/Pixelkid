@@ -239,6 +239,14 @@ async function play(page, card, S) {
     if (page.errors.length) { bad++; console.log(`✘ ${p}\n  ${page.errors.join('\n  ')}`); } else console.log(`✅ ${p}`);
     page.close();
   }
+  if (pages) { // the home page's Lesson mode: tiles instead of the map, and a locked tile has no Play button
+    const page = await open('index.html', { setup: w => w.localStorage.setItem('y3:mode', '"lessons"') }); await wait(300);
+    const locked = page.d.querySelector('.ltile.locked');
+    if (!page.d.querySelector('.ltile')) page.errors.push('no lesson tiles');
+    if (locked) { locked.click(); if (page.d.querySelector('.qcard a.btn')) page.errors.push('a locked tile can be played'); }
+    if (page.errors.length) { bad++; console.log(`✘ index.html (Lesson mode)\n  ${page.errors.join('\n  ')}`); } else console.log('✅ index.html (Lesson mode)');
+    page.close();
+  }
   if (files.length === 1 || args.includes('--child')) {
     for (const f of files) {
       const t = Date.now(), fails = await lessonFile(f);

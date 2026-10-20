@@ -6,6 +6,7 @@
   <title>PixelKid</title>
   <link rel="stylesheet" href="shared/lesson.css">
   <link rel="stylesheet" href="shared/map.css">
+  <link rel="stylesheet" href="shared/lesson-grid.css">
   <script src="shared/pixel.js"></script>
   <script src="shared/pixel-icons.js"></script>
   <script src="shared/avatar.js"></script>
@@ -131,6 +132,7 @@
     </div>
   </header>
   <nav class="tabs" role="tablist" id="tabs"></nav>
+  <div class="modes" id="modes" role="group" aria-label="How to show the lessons"><button type="button" data-mode="adventure">🗺️ Adventure</button><button type="button" data-mode="lessons">📚 Lessons</button></div>
   <section class="passport" id="passport" hidden></section>
   <main class="qmap-wrap" id="shelf"></main>
   <footer class="grownups"><a href="parents.html">👪 For grown-ups: what's tricky?</a></footer>
@@ -138,6 +140,7 @@
   <div class="toasts" id="toasts" aria-live="polite"></div>
 
 <script src="shared/map.js"></script>
+<script src="shared/lesson-grid.js"></script>
 <script>
 // Add a lesson by giving it a `file`. Lessons without one show as "Coming soon".
 // Each lesson follows the one listed before it on the world's road; `after: '<title>'` starts a branch after another lesson.
@@ -264,6 +267,8 @@ const settings = get('y3:settings', {});
 let current = 'science';
 try { current = localStorage.getItem('y3:tab') || 'science'; } catch (e) { /* ignore */ }
 if (!LIBRARY[current]) current = 'science';
+// Adventure mode is the quest map; Lesson mode (📚) shows the same lessons as plain tiles, with no map or NPCs
+let mode = get('y3:mode', 'adventure') === 'lessons' ? 'lessons' : 'adventure';
 
 const total = Object.values(records).reduce((n, r) => n + (r.stars || 0), 0);
 const wal = window.Avatar ? Avatar.wallet() : { balance: total };
@@ -342,7 +347,7 @@ if (window.Avatar) {
 function refreshHud() {
   document.getElementById('gems').querySelector('b').textContent = window.Avatar ? Avatar.wallet().balance : wal.balance;
   const bag = document.getElementById('bag');
-  bag.hidden = !window.NPC;
+  bag.hidden = !window.NPC || mode === 'lessons';
   if (window.NPC) bag.querySelector('b').textContent = NPC.bagCount() || '';
 }
 refreshHud();
@@ -370,8 +375,16 @@ function passport() {
   box.querySelector('h2').textContent = `🛂 My passport – ${n} countr${n === 1 ? 'y' : 'ies'} visited`;
   box.querySelector('.stamps').replaceChildren(...stamps);
 }
+document.getElementById('modes').addEventListener('click', e => {
+  const b = e.target.closest('[data-mode]');
+  if (!b || b.dataset.mode === mode) return;
+  mode = b.dataset.mode;
+  try { localStorage.setItem('y3:mode', JSON.stringify(mode)); } catch (e) { /* ignore */ }
+  refreshHud(); render();
+});
 function render() {
-  document.body.className = current;
+  document.body.className = current + (mode === 'lessons' ? ' lessons-mode' : '');
+  document.querySelectorAll('#modes [data-mode]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === mode)));
   passport();
   tabs.replaceChildren(...Object.entries(LIBRARY).map(([key, s]) => {
     const b = document.createElement('button');
@@ -391,7 +404,7 @@ function render() {
   tabs.scrollLeft = sel.offsetLeft - (tabs.clientWidth - sel.offsetWidth) / 2; // keep the chosen world in view on a phone
   const all = LIBRARY[current].lessons;
   const stateOf = l => { const rec = records[l.id]; return rec && rec.done ? 'done' : rec && rec.stars ? 'going' : 'new'; };
-  drawMap(current, all, stateOf);
+  (mode === 'lessons' ? drawGrid : drawMap)(current, all, stateOf);
 }
 render();
 </script>

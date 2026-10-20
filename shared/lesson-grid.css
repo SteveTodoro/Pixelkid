@@ -1,0 +1,32 @@
+/* Pixelkid Lesson mode – a world's lessons as stone tiles grouped by topic (shared/lesson-grid.js). No moving parts. */
+/* topics wrap side by side, so a topic with one lesson doesn't take a whole row */
+.lgrid { display: flex; flex-wrap: wrap; gap: 18px; }
+.lunit { flex: 1 1 auto; padding: 14px 16px 18px; background: rgba(10,16,32,.45); border: 4px solid #000; box-shadow: inset 3px 3px 0 rgba(255,255,255,.18), inset -3px -3px 0 rgba(0,0,0,.3), 0 6px 0 rgba(0,0,0,.25); }
+.lunit h2 { margin: 0 0 12px; font-size: 1.3rem; color: #fff; text-shadow: 2px 2px 0 #000; }
+.ltiles { display: flex; flex-wrap: wrap; gap: 12px; }
+.ltile { width: 160px; display: flex; flex-direction: column; align-items: center; gap: 8px; min-height: 170px; padding: 14px 10px 10px; cursor: pointer; text-align: center; color: var(--ink);
+  background: linear-gradient(var(--brand) 0 8px, #000 8px 11px, var(--stone) 11px); border: 4px solid #000; box-shadow: var(--bevel), 0 5px 0 #000; -webkit-tap-highlight-color: transparent; }
+.ltile:hover { filter: brightness(1.08); }
+.ltile:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+.ltile:active { box-shadow: var(--bevel-in); transform: translateY(3px); }
+.lt-icon { width: 64px; height: 64px; display: grid; place-items: center; font-size: 2.4rem; background: var(--slot); border: 3px solid #000; box-shadow: var(--bevel-in); }
+.lt-title { flex: 1; font-family: var(--pixel); font-weight: 700; font-size: 1rem; line-height: 1.15; }
+.lt-tag { padding: 2px 8px; background: #000; color: #fff; font-family: var(--pixel); font-weight: 700; font-size: .75rem; }
+.ltile.done .lt-tag { color: #7cfc3a; }
+.ltile.next { outline: 4px solid var(--gold); outline-offset: -1px; }
+.ltile.next .lt-tag { color: #ffd43b; }
+.ltile.locked, .ltile.soon { background: linear-gradient(#777 0 8px, #000 8px 11px, #9a9a9a 11px); }
+.ltile.locked .lt-icon, .ltile.soon .lt-icon { filter: grayscale(1); opacity: .6; }
+.ltile.locked .lt-title, .ltile.soon .lt-title { color: #333; }
+@media (max-width: 479px) {
+  .lunit { flex-basis: 100%; padding: 10px 10px 14px; }
+  .ltiles { gap: 10px; }
+  .ltile { width: calc(50% - 5px); min-height: 150px; }
+}
+
+/* the Adventure / Lessons switch under the world tabs */
+.modes { position: relative; z-index: 1; display: flex; justify-content: center; gap: 0; margin: 10px auto 0; }
+.modes button { cursor: pointer; padding: 6px 14px; font-family: var(--pixel); font-weight: 700; font-size: .95rem; color: #fff; text-shadow: 2px 2px 0 rgba(0,0,0,.5); background: rgba(0,0,0,.35); border: 3px solid #000; }
+.modes button + button { border-left: 0; }
+.modes button[aria-pressed="true"] { background: var(--brand); box-shadow: var(--bevel); }
+.modes button:focus-visible { outline: 3px solid #fff; outline-offset: -3px; }

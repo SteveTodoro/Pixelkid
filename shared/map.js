@@ -39,6 +39,20 @@ function roadTree(lessons) {
   });
   return stops;
 }
+// what state each stop is in: done · going · new · locked (the stop before isn't cleared yet) · soon (not built yet).
+// The map and Lesson mode's grid (shared/lesson-grid.js) both use this, so a quest opens at the same time in both.
+function questStops(lessons, stateOf) {
+  const stops = roadTree(lessons);
+  const cleared = s => !!(s && s.l.file && stateOf(s.l) === 'done');
+  stops.forEach(s => {
+    const st = s.l.file ? stateOf(s.l) : 'soon';
+    s.st = st === 'new' && s.parent && s.parent.l.file && !cleared(s.parent) ? 'locked' : st;
+    s.vis = ['done', 'going', 'new'].includes(s.st); // only open stops show on the map
+  });
+  return stops;
+}
+// the quest that glows: the one already started, else every open one
+const glowsNext = (stops, s) => { const going = stops.find(t => t.st === 'going'); return s === going || (!going && s.st === 'new'); };
 
 function drawMap(key, lessons, stateOf) {
   if (mapHero) { mapHero.stop(); mapHero = null; }
@@ -55,14 +69,8 @@ function drawMap(key, lessons, stateOf) {
   let seed = [...key].reduce((n, c) => (n * 31 + c.charCodeAt(0)) >>> 0, 7); // seeded, so the scenery stays put between visits
   const rnd = () => (seed = (seed * 1103515245 + 12345) >>> 0) / 4294967296;
 
-  // what state each stop is in: done · going · new · locked (the stop before isn't cleared yet) · soon (not built yet)
-  const stops = roadTree(lessons);
+  const stops = questStops(lessons, stateOf);
   const cleared = s => !!(s && s.l.file && stateOf(s.l) === 'done');
-  stops.forEach(s => {
-    const st = s.l.file ? stateOf(s.l) : 'soon';
-    s.st = st === 'new' && s.parent && s.parent.l.file && !cleared(s.parent) ? 'locked' : st;
-    s.vis = ['done', 'going', 'new'].includes(s.st); // only open stops show
-  });
 
   // Lay the road out in rows across the page, so a whole world fits on about one screen. A lane is a stretch of road with
   // no fork in it: it fills its share of the width with rows of stops, one topic to a row (a long topic carries on in the
@@ -292,7 +300,7 @@ function drawMap(key, lessons, stateOf) {
   dot('start', start, '🏡', 'START').onclick = () => goTo(start, () => showBanner(start));
   stops.forEach(s => {
     if (!s.vis) return;
-    const glow = s === going || (!going && s.st === 'new');
+    const glow = glowsNext(stops, s);
     const b = dot(s.st + (glow ? ' next' : '') + (fresh.has(s.l.id) ? ' fresh' : ''), s, s.l.emoji, s.l.title);
     if (s.st === 'done') { const st = document.createElement('span'); st.className = 'qstar'; st.textContent = '★'; b.append(st); }
     b.setAttribute('aria-label', `${s.l.title}: ${{ done: 'cleared', going: 'started', new: 'open' }[s.st]}`);
@@ -460,4 +468,4 @@ qBack.addEventListener('click', e => { if (e.target === qBack) closeCard(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !qBack.hidden) closeCard(); });
 // a new width (phone turned, window resized) lays the road out again
 let resizeT = 0;
-window.addEventListener('resize', () => { clearTimeout(resizeT); resizeT = setTimeout(() => { if (mapWrap.firstChild && mapWrap.firstChild.clientWidth !== mapWidth) render(); }, 200); });
+window.addEventListener('resize', () => { clearTimeout(resizeT); resizeT = setTimeout(() => { if (mapWrap.querySelector('.qmap') && mapWrap.firstChild.clientWidth !== mapWidth) render(); }, 200); });
