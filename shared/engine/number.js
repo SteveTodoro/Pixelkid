@@ -1,5 +1,5 @@
 /* Pixelkid lesson engine – number games: Place Value Blocks (hundreds, tens and ones on a place value mat) and Column Sums
- * (the written column method for adding and subtracting, with exchanging).
+ * (the written column method for adding and subtracting, with exchanging) and the Shop Till (pay with coins, give change).
  * One part of shared/engine.js, which loads it only when a lesson uses it. E is the engine's shared helpers
  * (E.state and E.stageCard are live). See the top of shared/engine.js for how the parts fit together.
  */
@@ -242,6 +242,89 @@ PixelkidEngine.part('number', E => {
       };
     }
     show();
+    return root;
+  };
+
+  // ===== Shop Till: pay with coins, and give change =====
+  // r.coins: the coins (and notes) in the till, in pence (default 1p, 2p, 5p, 10p, 20p, 50p, £1, £2; add 500 / 1000 for notes).
+  // r.missions: [{ text, customer (emoji), yes, ask: [questions], and one of:
+  //   pay: 75 – put coins on the counter that make exactly 75p (fewest: true – and use as few coins as you can)
+  //   buy: [{ name, emoji, price }] – add up the shopping, then pay the total exactly
+  //   buy + given: 100 – the customer pays with £1: give them the right change }]
+  // Tap or drag a coin onto the counter; tap a coin on the counter to put it back. The counter's total only shows after a
+  // miss (so the child does the counting), and hints for change count on from the price to what was paid.
+  const money = p => (p < 100 ? `${p}p` : `£${p % 100 ? (p / 100).toFixed(2) : p / 100}`);
+  const coinEl = v => h('i', { class: `coin coin-${v}${v >= 500 ? ' note' : ''}`, 'aria-label': money(v) }, h('b', null, money(v)));
+  const fewestCoins = (p, coins) => { let n = 0; coins.slice().sort((a, b) => b - a).forEach(c => { n += Math.floor(p / c); p %= c; }); return n; };
+  GAMES.shop = function (r, key, done) {
+    const coins = r.coins || [1, 2, 5, 10, 20, 50, 100, 200];
+    let onCounter = [], target = 0, tries = 0, won = false, showTotal = false;
+    const customer = h('div', { class: 'shop-customer' });
+    const counter = h('div', { class: 'shop-counter', 'data-drop': 'counter' });
+    const counterHead = h('div', { class: 'shop-counter-head' });
+    const totalEl = h('div', { class: 'shop-total' });
+    const checkBtn = h('button', { class: 'btn big green', type: 'button', onclick: () => check() }, '✔ Check');
+    const value = () => onCounter.reduce((a, b) => a + b, 0);
+    const missions = missionRunner(Object.assign({ finish: '🏆 Shop closed – brilliant maths!' }, r), key, done, m => {
+      onCounter = []; tries = 0; won = false; showTotal = false;
+      const cost = m.buy ? m.buy.reduce((a, it) => a + it.price, 0) : m.pay;
+      target = m.given ? m.given - cost : cost;
+      const items = (m.buy || []).map(it => h('div', { class: 'shop-item' }, h('span', { class: 'shop-item-pic' }, it.emoji || '🛍️'), h('span', null, it.name), h('b', { class: 'shop-price' }, money(it.price))));
+      put(customer, h('div', { class: 'shop-who' }, m.customer || '🙂'),
+        h('div', { class: 'shop-order' }, items.length ? items : h('div', { class: 'shop-item' }, h('b', { class: 'shop-price' }, money(m.pay))),
+          m.given ? h('div', { class: 'shop-given' }, 'They pay with ', coinEl(m.given)) : null));
+      counterHead.textContent = m.given ? '🪙 Your change for the customer:' : '🪙 Put the money on the counter:';
+      say(m.say || (m.given ? 'Count on from the price to what they paid. That\'s the change!' : m.buy ? 'Add up the prices, then pay exactly that much.' : `Make exactly ${money(m.pay)}.`));
+      sync();
+    });
+    function add(v) { if (won) return; if (onCounter.length >= 20) { say('That\'s a lot of coins! Try some bigger ones.'); return; } onCounter.push(v); sfx.tap(); sync(); }
+    function remove(i) { if (won) return; onCounter.splice(i, 1); sfx.tap(); sync(); }
+    function check() {
+      const m = missions.m;
+      if (won || !m) return;
+      const got = value();
+      if (!onCounter.length) { say('Put some coins on the counter first!'); return; }
+      if (got === target && (!m.fewest || onCounter.length <= fewestCoins(target, coins))) {
+        won = true;
+        if (tries === 0) { track('Shop', { q: m.text, type: 'type', answer: money(target) }, true); say(praise()); } // a miss was already tracked
+        sync(); missions.win(totalEl); return;
+      }
+      tries++; sfx.bad(); shake(counter);
+      if (got === target) { say(`That's exactly ${money(target)}! But can you do it with fewer coins? Swap some small coins for a bigger one.`); return; }
+      if (tries === 1) say(got < target ? 'Not enough! Count your coins again – start with the biggest.' : 'Too much! Count your coins again – start with the biggest.');
+      else {
+        showTotal = true;
+        const diff = Math.abs(target - got);
+        if (m.given) {
+          const cost = m.given - target;
+          say(`💡 Count on from ${money(cost)} to ${money(m.given)}. You've given ${money(got)} – that's ${money(diff)} too ${got < target ? 'little' : 'much'}.`);
+        } else say(`💡 You've put ${money(got)}. That's ${money(diff)} too ${got < target ? 'little' : 'much'}.`);
+      }
+      if (tries === 1) track('Shop', { q: m.text, type: 'type', answer: money(target) }, false);
+      sync();
+    }
+    function sync() {
+      put(counter, onCounter.length ? onCounter.slice().sort((a, b) => b - a).map(v => {
+        const c = coinEl(v); c.setAttribute('role', 'button');
+        c.addEventListener('click', () => remove(onCounter.indexOf(v)));
+        return c;
+      }) : h('span', { class: 'shop-empty' }, 'Drag coins here'));
+      totalEl.textContent = won ? `✔ ${money(value())}` : showTotal ? `On the counter: ${money(value())}` : '';
+      checkBtn.hidden = won;
+    }
+    const till = h('div', { class: 'shop-till' }, coins.map(v => {
+      const c = coinEl(v); c.setAttribute('role', 'button'); c.tabIndex = 0;
+      draggable(c, { tap: () => add(v), drop: z => { if (z === counter) add(v); } });
+      c.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); add(v); } });
+      return c;
+    }));
+    const root = h('div', { class: 'game shop' }, missions.box, customer,
+      h('div', { class: 'shop-desk' }, counterHead, counter, totalEl),
+      h('div', { class: 'lab-label' }, '💰 The till: tap or drag a coin'), till,
+      h('div', { class: 'btn-row' }, h('button', { class: 'btn ghost', type: 'button', onclick() { if (!won) { onCounter = []; sfx.tap(); sync(); } } }, '↺ Clear the counter'), checkBtn),
+      missions.ask);
+    root._test = { add, remove, check, get total() { return value(); }, get target() { return target; }, get mission() { return missions.i; }, get won() { return won; } };
+    missions.next();
     return root;
   };
 });

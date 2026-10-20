@@ -52,14 +52,14 @@ Privacy: the repo is public. Never put the child's name in files, URLs or commit
 5. To see a page, serve the repo (`python3 -m http.server`). For screenshots, headless Chromium with `--screenshot` works. Seed `localStorage` `y3:progress:<lesson id>` to jump to a stage.
 
 ## Where things stand (October 2026)
-- **Science:** Magnets, Friction, the Plants unit (3 lessons) and Rock Stars. Next on the roads: Fossil Hunters (Rocks), or Fuel Your Body on the other branch.
-- **Maths:** the Time unit (4 lessons) and Place Value Party. The road forks next: 3-Digit Add & Subtract, or Counting in 4s, 8s, 50s & 100s.
-- **English:** Prefixes → Speech Marks Squad. Next: Poetry Playground, or the reading branch (Theseus & the Minotaur).
+- **Science:** Magnets, Friction, the Plants unit (3 lessons) and the Rocks unit (Rock Stars, Fossil Hunters, Super Soil). Next: Fuel Your Body (the other branch).
+- **Maths:** the Time unit (4 lessons), Place Value Party, 3-Digit Add & Subtract and Money Market. Next: Measure It!, or Counting in 4s, 8s, 50s & 100s on the other branch.
+- **English:** Prefixes → Poetry Playground (the writing branch), and Theseus & the Minotaur (the first reading-branch lesson). Next: Fairy Tale Twist.
 - **Future Skills:** AI, Pixel Art, Poster.
 - **Wonders:** Tardigrades, Immortal Jellyfish (next: Octopus).
 - **Around the World:** Japan, England, Thailand, USA (China next).
 - **Waiting on the parent:**
-  - playtest feedback on the newest lessons (Speech Marks, Place Value, Rock Stars) and on the quest-map NPCs, tap-to-walk and biomes
+  - playtest feedback on the newest lessons (Speech Marks, Place Value, Rock Stars, Fossils, Add & Subtract, Poetry, Theseus, Super Soil, Money Market; the new Labyrinth, Soil Lab and Shop Till games) and on the quest-map NPCs, tap-to-walk and biomes
   - a decision on the map's terrain/topography and icon redesign
 - **Quest map:** a Super Mario World–style overworld, live in every world.
   - **Code:** `shared/map.js` (layout, reveal, hero, NPCs, cards, banner), `shared/map-art.js` (the landscape kit) and `shared/map.css`.

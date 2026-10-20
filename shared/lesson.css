@@ -1367,3 +1367,35 @@ a { color: var(--brand-dark); }
 .lb-arrow { width: 56px; height: 48px; padding: 0; font-size: 1.4rem; touch-action: manipulation; }
 .lb-arrow:nth-child(1) { grid-area: u; } .lb-arrow:nth-child(2) { grid-area: l; } .lb-arrow:nth-child(3) { grid-area: r; } .lb-arrow:nth-child(4) { grid-area: d; }
 .lb-ask:not(:empty) { max-width: 620px; margin: 10px auto 0; }
+/* Shop Till: UK coins and notes, a customer with their shopping, and the counter */
+.shop-customer { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; margin: 10px auto; }
+.shop-who { font-size: 3rem; }
+.shop-order { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.shop-item { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; background: #fff; color: #000; border: 3px solid #000; box-shadow: 0 3px 0 #000; font-weight: 700; }
+.shop-item-pic { font-size: 1.6rem; }
+.shop-price { padding: 2px 8px; font-family: Lexend, sans-serif; background: #ffd43b; border: 2px solid #000; }
+.shop-given { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; }
+.shop-desk { max-width: 620px; margin: 10px auto; padding: 10px; background: #8a5a32; border: 4px solid #000; box-shadow: inset 0 4px 0 #b0703c; }
+.shop-counter-head { color: #fff; font-weight: 700; margin-bottom: 6px; text-shadow: 1px 1px 0 #000; }
+.shop-counter { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; min-height: 84px; padding: 8px; background: #6b4425; border: 3px dashed #ecd3a4; }
+.shop-counter.over { background: #7d5130; border-color: #ffd43b; }
+.shop-empty { color: #ecd3a4; font-weight: 700; }
+.shop-total { min-height: 1.5em; margin-top: 6px; color: #fff; font: 700 1.1rem Lexend, sans-serif; text-align: center; text-shadow: 1px 1px 0 #000; }
+.shop-till { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 620px; margin: 6px auto 10px; }
+.coin { display: inline-grid; place-items: center; width: 58px; height: 58px; border-radius: 50%; border: 3px solid #000; box-shadow: inset -3px -4px 0 rgba(0,0,0,.25), inset 3px 3px 0 rgba(255,255,255,.45); cursor: pointer; font-style: normal; user-select: none; -webkit-user-select: none; touch-action: none; }
+.coin b { font: 700 .95rem Lexend, sans-serif; color: #1b1b1b; }
+.coin-1, .coin-2 { background: #c86b3c; }
+.coin-1 { width: 48px; height: 48px; }
+.coin-5 { width: 44px; height: 44px; }
+.coin-5, .coin-10, .coin-20, .coin-50 { background: #d9dde3; }
+.coin-20, .coin-50 { border-radius: 0; clip-path: polygon(50% 0, 89% 19%, 98% 61%, 72% 95%, 28% 95%, 2% 61%, 11% 19%); border: 0; box-shadow: inset 0 0 0 3px #1b1b1b, inset -3px -4px 0 rgba(0,0,0,.25); }
+.coin-20 { width: 52px; height: 52px; }
+.coin-50 { width: 64px; height: 64px; }
+.coin-100 { background: radial-gradient(circle, #ffd43b 52%, #d9dde3 54%); width: 60px; height: 60px; }
+.coin-200 { background: radial-gradient(circle, #d9dde3 52%, #ffd43b 54%); width: 66px; height: 66px; }
+.coin.note { width: 92px; height: 52px; border-radius: 4px; }
+.coin-500 { background: #2ec4b6; } .coin-1000 { background: #ff8c1a; } .coin-2000 { background: #8e5cff; }
+.coin.drag-ghost { position: fixed; z-index: 90; pointer-events: none; }
+.shop-counter .coin { cursor: pointer; }
+.shop-given .coin { width: 44px; height: 44px; cursor: default; } .shop-given .coin.note { width: 70px; height: 40px; }
+.shop-given .coin b { font-size: .8rem; }

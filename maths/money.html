@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Money Market</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <script src="../shared/pixel.js"></script>
+  <script src="../shared/pixel-icons.js"></script>
+  <script src="../shared/avatar.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// ---------- blocky pictures for this lesson ----------
+// a market stall with a striped awning and fruit on the counter
+const STALL = Pixel.svg([
+  'rrwwrrwwrrwwrrwwrrww',
+  'rrwwrrwwrrwwrrwwrrww',
+  '.rwwrrwwrrwwrrwwrrw.',
+  '..k..............k..',
+  '..k..............k..',
+  '..k..............k..',
+  '..k.ooo..yy..ggg.k..',
+  '..k.ooo.yyyy.ggg.k..',
+  'nnnnnnnnnnnnnnnnnnnn',
+  'NnnnnnnnnnnnnnnnnnnN',
+  '.NnnnnnnnnnnnnnnnnN.',
+  '..N..............N..',
+  '..N..............N..',
+], { r: '#e53935', w: '#ffffff', k: '#1b1b1b', o: '#ff8c1a', y: '#ffd43b', g: '#4caf2a', n: '#b0703c', N: '#6b4425' });
+
+// the boss: Pinchy, a crab who pinches people's change
+const PINCHY = Pixel.svg([
+  'kk..........kk',
+  'krk........krk',
+  'krrk......krrk',
+  '.krk.k..k.krk.',
+  '..k.kwk.kwk.k.',
+  '..k..k...k..k.',
+  '..kkrrrrrrkk..',
+  '.krrrrrrrrrrk.',
+  'krrrryyyyrrrrk',
+  'krrrrrrrrrrrrk',
+  '.krrkrrrrkrrk.',
+  'k.k..k..k..k.k',
+], { k: '#1b1b1b', r: '#e53935', w: '#ffffff', y: '#ffd43b' });
+
+// ---------- the lesson ----------
+window.LESSON = {
+  id: 'maths-money',
+  subject: 'maths',
+  title: 'Money Market',
+  emoji: '💷',
+  home: '../index.html',
+  finishAch: 'miner',
+  mascot: {
+    name: 'Professor Bolt',
+    sprite: Pixel.sprites.robot,
+    praise: ['Money-tastic!', 'Cha-ching!', 'Spot on, shopkeeper!', 'Critical hit!', 'You\'re a coin counter!', 'Brilliant!', 'Worth every penny!'],
+    oops: ['Oops! Start with the biggest coin.', 'Not quite – count on to the next 10p.', 'Hmm, check your adding.', 'So close! One more try.'],
+  },
+  glossary: {
+    pound: { emoji: '💷', def: 'The money used in the UK. Its sign is £. One pound is worth 100 pence.' },
+    pence: { emoji: '🪙', def: 'The small money in the UK. Its sign is p. 100 pence make one pound.' },
+    change: { emoji: '🔁', def: 'The money you get back when you pay more than something costs.' },
+    total: { emoji: '➕', def: 'How much everything costs, all added up.' },
+    barter: { emoji: '🤝', def: 'To swap things you have for things you want, without using money.' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'Money Market', short: 'Start', minutes: 1,
+      pic: STALL,
+      hello: 'Welcome to the Maths Mine market! Today YOU run a stall. But keep an eye on your till – Pinchy the Penny-Pincher Crab loves snipping customers\' change!',
+      question: 'A lolly costs 40p and you pay with £1. How much should you get back?',
+      intro: 'Warm up, learn pounds and pence, work the **till** at your stall, investigate the fewest coins – then stop Pinchy!',
+      nameLabel: 'Player name:',
+    },
+
+    {
+      type: 'review', title: 'Warm-up', short: 'Warm-up', minutes: 3,
+      from: { title: 'Counting and adding you already know', emoji: '➕' },
+      facts: [
+        'Counting in 5s: 5, 10, 15, 20… Counting in 10s: 10, 20, 30, 40…',
+        'Number bonds to 100: 30 + 70 = 100, 65 + 35 = 100.',
+        'Counting on: to get from 70 to 100, count on 30.',
+        'Start adding with the biggest number – it\'s quicker.',
+      ],
+      questions: [
+        { type: 'type', q: '50 + 20 + 5 = ?', answer: ['75'], placeholder: 'a number', hint: '50 + 20 = 70, then 5 more.' },
+        { type: 'slider', q: '100 − 40 = ? Drag the marker.', min: 0, max: 100, step: 10, answer: 60, hint: '40 + ? = 100' },
+        { type: 'mcq', q: 'Count in 5s: 5, 10, 15, 20, …', options: ['25', '21', '30'], answer: 0 },
+        { type: 'type', q: '65 + ? = 100', answer: ['35'], placeholder: 'a number', hint: 'Count on from 65 to 70 (5), then to 100 (30).' },
+      ],
+    },
+
+    {
+      type: 'read', title: 'Pounds and pence', short: 'Read', minutes: 6,
+      say: 'Read each page carefully – the checks test if you really understood. Tap the yellow words for a 💎.',
+      cards: [
+        {
+          title: 'UK money', pic: '💷🪙',
+          text: [
+            'In the UK, money comes in [[pound]]s (£) and [[pence]] (p). The coins are 1p, 2p, 5p, 10p, 20p, 50p, £1 and £2. There are notes too: £5, £10 and £20.',
+            'At home in Thailand you use baht. One baht is 100 satang – the same idea as pounds and pence!',
+          ],
+          check: { type: 'oddone', q: 'Which of these is NOT a real UK coin?', items: ['2p', '20p', '30p', '50p'], answer: 2, why: 'Why is 30p the odd one out?', reasons: ['There is no 30p coin – you would use a 20p and a 10p', 'It is worth too much', 'It is the biggest coin'], reason: 0 },
+        },
+        {
+          title: '100 pence make a pound', pic: '🪙➡️💷',
+          text: [
+            'One pound is worth 100 pence. So £2 is 200p, and one pound fifty is 150p.',
+            'We write pounds and pence with a dot in between: £1.50 means 1 pound and 50 pence.',
+          ],
+          check: { type: 'type', q: 'Gran gives you £2, all in 10p coins. How many 10p coins is that?', answer: ['20', 'twenty'], placeholder: 'a number', hint: '£1 is ten 10p coins. So £2 is…' },
+        },
+        {
+          title: 'Counting coins', pic: '🪙',
+          text: [
+            'To count a pile of coins, start with the biggest, then count on.',
+            'A 50p, two 20p coins and a 5p: 50p… 70p… 90p… 95p.',
+          ],
+          check: { type: 'type', q: 'Count these coins: 20p, 5p, 50p, 10p. How much altogether?', answer: ['85', '85p'], placeholder: 'how many p', hint: 'Start with the 50p, then the 20p…' },
+        },
+        {
+          title: 'Giving change', pic: '🔁',
+          text: [
+            '[[change]] is the money you get back when you pay more than something costs.',
+            'To find it, count on from the price to what you paid. A drink costs 65p and you pay £1: 65p to 70p is 5p, 70p to £1 is 30p. The change is 35p.',
+          ],
+          check: { type: 'slider', q: 'A rubber costs 80p. You pay with £1. How much change should you get?', min: 0, max: 100, step: 5, answer: 20, unit: 'p', hint: 'Count on from 80p to 100p.' },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'UK Notes & Coins', short: 'Video 1', minutes: 6,
+      video: { id: 'zyV_6FEWWQY', title: 'Learn UK Notes & Coins ► Pounds & Pence | Maths Skills', channel: 'Maple Online Learning', duration: '5:10' },
+      say: 'All about pounds and pence! Watch, then answer my questions.',
+      clues: [
+        'How many pence make one pound?',
+        'What did people do before money?',
+        'What change did Mrs Tibbles get?',
+        'Why must you always write £ or p?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'In the UK, one pound is made up of…', options: ['100 pence', '10 pence', '1,000 pence'], answer: 0 },
+        { type: 'mcq', q: 'Long ago, before money, what did people do?', options: ['Traded one thing for another, like sheep for chickens', 'Got everything for free', 'Paid with their phones'], answer: 0 },
+        { type: 'mcq', q: 'The video says £1 could roughly buy…', options: ['a packet of biscuits', 'a bike', 'a house'], answer: 0 },
+        { type: 'type', q: 'Mrs Tibbles\'s cat food cost £1.80. She paid with a £2 coin. How much change did she get?', answer: ['20', '20p'], placeholder: 'how many p', hint: 'Count on from £1.80 to £2.' },
+        { type: 'mcq', q: 'Which of these is a UK note?', options: ['£10', '£3', '£7'], answer: 0 },
+        { type: 'tf', q: 'The video says always write £ or p in your answer – 456p and £456 are VERY different!', answer: true },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Your Market Stall', short: 'Game 1', minutes: 10,
+      rounds: [
+        {
+          game: 'shop', title: 'Work the till',
+          intro: 'You run the stall! Read what each customer wants. **Drag coins** from the till onto the counter (or tap them), then press Check. Tap a coin on the counter to put it back.',
+          say: 'Start with the biggest coin that fits!',
+          missions: [
+            { text: 'A customer buys an apple. Put exactly the right money on the counter.', customer: '🐻', buy: [{ name: 'apple', emoji: '🍎', price: 35 }], yes: 'Spot on: 20p + 10p + 5p = 35p.' },
+            { text: 'Add up the shopping, then put the total on the counter.', customer: '🐰', buy: [{ name: 'comic', emoji: '📖', price: 50 }, { name: 'lolly', emoji: '🍭', price: 25 }], yes: '50p + 25p = 75p. Cha-ching!' },
+            { text: 'This customer pays with 50p. Give them their change.', customer: '🦊', buy: [{ name: 'banana', emoji: '🍌', price: 30 }], given: 50, yes: '30p to 50p is 20p change.' },
+            { text: 'This customer pays with £1. Give them their change.', customer: '🦁', buy: [{ name: 'juice', emoji: '🧃', price: 45 }], given: 100, yes: '45p → 50p is 5p, then 50p → £1 is 50p. Change: 55p!' },
+            { text: 'Add up the shopping – it\'s more than a pound this time!', customer: '🐸', buy: [{ name: 'sandwich', emoji: '🥪', price: 120 }, { name: 'cookie', emoji: '🍪', price: 60 }], yes: '£1.20 + 60p = £1.80.', ask: [
+              { q: 'How else could you write £1.80?', options: ['180p', '18p', '1,800p'], answer: 0 },
+            ] },
+            { text: 'Last customer! They pay with a £2 coin.', customer: '🦉', buy: [{ name: 'notebook', emoji: '📒', price: 135 }], given: 200, yes: '£1.35 → £1.40 is 5p, → £2 is 60p. Change: 65p!' },
+          ],
+        },
+        {
+          game: 'match', title: 'Two ways to write it',
+          intro: 'Match each amount in pounds to the same amount in pence.',
+          say: 'Remember: £1 is 100p!',
+          pairs: [
+            { a: '£1.50', b: '150p' },
+            { a: '£2.05', b: '205p' },
+            { a: '£3', b: '300p' },
+            { a: '£1.07', b: '107p' },
+            { a: '£4.20', b: '420p' },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'investigate', title: 'The fewest coins', short: 'Investigate', minutes: 8,
+      say: 'Pinchy keeps pinching coins from slow shopkeepers! Let\'s find out how to pay with as FEW coins as possible.',
+      question: 'What is the quickest way to pay – with the fewest coins?',
+      predict: { q: 'Have a guess: what is the fewest coins you need to make 80p?', options: ['3 coins', '2 coins', '8 coins'], answer: 0 },
+      test: {
+        game: 'shop', title: 'Fewest coins',
+        intro: 'Make each amount with the **fewest coins** you can. Start with the biggest coin that fits, then the next biggest…',
+        say: 'Biggest coin first!',
+        missions: [
+          { text: 'Make 80p with the fewest coins.', customer: '🦉', pay: 80, fewest: true, yes: '50p + 20p + 10p – just 3 coins!' },
+          { text: 'Make 37p with the fewest coins.', customer: '🐢', pay: 37, fewest: true, yes: '20p + 10p + 5p + 2p – 4 coins.' },
+          { text: 'Make £1.75 with the fewest coins.', customer: '🦁', pay: 175, fewest: true, yes: '£1 + 50p + 20p + 5p – 4 coins.' },
+        ],
+      },
+      explain: [
+        { q: 'Which coin should you put down FIRST?', options: ['The biggest coin that isn\'t too much', 'Always a 1p', 'Any coin at all'], answer: 0 },
+        { type: 'type', q: 'What is the fewest coins you need to make 60p?', answer: ['2', 'two'], placeholder: 'a number', hint: 'Which big coin fits first? Then what is left?', explain: '50p + 10p – just 2 coins.' },
+        { type: 'oddone', q: 'Three ways to make 40p. Which one uses the FEWEST coins?', items: ['20p + 20p', '20p + 10p + 10p', '10p + 10p + 10p + 10p'], answer: 0, why: 'Why does 20p + 20p win?', reasons: ['It uses only 2 coins', 'It has the most coins', '20p coins are shiny'], reason: 0 },
+      ],
+      result: [
+        'To use the fewest coins, start with the **biggest coin that isn\'t too much**. Then do the same with what is left, until you have made the amount.',
+        '80p: a 50p (30p left), a 20p (10p left), a 10p. Just 3 coins!',
+        'Shopkeepers do this every day, so customers don\'t get a pocket full of 1p coins.',
+      ],
+    },
+
+    {
+      type: 'video', title: 'Who Invented Money?', short: 'Video 2', minutes: 7,
+      video: { id: 'GZ7y-yFdX9M', title: 'Who Invented Money? | The History of Money | Barter System of Exchange | The Dr Binocs Show', channel: 'Peekaboo Kidz', duration: '5:36' },
+      say: 'Dr Binocs zooms back in time to find out who invented money. Watch, then answer my questions.',
+      clues: [
+        'What does "barter" mean?',
+        'What did people use before coins?',
+        'Where were the first metal coins made?',
+        'What is paper money really made of?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'Long ago, people would [[barter]]. That means they…', options: ['swapped things for other things', 'saved money in a bank', 'paid with cards'], answer: 0 },
+        { type: 'mcq', q: 'Why was bartering tricky?', options: ['It was hard to agree what things were worth', 'Nobody had anything to swap', 'It was against the law'], answer: 0 },
+        { type: 'mcq', q: 'Before coins, some people used… as money.', options: ['cowry shells, beads and stones', 'leaves', 'chocolate'], answer: 0 },
+        { type: 'mcq', q: 'The first metal coins came from Lydia (in Turkey today). What were they made of?', options: ['a mix of gold and silver', 'plastic', 'wood'], answer: 0 },
+        { type: 'mcq', q: 'Who first printed paper money, so people didn\'t have to carry heavy coins?', options: ['the Chinese', 'the Romans', 'the Vikings'], answer: 0 },
+        { type: 'tf', q: 'Paper money is really made of paper.', answer: false, explain: 'Dr Binocs says it\'s made from cotton and linen, a cloth made from a plant called flax.' },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Market Day', short: 'Game 2', minutes: 8,
+      rounds: [
+        {
+          game: 'sort', title: 'Can you afford it?',
+          intro: 'You have £1 to spend. Can you afford each one? Sort them!',
+          say: 'Is it £1 or less? Then you can afford it!',
+          buckets: [
+            { id: 'yes', label: 'YES – £1 IS ENOUGH', emoji: '✅' },
+            { id: 'no', label: 'NO – TOO MUCH', emoji: '❌' },
+          ],
+          items: [
+            { label: 'a comic for 85p', bucket: 'yes' }, { label: 'a pencil for 99p', bucket: 'yes' }, { label: '2 apples at 40p each', bucket: 'yes' },
+            { label: 'a ball for £1.20', bucket: 'no' }, { label: '3 cookies at 40p each', bucket: 'no' }, { label: 'a kite for 150p', bucket: 'no' },
+          ],
+        },
+        {
+          game: 'invaders', title: 'Coin Invaders',
+          intro: 'Arcade time! Read the mission at the top, then **shoot only the right amounts**. Watch out for the falling bombs!',
+          say: 'Read the mission, then aim carefully!',
+          waves: [
+            { prompt: 'Shoot the amounts worth exactly £1!', items: [
+              { label: '50p + 50p', ok: true }, { label: '100p', ok: true }, { label: '10 × 10p', ok: true },
+              { label: '60p + 30p', ok: false, why: '60p + 30p = 90p – 10p short of £1.' }, { label: '£1.10', ok: false, why: '£1.10 is 10p MORE than £1.' }, { label: '10p', ok: false, why: '10p is much less than £1.' },
+            ] },
+            { prompt: 'An ice cream costs 70p. You pay £1. Shoot the right change!', items: [
+              { label: '30p', ok: true }, { label: '20p + 10p', ok: true }, { label: '3 × 10p', ok: true },
+              { label: '40p', ok: false, why: 'Count on from 70p: 80, 90, 100 – that\'s 30p, not 40p.' }, { label: '70p', ok: false, why: '70p is the price, not the change.' }, { label: '13p', ok: false, why: 'Count on in 10s from 70p to £1.' },
+            ] },
+            { prompt: 'Shoot the amounts MORE than £2!', items: [
+              { label: '250p', ok: true }, { label: '£2.05', ok: true }, { label: '210p', ok: true },
+              { label: '199p', ok: false, why: '199p is 1p LESS than £2.' }, { label: '£1.99', ok: false, why: '£1.99 is just under £2.' }, { label: '20p', ok: false, why: '20p is much less than £2.' },
+            ] },
+          ],
+          done: 'ALL WAVES CLEAR! Your money skills are rich!',
+        },
+      ],
+    },
+
+    {
+      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
+      say: 'Market moves! Do each one.',
+      wiggle: {
+        title: '🛒 Market Moves!',
+        seconds: 60,
+        moves: [
+          '🛒 Push a heavy shopping trolley – walk on the spot!',
+          '🍎 Reach up high for the apples on the top shelf!',
+          '🪙 Flip a coin – spin round once!',
+          '🦀 Pinchy is coming – scuttle sideways like a crab!',
+          '📢 Shout like a market trader: "Lovely bananas!"',
+          '💰 Count your money – touch your toes ten times!',
+        ],
+      },
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: Pinchy the Penny-Pincher', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      say: 'PINCHY THE PENNY-PINCHER is snipping coins out of everyone\'s change! Every right answer gets the money back. Go, {name}!',
+      boss: {
+        name: 'Pinchy', sprite: PINCHY, attack: ['🪙', '🦀'], spin: true,
+        lines: {
+          intro: 'SNIP SNAP! I\'m Pinchy, and every penny I pinch is MINE! Nobody counts their change anyway… do they?',
+          hurt: ['Ow! You counted it properly!', 'Snip! My claws slipped!', 'Stop counting on! It\'s making my shell itch!', 'You spotted that? Clever clogs!'],
+          taunt: ['Snip snap – that\'s MY 10p now!', 'Wrong change! More coins for my sandcastle!', 'Ha! Didn\'t count it, did you?', 'Pinch, pinch, pinch!'],
+          angry: 'NOW I\'M SNAPPY! CLAWS AT THE READY!',
+          dodge: 'Here comes a shower of pinched pennies! Dodge them!',
+          miss: 'You dodged every penny? You\'re quicker than a seagull!',
+          last: 'My pockets… are empty… I can\'t pinch anything…',
+          defeat: 'Snip… snap… fizzle. Fine! Here\'s everyone\'s change back. Every last penny.',
+          win: 'Ha! I\'ve pinched it ALL! I\'m the richest crab on the beach!',
+          stunned: 'Seeing coins… spinning… so many shiny coins…',
+          beg: ['Wait! I\'ll give back ALL the 1p coins!', 'Mercy! I\'ll only pinch from seaweed!', 'I promise to always give the right change!'],
+        },
+      },
+      bonus: {
+        title: '⭐ Bonus quest (for a grown-up to help with)',
+        text: 'Set up a pretend shop at home! Put price labels on some toys or snacks (all under £1, or under 100 baht). Take turns being the shopkeeper and giving change by counting on.',
+      },
+      questions: [
+        { type: 'mcq', q: 'How many pence make £1?', options: ['100', '10', '50'], answer: 0 },
+        { type: 'type', q: 'Count these coins: 50p, 20p, 20p, 2p. How much altogether?', answer: ['92', '92p'], placeholder: 'how many p', hint: '50 + 20 + 20 = 90, then 2 more.' },
+        { type: 'slider', q: 'A yo-yo costs 55p. You pay with £1. How much change?', min: 0, max: 100, step: 5, answer: 45, unit: 'p', hint: '55p → 60p is 5p, then 60p → 100p is 40p.' },
+        { type: 'oddone', q: 'Which amount is NOT the same as the others?', items: ['£2.50', '250p', '2 pounds 50', '£25'], answer: 3, why: 'Why is £25 the odd one out?', reasons: ['£25 is twenty-five pounds – much more than £2.50', 'It has no p', 'It is the shortest'], reason: 0 },
+        { type: 'mcq', q: 'Which coins make 30p using the fewest coins?', options: ['20p + 10p', '10p + 10p + 10p', '5p × 6'], answer: 0 },
+        { type: 'gap', q: '£1.50 is the same as ___.', options: ['150p', '15p', '1,500p'], answer: 0 },
+        { type: 'type', q: 'A comic costs 75p and a sticker costs 20p. What is the total?', answer: ['95', '95p'], placeholder: 'how many p' },
+        { type: 'mcq', q: 'You have £1. Can you buy a drink for 60p AND crisps for 50p?', options: ['No – that\'s £1.10, which is 10p too much', 'Yes – that\'s exactly £1', 'Yes – with 10p left over'], answer: 0 },
+        { type: 'tf', q: 'When people barter, they swap things instead of using money.', answer: true },
+        { type: 'build', q: 'Build the change from £1 for a 65p sandwich.', answer: ['20p', '10p', '5p'], extra: ['50p', '2p'], join: ' + ', hint: 'Count on from 65p to £1: that\'s 35p.' },
+        { type: 'mcq', q: 'Pinchy gave 30p change from 50p for a 25p lolly. What went wrong?', options: ['The change should be 25p – he gave 5p too much', 'The change should be 35p', 'Nothing – it\'s right'], answer: 0, hint: 'Count on from 25p to 50p.' },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>
