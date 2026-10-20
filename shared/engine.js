@@ -548,7 +548,7 @@
       playing = false;
       try { speechSynthesis.cancel(); } catch (e) { /* ignore */ }
       light(null); lines.forEach(l => l.el.classList.remove('rd-line'));
-      btn.textContent = '🔊 Read to me'; btn.classList.remove('on');
+      btn.textContent = '🔊 Read to me'; btn.classList.remove('on'); btn.disabled = false;
     };
     const play = k => {
       if (!playing) return;
@@ -569,11 +569,11 @@
       speechSynthesis.speak(u);
     };
     btn.addEventListener('click', () => {
-      if (playing) { stop(); return; }
+      if (playing) return; // locked until the whole page has been read (no spamming)
       if (!canSpeak) { say('Sorry – this device can\'t read aloud.'); return; }
       stopReading();
       try { speechSynthesis.cancel(); } catch (e) { /* ignore */ }
-      playing = true; btn.textContent = '⏹ Stop reading'; btn.classList.add('on');
+      playing = true; btn.textContent = '🔊 Reading…'; btn.classList.add('on'); btn.disabled = true;
       stopReading = stop;
       play(0);
     });
@@ -1741,8 +1741,12 @@
   if (canSpeak) try { speechSynthesis.getVoices(); speechSynthesis.addEventListener('voiceschanged', () => speechSynthesis.getVoices()); } catch (e) { /* ignore */ }
   // read words aloud in a British voice (the 🔊 button always speaks; automatic reading respects mute)
   // lang: another language – it only speaks if this device has a voice for it (never in the wrong accent)
+  // a 🔊 press (force) while the last line is still being spoken is ignored, so it can't be spammed;
+  // speakingUntil is a time-out in case a device never fires onend
+  let speakingUntil = 0, lastSpoken = null;
   function speak(text, { rate = 0.85, force = false, lang = null } = {}) {
     if (!canSpeak || (settings.muted && !force)) return false;
+    if (force && Date.now() < speakingUntil) return true;
     try {
       const v = voiceFor(lang || 'en-GB');
       if (lang && !v) return false;
@@ -1750,6 +1754,9 @@
       const u = new SpeechSynthesisUtterance(text);
       if (v) u.voice = v;
       u.lang = v ? v.lang : 'en-GB'; u.rate = rate;
+      speakingUntil = Date.now() + 1500 + String(text).length * 90 / rate;
+      u.onend = u.onerror = () => { if (speakingUntil && u === lastSpoken) speakingUntil = 0; };
+      lastSpoken = u;
       speechSynthesis.speak(u);
       return true;
     } catch (e) { return false; }
