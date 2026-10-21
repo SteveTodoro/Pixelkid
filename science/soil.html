@@ -58,6 +58,8 @@ window.LESSON = {
   title: 'Super Soil',
   emoji: '🪱',
   home: '../index.html',
+  midBreak: false, // the Arcade stage is the fun break
+  layout: 2, // the compact (one video) version: older saved progress starts again from the top
   mascot: {
     name: 'Professor Bolt',
     sprite: Pixel.sprites.robot,
@@ -78,7 +80,7 @@ window.LESSON = {
       pic: SOILPROFILE,
       hello: 'Welcome back, rock star! Today we dig into the stuff under your feet: SOIL. But listen… that rumbling is Cementor the cement mixer, and he wants to pour concrete over every garden!',
       question: 'Rocks are hard and soil is soft. So how can soil be made from rock?',
-      intro: 'Recap, read, watch, solve the case of the soggy school field, shake soil in the **Soil Lab** – then stop Cementor!',
+      intro: 'Recap, read, watch, solve the case of the soggy school field, shake soil in the **Soil Lab**, pick your own arcade game – then stop Cementor!',
       nameLabel: 'Player name:',
     },
 
@@ -158,7 +160,7 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'Where Does Soil Come From?', short: 'Video 1', minutes: 6,
+      type: 'video', title: 'Where Does Soil Come From?', short: 'Video', minutes: 6,
       video: { id: '5b9o7yM7YGE', title: 'Where Does Soil Come From?', channel: 'SciShow Kids', duration: '5:29' },
       say: 'Squeaks wants to know where soil comes from. Watch, then answer my questions.',
       clues: [
@@ -170,7 +172,6 @@ window.LESSON = {
       questions: [
         { type: 'mcq', q: 'The video says soil is mostly made of…', options: ['tiny bits of rock', 'old leaves', 'water'], answer: 0 },
         { type: 'type', q: 'When rocks are broken into small pieces by wind, water or ice, scientists call it…', answer: ['weathering'], placeholder: 'one word', hint: 'It sounds like the weather!' },
-        { type: 'mcq', q: 'How can animals like moles help to make soil?', options: ['They scratch up rocks as they dig', 'They eat rocks', 'They carry soil from the shop'], answer: 0 },
         { type: 'mcq', q: 'Very hard rocks like quartz weather slowly and make…', options: ['grainy sand', 'sticky clay', 'humus'], answer: 0 },
         { type: 'mcq', q: 'How can you tell a soil has lots of organic matter (dead plant and animal bits)?', options: ['It is dark, nearly black', 'It is bright orange', 'It smells of flowers'], answer: 0 },
         { type: 'mcq', q: 'About how long does it take to make the top layer of soil?', options: ['about 100 years', 'about 1 week', 'about 1 day'], answer: 0 },
@@ -178,7 +179,7 @@ window.LESSON = {
     },
 
     {
-      type: 'game', title: 'Dig Deeper', short: 'Game 1', minutes: 9,
+      type: 'game', title: 'Dig Deeper', short: 'Dig', minutes: 5,
       rounds: [
         {
           game: 'sort', title: 'What\'s in the soil?',
@@ -203,26 +204,6 @@ window.LESSON = {
             { type: 'predict', q: 'Predict! You pour a cup of water onto sand and a cup onto clay. Which one will soak away first?', options: ['the sand', 'the clay', 'both the same'], answer: 0, reveal: 'The sand! Water slips through the big gaps between the grains. In clay, the tiny bits are packed tight, so water waits on top.',
               then: { q: 'So which soil would suit a cactus, which likes dry ground?', options: ['sandy soil', 'clay soil', 'a bucket of water'], answer: 0 } },
           ],
-        },
-        {
-          game: 'invaders', title: 'Soil Invaders',
-          intro: 'Arcade time! Read the mission at the top, then **shoot only the right answers**. Watch out for the falling bombs!',
-          say: 'Read the mission, then aim carefully!',
-          waves: [
-            { prompt: 'Shoot the things you find in healthy soil!', items: [
-              { label: 'bits of rock', ok: true }, { label: 'humus', ok: true }, { label: 'air', ok: true }, { label: 'worms', ok: true },
-              { label: 'plastic', ok: false, why: 'Plastic doesn\'t belong in soil – it never rots away.' }, { label: 'glass', ok: false, why: 'Glass is litter, not soil.' },
-            ] },
-            { prompt: 'Shoot the things that weather (break up) rocks!', items: [
-              { label: 'ice', ok: true }, { label: 'roots', ok: true }, { label: 'rain', ok: true }, { label: 'wind', ok: true },
-              { label: 'moonlight', ok: false, why: 'Moonlight is just light – it can\'t break rock.' }, { label: 'a song', ok: false, why: 'Even a very loud song won\'t make soil!' },
-            ] },
-            { prompt: 'Shoot the words that describe CLAY soil!', items: [
-              { label: 'sticky', ok: true }, { label: 'smooth', ok: true }, { label: 'drains slowly', ok: true },
-              { label: 'gritty', ok: false, why: 'Gritty is sandy soil – clay bits are tiny and smooth.' }, { label: 'drains fast', ok: false, why: 'That\'s sandy soil. Clay holds on to water.' },
-            ] },
-          ],
-          done: 'ALL WAVES CLEAR! You\'re a soil scientist!',
         },
       ],
     },
@@ -254,27 +235,7 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'Why Different Soils Feel Different', short: 'Video 2', minutes: 7,
-      video: { id: 'qJ9fJU1X9mA', title: 'Why Different Soils Feel Different', channel: 'SciShow Kids', duration: '6:51' },
-      say: 'Squeaks moved his favourite flower, and now it\'s wilting. Watch how they solve it with a jar of soil and water!',
-      clues: [
-        'What do scientists call how soil feels?',
-        'Which layer settled at the very bottom of the jar?',
-        'Which layer was at the top, and why?',
-        'Why was the flower wilting?',
-      ],
-      questions: [
-        { type: 'mcq', q: 'Scientists call the way soil feels its…', options: ['texture', 'colour', 'smell'], answer: 0 },
-        { type: 'mcq', q: 'Gritty soil feels rough because it is made of…', options: ['bigger bits of rock', 'smaller bits of rock', 'water'], answer: 0 },
-        { type: 'mcq', q: 'In the jar, which layer settled at the very BOTTOM?', options: ['sand – the biggest, heaviest grains', 'clay', 'silt'], answer: 0 },
-        { type: 'mcq', q: 'Why was clay the TOP layer in the jar?', options: ['Its bits are so tiny they take a long time to sink', 'It floats like a boat', 'Squeaks put it there'], answer: 0 },
-        { type: 'mcq', q: 'Why was Squeaks\'s flower wilting in its new spot?', options: ['The sandy soil let the water run away too fast', 'It had too much sun', 'A worm ate it'], answer: 0 },
-        { type: 'tf', q: 'Smooth soil is good for thirsty plants, because water takes a long time to pass through it.', answer: true },
-      ],
-    },
-
-    {
-      type: 'game', title: 'The Soil Lab', short: 'Game 2', minutes: 10,
+      type: 'game', title: 'The Soil Lab', short: 'Soil Lab', minutes: 7,
       rounds: [
         {
           game: 'soillab', title: 'Soil Lab',
@@ -301,20 +262,51 @@ window.LESSON = {
     },
 
     {
-      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
-      say: 'Worm workout! Do each move.',
-      wiggle: {
-        title: '🪱 Worm Workout!',
-        seconds: 60,
-        moves: [
-          '🪱 Wriggle like a worm – all the way down to the floor!',
-          '🌧️ Rain is coming – wiggle your fingers down like raindrops!',
-          '🧊 Freeze like ice in a rock crack – stay still… then CRACK!',
-          '🌱 Grow like a root – reach your arms deep down, then up high!',
-          '🫙 Shake the soil jar – shake your whole body!',
-          '😴 Now let it settle… slowly sit down and be still.',
-        ],
-      },
+      type: 'game', title: 'Soil Arcade: pick a game!', short: 'Arcade', icon: '🕹️', minutes: 4,
+      pick: { title: '🕹️ Pick your arcade game!', say: 'Your choice! Which game do you want to play? Win one to carry on – or play them all!' },
+      rounds: [
+        {
+          game: 'invaders', title: 'Soil Invaders', emoji: '🚀', blurb: 'Shoot the right answers about soil.',
+          intro: 'Arcade time! Read the mission at the top, then **shoot only the right answers**. Watch out for the falling bombs!',
+          say: 'Read the mission, then aim carefully!',
+          waves: [
+            { prompt: 'Shoot the things you find in healthy soil!', items: [
+              { label: 'bits of rock', ok: true }, { label: 'humus', ok: true }, { label: 'air', ok: true }, { label: 'worms', ok: true },
+              { label: 'plastic', ok: false, why: 'Plastic doesn\'t belong in soil – it never rots away.' }, { label: 'glass', ok: false, why: 'Glass is litter, not soil.' },
+            ] },
+            { prompt: 'Shoot the things that weather (break up) rocks!', items: [
+              { label: 'ice', ok: true }, { label: 'roots', ok: true }, { label: 'rain', ok: true }, { label: 'wind', ok: true },
+              { label: 'moonlight', ok: false, why: 'Moonlight is just light – it can\'t break rock.' }, { label: 'a song', ok: false, why: 'Even a very loud song won\'t make soil!' },
+            ] },
+            { prompt: 'Shoot the words that describe CLAY soil!', items: [
+              { label: 'sticky', ok: true }, { label: 'smooth', ok: true }, { label: 'drains slowly', ok: true },
+              { label: 'gritty', ok: false, why: 'Gritty is sandy soil – clay bits are tiny and smooth.' }, { label: 'drains fast', ok: false, why: 'That\'s sandy soil. Clay holds on to water.' },
+            ] },
+          ],
+          done: 'ALL WAVES CLEAR! You\'re a soil scientist!',
+        },
+        {
+          game: 'steadyhand', title: 'Steady Hand', emoji: '✏️', blurb: 'Guide your pencil along the wiggly path – don\'t touch the sides!',
+          intro: 'Press on the green dot and follow the wiggly path all the way to the 🏁 – carefully! Pick Easy, Medium or Hard.',
+          say: 'Steady hands! Don\'t touch the sides!',
+          done: 'What a steady hand! Steady as a worm in its tunnel.',
+        },
+        {
+          game: 'match', title: 'Soil Word Match', emoji: '🪱', blurb: 'Match each soil word to what it means.',
+          intro: 'Cementor has muddled up the soil words! Match each word to what it means.',
+          say: 'Tap a word, then tap what it means!',
+          hint: 'Think back to the reading pages and the Soil Lab.',
+          pairs: [
+            { a: '🍂 humus', b: 'rotted bits of dead plants and animals' },
+            { a: '🌧️ weathering', b: 'rocks breaking into tiny bits' },
+            { a: '🟫 topsoil', b: 'the dark top layer, full of food for plants' },
+            { a: '🪨 bedrock', b: 'solid rock, deep down' },
+            { a: '🏺 clay soil', b: 'sticky, and drains slowly' },
+            { a: '🏖️ sandy soil', b: 'gritty, and drains fast' },
+          ],
+          done: 'All matched! Cementor can\'t muddle you!',
+        },
+      ],
     },
 
     {
@@ -341,7 +333,6 @@ window.LESSON = {
         text: 'Make your own soil jar! Put a few spoons of garden soil in a clear jar with a lid, fill it with water, shake it hard, then leave it overnight. Count the layers – and see what floats!',
       },
       questions: [
-        { type: 'mcq', q: 'What is soil mostly made of?', options: ['tiny bits of rock, humus, water and air', 'only mud', 'crushed concrete'], answer: 0 },
         { type: 'type', q: 'Rain, ice, wind and roots breaking rock into tiny pieces is called…', answer: ['weathering'], placeholder: 'one word' },
         { type: 'hotspot', q: 'Tap the topsoil.', img: SOILPROFILE, spots: [{ x: 50, y: 25, r: 13, label: 'topsoil' }, { x: 50, y: 53, r: 13, label: 'that\'s the subsoil – paler, with stones' }, { x: 50, y: 83, r: 13, label: 'that\'s the bedrock – solid rock' }], answer: 0 },
         { type: 'mcq', q: 'Why is topsoil so good for plants?', options: ['It is full of humus – food for plants', 'It is the hardest layer', 'It has no water in it'], answer: 0 },

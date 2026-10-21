@@ -65,6 +65,8 @@ window.LESSON = {
   title: 'Rock Stars',
   emoji: '🪨',
   home: '../index.html',
+  midBreak: false, // the Arcade stage is the fun break
+  layout: 2, // the compact (one video) version: older saved progress starts again from the top
   mascot: {
     name: 'Professor Bolt',
     sprite: Pixel.sprites.robot,
@@ -85,7 +87,7 @@ window.LESSON = {
       pic: ROCKS,
       hello: 'Welcome back to the Science Lab! Today you are a geologist – a rock scientist. But watch out: Gnash the Gravel Gobbler is munching every rock he can find!',
       question: 'Are all rocks the same? How could you tell two rocks apart?',
-      intro: 'Warm up, read, watch, test real rocks in the **Rock Lab**, solve a stormy mystery – then stop Gnash the Gravel Gobbler!',
+      intro: 'Warm up, read, watch, test real rocks in the **Rock Lab**, solve a stormy mystery, pick your own arcade game – then stop Gnash the Gravel Gobbler!',
       nameLabel: 'Player name:',
     },
 
@@ -107,7 +109,7 @@ window.LESSON = {
     },
 
     {
-      type: 'read', title: 'Three kinds of rock', short: 'Read 1', minutes: 6,
+      type: 'read', title: 'Three kinds of rock', short: 'Read 1', minutes: 5,
       say: 'Read each page carefully – the checks test if you really understood. Tap the yellow words for a 💎.',
       cards: [
         {
@@ -146,7 +148,7 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'Types of Rocks', short: 'Video 1', minutes: 6,
+      type: 'video', title: 'Types of Rocks', short: 'Video', minutes: 5,
       video: { id: 'CeuYx-AbZdo', title: 'Types Of Rocks | The Dr. Binocs Show', channel: 'Peekaboo Kidz', duration: '3:52' },
       say: 'Dr. Binocs zooms in on the three kinds of rock. Watch, then answer my questions.',
       clues: [
@@ -161,12 +163,11 @@ window.LESSON = {
         { type: 'mcq', q: 'Where does the video say sedimentary rocks are often found?', options: ['on ocean and lake beds', 'inside volcanoes', 'on the Moon'], answer: 0 },
         { type: 'tf', q: 'The video says metamorphic rocks are made when rocks MELT completely.', answer: false, explain: 'Heat and pressure change them – but they don\'t melt.' },
         { type: 'type', q: 'The Taj Mahal in India is made from which metamorphic rock?', answer: ['marble'], placeholder: 'a rock', hint: 'It starts with m.' },
-        { type: 'mcq', q: 'About how much of the top part of the Earth\'s crust is igneous rock?', options: ['about 95%', 'about 5%', 'none of it'], answer: 0 },
       ],
     },
 
     {
-      type: 'game', title: 'The Rock Lab', short: 'Game 1', minutes: 12,
+      type: 'game', title: 'The Rock Lab', short: 'Rock Lab', minutes: 8,
       rounds: [
         {
           game: 'rocklab', title: 'Rock Lab', rocks: ['granite', 'marble', 'slate', 'sandstone', 'chalk', 'pumice'],
@@ -205,17 +206,6 @@ window.LESSON = {
             { label: 'Slate: mudstone squeezed hard underground', emoji: '🏠', bucket: 'met', hint: 'Squeezing changed it.' },
           ],
         },
-        {
-          game: 'invaders', title: 'Rock Blaster',
-          intro: 'Arcade round! Read the target at the top and **shoot only the rocks that match it**.',
-          say: 'Think about your Rock Lab results!',
-          waves: [
-            { prompt: 'Shoot the PERMEABLE rocks (they soak up water)!', items: [{ label: 'chalk', ok: true }, { label: 'sandstone', ok: true }, { label: 'pumice', ok: true }, { label: 'slate', ok: false, why: 'Slate kept the water out – impermeable.' }, { label: 'granite', ok: false, why: 'Granite\'s crystals are locked tight – no gaps.' }] },
-            { prompt: 'Shoot the IGNEOUS rocks!', items: [{ label: 'granite', ok: true }, { label: 'pumice', ok: true }, { label: 'chalk', ok: false, why: 'Chalk is sedimentary – made of shells.' }, { label: 'marble', ok: false, why: 'Marble is metamorphic – changed limestone.' }] },
-            { prompt: 'Shoot the things that are NATURAL rock!', items: [{ label: 'slate', ok: true }, { label: 'marble', ok: true }, { label: 'brick', ok: false, why: 'Brick is made by people from baked clay.' }, { label: 'concrete', ok: false, why: 'Concrete is mixed by people.' }] },
-          ],
-          done: 'ROCK BLASTER CLEAR! You\'re a real rock star!',
-        },
       ],
     },
 
@@ -247,30 +237,28 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'Testing Rocks', short: 'Video 2', minutes: 5,
-      video: { id: 'do-GLQY1wGk', title: 'Science, Year 3, Week 2 – Testing Rocks', channel: 'Harris Garrard Academy', duration: '3:27' },
-      say: 'A real teacher tests real rocks – the same tests as your Rock Lab! Watch, then answer my questions.',
-      clues: [
-        'Which four rocks are tested?',
-        'What does the teacher scratch them with?',
-        'What does permeable mean?',
-        'Which rock does something surprising in the water?',
-      ],
-      questions: [
-        { type: 'mcq', q: 'Which four rocks does the teacher test?', options: ['sandstone, chalk, slate and pumice', 'granite, marble, coal and slate', 'chalk, brick, glass and sand'], answer: 0 },
-        { type: 'mcq', q: 'What does the teacher use for the scratch test?', options: ['a paper clip', 'a hammer', 'a toothbrush'], answer: 0 },
-        { type: 'mcq', q: 'Which rock seemed very soft and easy to scratch?', options: ['chalk', 'slate', 'all of them were the same'], answer: 0 },
-        { type: 'tf', q: 'On the slate, the water stayed as a droplet – so slate is impermeable.', answer: true },
-        { type: 'type', q: 'Which rock FLOATED in the beaker of water?', answer: ['pumice'], placeholder: 'a rock', hint: 'It is full of holes.' },
-        { type: 'mcq', q: 'The teacher says permeable means…', options: ['water is absorbed into the rock and can go through it', 'the rock floats', 'the rock is very hard'], answer: 0 },
-      ],
-    },
-
-    {
-      type: 'game', title: 'Rocks at Work', short: 'Game 2', minutes: 8,
+      type: 'game', title: 'Rock Arcade: pick a game!', short: 'Arcade', icon: '🕹️', minutes: 4,
+      pick: { title: '🕹️ Pick your arcade game!', say: 'Your choice! Which game do you want to play? Win one to carry on – or play them all!' },
       rounds: [
         {
-          game: 'match', title: 'The right rock for the job',
+          game: 'invaders', title: 'Rock Blaster', emoji: '🚀', blurb: 'Shoot the rocks that match the target.',
+          intro: 'Arcade round! Read the target at the top and **shoot only the rocks that match it**.',
+          say: 'Think about your Rock Lab results!',
+          waves: [
+            { prompt: 'Shoot the PERMEABLE rocks (they soak up water)!', items: [{ label: 'chalk', ok: true }, { label: 'sandstone', ok: true }, { label: 'pumice', ok: true }, { label: 'slate', ok: false, why: 'Slate kept the water out – impermeable.' }, { label: 'granite', ok: false, why: 'Granite\'s crystals are locked tight – no gaps.' }] },
+            { prompt: 'Shoot the IGNEOUS rocks!', items: [{ label: 'granite', ok: true }, { label: 'pumice', ok: true }, { label: 'chalk', ok: false, why: 'Chalk is sedimentary – made of shells.' }, { label: 'marble', ok: false, why: 'Marble is metamorphic – changed limestone.' }] },
+            { prompt: 'Shoot the things that are NATURAL rock!', items: [{ label: 'slate', ok: true }, { label: 'marble', ok: true }, { label: 'brick', ok: false, why: 'Brick is made by people from baked clay.' }, { label: 'concrete', ok: false, why: 'Concrete is mixed by people.' }] },
+          ],
+          done: 'ROCK BLASTER CLEAR! You\'re a real rock star!',
+        },
+        {
+          game: 'steadyhand', title: 'Steady Hand', emoji: '✏️', blurb: 'Guide your pencil along the wiggly path – don\'t touch the sides!',
+          intro: 'Press on the green dot and follow the wiggly path all the way to the 🏁 – carefully! Pick Easy, Medium or Hard.',
+          say: 'Steady hands! Don\'t touch the sides!',
+          done: 'What a steady hand! Rock solid!',
+        },
+        {
+          game: 'match', title: 'The right rock for the job', emoji: '🔨', blurb: 'Match each job to the best rock.',
           intro: 'People choose rocks because of their properties. Match each job to the best rock.',
           say: 'Think: hard? soft? waterproof? pretty?',
           hint: 'Remember your Rock Lab results!',
@@ -282,35 +270,7 @@ window.LESSON = {
             { a: '🦶 Rubbing hard skin off your feet', b: 'pumice' },
           ],
         },
-        {
-          game: 'questions', title: 'Geologist\'s notebook',
-          intro: 'A geologist found these rocks on a walk. Use what you know to answer her notes.',
-          say: 'Think about how each rock was made and what it can do.',
-          questions: [
-            { type: 'type', q: 'This rock was made from tiny sea shells in layers, and you can draw with it. What is it?', answer: ['chalk'], placeholder: 'a rock', hint: 'You might use it on a blackboard.' },
-            { type: 'oddone', q: 'Which rock is the odd one out?', items: ['sandstone', 'chalk', 'limestone', 'granite'], answer: 3, why: 'Why is granite the odd one out?', reasons: ['It is igneous – the others are sedimentary', 'It is the softest', 'It is made by people'], reason: 0 },
-            { type: 'predict', q: 'You drop a granite pebble and a pumice stone into a bucket of water. What do you predict?', options: ['pumice floats, granite sinks', 'they both float', 'they both sink'], answer: 0, reveal: 'The pumice bobs on top, full of air bubbles. The granite sinks straight to the bottom.', then: { q: 'So most rocks…', options: ['sink in water', 'float in water', 'dissolve in water'], answer: 0 } },
-            { type: 'mcq', q: 'Old gravestones made of sandstone often have words that are hard to read. Why?', options: ['rain soaked in and wore the soft rock away', 'someone rubbed the words out', 'sandstone grows moss on purpose'], answer: 0 },
-          ],
-        },
       ],
-    },
-
-    {
-      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
-      say: 'Time to move like the rocks! Do each move.',
-      wiggle: {
-        title: '🌋 Rock and Roll Moves!',
-        seconds: 60,
-        moves: [
-          '🌋 Crouch down low… then ERUPT like a volcano!',
-          '🏖️ Lie flat like a layer of sand – then another on top!',
-          '🔥 Squeeze yourself tiny like metamorphic rock!',
-          '🪨 Freeze like a statue made of marble!',
-          '🎸 Rock and roll! Play an air guitar!',
-          '🪶 Float like pumice – tiptoe very lightly!',
-        ],
-      },
     },
 
     {
@@ -339,7 +299,6 @@ window.LESSON = {
         button: 'Watch the bonus video ▶',
       },
       questions: [
-        { type: 'mcq', q: 'Igneous rocks are made when…', options: ['hot melted rock cools down and goes hard', 'layers of sand get squashed together', 'plants grow on top of rocks'], answer: 0 },
         { type: 'type', q: 'Which rock can float on water because it is full of holes?', answer: ['pumice'], placeholder: 'a rock', hint: 'It comes from frothy lava.' },
         { type: 'mcq', q: 'Gnash wants to build a roof. Which rock should he use?', options: ['slate', 'chalk', 'sandstone'], answer: 0, hint: 'Which rock is impermeable and splits into thin sheets?' },
         { type: 'tf', q: 'Brick is a natural rock.', answer: false, explain: 'Brick is made by people, from clay baked in a hot oven.' },

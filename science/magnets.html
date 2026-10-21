@@ -57,6 +57,8 @@ window.LESSON = {
   title: 'Magnet Magic!',
   emoji: '🧲',
   home: '../index.html',
+  midBreak: false, // the Arcade stage is the fun break
+  layout: 2, // the compact (one video) version: older saved progress starts again from the top
   mascot: {
     name: 'Professor Bolt',
     sprite: Pixel.sprites.robot,
@@ -85,7 +87,7 @@ window.LESSON = {
       pic: Pixel.sprites.magnet,
       hello: "Beep boop! I'm Professor Bolt. Complete every quest, collect 💎 gems, level up – then beat the boss!",
       question: 'Why does a fridge magnet stick to the fridge, but not to the wooden table?',
-      intro: 'Read, watch, play and battle your way through **9 quests**. Tap the yellow words to learn what they mean – each new word is worth a 💎!',
+      intro: 'Read, watch, test magnets with your fingers, pick your own arcade game – then battle the boss! Tap the yellow words to learn what they mean – each new word is worth a 💎!',
       nameLabel: 'Player name:',
     },
 
@@ -136,7 +138,7 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'Fun with Magnets!', short: 'Video 1', minutes: 7,
+      type: 'video', title: 'Fun with Magnets!', short: 'Video', minutes: 6,
       video: { id: 's236Q1nuWXg', title: 'Fun with Magnets!', channel: 'SciShow Kids', duration: '4:46' },
       say: 'Movie time! Watch the video, then come back and answer my questions.',
       clues: [
@@ -148,7 +150,6 @@ window.LESSON = {
       questions: [
         { type: 'mcq', q: 'What is the invisible area all around a magnet called?', options: ['the magnetic field', 'the magnet bubble', 'the force zone'], answer: 0, hint: 'It was also in our reading pages!' },
         { type: 'mcq', q: 'Jessi tested three spoons. Which one did the magnet attract?', options: ['🪵 the wooden spoon', '🥤 the plastic spoon', '🍴 the metal spoon'], answer: 2, hint: 'Magnets attract some metals…' },
-        { type: 'tf', q: 'In the video, the magnet moved a paperclip through a piece of paper.', answer: true, explain: 'The magnetic field pulls right through the paper!' },
         { type: 'tf', q: 'A paperclip stuck to a magnet can pick up another paperclip on its own.', answer: false, hint: "It's the magnet that is special – not the paperclip.", explain: 'The paperclip is attracted to the magnet, but it is not a magnet itself.' },
         { type: 'mcq', q: 'Why does a magnet stick to a fridge door?', options: ['There is iron inside the door', 'The door is sticky', 'The door is cold'], answer: 0 },
         { type: 'mcq', q: 'How can you tell that a magnet is strong?', options: ['It is a bright colour', 'It pulls things from further away', 'It is very big'], answer: 1, hint: 'Think about how close you have to get before it starts to pull.' },
@@ -156,7 +157,7 @@ window.LESSON = {
     },
 
     {
-      type: 'game', title: 'Magnet Detective', short: 'Game 1', minutes: 9,
+      type: 'game', title: 'Magnet Detective', short: 'Detective', minutes: 5,
       rounds: [
         {
           game: 'forces', title: 'Hands-on: will it stick?', shuffle: true, hold: '🧲', snap: true, noTap: true,
@@ -188,57 +189,14 @@ window.LESSON = {
             { label: 'paperclip', emoji: '📎', bucket: 'mm', hint: 'Paperclips are made of steel. Steel has iron in it!' },
             { label: 'iron bolt', emoji: '🔩', bucket: 'mm', hint: 'Iron is a magnetic metal.' },
             { label: 'steel food tin', emoji: '🥫', bucket: 'mm', hint: 'Steel has iron in it, so it is magnetic.' },
-            { label: 'steel scissors', emoji: '✂️', bucket: 'mm', hint: 'Steel has iron in it, so it is magnetic.' },
-            { label: 'steel fork', emoji: '🍴', bucket: 'mm', hint: 'Steel has iron in it, so it is magnetic.' },
             { label: 'safety pin', emoji: '🧷', bucket: 'mm', hint: 'Safety pins are made of steel.' },
             { label: 'drinks can', emoji: '🥤', bucket: 'nm', hint: 'Drinks cans are aluminium – a metal, but not magnetic!' },
-            { label: 'kitchen foil', emoji: '✨', bucket: 'nm', hint: 'Foil is aluminium – a metal, but not magnetic.' },
             { label: 'gold ring', emoji: '💍', bucket: 'nm', hint: 'Gold is a metal, but magnets do not attract it.' },
             { label: 'brass trumpet', emoji: '🎺', bucket: 'nm', hint: 'Brass is a metal, but it is not magnetic.' },
-            { label: 'bronze medal', emoji: '🥉', bucket: 'nm', hint: 'Bronze is a metal, but it is not magnetic.' },
             { label: 'wooden block', emoji: '🪵', bucket: 'no', hint: 'Is wood a metal?' },
             { label: 'plastic ruler', emoji: '📏', bucket: 'no', hint: 'Is plastic a metal?' },
             { label: 'glass jar', emoji: '🫙', bucket: 'no', hint: 'Is glass a metal?' },
-            { label: 'rubber duck', emoji: '🦆', bucket: 'no', hint: 'Is rubber a metal?' },
-            { label: 'pencil', emoji: '✏️', bucket: 'no', hint: 'Pencils are wood and graphite – not metal.' },
           ],
-        },
-        {
-          game: 'truefalse', title: 'Myth Busters',
-          intro: 'True or false? Bust the myths!',
-          say: 'Some of these are true and some are fibs. Can you spot which?',
-          statements: [
-            { text: 'All metals are magnetic.', answer: false, why: 'Aluminium, gold, copper and brass are metals, but magnets do not attract them.' },
-            { text: 'Nickel is a magnetic metal.', answer: true, why: 'Iron, nickel and cobalt are the magnetic metals.' },
-            { text: 'A magnet must touch something to pull it.', answer: false, why: 'Magnetism is a non-contact force – it works across a gap.' },
-            { text: 'Steel is magnetic because it is made mostly from iron.', answer: true, why: "That's right – the iron makes it magnetic." },
-            { text: 'A gold ring will stick to a magnet.', answer: false, why: 'Gold is a metal, but it is not magnetic.' },
-            { text: 'Wood can be magnetic if it is very thick.', answer: false, why: 'Wood is never magnetic, however thick it is.' },
-          ],
-        },
-        {
-          game: 'blocks', title: 'Magnet Bridge',
-          intro: 'Help Professor Bolt cross the river! A giant magnet under the water holds the bridge up – so only **magnetic** blocks will stay. Everything else goes SPLASH!',
-          say: 'Build a bridge with MAGNETIC blocks – iron, steel and nickel!',
-          map: [
-            '............',
-            '............',
-            '............',
-            'R..........F',
-            'gggwwwwwgggg',
-            'dddwwwwwdddd',
-          ],
-          blocks: [
-            { id: 'wood', label: 'Wood', count: 3, sinks: true, why: 'Wood is not magnetic, so the river magnet cannot hold it up!' },
-            { id: 'iron', label: 'Iron', count: 2 },
-            { id: 'gold', label: 'Gold', count: 2, sinks: true, why: 'Gold is a metal, but it is NOT magnetic!' },
-            { id: 'steel', label: 'Steel', count: 2 },
-            { id: 'plastic', label: 'Plastic', count: 2, sinks: true, why: 'Plastic is never magnetic.' },
-            { id: 'foil', label: 'Foil', count: 2, sinks: true, why: 'Foil is aluminium – a metal, but not magnetic!' },
-            { id: 'nickel', label: 'Nickel', count: 1 },
-          ],
-          hintWater: '💦 Splash! The bridge must reach ALL the way across – using only MAGNETIC blocks.',
-          done: 'I made it across! Only magnetic blocks stick to the river magnet!',
         },
       ],
     },
@@ -291,40 +249,8 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'Magnets for Kids', short: 'Video 2', minutes: 7,
-      video: { id: '7HHs98PBgk0', title: 'Magnets for Kids | What is a magnet, and how does it work?', channel: 'Learn Bright', duration: '5:36' },
-      say: 'Second video! This one has some brand new facts. Watch carefully!',
-      clues: [
-        'What are the two ends of a magnet called?',
-        'What happens when two South poles meet?',
-        'How many types of magnet are there?',
-        'An amazing fact about the Earth!',
-      ],
-      questions: [
-        { type: 'mcq', q: 'What are the two ends of a magnet called?', options: ['North pole and South pole', 'top and bottom', 'left and right'], answer: 0 },
-        { type: 'gap', q: 'When two South poles are put together, they ___ each other.', options: ['repel', 'attract'], answer: 0, explain: 'Like poles push apart.' },
-        { type: 'mcq', q: 'How many types of magnet did the video talk about?', options: ['one', 'two', 'three'], answer: 2, hint: 'Temporary, permanent and…', explain: 'Temporary magnets, permanent magnets and electromagnets.' },
-        { type: 'tf', q: "The Earth's core is made of iron and nickel, so the Earth has its own magnetic field.", answer: true },
-        { type: 'mcq', q: 'Which of these did the video say uses magnets?', options: ['🧭 compasses', '🍌 bananas', '✏️ pencils'], answer: 0, hint: 'It helps explorers find North.' },
-      ],
-    },
-
-    {
-      type: 'game', title: 'Pole Power', short: 'Game 2', minutes: 7,
+      type: 'game', title: 'Pole Power', short: 'Poles', minutes: 5,
       rounds: [
-        {
-          game: 'label', title: 'Attract or repel?',
-          intro: 'Look at the poles that are **facing each other**. Will each pair attract or repel?',
-          say: 'Only look at the two ends in the middle. Same or different?',
-          pic: POLE_BOARD,
-          hint: 'Look at the two middle ends. Different poles attract. The same poles repel!',
-          spots: [
-            { x: 84, y: 12.4, answer: '🤝 attract' },
-            { x: 84, y: 36, answer: '🙅 repel' },
-            { x: 84, y: 59.7, answer: '🙅 repel' },
-            { x: 84, y: 83.4, answer: '🤝 attract' },
-          ],
-        },
         {
           game: 'forces', title: 'Hands-on: pole power', shuffle: true, hold: '🧲', snap: true, noTap: true,
           words: { pull: 'ATTRACT', pullSub: '(snaps to you)', push: 'REPEL', pushSub: '(pushes away)' },
@@ -353,52 +279,57 @@ window.LESSON = {
             { type: 'order', q: 'Put the steps of the investigation in order.', items: ['🤔 Predict which magnet is strongest.', '📎 Test each magnet with the same paperclips.', '📝 Record the results in a table.', '🏆 Compare the results and decide.'], ends: ['START', 'END'], hint: 'Scientists always predict before they test!' },
           ],
         },
-        {
-          game: 'match', title: 'Word match',
-          intro: 'Match each magnet word to what it means.',
-          say: 'Tap a word, then tap what it means!',
-          hint: 'Not a match. Tap the yellow words in the reading pages if you need help!',
-          pairs: [
-            { a: '🤝 attract', b: 'pull together' },
-            { a: '🙅 repel', b: 'push apart' },
-            { a: '↔️ poles', b: 'the two ends of a magnet' },
-            { a: '🌀 magnetic field', b: 'the invisible area around a magnet' },
-            { a: '⚖️ fair test', b: 'change only one thing' },
-            { a: '🧭 compass', b: 'has a needle that points North' },
-          ],
-        },
       ],
     },
 
     {
-      type: 'break', title: 'Brain Break', short: 'Break', minutes: 2,
-      say: "Stand up, scientist! Let's be magnets!",
-      wiggle: {
-        title: '🕺 Magnet Moves!',
-        seconds: 60,
-        moves: [
-          '🧲 Be a magnet! Stretch your arms out wide.',
-          '🤝 Opposites attract! Clap your hands together 10 times.',
-          '🙅 Like poles repel! Jump your feet apart, then together.',
-          '📎 Be a paperclip! Zoom on the spot as fast as you can.',
-          '🧭 Be a compass! Spin around slowly and point North.',
-          '😌 Shake it out and take a big deep breath.',
-        ],
-      },
-      tryit: {
-        title: '🔍 Try it at home: Magnet Hunt',
-        intro: 'Ask a grown-up for a fridge magnet.',
-        steps: [
-          '**Predict** first: will it stick? Tap the first box.',
-          'Gently hold the magnet on each thing.',
-          'Did it stick? Tap the second box.',
-        ],
-        table: {
-          cols: ['I think…', 'It did…'],
-          items: ['🥄 a spoon', '🚪 a door handle', '🧊 the fridge door', '📕 a book', '🚗 a toy car', '🔥 a radiator'],
+      type: 'game', title: 'Magnet Arcade: pick a game!', short: 'Arcade', icon: '🕹️', minutes: 4,
+      pick: { title: '🕹️ Pick your arcade game!', say: 'Your choice! Which game do you want to play? Win one to carry on – or play them all!' },
+      rounds: [
+        {
+          game: 'blocks', title: 'Magnet Bridge', emoji: '🌉', blurb: 'Build a bridge from MAGNETIC blocks so Bolt can cross.',
+          intro: 'Help Professor Bolt cross the river! A giant magnet under the water holds the bridge up – so only **magnetic** blocks will stay. Everything else goes SPLASH!',
+          say: 'Build a bridge with MAGNETIC blocks – iron, steel and nickel!',
+          map: [
+            '............',
+            '............',
+            '............',
+            'R..........F',
+            'gggwwwwwgggg',
+            'dddwwwwwdddd',
+          ],
+          blocks: [
+            { id: 'wood', label: 'Wood', count: 3, sinks: true, why: 'Wood is not magnetic, so the river magnet cannot hold it up!' },
+            { id: 'iron', label: 'Iron', count: 2 },
+            { id: 'gold', label: 'Gold', count: 2, sinks: true, why: 'Gold is a metal, but it is NOT magnetic!' },
+            { id: 'steel', label: 'Steel', count: 2 },
+            { id: 'plastic', label: 'Plastic', count: 2, sinks: true, why: 'Plastic is never magnetic.' },
+            { id: 'foil', label: 'Foil', count: 2, sinks: true, why: 'Foil is aluminium – a metal, but not magnetic!' },
+            { id: 'nickel', label: 'Nickel', count: 1 },
+          ],
+          hintWater: '💦 Splash! The bridge must reach ALL the way across – using only MAGNETIC blocks.',
+          done: 'I made it across! Only magnetic blocks stick to the river magnet!',
         },
-        tip: 'Tap once for ✅ (sticks) and twice for ❌ (does not stick).',
-      },
+        {
+          game: 'steadyhand', title: 'Steady Hand', emoji: '✏️', blurb: 'Guide your pencil along the wiggly path – don\'t touch the sides!',
+          intro: 'Press on the green dot and follow the wiggly path all the way to the 🏁 – carefully! Pick Easy, Medium or Hard.',
+          say: 'Steady hands! Don\'t touch the sides!',
+          done: 'What a steady hand! Steadier than a compass needle.',
+        },
+        {
+          game: 'truefalse', title: 'Myth Busters', emoji: '🕵️', blurb: 'True or fib? Bust the magnet myths.',
+          intro: 'True or false? Bust the myths!',
+          say: 'Some of these are true and some are fibs. Can you spot which?',
+          statements: [
+            { text: 'All metals are magnetic.', answer: false, why: 'Aluminium, gold, copper and brass are metals, but magnets do not attract them.' },
+            { text: 'Nickel is a magnetic metal.', answer: true, why: 'Iron, nickel and cobalt are the magnetic metals.' },
+            { text: 'A magnet must touch something to pull it.', answer: false, why: 'Magnetism is a non-contact force – it works across a gap.' },
+            { text: 'Steel is magnetic because it is made mostly from iron.', answer: true, why: "That's right – the iron makes it magnetic." },
+            { text: 'A gold ring will stick to a magnet.', answer: false, why: 'Gold is a metal, but it is not magnetic.' },
+            { text: 'Wood can be magnetic if it is very thick.', answer: false, why: 'Wood is never magnetic, however thick it is.' },
+          ],
+        },
+      ],
     },
 
     {
@@ -412,7 +343,6 @@ window.LESSON = {
         button: 'Open the Oak lesson ▶',
       },
       questions: [
-        { type: 'mcq', q: 'What do we call a push or a pull?', options: ['a force', 'a pole', 'a field'], answer: 0 },
         { type: 'oddone', q: 'Which one would the magnet NOT pick up?', items: ['🔩 iron nail', '📎 paperclip', '🥫 steel tin', '🥤 drinks can'], answer: 3, why: 'Why does the drinks can not belong?', reasons: ['It is aluminium – a metal that is not magnetic', 'It is not made of metal at all', 'It is too heavy for the magnet'], reason: 0, hint: 'They are all metal – but not every metal is magnetic!' },
         { type: 'gap', q: 'The magnetic metals are iron, cobalt and ___.', options: ['nickel', 'gold', 'aluminium'], answer: 0 },
         { type: 'tf', q: 'A drinks can is made of metal, so it must be magnetic.', answer: false, hint: 'Remember the tricky fact – not all metals are magnetic!', explain: 'Drinks cans are aluminium, which is not magnetic.' },
@@ -420,7 +350,6 @@ window.LESSON = {
         { type: 'mcq', q: 'Two magnets push each other away. One of the facing ends is a South pole. What is the other one?', options: ['North', 'South'], answer: 1, hint: 'Pushing apart means the poles are the SAME.' },
         { type: 'tf', q: 'Magnetism is a non-contact force.', answer: true, explain: 'Magnets can pull without touching.' },
         { type: 'mcq', q: 'Why can a fridge magnet hold up your drawing?', options: ["Its pull works through paper", 'The paper becomes magnetic', 'The drawing is sticky'], answer: 0 },
-        { type: 'mcq', q: 'At the recycling centre, the giant magnet picks up…', options: ['🥫 steel tins', '🥤 aluminium drinks cans', '🍾 glass bottles'], answer: 0 },
         { type: 'slider', q: 'Magnet X holds 9 paperclips. Magnet Y holds 4. How many MORE does magnet X hold? Drag the marker.', min: 0, max: 10, step: 1, answer: 5, hint: 'Count on from 4 to 9.', explain: '9 − 4 = 5, so X is stronger by 5.' },
         { type: 'mcq', q: 'Why does a compass needle point North?', options: ['The Earth is like a giant magnet', 'The wind blows it', 'It is heavier at one end'], answer: 0 },
         { type: 'order', q: 'Put the recycling magnet steps in order.', items: ['🗑️ Rubbish moves along a belt.', '🥫 A giant magnet pulls the steel tins out.', '🔥 The tins are melted to make new things.'], hint: 'The rubbish has to arrive before the magnet can pick anything out.' },

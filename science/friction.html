@@ -40,15 +40,6 @@ const CAPTAIN_SKID = Pixel.svg([
   '....k....k..',
 ], { k: '#1b1b1b', w: '#e8f9ff', b: '#7fd6ff', d: '#3c9ad1' });
 
-const RAMP_TABLE = `<table>
-  <caption>🚗 How far did the toy car roll?</caption>
-  <tr><th>Surface</th><th>Rough or smooth?</th><th>Distance</th></tr>
-  <tr><td>🧶 carpet</td><td>rough</td><td>40 cm</td></tr>
-  <tr><td>🛁 towel</td><td>very rough</td><td>25 cm</td></tr>
-  <tr><td>🪵 wooden floor</td><td>smooth</td><td>120 cm</td></tr>
-  <tr><td>🧊 shiny tiles</td><td>very smooth</td><td>150 cm</td></tr>
-</table>`;
-
 // ---------- the lesson ----------
 window.LESSON = {
   id: 'science-friction',
@@ -56,6 +47,8 @@ window.LESSON = {
   title: 'Pushes, Pulls & Friction',
   emoji: '🛷',
   home: '../index.html',
+  midBreak: false, // the Arcade stage is the fun break
+  layout: 2, // the compact (one video) version: older saved progress starts again from the top
   mascot: {
     name: 'Professor Bolt',
     sprite: Pixel.sprites.robot,
@@ -82,7 +75,7 @@ window.LESSON = {
       pic: CAPTAIN_SKID,
       hello: "Beep boop! Welcome back! Today we're learning about pushes, pulls and the sneaky force that slows everything down…",
       question: 'Why is it easy to slide across ice, but hard to slide across a carpet?',
-      intro: 'Start with a quick recap of **Magnet Magic**, then read, watch, hunt for words, solve a crossword – and battle the slipperiest boss yet!',
+      intro: 'Start with a quick recap of **Magnet Magic**, then read, watch, roll cars down a ramp, pick your own arcade game – and battle the slipperiest boss yet!',
       nameLabel: 'Player name:',
     },
 
@@ -150,7 +143,7 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'Push and Pull for Kids', short: 'Video 1', minutes: 7,
+      type: 'video', title: 'Push and Pull for Kids', short: 'Video', minutes: 6,
       video: { id: 'ZLDUrPaLQWE', title: 'Push and Pull for Kids | Forces in Science', channel: 'Homeschool Pop', duration: '5:28' },
       say: 'Movie time! Watch the video, then come back and answer my questions.',
       clues: [
@@ -164,13 +157,12 @@ window.LESSON = {
         { type: 'mcq', q: 'In the video, a pull moves an object…', options: ['towards you', 'away from you'], answer: 0 },
         { type: 'gap', q: 'The girl building a snowman was ___ the big snowball along.', options: ['pushing', 'pulling'], answer: 0, hint: 'The snowball moved away from her.' },
         { type: 'mcq', q: 'The boy with the sled was bringing it towards himself. Was that a push or a pull?', options: ['push', 'pull'], answer: 1 },
-        { type: 'tf', q: 'Pressing a button or a computer key is a push.', answer: true, explain: 'You move the button away from you.' },
         { type: 'mcq', q: 'What is the difference between a push and a pull?', options: ['the direction it moves', 'how heavy it is', 'what colour it is'], answer: 0, hint: 'Away from you, or towards you?' },
       ],
     },
 
     {
-      type: 'game', title: 'Force Finder', short: 'Game 1', minutes: 10,
+      type: 'game', title: 'Force Finder', short: 'Forces', minutes: 5,
       rounds: [
         {
           game: 'forces', title: 'Hands-on: push or pull?', shuffle: true,
@@ -197,52 +189,12 @@ window.LESSON = {
             { label: 'kick a ball', emoji: '⚽', bucket: 'push', hint: 'The ball moves away from you.' },
             { label: 'ring a doorbell', emoji: '🔔', bucket: 'push', hint: 'You press the button away from you.' },
             { label: 'push a trolley', emoji: '🛒', bucket: 'push', hint: 'The trolley moves away from you.' },
-            { label: 'roll a bowling ball', emoji: '🎳', bucket: 'push', hint: 'The ball moves away from you.' },
             { label: 'close a drawer', emoji: '🗄️', bucket: 'push', hint: 'Closing a drawer moves it away from you.' },
-            { label: 'squash play dough', emoji: '🟣', bucket: 'push', hint: 'You press down, away from you.' },
             { label: 'tug of war', emoji: '🪢', bucket: 'pull', hint: 'You bring the rope towards you.' },
             { label: 'open a drawer', emoji: '🗃️', bucket: 'pull', hint: 'Opening a drawer brings it towards you.' },
             { label: 'pull a sledge', emoji: '🛷', bucket: 'pull', hint: 'The sledge comes along behind you.' },
-            { label: 'pick an apple', emoji: '🍎', bucket: 'pull', hint: 'You pull the apple off the tree towards you.' },
             { label: 'drag a suitcase', emoji: '🧳', bucket: 'pull', hint: 'The suitcase follows behind you.' },
-            { label: 'pull up your socks', emoji: '🧦', bucket: 'pull', hint: 'You pull them up towards you.' },
           ],
-        },
-        {
-          game: 'mystery', title: 'Mystery Force Words',
-          intro: 'Captain Skid has hidden some **force words**! Read the clue and work out the word. Solve it on the first clue for 3 gems!',
-          say: 'The fewer clues you need, the more gems you win!',
-          words: [
-            { word: 'smooth', clues: ['It describes how something feels.', 'Ice, glass and shiny tiles are all like this.', 'It is the opposite of rough.'] },
-            { word: 'brakes', clues: ['Every bike has them.', 'They rub on the wheel to make friction.', 'You squeeze them to slow down and stop.'], options: ['brakes', 'pedals', 'wheels', 'bells'] },
-            { word: 'surface', clues: ['A table has one. So does a road.', 'Friction happens when two of these rub together.', 'It is the outside or top layer of something.'] },
-          ],
-        },
-        {
-          game: 'invaders', title: 'Force Blaster',
-          intro: 'Push-and-pull aliens are invading! Read each mission at the top – then shoot ONLY the right aliens.',
-          say: 'Tap above an alien to fly there and fire!',
-          waves: [
-            {
-              prompt: 'Shoot the PUSHES!',
-              items: [
-                { label: '⚽ kick', ok: true }, { label: '🔔 press', ok: true }, { label: '🛒 push trolley', ok: true }, { label: '🎳 bowl', ok: true },
-                { label: '🪢 tug', ok: false, why: 'Tug of war is a PULL – the rope comes towards you.' },
-                { label: '🍎 pick', ok: false, why: 'Picking an apple is a PULL.' },
-                { label: '🧳 drag', ok: false, why: 'Dragging a suitcase is a PULL.' },
-              ],
-            },
-            {
-              prompt: 'Now shoot the PULLS!',
-              items: [
-                { label: '🚪 open a drawer', ok: true }, { label: '🐕 walk a dog on a lead', ok: true }, { label: '🧦 pull up socks', ok: true },
-                { label: '🛝 push a swing', ok: false, why: 'You push a swing AWAY from you – that is a push.' },
-                { label: '🚲 pedal', ok: false, why: 'Pedalling pushes the pedals down – a push.' },
-                { label: '🔔 ring a doorbell', ok: false, why: 'Pressing a doorbell is a push.' },
-              ],
-            },
-          ],
-          done: 'MISSION COMPLETE! Pushes move things away, pulls bring them closer.',
         },
       ],
     },
@@ -295,26 +247,7 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'Slipping, Sliding Science!', short: 'Video 2', minutes: 7,
-      video: { id: 'Ps90zArJEJY', title: 'Slipping, Sliding Science! | Physics for Kids', channel: 'SciShow Kids', duration: '4:21' },
-      say: 'Second video! Watch how friction works on a water slide.',
-      clues: [
-        'What is friction?',
-        'Why is a book harder to push along the pavement than a table?',
-        'Why is ice so slippery?',
-        'What makes the water slide so slippery?',
-      ],
-      questions: [
-        { type: 'mcq', q: 'What is friction?', options: ['a force between two surfaces that are trying to slide against each other', 'a kind of magnet', 'a type of water'], answer: 0 },
-        { type: 'mcq', q: 'Why is it harder to push a book along the pavement than across a table?', options: ['The pavement is rougher, so there is more friction', 'The book gets heavier outside', 'The pavement is magnetic'], answer: 0 },
-        { type: 'tf', q: 'Ice is slippery because it is very smooth and makes less friction.', answer: true },
-        { type: 'mcq', q: 'What made the water slide really slippery?', options: ['💧 the water', '🌱 the grass', '☀️ the sunshine'], answer: 0, explain: 'The water makes a slippery layer between you and the plastic.' },
-        { type: 'predict', q: 'You run onto a smooth wooden floor wearing just socks. What do you predict?', options: ['🧦 I slide a long way', '🛑 I stop straight away'], answer: 0, reveal: 'Wheee! Socks are smooth, so there is very little friction – you slide!', then: { q: 'Why do trainers stop you sliding?', options: ['Their bumpy soles make more friction', 'They are heavier than socks', 'They are a brighter colour'], answer: 0, hint: 'Which has bumpy, grippy soles?' } },
-      ],
-    },
-
-    {
-      type: 'game', title: 'Friction Lab', short: 'Game 2', minutes: 12,
+      type: 'game', title: 'Friction Lab', short: 'Lab', minutes: 7,
       rounds: [
         {
           game: 'ramp', title: 'Ramp Lab',
@@ -341,20 +274,6 @@ window.LESSON = {
           ],
         },
         {
-          game: 'questions', title: 'Ramp test',
-          intro: 'Professor Bolt rolled the same toy car down the same ramp onto four surfaces. Read the table carefully!',
-          say: 'Think like a scientist! Short distance = lots of friction.',
-          html: RAMP_TABLE,
-          questions: [
-            { type: 'mcq', q: 'On which surface did the car stop soonest?', options: ['🧶 carpet', '🛁 towel', '🪵 wooden floor', '🧊 shiny tiles'], answer: 1, hint: 'Find the SHORTEST distance.' },
-            { type: 'mcq', q: 'Which surface made the LEAST friction?', options: ['🧶 carpet', '🛁 towel', '🪵 wooden floor', '🧊 shiny tiles'], answer: 3, hint: 'Less friction means the car rolls further.' },
-            { type: 'type', q: 'How much further did the car roll on the wooden floor than on the carpet?', answer: ['80', '80 cm', '80cm'], after: 'cm', placeholder: 'a number', hint: 'Take 40 away from 120.', explain: '120 − 40 = 80 cm' },
-            { type: 'tf', q: 'The rougher the surface, the further the car rolled.', answer: false, explain: 'Rough surfaces make more friction, so the car stops sooner.' },
-            { type: 'mcq', q: 'To keep the test fair, what must stay the same?', options: ['the height of the ramp', 'the surface', 'the distance the car rolls'], answer: 0, hint: 'We only change ONE thing – the surface.' },
-            { type: 'order', q: 'Put the surfaces in order from MOST friction to LEAST friction.', items: ['🛁 towel (25 cm)', '🧶 carpet (40 cm)', '🪵 wooden floor (120 cm)', '🧊 shiny tiles (150 cm)'], ends: ['MOST friction', 'LEAST friction'], hint: 'Most friction = shortest distance.' },
-          ],
-        },
-        {
           game: 'forces', title: 'Slide Challenge',
           intro: 'Flick each thing ▶ so that friction stops it inside the green box. Watch the floor! **Rough** floors need a big push. **Smooth** floors need only a gentle one.',
           say: 'A quick flick is a big push. A slow little flick is a gentle push!',
@@ -366,8 +285,47 @@ window.LESSON = {
             { slide: 'sand', thing: '📦', label: 'Slide the box across the sand!' },
           ],
         },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Force Arcade: pick a game!', short: 'Arcade', icon: '🕹️', minutes: 4,
+      pick: { title: '🕹️ Pick your arcade game!', say: 'Your choice! Which game do you want to play? Win one to carry on – or play them all!' },
+      rounds: [
         {
-          game: 'crossword', title: 'Forces Crossword',
+          game: 'invaders', title: 'Force Blaster', emoji: '🚀', blurb: 'Shoot the pushes – then the pulls!',
+          intro: 'Push-and-pull aliens are invading! Read each mission at the top – then shoot ONLY the right aliens.',
+          say: 'Tap above an alien to fly there and fire!',
+          waves: [
+            {
+              prompt: 'Shoot the PUSHES!',
+              items: [
+                { label: '⚽ kick', ok: true }, { label: '🔔 press', ok: true }, { label: '🛒 push trolley', ok: true }, { label: '🎳 bowl', ok: true },
+                { label: '🪢 tug', ok: false, why: 'Tug of war is a PULL – the rope comes towards you.' },
+                { label: '🍎 pick', ok: false, why: 'Picking an apple is a PULL.' },
+                { label: '🧳 drag', ok: false, why: 'Dragging a suitcase is a PULL.' },
+              ],
+            },
+            {
+              prompt: 'Now shoot the PULLS!',
+              items: [
+                { label: '🚪 open a drawer', ok: true }, { label: '🐕 walk a dog on a lead', ok: true }, { label: '🧦 pull up socks', ok: true },
+                { label: '🛝 push a swing', ok: false, why: 'You push a swing AWAY from you – that is a push.' },
+                { label: '🚲 pedal', ok: false, why: 'Pedalling pushes the pedals down – a push.' },
+                { label: '🔔 ring a doorbell', ok: false, why: 'Pressing a doorbell is a push.' },
+              ],
+            },
+          ],
+          done: 'MISSION COMPLETE! Pushes move things away, pulls bring them closer.',
+        },
+        {
+          game: 'steadyhand', title: 'Steady Hand', emoji: '✏️', blurb: 'Guide your pencil along the wiggly path – don\'t touch the sides!',
+          intro: 'Press on the green dot and follow the wiggly path all the way to the 🏁 – carefully! Pick Easy, Medium or Hard.',
+          say: 'Steady hands! Don\'t touch the sides!',
+          done: 'What a steady hand! Captain Skid would have skidded off.',
+        },
+        {
+          game: 'crossword', title: 'Forces Crossword', emoji: '🧩', blurb: 'Every answer is a forces word.',
           intro: 'Solve the crossword! Tap a clue, then type the answer with the letter keys.',
           say: 'Crossword time! Stuck? Press 💡 Hint for a free letter.',
           entries: [
@@ -385,37 +343,6 @@ window.LESSON = {
     },
 
     {
-      type: 'break', title: 'Brain Break', short: 'Break', minutes: 2,
-      say: "Stand up, scientist! Time for some force moves!",
-      wiggle: {
-        title: '🕺 Force Moves!',
-        seconds: 60,
-        moves: [
-          '🧱 Push the wall! Push as hard as you can for 5 seconds.',
-          '🪢 Tug of war! Pull an invisible rope towards you.',
-          '⛸️ Ice skate! Glide your feet on the smooth ice.',
-          '👟 Grippy feet! Stomp on the spot like football boots.',
-          '🛷 Pull a sledge! Walk forward pulling a heavy sledge.',
-          '😌 Shake it out and take a big deep breath.',
-        ],
-      },
-      tryit: {
-        title: '🔍 Try it at home: Slide Test',
-        intro: 'You need a toy car (or a coin) and a grown-up.',
-        steps: [
-          '**Predict**: will it slide a long way on this floor? Tap the first box.',
-          'Give it the **same gentle push** each time – that keeps it fair!',
-          'Did it go a long way? Tap the second box.',
-        ],
-        table: {
-          cols: ['I think…', 'It did…'],
-          items: ['🧶 carpet', '🪵 wooden floor', '🧊 kitchen tiles', '🛁 a towel', '📕 a big book'],
-        },
-        tip: 'Tap once for ✅ (went a long way) and twice for ❌ (stopped quickly).',
-      },
-    },
-
-    {
       type: 'quiz', title: 'Boss Battle: Captain Skid', short: 'Boss', kind: 'Boss battle', minutes: 6,
       say: 'Uh-oh… CAPTAIN SKID wants to make the whole world slippery! Every right answer is a hit. Stop him, {name}!',
       boss: { name: 'Captain Skid', sprite: CAPTAIN_SKID, attack: '🧊', lines: { intro: 'Ahoy! Captain Skid will make EVERYTHING slippery!', hurt: ['Whoa! I\'m slipping!', 'Too much grip!', 'Argh! Friction!'], taunt: ['Wheee! Wrong!', 'Slip slide!', 'Ha! Skidded you!'], angry: 'Now I\'m sliding mad!', defeat: 'NOOO! I\'ve skidded to a stop!', win: 'Wheee! Everyone is slipping over! I win!', stunned: 'Whoa… whoa… can\'t… stop… spinning…', beg: ['Wait! I can\'t get a grip!', 'Help! I\'m sliding the wrong way!', 'No more friction, please!'] } },
@@ -427,7 +354,6 @@ window.LESSON = {
       },
       questions: [
         { type: 'type', q: 'Finish it: a force is a push or a…', answer: ['pull', 'a pull'], before: 'a push or a', placeholder: 'one word', hint: 'The opposite of a push!' },
-        { type: 'mcq', q: 'Which of these is a PULL?', options: ['⚽ kicking a ball', '🍎 picking an apple', '🔔 ringing a doorbell'], answer: 1, hint: 'Which one moves towards you?' },
         { type: 'tf', q: 'Forces can change the shape of an object.', answer: true, explain: 'Like squashing play dough!' },
         { type: 'mcq', q: 'Which of these is a NON-contact force?', options: ['🧲 magnetism', '⚽ kicking', '🛑 friction'], answer: 0, hint: 'Remember last lesson – which force works without touching?' },
         { type: 'gap', q: 'Friction is a force that ___ things down.', options: ['slows', 'speeds'], answer: 0 },
@@ -436,7 +362,6 @@ window.LESSON = {
         { type: 'build', q: 'Why is grit spread on icy roads? Build the answer.', answer: ['Grit', 'gives', 'tyres', 'more', 'grip'], extra: ['less', 'speed'], join: ' ', hint: 'Rough grit makes MORE friction.' },
         { type: 'mcq', q: 'Bike brakes use friction to…', options: ['🛑 slow down and stop', '🎈 make the bike lighter', '💨 pump up the tyres'], answer: 0 },
         { type: 'mcq', q: 'Jay pushes a box. It will not move. What could help?', options: ['put wheels under it', 'put sandpaper under it', 'push it more gently'], answer: 0, hint: 'Which one makes LESS friction?' },
-        { type: 'mcq', q: 'Mia tests 3 floors with her toy car. To keep it fair she must…', options: ['use the same car and ramp each time', 'use a different car each time', 'push harder on the carpet'], answer: 0 },
         { type: 'order', q: 'Put these in order from MOST friction to LEAST friction.', items: ['🧱 sandpaper', '🧶 carpet', '🪵 wooden floor', '🧊 ice'], ends: ['MOST GRIP', 'MOST SLIPPY'], hint: 'Roughest first, smoothest last.' },
       ],
     },

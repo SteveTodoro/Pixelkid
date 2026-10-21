@@ -68,6 +68,8 @@ window.LESSON = {
   title: 'Fossil Hunters',
   emoji: '🦖',
   home: '../index.html',
+  midBreak: false, // the Arcade stage is the fun break
+  layout: 2, // the compact (one video) version: older saved progress starts again from the top
   mascot: {
     name: 'Professor Bolt',
     sprite: Pixel.sprites.robot,
@@ -87,7 +89,7 @@ window.LESSON = {
       pic: AMMONITE,
       hello: 'Welcome back, rock star! Today we hunt for clues from millions of years ago, hidden inside rocks. But watch the sky: Pterry the pterosaur is swooping in to snatch our fossils!',
       question: 'How could a dinosaur that lived millions of years ago end up inside a rock?',
-      intro: 'Recap, read, watch, dig up real fossils at the **Dig Site**, investigate the layers – then save the fossils from Pterry!',
+      intro: 'Recap, read, watch, dig up real fossils at the **Dig Site**, investigate the layers, pick your own arcade game – then save the fossils from Pterry!',
       nameLabel: 'Player name:',
     },
 
@@ -151,11 +153,19 @@ window.LESSON = {
           ],
           check: { q: 'A trilobite is found in a layer BELOW an ammonite. Which one is older?', options: ['the trilobite', 'the ammonite', 'they are exactly the same age'], answer: 0, hint: 'Which layer was made first?' },
         },
+        {
+          title: 'Mary Anning, fossil hunter', pic: '👧🔍🦴',
+          text: [
+            'Mary Anning lived by the sea in England, about 200 years ago. She hunted for fossils in the crumbly cliffs, and sold them to visitors.',
+            'When she was 12, she and her brother found the skeleton of a giant sea reptile called an ichthyosaur (say "ICK-thee-oh-sor"). Some scientists did not believe her at first, because she had never been to school. Today she is one of the most famous fossil hunters ever.',
+          ],
+          check: { q: 'Mary found her best fossils in cliffs by the sea. Why are seaside cliffs such good places to hunt?', options: ['Waves and rain wear the rock away, so fossils peep out', 'Fossils are washed in by the tide every day', 'The sand turns into fossils overnight'], answer: 0, hint: 'Think back: what makes a buried fossil peep out of the rock?' },
+        },
       ],
     },
 
     {
-      type: 'video', title: 'How Do Dinosaur Fossils Form?', short: 'Video 1', minutes: 6,
+      type: 'video', title: 'How Do Dinosaur Fossils Form?', short: 'Video', minutes: 5,
       video: { id: '87E8bQrX4Wg', title: 'How do dinosaur fossils form? | Natural History Museum', channel: 'Natural History Museum', duration: '3:49' },
       say: 'The Natural History Museum shows how a dinosaur became a fossil. Watch, then answer my questions.',
       clues: [
@@ -175,7 +185,7 @@ window.LESSON = {
     },
 
     {
-      type: 'game', title: 'The Dig Site', short: 'Game 1', minutes: 12,
+      type: 'game', title: 'The Dig Site', short: 'Dig Site', minutes: 6,
       rounds: [
         {
           game: 'fossildig', title: 'Fossil dig',
@@ -201,22 +211,6 @@ window.LESSON = {
           ends: ['FIRST', 'LAST'],
           items: ['🦕 A dinosaur dies by a river', '🌊 A flood covers its bones in mud', '🪨 Layers pile on top and turn to rock', '💧 Minerals turn the bones to stone', '🔍 Rain wears the rock away and a fossil hunter finds it'],
           hint: 'The bones have to be buried before they can turn to stone.',
-        },
-        {
-          game: 'runner', title: 'Fossil Dash',
-          intro: 'Your hero runs by itself! Pick the lane with a **real fossil** – leave everything else behind.',
-          say: 'Tap the top or bottom lane. Collect the FOSSILS!',
-          prompt: 'Collect the real fossils!',
-          items: [
-            { label: 'ammonite', ok: true },
-            { label: 'dino footprint', ok: true },
-            { label: 'trilobite', ok: true },
-            { label: 'shark tooth fossil', ok: true },
-            { label: 'plastic dinosaur', ok: false, why: 'A toy was never alive, so it can\'t be a fossil.' },
-            { label: 'granite', ok: false, why: 'Granite is an igneous rock – fossils don\'t form in it.' },
-            { label: 'a glass marble', ok: false, why: 'A marble was made by people, not a living thing.' },
-          ],
-          done: 'FOSSIL DASH COMPLETE! You know a real fossil when you see one!',
         },
       ],
     },
@@ -250,30 +244,33 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'Mary Anning: Fossil Hunter', short: 'Video 2', minutes: 6,
-      video: { id: 'koota_lwU_4', title: 'Mary Anning: Fossil Hunter | Science for Kids', channel: 'SciShow Kids', duration: '4:14' },
-      say: 'Meet Mary Anning, one of the greatest fossil hunters ever – who never even went to school! Watch, then answer my questions.',
-      clues: [
-        'Where did Mary Anning live?',
-        'What did she find when she was 12?',
-        'Why didn\'t some scientists believe her?',
-        'What were the strange little stones?',
-      ],
-      questions: [
-        { type: 'mcq', q: 'Mary Anning lived in England, near…', options: ['the sea, with cliffs to explore', 'a big city with no cliffs', 'a volcano'], answer: 0 },
-        { type: 'mcq', q: 'What did Mary sell to visitors?', options: ['shells (and fossils) she collected', 'ice creams', 'books'], answer: 0 },
-        { type: 'type', q: 'At what age did Mary and her brother find a whole ichthyosaur skeleton?', answer: ['12', 'twelve'], placeholder: 'a number', hint: 'She was still a child!' },
-        { type: 'mcq', q: 'An ichthyosaur had fins and flippers, but it was not a fish. What was it?', options: ['a reptile', 'a mammal', 'an insect'], answer: 0 },
-        { type: 'mcq', q: 'Why did some scientists not take Mary seriously?', options: ['she hadn\'t studied science at school', 'her fossils were fake', 'she lived too far away'], answer: 0 },
-        { type: 'mcq', q: 'Mary broke open some strange little stones. What were they?', options: ['fossilised poo!', 'dinosaur eggs', 'gold nuggets'], answer: 0 },
-      ],
-    },
-
-    {
-      type: 'game', title: 'Museum Curator', short: 'Game 2', minutes: 8,
+      type: 'game', title: 'Fossil Arcade: pick a game!', short: 'Arcade', icon: '🕹️', minutes: 4,
+      pick: { title: '🕹️ Pick your arcade game!', say: 'Your choice! Which game do you want to play? Win one to carry on – or play them all!' },
       rounds: [
         {
-          game: 'mystery', title: 'Mystery fossil words',
+          game: 'runner', title: 'Fossil Dash', emoji: '🏃', blurb: 'Race along and grab the real fossils.',
+          intro: 'Your hero runs by itself! Pick the lane with a **real fossil** – leave everything else behind.',
+          say: 'Tap the top or bottom lane. Collect the FOSSILS!',
+          prompt: 'Collect the real fossils!',
+          items: [
+            { label: 'ammonite', ok: true },
+            { label: 'dino footprint', ok: true },
+            { label: 'trilobite', ok: true },
+            { label: 'shark tooth fossil', ok: true },
+            { label: 'plastic dinosaur', ok: false, why: 'A toy was never alive, so it can\'t be a fossil.' },
+            { label: 'granite', ok: false, why: 'Granite is an igneous rock – fossils don\'t form in it.' },
+            { label: 'a glass marble', ok: false, why: 'A marble was made by people, not a living thing.' },
+          ],
+          done: 'FOSSIL DASH COMPLETE! You know a real fossil when you see one!',
+        },
+        {
+          game: 'steadyhand', title: 'Steady Hand', emoji: '✏️', blurb: 'Guide your pencil along the wiggly path – don\'t touch the sides!',
+          intro: 'Press on the green dot and follow the wiggly path all the way to the 🏁 – carefully! Pick Easy, Medium or Hard.',
+          say: 'Steady hands! Don\'t touch the sides!',
+          done: 'What a steady hand! Gentle enough to brush a fossil.',
+        },
+        {
+          game: 'mystery', title: 'Mystery Fossil Words', emoji: '🔍', blurb: 'Crack the clues to find the fossil word.',
           intro: 'Read the clues one at a time and guess the word. Guess on the first clue for 3 💎!',
           words: [
             { word: 'FOSSIL', clues: ['It can be a bone, a shell or even a footprint.', 'It is kept safe in rock for millions of years.', 'Mary Anning hunted for them.'], explain: 'A fossil is the remains or trace of a living thing from long ago.' },
@@ -282,35 +279,7 @@ window.LESSON = {
             { word: 'SEDIMENT', clues: ['It settles at the bottom of seas and rivers.', 'It buries remains so they can become fossils.', 'Sand and mud are this.'], explain: 'Sediment is sand, mud and bits of rock that settle in layers.' },
           ],
         },
-        {
-          game: 'truefalse', title: 'Fossil fact or fiction?',
-          intro: 'Is each fossil fact true or false? Think like a palaeontologist!',
-          statements: [
-            { text: 'Dinosaur fossils have been found that show the animals sitting on their nests.', answer: true, why: 'The Citipati fossil was buried by a sandstorm while it sat on its eggs.' },
-            { text: 'Every animal that dies becomes a fossil.', answer: false, why: 'Most never do – the remains have to be buried quickly, and even then most fossils are lost.' },
-            { text: 'Fossils are usually found in igneous rock, like granite.', answer: false, why: 'They form in sedimentary rock, made from layers of sand and mud.' },
-            { text: 'Ammonites died out at about the same time as the dinosaurs.', answer: true, why: 'Both became extinct around 66 million years ago.' },
-            { text: 'Mary Anning found the first whole plesiosaur skeleton.', answer: true, why: 'She did – some people didn\'t believe it was real at first!' },
-          ],
-        },
       ],
-    },
-
-    {
-      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
-      say: 'Dinosaur moves! Do each one for a few seconds.',
-      wiggle: {
-        title: '🦖 Dino Moves!',
-        seconds: 60,
-        moves: [
-          '🦖 Stomp like a T. rex with tiny arms!',
-          '🦕 Stretch your long neck up high like a Diplodocus!',
-          '🪽 Flap your wings and swoop like a pterosaur!',
-          '🐚 Curl up small like an ammonite shell!',
-          '🖌️ Brush the floor gently like a fossil hunter!',
-          '🌋 Jump up – the volcano is erupting!',
-        ],
-      },
     },
 
     {
@@ -339,7 +308,6 @@ window.LESSON = {
         button: 'Watch the bonus video ▶',
       },
       questions: [
-        { type: 'mcq', q: 'A fossil is…', options: ['the remains or trace of a living thing from long ago, kept in rock', 'any old rock', 'a kind of crystal'], answer: 0 },
         { type: 'mcq', q: 'In which kind of rock are fossils usually found?', options: ['sedimentary', 'igneous', 'metamorphic'], answer: 0 },
         { type: 'order', q: 'Put these in order: how a fossil forms.', items: ['🐟 a fish dies', '🏖️ it is buried by sand', '💧 minerals turn it to stone', '🔍 the rock wears away and it is found'], ends: ['FIRST', 'LAST'], hint: 'It has to be buried before it can turn to stone.' },
         { type: 'mcq', q: 'Pterry finds a fossil in the top layer and one in the bottom layer. Which is older?', options: ['the one in the bottom layer', 'the one in the top layer', 'they are the same age'], answer: 0 },

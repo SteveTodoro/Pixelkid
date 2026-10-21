@@ -76,6 +76,8 @@ window.LESSON = {
   title: 'Flower Power Life Cycle',
   emoji: '🌸',
   home: '../index.html',
+  midBreak: false, // the Arcade stage is the fun break
+  layout: 2, // the compact (one video) version: older saved progress starts again from the top
   finishAch: 'gardener',
   mascot: {
     name: 'Professor Bolt',
@@ -101,7 +103,7 @@ window.LESSON = {
       pic: BLOOM,
       hello: 'Beep boop! Welcome back, scientist! Today we find out why flowers are so much more than just pretty.',
       question: 'An apple tree can\'t walk. So how does it plant baby apple trees in new places?',
-      intro: 'Recap **What Do Plants Need?**, read, watch, fly a bee from flower to flower, send seeds flying – then stop Mowbot 3000 from mowing down every flower! A new 🐝 bee pet is waiting in the Wardrobe shop.',
+      intro: 'Recap **What Do Plants Need?**, read, watch, fly a bee from flower to flower, send seeds flying, pick your own arcade game – then stop Mowbot 3000 from mowing down every flower! A new 🐝 bee pet is waiting in the Wardrobe shop.',
       nameLabel: 'Player name:',
     },
 
@@ -123,7 +125,7 @@ window.LESSON = {
     },
 
     {
-      type: 'read', title: 'From seed to flower', short: 'Read 1', minutes: 6,
+      type: 'read', title: 'From seed to flower', short: 'Read 1', minutes: 5,
       say: 'Read each page carefully – the checks test if you really understood it! Tap the yellow words for a 💎.',
       cards: [
         {
@@ -170,7 +172,7 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'From Seed to Fruit', short: 'Video 1', minutes: 7,
+      type: 'video', title: 'From Seed to Fruit', short: 'Video', minutes: 6,
       video: { id: '2SBVz4MgeIE', title: 'Plant Life Cycle Stages From Seed To Fruit', channel: 'The Pique Lab', duration: '5:22' },
       say: 'In this video, a tree tells the story of its own life! Watch, then answer my questions.',
       clues: [
@@ -183,24 +185,14 @@ window.LESSON = {
         { type: 'mcq', q: 'The video says a seed needs three things to wake up. Which three?', options: ['water, oxygen and warmth', 'light, soil and wind', 'sugar, salt and water'], answer: 0, explain: 'W-O-W: water, oxygen, warmth!' },
         { type: 'type', q: 'What protects the seed while it sleeps?', answer: ['seed coat', 'a seed coat', 'the seed coat', 'its seed coat', 'coat'], placeholder: 'two words', hint: 'It is a tough ____ ____ wrapped around the seed.' },
         { type: 'mcq', q: 'Which part of the plant appears first?', options: ['the roots', 'the flowers', 'the fruit'], answer: 0 },
-        { type: 'tf', q: 'The video says roots always grow downwards, whichever way up the seed is lying.', answer: true },
         { type: 'mcq', q: 'In the video, the two ways the flowers can be pollinated are by…', options: ['insects or the wind', 'rain or snow', 'people or cars'], answer: 0 },
         { type: 'mcq', q: 'Ferns do not grow flowers. What does the video say they make instead?', options: ['spores', 'apples', 'nectar'], answer: 0 },
       ],
     },
 
     {
-      type: 'game', title: 'Pollination Lab', short: 'Game 1', minutes: 13,
+      type: 'game', title: 'Pollination Lab', short: 'Bee Lab', minutes: 7,
       rounds: [
-        {
-          game: 'questions', title: 'Life cycle line-up',
-          intro: 'Put the life cycle of a flowering plant in order, then answer Professor Bolt\'s questions.',
-          say: 'Think about what has to happen FIRST!',
-          questions: [
-            { type: 'order', q: 'Put the life cycle in order. The seed is done for you!', items: ['🫘 a seed', '🌱 it germinates (sprouts)', '🌿 a seedling grows', '🌷 the adult plant flowers', '🐝 the flowers are pollinated', '🍎 seeds grow inside the fruit'], start: true, ends: ['START', 'END'], hint: 'Seeds can only be made after pollination.' },
-            { type: 'mcq', q: 'What comes straight after the seeds are spread to a new place?', options: ['They germinate and the cycle starts again', 'The plant grows its first flower', 'The fruit turns back into a flower'], answer: 0 },
-          ],
-        },
         {
           game: 'label', title: 'Label the flower',
           intro: 'Drag each label onto the right part of the flower. Two of the labels are fakes!',
@@ -239,17 +231,6 @@ window.LESSON = {
                 { type: 'predict', q: 'The bee carries poppy pollen to a sunflower. What do you predict?', options: ['Nothing happens', 'The sunflower grows poppy seeds', 'The sunflower turns red'], answer: 0, reveal: 'Nothing happens – poppy pollen only works on poppies!', then: { q: 'So to make seeds, a flower needs pollen from…', options: ['the same kind of flower', 'any flower at all', 'a bee\'s nest'], answer: 0 } },
               ],
             },
-          ],
-        },
-        {
-          game: 'questions', title: 'Word Builder',
-          intro: 'Mowbot chopped up the **life cycle words**! Read the meaning, then tap the tiles to build the word again. Watch out – some tiles are traps!',
-          say: 'Say the word slowly, one chunk at a time, then build it.',
-          questions: [
-            { type: 'build', q: 'Build the word: when a seed wakes up and sprouts, it…', answer: ['ger', 'mi', 'nate'], extra: ['jer', 'mate'], hint: 'It starts with a soft g, like in giant.' },
-            { type: 'build', q: 'Build the word: the yellow dust made by the stamens.', answer: ['pol', 'len'], extra: ['pal', 'lin'] },
-            { type: 'build', q: 'Build the word: a baby plant that has just sprouted.', answer: ['seed', 'ling'], extra: ['sead', 'lin'] },
-            { type: 'build', q: 'Build the word: moving pollen from flower to flower.', answer: ['pol', 'li', 'na', 'tion'], extra: ['shun', 'pal'], hint: 'The end sounds like "shun" but is spelt t-i-o-n.' },
           ],
         },
       ],
@@ -296,65 +277,11 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'How Do Seeds Travel?', short: 'Video 2', minutes: 7,
-      video: { id: 'WqgVks9NViQ', title: 'How Do Plant Seeds Travel?', channel: 'SciShow Kids', duration: '5:47' },
-      say: 'Jessi and Squeaks the robot mouse are finding out how seeds get around. Watch, then answer my questions.',
-      clues: [
-        'How do you help a dandelion when you make a wish?',
-        'Why can\'t all the seeds grow next to the parent plant?',
-        'How does a coconut travel?',
-        'Why do squirrels help oak trees?',
-      ],
-      questions: [
-        { type: 'mcq', q: 'When you blow on a fluffy dandelion, you are…', options: ['helping its seeds travel somewhere new', 'stopping it from growing', 'giving it a drink'], answer: 0 },
-        { type: 'mcq', q: 'Why do seeds need to travel away from the parent plant?', options: ['There would not be enough space, soil, water and sunlight for them all', 'The parent plant does not like them', 'Seeds can only grow in water'], answer: 0 },
-        { type: 'type', q: 'What do maple (sycamore) seeds have to catch the wind?', answer: ['wings', 'wing', 'a wing'], placeholder: 'one word', hint: 'They spin like helicopters…' },
-        { type: 'mcq', q: 'How does a coconut travel?', options: ['It floats on the water, like a boat', 'It flies on the wind', 'It sticks to animals\' fur'], answer: 0 },
-        { type: 'mcq', q: 'Why do lots of oak trees grow from acorns that squirrels buried?', options: ['The squirrels forgot where they put them', 'Squirrels plant them on purpose', 'Acorns fall out of squirrels\' nests'], answer: 0 },
-        { type: 'mcq', q: 'Why does an apple tree wrap its seeds in tasty fruit?', options: ['So animals eat it and carry the seeds away in their tummies', 'So the seeds stay warm', 'So nobody eats it'], answer: 0 },
-      ],
-    },
-
-    {
-      type: 'game', title: 'Seed Scatter', short: 'Game 2', minutes: 10,
+      type: 'game', title: 'Meadow Arcade: pick a game!', short: 'Arcade', icon: '🕹️', minutes: 4,
+      pick: { title: '🕹️ Pick your arcade game!', say: 'Your choice! Which game do you want to play? Win one to carry on – or play them all!' },
       rounds: [
         {
-          game: 'sort', title: 'How does it travel?',
-          intro: 'Look at each seed\'s clue. Sort it into the way it travels.',
-          say: 'Is it fluffy? Hooked? Tasty? Floaty? Or does it pop?',
-          buckets: [
-            { id: 'wind', label: 'Wind', emoji: '🌬️' },
-            { id: 'animal', label: 'Animals', emoji: '🐿️' },
-            { id: 'water', label: 'Water', emoji: '🌊' },
-            { id: 'pop', label: 'Pop!', emoji: '💥' },
-          ],
-          items: [
-            { label: 'dandelion with a fluffy parachute', emoji: '🌼', bucket: 'wind', hint: 'Fluffy and light – what could blow it away?' },
-            { label: 'sycamore seed with wings', emoji: '🍁', bucket: 'wind', hint: 'Wings spin like a helicopter in the…?' },
-            { label: 'burr covered in tiny hooks', emoji: '🌰', bucket: 'animal', hint: 'Hooks stick to fur.' },
-            { label: 'juicy strawberry', emoji: '🍓', bucket: 'animal', hint: 'Who eats strawberries?' },
-            { label: 'acorn that squirrels bury', emoji: '🐿️', bucket: 'animal', hint: 'Squirrels forget where they hide them.' },
-            { label: 'coconut that floats', emoji: '🥥', bucket: 'water', hint: 'It floats like a boat.' },
-            { label: 'water lily seed that drifts on a pond', emoji: '🪷', bucket: 'water', hint: 'It drifts along on…?' },
-            { label: 'pea pod that dries and bursts open', emoji: '🫛', bucket: 'pop', hint: 'It bursts and flings its seeds out!' },
-          ],
-        },
-        {
-          game: 'match', title: 'Seed super-powers',
-          intro: 'Every seed has a special trick for travelling. Match each seed to its super-power!',
-          say: 'Tap a seed, then tap its trick!',
-          hint: 'Think about its shape: wings, fluff, hooks, a tasty coat or a floaty shell?',
-          pairs: [
-            { a: '🍁 sycamore', b: '🚁 spins like a helicopter' },
-            { a: '🌼 dandelion', b: '🪂 floats on a parachute' },
-            { a: '🌰 burdock burr', b: '🪝 hooks onto fur' },
-            { a: '🍒 cherry', b: '🐦 eaten by birds' },
-            { a: '🥥 coconut', b: '⛵ sails across the sea' },
-            { a: '🫛 pea pod', b: '💥 bursts open and flings' },
-          ],
-        },
-        {
-          game: 'runner', title: 'Fruit Dash',
+          game: 'runner', title: 'Fruit Dash', emoji: '🏃', blurb: 'Race past Mowbot and grab the fruits.',
           intro: 'Mowbot is mowing the meadow! Run past him and collect only the **fruits** – remember the scientist\'s rule: a fruit holds the seeds.',
           say: 'Pick the lane with the FRUIT! Jump the rocks and hold DASH to go faster.',
           prompt: 'Collect the FRUITS – they hold seeds!',
@@ -371,39 +298,27 @@ window.LESSON = {
             { label: '🥦 broccoli', ok: false, why: 'Broccoli is a bunch of flower buds – not a fruit with seeds.' },
           ],
         },
-      ],
-    },
-
-    {
-      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
-      say: 'Time to grow, bloom and fly – the life cycle dance!',
-      wiggle: {
-        title: '🌸 Life Cycle Dance!',
-        seconds: 60,
-        moves: [
-          '🫘 Curl up small like a sleeping seed…',
-          '🌱 Germinate! Wiggle your feet like roots, then slowly push your arms up like a shoot.',
-          '🌷 Bloom! Open your arms wide like petals.',
-          '🐝 Buzz around the room from flower to flower!',
-          '🍁 Be a sycamore seed – spin round and round as you float down.',
-          '🌼 Be a dandelion seed – tiptoe away on the wind!',
-        ],
-      },
-      tryit: {
-        title: '🚁 Try it at home: Paper Helicopter Seeds',
-        intro: 'Sycamore seeds spin to fall slowly, so the wind can carry them further. You need a strip of paper, scissors, a paper clip and a grown-up. Cut the top of the strip down the middle and fold the two halves opposite ways, like wings. Put the paper clip on the bottom.',
-        steps: [
-          'Before you test, tap the first box for each one: do you THINK it will fall slowly?',
-          'Stand somewhere safe and drop each one from the same height. Count how long it takes to land.',
-          'Tap the second box: did it fall slowly?',
-          'Which one would a plant want for its seeds? Why?',
-        ],
-        table: {
-          cols: ['I think it falls slowly…', 'It fell slowly…'],
-          items: ['🚁 paper helicopter', '📄 flat strip of paper (no wings)', '⚪ paper scrunched into a ball'],
+        {
+          game: 'steadyhand', title: 'Steady Hand', emoji: '✏️', blurb: 'Guide your pencil along the wiggly path – don\'t touch the sides!',
+          intro: 'Press on the green dot and follow the wiggly path all the way to the 🏁 – carefully! Pick Easy, Medium or Hard.',
+          say: 'Steady hands! Don\'t touch the sides!',
+          done: 'What a steady hand! Steadier than a bee on a breezy day.',
         },
-        tip: 'Tap once for ✅ and twice for ❌. Extra challenge: make the wings longer or shorter – which spins best?',
-      },
+        {
+          game: 'match', title: 'Seed super-powers', emoji: '🍁', blurb: 'Match each seed to its travel trick.',
+          intro: 'Every seed has a special trick for travelling. Match each seed to its super-power!',
+          say: 'Tap a seed, then tap its trick!',
+          hint: 'Think about its shape: wings, fluff, hooks, a tasty coat or a floaty shell?',
+          pairs: [
+            { a: '🍁 sycamore', b: '🚁 spins like a helicopter' },
+            { a: '🌼 dandelion', b: '🪂 floats on a parachute' },
+            { a: '🌰 burdock burr', b: '🪝 hooks onto fur' },
+            { a: '🍒 cherry', b: '🐦 eaten by birds' },
+            { a: '🥥 coconut', b: '⛵ sails across the sea' },
+            { a: '🫛 pea pod', b: '💥 bursts open and flings' },
+          ],
+        },
+      ],
     },
 
     {
@@ -441,7 +356,6 @@ window.LESSON = {
         { type: 'type', q: 'Where do the seeds grow inside a flower? In the…', answer: ['ovary', 'the ovary'], before: 'in the', placeholder: 'a flower part', hint: 'It swells up into the fruit later.' },
         { type: 'tf', q: 'A tomato is a fruit, because it grows from the flower and holds seeds.', answer: true },
         { type: 'mcq', q: 'A seed has tiny hooks all over it. How does it most likely travel?', options: ['It sticks to animals\' fur', 'It floats on the sea', 'It spins on the wind'], answer: 0 },
-        { type: 'mcq', q: 'Why do plants spread their seeds far away?', options: ['So the seedlings are not squashed together fighting for light, water and space', 'So the parent plant gets lonely', 'So the seeds can see the world'], answer: 0 },
         { type: 'order', q: 'Put the life cycle in order. The seed is done for you!', items: ['🫘 a seed', '🌱 germination: the seed sprouts', '🌷 the plant grows flowers', '🐝 pollination: a bee carries pollen', '🍎 a fruit grows with new seeds inside', '🌬️ seed dispersal: the seeds are spread'], start: true, ends: ['START', 'END'], hint: 'Seeds can only be made after pollination.' },
       ],
     },

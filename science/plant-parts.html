@@ -78,6 +78,8 @@ window.LESSON = {
   title: 'Plant Detectives',
   emoji: '🌱',
   home: '../index.html',
+  midBreak: false, // the Arcade stage is the fun break
+  layout: 2, // the compact (one video) version: older saved progress starts again from the top
   finishAch: 'gardener',
   mascot: {
     name: 'Professor Bolt',
@@ -105,7 +107,7 @@ window.LESSON = {
       pic: SPROUT,
       hello: 'Beep boop! Grab your magnifying glass, detective. Today we are investigating PLANTS!',
       question: 'A plant has no mouth, no hands and no feet. So how does it drink, stand up and eat?',
-      intro: 'Warm up, then read, watch, label a plant and run through the garden – and stop Weedzilla! Finish the lesson to unlock the 👒 gardener\'s straw hat.',
+      intro: 'Warm up, then read, watch, label a plant, teach a robot, pick your own arcade game – and stop Weedzilla! Finish the lesson to unlock the 👒 gardener\'s straw hat.',
       nameLabel: 'Player name:',
     },
 
@@ -128,7 +130,7 @@ window.LESSON = {
     },
 
     {
-      type: 'read', title: 'The parts of a plant', short: 'Read 1', minutes: 5,
+      type: 'read', title: 'The parts of a plant', short: 'Read 1', minutes: 4,
       say: 'Read each page carefully, detective – the checks test if you really understood it! Tap the yellow words for a 💎.',
       cards: [
         {
@@ -175,7 +177,7 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'Parts of a Plant', short: 'Video 1', minutes: 6,
+      type: 'video', title: 'Parts of a Plant', short: 'Video', minutes: 5,
       video: { id: 'p3St51F4kE8', title: 'Parts Of A Plant | The Dr. Binocs Show', channel: 'Peekaboo Kidz', duration: '3:14' },
       say: 'Dr Binocs is zooming in on a plant! It is a short one, so watch carefully – then answer my questions.',
       clues: [
@@ -190,12 +192,11 @@ window.LESSON = {
         { type: 'mcq', q: 'The green colour in a leaf helps it to…', options: ['soak up sunlight and make food', 'smell nice for bees', 'hold on to the soil'], answer: 0, explain: 'The green stuff is called chlorophyll (say "KLOR-oh-fill").' },
         { type: 'mcq', q: 'Dr Binocs says the stem acts like a…', options: ['pillar', 'pillow', 'puddle'], answer: 0, hint: 'Something tall and strong that holds things up.' },
         { type: 'mcq', q: 'When the winds are too strong, the roots…', options: ['keep the plant firm in the soil', 'pull the plant underground', 'grow flowers'], answer: 0 },
-        { type: 'tf', q: 'Dr Binocs says every fruit is sweet and good to eat.', answer: false, explain: 'Not all fruits are sweet or safe to eat – but they are still fruits!' },
       ],
     },
 
     {
-      type: 'game', title: 'Plant Parts Lab', short: 'Game 1', minutes: 8,
+      type: 'game', title: 'Plant Parts Lab', short: 'Lab', minutes: 5,
       rounds: [
         {
           game: 'label', title: 'Label the plant',
@@ -224,26 +225,12 @@ window.LESSON = {
           items: [
             { label: 'soaks up water from the soil', emoji: '💧', bucket: 'roots', hint: 'Which part is down in the soil?' },
             { label: 'stops the plant blowing away', emoji: '⚓', bucket: 'roots', hint: 'Which part anchors the plant in the ground?' },
-            { label: 'grows under the ground', emoji: '🟫', bucket: 'roots', hint: 'Which part can you NOT see?' },
             { label: 'holds the plant up tall', emoji: '⬆️', bucket: 'stem', hint: 'Which part is like a pillar?' },
             { label: 'carries water up to the leaves', emoji: '🚰', bucket: 'stem', hint: 'Which part has tiny tubes inside, going up and down?' },
-            { label: 'is called a trunk on a tree', emoji: '🌳', bucket: 'stem', hint: 'A trunk is a giant, woody…' },
             { label: 'makes food using sunlight', emoji: '☀️', bucket: 'leaves', hint: 'Which part is the food factory?' },
             { label: 'is usually green, flat and wide', emoji: '🟩', bucket: 'leaves', hint: 'That shape is great for catching light.' },
-            { label: 'has tiny holes to let air in', emoji: '💨', bucket: 'leaves', hint: 'Which part makes food from air, water and light?' },
             { label: 'invites bees to visit', emoji: '🐝', bucket: 'flower', hint: 'Which part has bright petals and a sweet smell?' },
             { label: 'is where seeds are made', emoji: '🌰', bucket: 'flower', hint: 'Which part makes new plants?' },
-            { label: 'has colourful petals', emoji: '🎨', bucket: 'flower', hint: 'Petals belong to…' },
-          ],
-        },
-        {
-          game: 'mystery', title: 'Mystery Plant Words',
-          intro: 'A detective case! Read the clue and work out the **plant word**. Solve it on the first clue for 3 gems!',
-          say: 'Think hard before you ask for another clue – the fewer clues you need, the more gems you win!',
-          words: [
-            { word: 'roots', clues: ['You hardly ever see them.', 'They hold the plant tight so the wind cannot blow it over.', 'They soak up water like lots of tiny straws.'] },
-            { word: 'pollen', clues: ['It is a yellow dust.', 'It sticks to a bee\'s hairy body.', 'Bees carry it from flower to flower so seeds can grow.'] },
-            { word: 'photosynthesis', clues: ['It happens inside leaves.', 'It needs sunlight, air and water.', 'It is how a plant makes its own food.'], options: ['photosynthesis', 'nutrients', 'pollen', 'anchor'] },
           ],
         },
       ],
@@ -269,55 +256,11 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'Which Part Is Most Important?', short: 'Video 2', minutes: 7,
-      video: { id: 'v6YhghG7mzQ', title: 'Parts of a Plant and Their Functions for Kids', channel: 'Tutoring Hour', duration: '4:53' },
-      say: 'Uh-oh – the parts of a plant are having an argument! Watch, then answer my questions.',
-      clues: [
-        'What are the plant parts arguing about?',
-        'What is the part of a plant above the ground called?',
-        'What does the leaf call itself?',
-        'Who wins the argument?',
-      ],
-      questions: [
-        { type: 'mcq', q: 'What were the plant parts arguing about?', options: ['which part is the most important', 'who is the tallest', 'who gets the most sunshine'], answer: 0 },
-        { type: 'type', q: 'The part of a plant that grows ABOVE the ground is called the…', answer: ['shoot', 'the shoot'], placeholder: 'Type the word from the video', hint: 'It rhymes with "root".' },
-        { type: 'mcq', q: 'Mr Stem carries water up the plant. What else does he carry?', options: ['the food made by the leaves', 'the bees', 'the soil'], answer: 0 },
-        { type: 'type', q: 'The leaf calls itself the food…', answer: ['factory', 'food factory'], placeholder: 'Type the missing word', hint: 'A place where things are made.' },
-        { type: 'mcq', q: 'The tiny holes on a leaf are called stomata. What do they help the plant do?', options: ['breathe – let gases in and out', 'see in the dark', 'hold on to the ground'], answer: 0 },
-        { type: 'mcq', q: 'What does Tori decide at the end?', options: ['All the parts are equally important', 'The flower is the best', 'The roots should be in charge'], answer: 0 },
-      ],
-    },
-
-    {
-      type: 'game', title: 'Garden Quest', short: 'Game 2', minutes: 8,
+      type: 'game', title: 'Garden Arcade: pick a game!', short: 'Arcade', icon: '🕹️', minutes: 4,
+      pick: { title: '🕹️ Pick your arcade game!', say: 'Your choice! Which game do you want to play? Win one to carry on – or play them all!' },
       rounds: [
         {
-          game: 'match', title: 'Which part do we eat?',
-          intro: 'Match each food to the part of the plant it comes from.',
-          say: 'Tap a food, then tap the plant part it is!',
-          hint: 'Think: does it grow underground? Is it full of seeds? Is it a bunch of tiny flowers?',
-          pairs: [
-            { a: '🥕 carrot', b: 'root' },
-            { a: '🌿 celery', b: 'stem' },
-            { a: '🥬 lettuce', b: 'leaf' },
-            { a: '🥦 broccoli', b: 'flower' },
-            { a: '🍎 apple', b: 'fruit' },
-            { a: '🫛 peas', b: 'seed' },
-          ],
-        },
-        {
-          game: 'questions', title: 'Plant Part Finder',
-          intro: 'No labels this time, detective! Read the JOB, then tap the part of the plant that does it.',
-          say: 'Think about each job – then tap the right part of the plant!',
-          questions: [
-            { type: 'hotspot', q: 'Which part is the food factory?', img: PLANT_PIC, spots: PLANT_SPOTS, answer: [1, 2], hint: 'It is green, flat and wide to catch the light.' },
-            { type: 'hotspot', q: 'Where are new seeds made?', img: PLANT_PIC, spots: PLANT_SPOTS, answer: 0, hint: 'Bees visit this part.' },
-            { type: 'hotspot', q: 'Which part soaks up water from the soil?', img: PLANT_PIC, spots: PLANT_SPOTS, answer: 4, hint: 'They work like tiny straws.' },
-            { type: 'hotspot', q: 'Which part holds the leaves up to the sunshine?', img: PLANT_PIC, spots: PLANT_SPOTS, answer: 3, hint: 'Its tiny tubes carry water up, too.' },
-          ],
-        },
-        {
-          game: 'runner', title: 'Garden Run',
+          game: 'runner', title: 'Garden Run', emoji: '🏃', blurb: 'Race through the garden and grab the plant parts.',
           intro: 'Your hero runs by itself and the words come two at a time – pick the lane with the right one! Collect the **parts of a plant** – dodge the things a plant does NOT have.',
           say: 'Tap the top or bottom lane. Collect the PLANT PARTS!',
           prompt: 'Collect PLANT PARTS – dodge what plants don\'t have!',
@@ -334,38 +277,27 @@ window.LESSON = {
           ],
           done: 'LEVEL COMPLETE! Roots, stem, leaves, flowers – you know them all!',
         },
-      ],
-    },
-
-    {
-      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
-      say: 'Stand up, detective! Time to grow like a plant!',
-      wiggle: {
-        title: '🌱 Grow Like a Plant!',
-        seconds: 60,
-        moves: [
-          '🌰 Be a seed! Curl up in a tiny ball on the floor.',
-          '🌱 Sprout! Slowly, slowly grow up until you are standing tall.',
-          '🥕 Roots! Stamp your feet into the ground so nothing can push you over.',
-          '🍃 Leaves! Stretch your arms out wide to catch the sunshine.',
-          '🌬️ Windy day! Sway from side to side – but keep your feet anchored!',
-          '🪤 Venus flytrap! Clap your hands together – SNAP!',
-        ],
-      },
-      tryit: {
-        title: '🔍 Try it at home: Plant Part Hunt',
-        intro: 'Go on a plant hunt in the garden, a park or your kitchen with a grown-up. Can you find every part?',
-        steps: [
-          'Before you go, tap the first box for each part you THINK you will find.',
-          'Hunt! Look gently – never pick wild flowers, and never eat a plant unless a grown-up says it is safe.',
-          'Tap the second box for each part you really found.',
-        ],
-        table: {
-          cols: ['I think I\'ll find it', 'I found it!'],
-          items: ['🥕 roots (look on a weed a grown-up pulls up)', '🌿 a stem or trunk', '🍃 a leaf', '🌸 a flower', '🍎 a fruit with seeds inside'],
+        {
+          game: 'steadyhand', title: 'Steady Hand', emoji: '✏️', blurb: 'Guide your pencil along the wiggly path – don\'t touch the sides!',
+          intro: 'Press on the green dot and follow the wiggly path all the way to the 🏁 – carefully! Pick Easy, Medium or Hard.',
+          say: 'Steady hands! Don\'t touch the sides!',
+          done: 'What a steady hand! Weedzilla could never be that careful.',
         },
-        tip: 'Tap once for ✅ and twice for ❌. Bonus: in the kitchen, can you find a root, a stem, a leaf, a flower and a seed that we eat?',
-      },
+        {
+          game: 'match', title: 'Which part do we eat?', emoji: '🥕', blurb: 'Match each food to the plant part it comes from.',
+          intro: 'Match each food to the part of the plant it comes from.',
+          say: 'Tap a food, then tap the plant part it is!',
+          hint: 'Think: does it grow underground? Is it full of seeds? Is it a bunch of tiny flowers?',
+          pairs: [
+            { a: '🥕 carrot', b: 'root' },
+            { a: '🌿 celery', b: 'stem' },
+            { a: '🥬 lettuce', b: 'leaf' },
+            { a: '🥦 broccoli', b: 'flower' },
+            { a: '🍎 apple', b: 'fruit' },
+            { a: '🫛 peas', b: 'seed' },
+          ],
+        },
+      ],
     },
 
     {
@@ -398,8 +330,6 @@ window.LESSON = {
         { type: 'hotspot', q: 'Weedzilla hid the water pipes! Tap the part that carries water from the roots up to the leaves.', img: PLANT_PIC, spots: PLANT_SPOTS, answer: 3, hint: 'It is the thin green part that holds the plant up.' },
         { type: 'type', q: 'Plants make their own food in their…', answer: ['leaves', 'leaf'], placeholder: 'Type the plant part', hint: 'It is the green, flat and wide part.' },
         { type: 'mcq', q: 'Weedzilla says, "Plants eat dinner with their roots, like a mouth!" What could you tell it?', options: ['Wrong – plants make their own food in their leaves', 'Right – roots chew up the soil', 'Right – flowers eat flies every day'], answer: 0 },
-        { type: 'mcq', q: 'Which of these is a tree\'s stem?', options: ['the trunk', 'the bark chippings', 'the acorns'], answer: 0 },
-        { type: 'mcq', q: 'Why do bees visit flowers?', options: ['The bright petals and sweet smell invite them', 'They want to eat the roots', 'They are looking for a bed'], answer: 0 },
         { type: 'tf', q: 'A strawberry is a fruit because it has seeds.', answer: true, explain: 'The seeds are the tiny dots on the outside!' },
         { type: 'oddone', q: 'Odd one out! Three of these are fruits.', items: ['🍎 apple', '🍅 tomato', '🫛 pea pod', '🥕 carrot'], answer: 3, reasons: ['It has no seeds inside – it is a root', 'It is orange', 'It does not grow on a tree'], reason: 0, hint: 'Which one has NO seeds inside?' },
         { type: 'predict', q: 'Weedzilla locks a bean plant in a dark cupboard for two weeks. What do you think will happen?', options: ['It stays green and strong', 'It turns pale and droopy'], answer: 1, reveal: 'It turns pale, weak and droopy. With no light, its leaves cannot make food.', revealPic: '🥀',
