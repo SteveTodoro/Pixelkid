@@ -151,7 +151,7 @@ async function lessonFile(file) {
       let page;
       try {
         page = await open(file, {
-          lesson: v => Object.assign({}, v, { midBreak: false, stages: [S.type === 'game' && S.rounds ? Object.assign({}, S, { rounds: [S.rounds[ri]] }) : S] }),
+          lesson: v => Object.assign({}, v, { midBreak: false, stages: [S.type === 'game' && S.rounds ? Object.assign({}, S, { rounds: [S.rounds[ri]], pick: false }) : S] }),
           setup: w => w.localStorage.setItem('y3:progress:' + L.id, JSON.stringify({ stage: 0, maxStage: 0, mid: true })),
         });
         const card = page.d.querySelector('.stage-card');
@@ -227,8 +227,10 @@ async function play(page, card, S) {
   } else return; // games, breaks, welcome: rendering without errors is the check
   if (!nextReady() && S.type !== 'quiz') throw new Error('played to the end, but the stage did not finish');
 }
+// other test scripts can borrow the simulated browser: const { open, answer, moveOn, wait } = require('./smoke.js')
+module.exports = { open, answer, moveOn, wait };
 
-(async () => {
+if (require.main === module) (async () => {
   const index = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
   let files = args.filter(a => !a.startsWith('--'));
   const pages = !files.length;

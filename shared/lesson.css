@@ -1051,6 +1051,11 @@ a { color: var(--brand-dark); }
 .px-choice-level { font-family: var(--pixel); font-size: .95rem; color: #b36b00; }
 .px-choice-done { position: absolute; top: 6px; right: 8px; font-size: 1.3rem; }
 .px-back { justify-content: flex-start; margin-bottom: 6px; }
+/* game stage with pick: true – the same cards, with a big icon and a one-line blurb */
+.pick-games { grid-template-columns: repeat(auto-fit, minmax(150px, 220px)); justify-content: center; }
+.pick-game-emoji { font-size: 2.6rem; line-height: 1; }
+.pick-game-emoji .pxi { width: 56px; height: 56px; }
+.pick-game-blurb { font-size: .95rem; text-align: center; line-height: 1.3; }
 .px-result { margin: 12px auto 0; max-width: 560px; padding: 12px; text-align: center; background: #fff8e6; border: 3px solid #000; box-shadow: var(--bevel); }
 .px-result.stale { opacity: .6; }
 .px-result.stale::after { content: "You changed it – tap I'm finished! again for a new score."; display: block; font-size: .9rem; margin-top: 4px; }

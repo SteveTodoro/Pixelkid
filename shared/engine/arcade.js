@@ -721,7 +721,7 @@ PixelkidEngine.part('arcade', E => {
   // ===== Labyrinth: walk Theseus through a dark maze, unrolling Ariadne's thread, to the Minotaur and back out =====
   // r.map: rows of '#' wall, '.' floor, 'S' the entrance (start and finish), 'M' the monster, '1'–'9' gates.
   // r.gates: questions – gate 1 asks r.gates[0] … and opens once it's answered. r.monster: the question that beats the monster.
-  // r.monsterPic (emoji or svg, default 🐂), r.done. Walk by tapping a square (the hero walks there along squares
+  // r.monsterPic (emoji or svg, default 🐂), r.done, r.words { door, find, beat, back, out } for a maze that isn't Theseus's. Walk by tapping a square (the hero walks there along squares
   // already seen), dragging a finger, the arrow buttons or the arrow keys. Only squares near the hero are lit; the thread
   // follows the hero (and rewinds when they walk back along it), so after the monster it shows the way out.
   GAMES.labyrinth = function (r, key, done) {
@@ -731,6 +731,7 @@ PixelkidEngine.part('arcade', E => {
     grid.forEach((row, y) => { while (row.length < cols) row.push('#'); row.forEach((ch, x) => {
       if (ch === 'S') start = [x, y]; else if (ch === 'M') monster = [x, y]; else if (/[1-9]/.test(ch)) gates[x + ',' + y] = +ch;
     }); });
+    const W = Object.assign({ door: '🏛️', find: 'Find the Minotaur!', beat: 'Beat the Minotaur! ▶', back: '🧵 Follow the thread back to the entrance 🏛️', out: '🏁 Out of the labyrinth!' }, r.words);
     const open = new Set(), seen = new Set();
     let pos = start.slice(), trail = [start.slice()], phase = 'in', asking = false, walking = null, finished = false;
     const wall = (x, y) => x < 0 || y < 0 || x >= cols || y >= rows || grid[y][x] === '#';
@@ -749,7 +750,7 @@ PixelkidEngine.part('arcade', E => {
     thread.append(line);
     const place = (el, x, y) => { el.style.left = `${x / cols * 100}%`; el.style.top = `${y / rows * 100}%`; el.style.width = `${100 / cols}%`; el.style.height = `${100 / rows}%`; };
     const hero = h('div', { class: 'lb-hero' }, h('img', { src: AV ? AV.dataURL(AV.load().look, { scale: 4 }) : spriteCanvas(SPR.robot, ROBOT_PAL, 4).toDataURL(), alt: 'you' }));
-    const door = h('div', { class: 'lb-door' }, '🏛️');
+    const door = h('div', { class: 'lb-door' }, W.door);
     const beast = h('div', { class: 'lb-beast', hidden: true }, pic(r.monsterPic || '🐂', 'lb-beast-pic'));
     const board = h('div', { class: 'lb-board' }, gridEl, thread, door, beast, hero);
     const status = h('div', { class: 'bb-status' });
@@ -786,10 +787,10 @@ PixelkidEngine.part('arcade', E => {
       }
       if (atMonster(x, y)) {
         say(r.monsterSay || 'The Minotaur blocks the way! Answer to beat it!');
-        question(r.monster, 'monster', 'Beat the Minotaur! ▶', () => {
+        question(r.monster, 'monster', W.beat, () => {
           phase = 'out'; beast.classList.add('beaten'); sfx.win(); confetti(40);
           say(r.outSay || 'You did it! Now follow Ariadne\'s red thread all the way back to the entrance.');
-          put(status, '🧵 Follow the thread back to the entrance 🏛️'); board.classList.add('glow');
+          put(status, W.back); board.classList.add('glow');
         });
         return false;
       }
@@ -802,7 +803,7 @@ PixelkidEngine.part('arcade', E => {
     function win() {
       finished = true; stopWalk(); sfx.win(); confetti(90); award(key + ':done', board);
       say(r.done || 'You escaped the labyrinth! Without the thread you would still be lost in there.');
-      put(status, '🏁 Out of the labyrinth!'); done();
+      put(status, W.out); done();
     }
     // tap a square: walk there along squares already seen (breadth-first search), stopping at gates and the monster
     function route(tx, ty) {
@@ -853,7 +854,7 @@ PixelkidEngine.part('arcade', E => {
     document.addEventListener('keydown', onKey);
 
     paint();
-    put(status, '👆 Tap a square to walk there, drag your hero, or use the arrows. Find the Minotaur!');
+    put(status, '👆 Tap a square to walk there, drag your hero, or use the arrows. ' + W.find);
     const root = h('div', { class: 'game labyrinth' }, board, status,
       h('div', { class: 'lb-pad' }, arrow('⬆', 0, -1), arrow('⬅', -1, 0), arrow('➡', 1, 0), arrow('⬇', 0, 1)), ask);
     root._test = { step, walkTo, route, get pos() { return pos.slice(); }, get phase() { return phase; }, get asking() { return asking; }, get finished() { return finished; }, get trail() { return trail.length; } };

@@ -126,6 +126,12 @@
     }
     state.mid = 1;
   }
+  // the lesson's stages were rearranged (L.layout went up): saved stage numbers point at the wrong stages now, so start
+  // again from the top. Gems, stars and badges already earned stay.
+  if (L.layout && state.layout !== L.layout) {
+    if (store.get(PKEY, null)) Object.assign(state, { stage: 0, maxStage: 0, complete: {} });
+    state.layout = L.layout; store.set(PKEY, state);
+  }
   state.stage = Math.min(state.stage, L.stages.length - 1);
   const settings = Object.assign({ muted: false, name: '' }, store.get(SKEY, {}));
   const save = () => store.set(PKEY, state);
@@ -1998,6 +2004,7 @@
 
   // ---------- stage: game (one or more rounds) ----------
   function renderGame(s, i) {
+    if (s.pick && s.rounds) return renderPick(s, i);
     const rounds = s.rounds || [s];
     let ri = 0;
     const area = h('div');
@@ -2023,6 +2030,50 @@
     }
     const el = shell(s, [mascot(''), area, nav.el]);
     show();
+    return el;
+  }
+  // A game stage with pick: true lets the player choose which round to play: one finished round completes the stage,
+  // and the rest stay open to play for fun. Rounds add emoji + blurb for their menu card; pick can be { title, say }.
+  function renderPick(s, i) {
+    const opt = typeof s.pick === 'object' ? s.pick : {};
+    const played = new Set(s.rounds.map((r, ri) => ri).filter(ri => state.awarded[`pick:s${i}:${ri}`]));
+    const area = h('div');
+    let inRound = false;
+    const nav = navRow(() => { if (inRound) menu(); else go(i - 1, true); });
+    const ready = () => state.complete[i] ? nav.set(nextLabel(i), () => go(i + 1)) : nav.set(nextLabel(i), null, false);
+    function menu() {
+      inRound = false; mistakes = 0;
+      say(played.size ? (opt.again || 'Brilliant! Play another game, or carry on when you are ready.') : (opt.say || s.say || 'Pick a game!'));
+      put(area, h('h3', { class: 'px-pick-title' }, opt.title || '🕹️ Which game do you want to play?'),
+        h('div', { class: 'px-choices pick-games' }, s.rounds.map((r, ri) =>
+          h('button', { class: 'px-choice', type: 'button', onclick() { sfx.tap(); play(ri); } },
+            h('span', { class: 'pick-game-emoji', 'aria-hidden': 'true' }, r.emoji || '🎮'),
+            h('span', { class: 'px-choice-name' }, r.title),
+            r.blurb && h('span', { class: 'pick-game-blurb' }, r.blurb),
+            played.has(ri) && h('span', { class: 'px-choice-done' }, '✔')))));
+      ready();
+    }
+    function play(ri) {
+      const r = s.rounds[ri];
+      inRound = true; mistakes = 0;
+      const other = h('button', { class: 'btn', type: 'button', onclick() { sfx.tap(); menu(); } }, '↩ Pick a different game');
+      const done = () => {
+        sfx.win(); confetti(90);
+        if (mistakes === 0) achieve('flawless');
+        played.add(ri); state.awarded[`pick:s${i}:${ri}`] = true; save(); complete(i);
+        say(r.done || 'You did it! Game complete! 🎉');
+        other.textContent = '↩ Play another game';
+        ready();
+      };
+      put(area,
+        h('div', { class: 'btn-row px-back' }, other),
+        r.intro && h('p', { class: 'instr', html: fmt(r.intro) }),
+        GAMES[r.game](r, `s${i}r${ri}`, done));
+      ready();
+      say(r.say || "Let's play!");
+    }
+    const el = shell(s, [mascot(''), area, nav.el]);
+    menu();
     return el;
   }
 

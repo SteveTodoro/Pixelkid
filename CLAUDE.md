@@ -1,6 +1,6 @@
 # Pixelkid – notes for Claude
 
-Pixelkid is a parent-led library of ~30-minute interactive lessons for a 7-year-old (UK National Curriculum, Year 3), played mainly on an **iPad**. It's a static site: GitHub Pages serves `main` at https://stevetodoro.github.io/Pixelkid/. Pushing to `main` ships a change, and Pages rebuilds in about a minute. If a build hangs for over 5 minutes, re-trigger it with `gh api -X POST repos/SteveTodoro/Pixelkid/pages/builds`.
+Pixelkid is a parent-led library of compact (15–20 minute) interactive lessons for a 7-year-old (UK National Curriculum, Year 3), played mainly on an **iPad**. It's a static site: GitHub Pages serves `main` at https://stevetodoro.github.io/Pixelkid/. Pushing to `main` ships a change, and Pages rebuilds in about a minute. If a build hangs for over 5 minutes, re-trigger it with `gh api -X POST repos/SteveTodoro/Pixelkid/pages/builds`.
 
 **TOPICS.md is the technical manual**: every stage type, game type, question type, world style and rule for writing lessons. Read it before writing or changing a lesson. This file covers who it's for, the parent's preferences and how to work.
 
@@ -19,7 +19,7 @@ Privacy: the repo is public. Never put the child's name in files, URLs or commit
 - Hero celebrations glow (the aura), they don't spin or jump; the parent found big movements exaggerated.
 
 ## How lessons should feel (the parent's feedback)
-- **Length and challenge:** about 30 minutes; challenging but never frustrating. Always give hints, the boss can't be lost, and retries are free.
+- **Length and challenge:** 15–20 minutes, compact and intensive: games and hands-on activities over passive stages, and a short path to the boss battle he loves (30 minutes felt like a chore). Dense, not easy: challenging but never frustrating. No optional/skippable stages (he'd always skip them). Always give hints, the boss can't be lost, and retries are free.
 - **Variety matters a lot** (the parent found lessons formulaic once):
   - at most ONE word puzzle (crossword or word search) per lesson, and none in about half of them
   - multiple choice ≤ 60% of questions
@@ -29,7 +29,7 @@ Privacy: the repo is public. Never put the child's name in files, URLs or commit
 - **Tactile wherever possible:** swipes, drags and physics that react to the finger. Add **simulated experiments** for things he can't do at home, as reusable engine games with missions, a results table and a `_test` hook.
 - **Every activity must make him do the lesson's thinking.** The game only wraps it.
 - **Choice and freedom over fixed tasks** (e.g. pick what to draw, pick a brain game). In drawing games, any attempt counts.
-- **Videos:** 2 short (~5 min) YouTube videos per lesson. Verify each exists (oEmbed) and read its transcript (`yt-dlp --write-auto-subs`) before writing questions, so the questions match what's actually shown. Kid-safe channels only; check Zack D Films Shorts for gore first.
+- **Videos:** 1 short (~5 min) YouTube video per lesson for new lessons (the parent felt 2 may be too much for the age group; existing lessons still have 2 until playtesting decides). Use the freed time for a hands-on stage. Verify each exists (oEmbed) and read its transcript (`yt-dlp --write-auto-subs`) before writing questions, so the questions match what's actually shown. Kid-safe channels only; check Zack D Films Shorts for gore first.
 - **Anti-scanning:** he matched highlighted words instead of reading. So reading checks ask about a new example in different wording, and nothing is bolded in reading text.
 - **Typed questions** show the answer after 2 wrong tries ("Use it and carry on"), because they used to lock him in.
 - **Put-in-order questions** only when there is ONE obvious order.
@@ -52,6 +52,7 @@ Privacy: the repo is public. Never put the child's name in files, URLs or commit
 5. To see a page, serve the repo (`python3 -m http.server`). For screenshots, headless Chromium with `--screenshot` works. Seed `localStorage` `y3:progress:<lesson id>` to jump to a stage.
 
 ## Where things stand (October 2026)
+- **Compact-format pilot (21 Oct):** Suffix Squad was cut from 12 stages and 2 videos to 9 stages and 1 video: Start, Recap, Read 1, Video, Lab, Read 2, 🕹️ Arcade (pick one of Spelling Blaster / Goblin Tunnels / Mystery Words), Spell Test (trimmed) and Boss. There is no brain break. Waiting on the parent's playtest. If it flows better, roll the same pattern out to the other lessons with 2 videos (see "Compact format" in TOPICS.md).
 - **Science:** Magnets, Friction, the Plants unit (3 lessons) and the Rocks unit (Rock Stars, Fossil Hunters, Super Soil). Next: Fuel Your Body (the other branch).
 - **Maths:** the Time unit (4 lessons), Place Value Party, 3-Digit Add & Subtract and Money Market. Next: Measure It!, or Counting in 4s, 8s, 50s & 100s on the other branch.
 - **English:** Prefixes → Poetry Playground (the writing branch), and Theseus & the Minotaur (the first reading-branch lesson). Next: Fairy Tale Twist.

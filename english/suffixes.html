@@ -33,6 +33,8 @@ window.LESSON = {
   emoji: '🧩',
   home: '../index.html',
   finishAch: 'speller',
+  midBreak: false, // the Suffix Arcade stage is the fun break
+  layout: 2, // the compact (one video) version: older saved progress starts again from the top
   mascot: {
     name: 'Quill the Wizard',
     sprite: Pixel.sprites.wizard,
@@ -54,12 +56,12 @@ window.LESSON = {
       pic: TAIL_UP,
       hello: "Welcome back to the WORD KINGDOM! Last time we powered up the FRONT of words. Today… we attack from the END!",
       question: 'How can a few letters on the end turn a word like FEAR into FEARLESS?',
-      intro: 'Recap, read, watch, hunt for words, hatch a **dragon egg** with your spelling – then stop Grumblegob for good!',
+      intro: 'Recap, read, watch, pick your own arcade game, hatch a **dragon egg** with your spelling – then stop Grumblegob for good!',
       nameLabel: 'Player name:',
     },
 
     {
-      type: 'review', title: 'Last time…', short: 'Recap', minutes: 3,
+      type: 'review', title: 'Last time…', short: 'Recap', minutes: 2,
       from: { title: 'Prefix Power', emoji: '🦸', url: 'prefixes.html' },
       facts: [
         'A prefix goes on the FRONT of a word and changes its meaning.',
@@ -76,7 +78,7 @@ window.LESSON = {
     },
 
     {
-      type: 'read', title: 'Suffix power-ups', short: 'Read 1', minutes: 5,
+      type: 'read', title: 'Suffix power-ups', short: 'Read 1', minutes: 4,
       say: 'Read each page carefully – the checks test if you really understood. Tap the yellow words for a 💎.',
       cards: [
         {
@@ -122,7 +124,7 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'Super Suffixes', short: 'Video 1', minutes: 6,
+      type: 'video', title: 'Super Suffixes', short: 'Video', minutes: 6,
       video: { id: 'qX3-0NGWTU8', title: 'Suffixes: ly, ful, less: Super Suffixes they look small, but they are powerful!', channel: 'Learn With Me Mrs. Sullivan', duration: '4:56' },
       say: 'Mrs Sullivan shows how tiny suffixes can be super powerful. Watch, then answer!',
       clues: [
@@ -134,7 +136,6 @@ window.LESSON = {
       questions: [
         { type: 'mcq', q: 'Mrs Sullivan says ly adds the meaning…', options: ['"in a way that is"', '"full of"', '"without"'], answer: 0 },
         { type: 'type', q: 'She plays the drums in a way that is loud. Finish the sentence.', answer: ['loudly'], before: 'She plays', placeholder: 'loud + ?', hint: 'Which suffix tells you HOW something is done?' },
-        { type: 'mcq', q: 'In the video, happy becomes…', options: ['happily', 'happyly', 'happyful'], answer: 0 },
         { type: 'mcq', q: 'She was full of grace. She was…', options: ['graceful', 'graceless', 'gracely'], answer: 0 },
         { type: 'mcq', q: 'She treated her ice cream cone without care. She was…', options: ['careless', 'careful', 'carely'], answer: 0 },
         { type: 'tf', q: 'In space you are weightless, so you float weightlessly – that word uses two suffixes!', answer: true },
@@ -142,7 +143,7 @@ window.LESSON = {
     },
 
     {
-      type: 'game', title: 'Suffix Lab', short: 'Game 1', minutes: 7,
+      type: 'game', title: 'Suffix Lab', short: 'Lab', minutes: 4,
       rounds: [
         {
           game: 'sort', title: 'Suffix chests',
@@ -160,18 +161,6 @@ window.LESSON = {
           ],
         },
         {
-          game: 'match', title: 'Root & suffix',
-          intro: 'Match each root word + suffix to the word it makes. Watch the spelling rules!',
-          say: 'Tap a sum, then tap the word it makes!',
-          pairs: [
-            { a: 'happy + ly', b: 'happily' },
-            { a: 'gentle + ly', b: 'gently' },
-            { a: 'care + ful', b: 'careful' },
-            { a: 'help + less', b: 'helpless' },
-            { a: 'brave + ly', b: 'bravely' },
-          ],
-        },
-        {
           game: 'questions', title: 'Word Builder',
           intro: 'Grumblegob chopped up some suffix words! Read the clue, then tap the tiles to **build the word** – use the spelling rules. Some tiles are goblin traps!',
           say: 'Remember the rules: y to i, le to ly, and ful has ONE l.',
@@ -186,8 +175,8 @@ window.LESSON = {
     },
 
     {
-      type: 'read', title: 'Big suffixes: -ous and -ation', short: 'Read 2', minutes: 5,
-      say: 'Two bigger, fancier suffixes – plus a spelling trap to dodge!',
+      type: 'read', title: 'Big suffixes: -ous and -ation', short: 'Read 2', minutes: 3,
+      say: 'Two bigger, fancier suffixes – and a drop-the-e trap to dodge!',
       cards: [
         {
           title: '-ous makes describing words', pic: '🐍⚠️',
@@ -213,52 +202,15 @@ window.LESSON = {
           ],
           check: { q: 'You admire a beautiful painting. The feeling you have is…', options: ['admiration', 'admireous', 'admirely'], answer: 0, hint: 'You need a THING word, and the e drops off.' },
         },
-        {
-          title: 'Myth-buster: careFULL?', pic: '❌ll ✅l',
-          text: [
-            'Lots of people think careful ends with full. It does not! The suffix ful always has just ONE l.',
-            'So: careful, helpful, beautiful, wonderful. If you spot two l letters at the end, it is a goblin trick.',
-          ],
-          check: { type: 'type', q: 'Your friend writes "thankfull". Write it the right way.', answer: ['thankful'], placeholder: 'fix the spelling', hint: 'How many l letters does the suffix ful have?', explain: 'thankful – the suffix ful has just ONE l.' },
-        },
       ],
     },
 
     {
-      type: 'video', title: 'The Suffix -ous', short: 'Video 2', minutes: 9,
-      video: { id: 'vUt1Rx6K1IQ', title: 'How Do You Use the Suffix -ous? | KS2 English Concept for Kids', channel: 'Twinkl Educational Publishing', duration: '8:10' },
-      say: 'This video has a mini spelling test at the end – grab a pencil and paper and join in!',
-      clues: [
-        'What does danger become?',
-        'What happens to the e in fame?',
-        'Which -ous words just have to be learnt?',
-        'What did the curious bird sit on?',
-      ],
-      questions: [
-        { type: 'mcq', q: 'The video says the suffix -ous is mostly used to make…', options: ['adjectives (describing words)', 'names of people', 'numbers'], answer: 0 },
-        { type: 'mcq', q: 'In the video, what does "poison" become?', options: ['poisonous', 'poisonful', 'poisonly'], answer: 0 },
-        { type: 'mcq', q: 'What happens to fame when -ous is added?', options: ['the e is dropped: famous', 'nothing: fameous', 'it gets a double m: fammous'], answer: 0 },
-        { type: 'mcq', q: 'Which of these words does the video say you just have to learn?', options: ['enormous', 'dangerous', 'poisonous'], answer: 0, explain: 'Tremendous, enormous and jealous have no obvious root word.' },
-        { type: 'tf', q: 'The video’s top tip is to check that your word looks and sounds right.', answer: true },
-        { type: 'mcq', q: 'In the spelling test, a curious little bird sat on…', options: ['my windowsill', 'my head', 'a mountain'], answer: 0 },
-      ],
-    },
-
-    {
-      type: 'game', title: 'Suffix Quest', short: 'Game 2', minutes: 7,
+      type: 'game', title: 'Suffix Arcade: pick a game!', short: 'Arcade', icon: '🕹️', minutes: 4,
+      pick: { title: '🕹️ Pick your Suffix Arcade game!', say: 'Your choice! Which game do you want to play? Win one to carry on – or play them all!' },
       rounds: [
         {
-          game: 'mystery', title: 'Mystery Suffix Words',
-          intro: 'Grumblegob has hidden some **suffix words**! Read the clue and work out the word. Solve it on the first clue for 3 gems!',
-          say: 'The fewer clues you need, the more gems you win – and spell it right!',
-          words: [
-            { word: 'fearless', clues: ['It describes a person.', 'A brave knight is like this.', 'It means WITHOUT any fear.'] },
-            { word: 'poisonous', clues: ['It is a describing word with a big suffix.', 'Some snakes and berries are like this.', 'It means full of poison.'] },
-            { word: 'information', clues: ['It is a thing, not a doing word.', 'You find lots of it in books and on websites.', 'When you inform someone, you give them this.'] },
-          ],
-        },
-        {
-          game: 'invaders', title: 'Spelling Blaster',
+          game: 'invaders', title: 'Spelling Blaster', emoji: '🚀', blurb: 'Shoot the goblin aliens with the RIGHT spellings.',
           intro: 'Goblin aliens are invading with spelling mistakes! Read each mission at the top – then shoot ONLY the correct spellings.',
           say: 'Tap above an alien to fly there and fire! Think about the rule first.',
           waves: [
@@ -292,11 +244,51 @@ window.LESSON = {
           ],
           done: 'SPELLING BLASTER CLEAR! Grumblegob\'s goblins are running away!',
         },
+        {
+          game: 'labyrinth', title: 'Goblin Tunnels', emoji: '🔦', blurb: 'Creep through the dark tunnels and trap Grumblegob.',
+          intro: 'Grumblegob is hiding in his dark tunnels! Find your way to him – a **magic thread** unrolls behind you. Gates block the way: answer to open them. Then follow the thread back out!',
+          say: 'Tap a square to walk there, or drag your hero. It\'s dark down here…',
+          monsterPic: Pixel.sprites.goblin,
+          words: { door: '🚪', find: 'Find Grumblegob!', beat: 'Beat Grumblegob! ▶', back: '🧵 Follow the magic thread back to the door 🚪', out: '🏁 Out of the tunnels!' },
+          map: [
+            '#############',
+            '#.....#.....#',
+            '#.#.###.#.###',
+            '#.#..3..#..2#',
+            '#.#######.#.#',
+            '#M#....1#.#.#',
+            '###.###.###.#',
+            '#...#.#.....#',
+            '#.###.#####.#',
+            '#S#.........#',
+            '#############',
+          ],
+          gates: [
+            { type: 'build', q: 'Gate 1 says: "Build fame + ous."', answer: ['fam', 'ous'], extra: ['e', 'ful'], hint: 'Fame ends in e. Drop it before ous!' },
+            { type: 'oddone', q: 'Gate 2 says: "Which one is NOT a real word?"', items: ['famous', 'nervous', 'dangerous', 'poisonful'], answer: 3, why: 'Why is poisonful wrong?', reasons: ['Full of poison is a fancy describing word: poisonous', 'It is too long', 'Poison is not a real word'], reason: 0 },
+            { type: 'type', q: 'Gate 3 says: "You inform your teacher about the school trip. What THING do you give them?"', answer: ['information'], placeholder: 'inform + ?', hint: 'The suffix that makes a THING word is ation.' },
+          ],
+          monster: { q: 'Grumblegob snarls: "My tunnels are full of danger! They are…"', options: ['dangerous', 'dangerful', 'dangerly'], answer: 0, hint: 'Full of danger – which fancy describing suffix?' },
+          monsterSay: 'Grumblegob jumps out of the dark! Answer to trap him!',
+          outSay: 'Grumblegob is trapped! Now follow the magic thread all the way back to the door. Tap the 🚪 to run there!',
+          done: 'You escaped the Goblin Tunnels! Grumblegob is grumbling in the dark.',
+        },
+        {
+          game: 'mystery', title: 'Mystery Words', emoji: '🔍', blurb: 'Crack the clues to find the hidden word.',
+          intro: 'Grumblegob has hidden some **suffix words**! Read the clue and work out the word. Solve it on the first clue for 3 gems!',
+          say: 'The fewer clues you need, the more gems you win – and spell it right!',
+          words: [
+            { word: 'fearless', clues: ['It describes a person.', 'A brave knight is like this.', 'It means WITHOUT any fear.'] },
+            { word: 'poisonous', clues: ['It is a describing word with a big suffix.', 'Some snakes and berries are like this.', 'It means full of poison.'] },
+            { word: 'information', clues: ['It is a thing, not a doing word.', 'You find lots of it in books and on websites.', 'When you inform someone, you give them this.'] },
+          ],
+          done: 'MYSTERY SOLVED! Grumblegob can\'t hide anything from you!',
+        },
       ],
     },
 
     {
-      type: 'game', title: 'The Spell Test: Dragon Egg Hatchery', short: 'Spell test', icon: '🪄', kind: 'Spelling test', minutes: 10,
+      type: 'game', title: 'The Spell Test: Dragon Egg Hatchery', short: 'Spell test', icon: '🪄', kind: 'Spelling test', minutes: 6,
       rounds: [
         {
           game: 'spelltest', mode: 'fix', title: 'Goblin Graffiti', scene: 'egg', prize: 'the goblin-proof egg',
@@ -305,9 +297,7 @@ window.LESSON = {
           words: [
             { word: 'careful', wrong: 'carefull', sentence: 'Be ___ when you carry the hot soup.', hint: 'ful has only ONE l.' },
             { word: 'happily', wrong: 'happyly', sentence: 'The dragon flapped its wings ___.', hint: 'Swap the y for an i, then add ly.' },
-            { word: 'gently', wrong: 'gentlely', sentence: 'Stroke the baby chick ___.', hint: 'gentle ends in le – swap le for ly.' },
             { word: 'famous', wrong: 'fameous', sentence: 'One day I will be a ___ footballer.', hint: 'Drop the e before ous.' },
-            { word: 'hopeless', wrong: 'hoapless', sentence: 'Grumblegob is ___ at spelling.', hint: 'The root word is hope.' },
           ],
         },
         {
@@ -318,13 +308,10 @@ window.LESSON = {
             { word: 'hopeful', sentence: 'I am ___ that it will snow tomorrow.', clue: 'full of hope', hint: 'hope + ful – one l!' },
             { word: 'fearless', sentence: 'The ___ knight walked into the dragon’s cave.', clue: 'without fear', hint: 'fear + less' },
             { word: 'quickly', sentence: 'The mouse ran ___ into its hole.', clue: 'fast', hint: 'quick + ly. Quick ends in ck.' },
-            { word: 'sadly', sentence: 'The lost puppy looked up at me ___.', clue: 'in a sad way', hint: 'sad + ly' },
             { word: 'easily', sentence: 'You beat that level ___!', clue: 'with no trouble', hint: 'easy ends in y – swap it for i.' },
             { word: 'simply', sentence: 'The answer is ___ too hard for a goblin.', clue: 'just, or in a simple way', hint: 'simple ends in le – swap le for ly.' },
             { word: 'dangerous', sentence: 'Crossing a busy road without looking is ___.', clue: 'full of danger', hint: 'danger + ous' },
-            { word: 'poisonous', sentence: 'Some frogs in the rainforest are ___.', clue: 'full of poison', hint: 'poison + ous' },
             { word: 'information', sentence: 'The museum sign gave us lots of ___.', clue: 'facts about something', hint: 'inform + ation' },
-            { word: 'beautiful', sentence: 'What a ___ sunset!', clue: 'lovely to look at', hint: 'beauty: swap y for i, then add ful (one l). Remember b-e-a-u.' },
           ],
         },
         {
@@ -334,7 +321,6 @@ window.LESSON = {
           waves: [
             { spell: 'useful', clue: 'Full of use', decoys: 'ao' },
             { spell: 'gently', clue: 'In a gentle way', decoys: 'ai' },
-            { spell: 'famous', clue: 'Known by everyone', decoys: 'ei' },
           ],
           done: 'LETTER BLASTER CLEAR! You are a suffix superstar!',
         },
@@ -342,35 +328,17 @@ window.LESSON = {
     },
 
     {
-      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
-      say: 'Time to move – the suffix way!',
-      wiggle: {
-        title: '🧩 Suffix Moves!',
-        seconds: 60,
-        moves: [
-          '🐆 Run on the spot QUICKLY!',
-          '🐢 Now walk on the spot SLOWLY…',
-          '🦁 Do a FEARLESS lion roar and pose!',
-          '🪶 Float GENTLY like a feather – arms drifting down.',
-          '😄 Jump HAPPILY – star jumps with a big smile!',
-          '🐉 Be a DANGEROUS dragon: stomp and flap your wings!',
-        ],
-      },
-    },
-
-    {
-      type: 'quiz', title: "Boss Battle: Grumblegob's Revenge", short: 'Boss', kind: 'Boss battle', minutes: 6,
+      type: 'quiz', title: "Boss Battle: Grumblegob's Revenge", short: 'Boss', kind: 'Boss battle', minutes: 5,
       say: 'GRUMBLEGOB is back – and now he is chopping the ends off words! Every right answer is a hit. Finish him, {name}!',
       boss: { name: 'Grumblegob', sprite: Pixel.sprites.goblin, attack: '🪨', lines: { intro: 'Grumblegob is back! And I\'m even grumpier-ER!', hurt: ['Ow! That was pain-FUL!', 'Grumble grumble!', 'Argh! Too clever!'], taunt: ['Hehehe! Wrong!', 'Grumble-WIN!', 'Missed me!'], angry: 'Now I\'m angri-EST!', defeat: 'NOOO! Grumblegob is help-LESS!', win: 'Hehehe! Grumblegob wins again! Go back and practise!', stunned: 'Ooh… I\'m all dizzy-FUL…', beg: ['Wait! Be kind-LY!', 'I\'m feeling help-LESS!', 'Mercy-FUL, please!'] } },
       questions: [
-        { type: 'mcq', q: 'Where does a suffix go?', options: ['at the end of a word', 'at the front of a word', 'in a different sentence'], answer: 0 },
         { type: 'mcq', q: 'A cup with no handle is…', options: ['handleless', 'handleful', 'handlely'], answer: 0 },
         { type: 'gap', q: 'The baby was sleeping, so we whispered ___.', options: ['quietly', 'quietful', 'quietless'], answer: 0 },
         { type: 'mcq', q: 'Grumblegob wrote "wonderfull". Which is right?', options: ['wonderful', 'wonderfull', 'wundaful'], answer: 0, hint: 'How many l letters does the suffix ful have?' },
         { type: 'type', q: 'Write busy + ly.', answer: ['busily'], placeholder: 'busy + ly', hint: 'busy ends in a y… swap it for an i!' },
         { type: 'build', q: 'Build humble + ly.', answer: ['humb', 'ly'], extra: ['le', 'e'], hint: 'The le rule: swap le for ly!' },
         { type: 'tf', q: 'In "The cat purred softly", the word softly tells us HOW the cat purred.', answer: true },
-        { type: 'mcq', q: 'Which word describes a jungle that is full of mystery?', options: ['mysterious', 'mysteryful', 'mysteryly'], answer: 0, explain: 'mystery + ous – the y turns into an i, just like in the video!' },
+        { type: 'mcq', q: 'Which word describes a jungle that is full of mystery?', options: ['mysterious', 'mysteryful', 'mysteryly'], answer: 0, explain: 'mystery + ous – the y turns into an i, just like happy → happily!' },
         { type: 'mcq', q: 'Which word is spelt correctly?', options: ['nervous', 'nervus', 'nerveous'], answer: 0, hint: 'Drop the e from nerve, then add ous.' },
         { type: 'gap', q: 'Our teacher gave us lots of useful ___ about volcanoes.', options: ['information', 'informous', 'informly'], answer: 0 },
         { type: 'order', q: 'Watch "happy" turn into "happily"! Put the word changes in order.', items: ['😊 happy', '✂️ happ (the y comes off)', '🔤 happi (an i goes on)', '✨ happily (add ly)'], ends: ['START', 'NEW WORD'], hint: 'Start with the whole word happy.' },
