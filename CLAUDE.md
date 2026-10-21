@@ -49,7 +49,7 @@ Privacy: the repo is public. Never put the child's name in files, URLs or commit
    - `node tools/emoji-audit.js`
    - `node tools/build-question-bank.js` (the map's challenger NPCs ask boss questions from it)
 3. After any change in `shared/`, run `npm install` once (jsdom), then `node tools/smoke.js`. It takes ~5 min and plays every lesson in a simulated browser. Drive new games through their `_test` hooks in a quick jsdom script too.
-4. Keep files under ~1,500 lines (lesson-check warns about bigger ones; `shared/engine.js` is over and should be split next time it changes). The engine core is `shared/engine.js`, and games live in parts under `shared/engine/` (loaded per lesson through `PARTS`).
+4. Keep files under ~1,500 lines (lesson-check warns about bigger ones). The engine core is `shared/engine.js`, and games live in parts under `shared/engine/` (loaded per lesson through `PARTS`; the everyday games are in `games.js`, the teach/case/investigate stages in `stages.js`).
 5. To see a page, serve the repo (`python3 -m http.server`). For screenshots, headless Chromium with `--screenshot` works. Seed `localStorage` `y3:progress:<lesson id>` to jump to a stage.
 
 ## Where things stand (October 2026)
