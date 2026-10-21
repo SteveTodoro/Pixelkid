@@ -187,16 +187,14 @@ window.LESSON = {
     },
 
     {
-      type: 'teach', title: 'Teach Professor Bolt: column subtraction', short: 'Teach', minutes: 6,
+      type: 'teach', title: 'Teach Professor Bolt: column subtraction', short: 'Teach', minutes: 4,
       say: 'Professor Bolt has been learning column subtraction from Captain Carryless. Uh-oh… Fix his mistakes!',
       robot: { name: 'Professor Bolt', emoji: '🤖' },
       intro: 'Greetings! I am Professor Bolt. A pirate taught me column subtraction, so I know EVERYTHING. (Arr?)',
       lines: [
         { text: 'Always start with the hundreds column.', wrong: 'hundreds', fix: 'ones', options: ['middle'], why: 'Start with the ones, then the tens, then the hundreds.' },
-        { text: 'Put the bigger number on top.', ok: true, why: 'Right – the number you are taking away from goes on top.' },
         { text: 'If the top digit is too small, exchange one ten for ten ones.', ok: true, why: 'Right – that is exchanging.' },
         { text: 'In 52 take away 7, the 2 becomes 12 and the 5 becomes 6.', wrongAt: 13, wrong: '6.', fix: '4', options: ['5'], why: 'One ten moves across, so 5 tens become 4 tens.' },
-        { text: 'Exchanging changes the value of the number.', wrong: 'changes', fix: 'keeps', options: ['doubles'], why: '4 tens and 12 ones is still 52 – the value stays the same.' },
         { text: 'To check 400 take away 150 = 250, add 250 + 150 and see if you get 500.', wrongAt: 17, wrong: '500.', fix: '400', options: ['250'], why: 'Adding back should get you to the number you started with: 400.' },
         { text: 'Subtraction is the inverse of multiplication.', wrong: 'multiplication', fix: 'addition', options: ['division'], why: 'Subtraction undoes addition.' },
       ],

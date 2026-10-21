@@ -170,7 +170,9 @@ async function play(page, card, S) {
   const btn = re => [...card.querySelectorAll('button')].find(b => re.test(b.textContent) && !b.disabled && !b.hidden);
   const nextReady = () => { const b = [...card.querySelectorAll('.navrow button')].pop(); return b && !b.disabled; };
   if (S.type === 'review' || S.type === 'quiz' || S.type === 'video') {
-    const go = btn(/test my memory|warm|fight|start|let.s go|ready|watched|begin/i); if (go) { go.click(); await wait(120); }
+    // the start button – never an answer option that happens to say "let's go" or "start"
+    const go = [...card.querySelectorAll('button')].find(b => /test my memory|warm|fight|start|let.s go|ready|watched|begin/i.test(b.textContent) && !b.disabled && !b.hidden && !b.closest('.opts'));
+    if (go) { go.click(); await wait(120); }
     for (const q of S.questions || []) { await answer(page, area, q); await moveOn(area); }
     await wait(200);
     if (S.type === 'review' && S.game) return; // the recap ends with a mini game: rendering it is the check

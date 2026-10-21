@@ -219,16 +219,14 @@ window.LESSON = {
     },
 
     {
-      type: 'teach', title: 'Teach Professor Bolt: the myth', short: 'Teach', minutes: 6,
+      type: 'teach', title: 'Teach Professor Bolt: the myth', short: 'Teach', minutes: 4,
       say: 'Professor Bolt heard the myth once, a very long time ago, and he has muddled it up. Fix his mistakes!',
       robot: { name: 'Professor Bolt', emoji: '🤖' },
       intro: 'Greetings! I know the myth of Theseus PERFECTLY. Well… nearly perfectly. Let me tell it to you!',
       lines: [
         { text: 'Long ago, King Minos ruled the island of Crete.', ok: true, why: 'Right – Crete is a big Greek island.' },
         { text: 'The Minotaur had the body of a man and the head of a lion.', wrong: 'lion', fix: 'bull', options: ['horse'], why: 'The Minotaur had the head of a bull.' },
-        { text: 'Theseus promised to change the black sail to a red one if he won.', wrong: 'red', fix: 'white', options: ['blue'], why: 'A white sail would tell his father he was safe.' },
         { text: 'Ariadne gave Theseus a sword to help him find his way out.', wrong: 'sword', fix: 'thread', options: ['map'], why: 'Ariadne gave him a ball of thread to unroll as he went.' },
-        { text: 'Theseus unrolled the thread as he crept through the dark tunnels.', ok: true, why: 'Right – then he could follow it back.' },
         { text: 'On the way home, the crew remembered to change the sail.', wrong: 'remembered', fix: 'forgot', options: ['wanted'], why: 'They were so busy celebrating that they forgot.' },
         { text: 'King Aegeus saw the white sail and thought his son was lost.', wrong: 'white', fix: 'black', options: ['red'], why: 'He saw the BLACK sail, so he thought Theseus had not survived.' },
       ],

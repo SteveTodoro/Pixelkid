@@ -209,17 +209,14 @@ window.LESSON = {
     },
 
     {
-      type: 'teach', title: 'Teach Professor Bolt: days, months and years', short: 'Teach', minutes: 6,
+      type: 'teach', title: 'Teach Professor Bolt: days, months and years', short: 'Teach', minutes: 4,
       say: 'Professor Bolt is teaching you about days, months and years – but his memory chip is wobbly! Fix his mistakes.',
       robot: { name: 'Professor Bolt', emoji: '🤖' },
       intro: 'Hello! I am Professor Bolt. I have learned ALL about days, months and years. Let me teach YOU! (My memory chip is a little bit wobbly…)',
       lines: [
         { text: 'One day has 12 hours, and one hour has 60 minutes.', wrongAt: 3, fix: '24', options: ['60', '7'], hint: 'Count the hours from one midnight to the next.', why: 'A whole day and night is 24 hours. 12 hours is only half a day!' },
-        { text: 'Seven days make a week, and two weeks make a fortnight.', ok: true, why: 'Right! 7 + 7 = 14 days in a fortnight.' },
-        { text: 'There are 10 months in one year.', wrongAt: 2, fix: '12', options: ['52', '7'], hint: 'January, February, March… keep counting to December.', why: 'January to December makes 12 months.' },
+        { text: 'There are 12 months in one year, from January to December.', ok: true, why: 'Right! January, February, March… all the way to December makes 12 months.' },
         { text: 'February is the longest month, with just 28 days.', wrong: 'longest', fix: 'shortest', options: ['oldest', 'coldest'], hint: 'Is 28 days a lot or a little for a month?', why: 'February is the SHORTEST month: 28 days, or 29 in a leap year.' },
-        { text: 'With the knuckle trick, every month on a knuckle has 31 days.', ok: true, why: 'Yes! January, March, May… they all land on knuckles and have 31 days.' },
-        { text: 'Every month in a dip has 31 days, except February.', wrongAt: 6, fix: '30', options: ['28', '29'], hint: 'Knuckles are the long months. What about the dips?', why: 'Dips are the shorter months: 30 days. February is the odd one out.' },
         { text: 'A leap year comes every 10 years and has 366 days.', wrongAt: 5, fix: '4', options: ['2', '100'], hint: 'Leap years come round quite often – the same as the Olympic Games.', why: 'Every 4 years there is a leap year, with 366 days instead of 365.' },
         { text: 'In a leap year, the extra day is added to the end of March.', wrong: 'march', fix: 'February', options: ['January', 'December'], hint: 'Which month is usually too short?', why: 'The extra day is 29 February – the leap day!' },
       ],

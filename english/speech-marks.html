@@ -191,17 +191,15 @@ window.LESSON = {
     },
 
     {
-      type: 'teach', title: 'Teach Professor Bolt: speech marks', short: 'Teach', minutes: 6,
+      type: 'teach', title: 'Teach Professor Bolt: speech marks', short: 'Teach', minutes: 4,
       say: 'Professor Bolt has been reading comics all night, and his notes on speech marks are muddled. Fix his mistakes!',
       robot: { name: 'Professor Bolt', emoji: '🤖' },
       intro: 'Greetings! I am Professor Bolt. I have learned ALL about speech marks. Let me teach YOU! (I did read them quite late at night…)',
       lines: [
         { text: 'Speech marks go around the words that someone thinks.', wrong: 'thinks', fix: 'says', options: ['writes'], why: 'Speech marks are for the words that are SAID out loud.' },
-        { text: 'The first mark opens the speech and the second mark closes it.', ok: true, why: 'Right – they come in a pair.' },
         { text: 'A question mark at the end of the speech goes outside the closing mark.', wrong: 'outside', fix: 'inside', options: ['under'], why: 'It belongs to the spoken words, so it stays inside.' },
         { text: 'The spoken words always begin with a small letter.', wrong: 'small', fix: 'capital', options: ['silly'], why: 'Spoken words start with a capital letter, even in the middle of a sentence.' },
         { text: 'When the speaker comes first, put a comma after the said word, before the speech starts.', ok: true, why: 'Right: Mum said, then the speech.' },
-        { text: 'Whispered tells us that someone spoke very loudly.', wrong: 'loudly', fix: 'quietly', options: ['quickly'], why: 'A whisper is very quiet.' },
         { text: 'Each new speaker starts on the same line.', wrong: 'same', fix: 'new', options: ['last'], why: 'A new line for each new speaker makes it easy to follow who is talking.' },
       ],
       outro: 'Thank you! My notes are fixed. Now I will never mix up thinking and saying again!',

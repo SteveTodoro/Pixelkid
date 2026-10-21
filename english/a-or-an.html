@@ -189,17 +189,14 @@ window.LESSON = {
     },
 
     {
-      type: 'teach', title: 'Teach Professor Bolt: listen, don\'t look!', short: 'Teach', minutes: 6,
+      type: 'teach', title: 'Teach Professor Bolt: listen, don\'t look!', short: 'Teach', minutes: 4,
       say: 'Professor Bolt is learning a and an – but he only LOOKS at words. Listen to each one and fix his mistakes!',
       robot: { name: 'Professor Bolt', emoji: '🤖' },
       intro: 'Greetings! I am Professor Bolt. I have learned when to use a and an. Let me teach YOU! (I can read letters very well… but I have no ears.)',
       lines: [
-        { text: 'We waited for an hour at the bus stop.', ok: true, why: 'Right! hour has a silent h, so it starts with a vowel sound: an hour.' },
         { text: 'The knight was a honest man.', wrongAt: 3, fix: 'an', options: ['a'], hint: 'Say honest out loud. Can you hear the h?', why: 'honest has a silent h too, so it starts with a vowel sound: an honest man.' },
         { text: 'Ben rode a horse along the beach.', ok: true, why: 'Yes! You can hear the h in horse, so it is a horse.' },
         { text: 'My sister has an unicorn toy.', wrongAt: 3, fix: 'a', options: ['an'], hint: 'Say it: "YOU-nicorn". Does it start with a vowel sound?', why: 'unicorn starts with a "you" sound, which acts like a consonant: a unicorn.' },
-        { text: 'Take an umbrella, because it might rain!', ok: true, why: 'Yes! umbrella starts with an "uh" vowel sound: an umbrella.' },
-        { text: 'The goblin was a ugly troll.', wrongAt: 3, fix: 'an', options: ['a'], hint: 'Whisper it both ways. Which one sounds smooth?', why: 'ugly starts with an "uh" vowel sound: an ugly troll. That is the ear test!' },
         { text: 'To choose a or an, look at the first letter of the next word.', wrong: 'letter', fix: 'sound', options: ['line', 'page'], hint: 'Is it a unicorn or an unicorn? The letter u is a vowel…', why: 'Busted! It is the first SOUND that counts, not the letter. That is why we say a unicorn but an hour.' },
         { text: 'Grandad drew a useful map of the castle.', ok: true, why: 'Right! useful starts with a "you" sound, so a useful map.' },
       ],
