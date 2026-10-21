@@ -54,6 +54,8 @@ window.LESSON = {
   title: 'Homophone Hunters',
   emoji: '👂',
   home: '../index.html',
+  midBreak: false, // the Arcade stage is the fun break
+  layout: 2, // the compact (one video) version: older saved progress starts again from the top
   finishAch: 'speller',
   mascot: {
     name: 'Quill the Wizard',
@@ -75,7 +77,7 @@ window.LESSON = {
       pic: SOUND_TWINS,
       hello: "Welcome back to the WORD KINGDOM! A ghost called Echo is haunting the castle, swapping words that SOUND the same. Only a hunter with sharp ears – and sharp eyes – can stop it!",
       question: 'If night and knight sound exactly the same, how do you know which one to write?',
-      intro: 'Recap, read, watch, proofread the ghost\'s mischief, build a **word castle** with your spelling – then banish Echo the Mix-Up Ghost!',
+      intro: 'Recap, read, watch, crack a case, pick your own arcade game, build a **word castle** with your spelling – then banish Echo the Mix-Up Ghost!',
       nameLabel: 'Hunter name:',
     },
 
@@ -106,7 +108,7 @@ window.LESSON = {
     },
 
     {
-      type: 'read', title: 'Sound twins', short: 'Read 1', minutes: 5,
+      type: 'read', title: 'Sound twins', short: 'Read 1', minutes: 4,
       say: 'Read each page carefully – the checks test if you really understood. Tap the yellow words for a 💎.',
       cards: [
         {
@@ -145,14 +147,13 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'Homophones are weird!', short: 'Video 1', minutes: 7,
+      type: 'video', title: 'Homophones are weird!', short: 'Video', minutes: 6,
       video: { id: 'rQuWqcVzqUU', title: 'Homophones for Kids | Grammar for Elementary Students', channel: 'Homeschool Pop', duration: '5:07' },
       say: 'This video says homophones are WEIRD – like a cow that works in a city! Watch, then answer.',
       clues: [
         'What did the baby eat?',
         'What is hay for?',
         'What was the person buying?',
-        'How many homophones are there in English?',
       ],
       questions: [
         { type: 'mcq', q: 'The video explains that homophones sound the same but…', options: ['look different and mean different things', 'mean exactly the same thing', 'are always spelt the same'], answer: 0 },
@@ -160,12 +161,11 @@ window.LESSON = {
         { type: 'mcq', q: 'In the video, the baby ate a…', options: ['watermelon', 'banana', 'biscuit'], answer: 0 },
         { type: 'mcq', q: 'The video says hay is…', options: ['food for horses', 'a way to say goodbye', 'a kind of bird'], answer: 0 },
         { type: 'mcq', q: 'The seagull flew over the ocean. The homophone of flew is…', options: ['flu – a kind of sickness', 'fly – a buzzing insect', 'flow – how a river moves'], answer: 0 },
-        { type: 'mcq', q: 'How many homophones does the video say English has?', options: ['over 7,000', 'about 20', 'exactly 100'], answer: 0 },
       ],
     },
 
     {
-      type: 'game', title: 'Homophone Hunt', short: 'Game 1', minutes: 8,
+      type: 'game', title: 'Homophone Hunt', short: 'Hunt', minutes: 5,
       rounds: [
         {
           game: 'match', title: 'Sound twins',
@@ -202,12 +202,6 @@ window.LESSON = {
             { label: 'I ate ___ much cake.', bucket: 'too', hint: 'MORE than enough!' },
           ],
         },
-        {
-          game: 'wordsearch', title: 'Homophone word hunt', size: 9,
-          intro: 'Find the hidden homophones – both twins of each pair are in there!',
-          say: 'Drag across each word you spot.',
-          words: ['HEAR', 'HERE', 'NIGHT', 'KNIGHT', 'FLOUR', 'FLOWER', 'SEA', 'SEE'],
-        },
       ],
     },
 
@@ -239,45 +233,11 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'They\'re, their or there?', short: 'Video 2', minutes: 7,
-      video: { id: 'SCtWH2AdvUE', title: 'When to Use They\'re, Their, or There: Using Homophones for Kids', channel: 'Free School', duration: '4:44' },
-      say: 'FreeSchool shows a handy test for each one. Watch closely – then try the test yourself!',
-      clues: [
-        'Which one is a contraction?',
-        'Which word hides inside there?',
-        'What could the dog catch?',
-        'What were they afraid of?',
-      ],
-      questions: [
-        { type: 'mcq', q: 'The video says they\'re is a contraction of…', options: ['they are', 'they were', 'there are'], answer: 0 },
-        { type: 'mcq', q: 'Which word hides inside t-h-e-r-e and helps you test it?', options: ['here', 'her', 'the'], answer: 0 },
-        { type: 'mcq', q: 'To test for their, the video swaps in…', options: ['his or her', 'here', 'they are'], answer: 0 },
-        { type: 'mcq', q: 'In the video, "___ dog can catch a ball." Which word fits?', options: ['Their', 'There', 'They\'re'], answer: 0 },
-        { type: 'mcq', q: '"The squirrel is over ___." Which word fits?', options: ['there', 'their', 'they\'re'], answer: 0 },
-        { type: 'tf', q: 'In the video, "they\'re all afraid of ghosts" uses they\'re because it means they are.', answer: true },
-      ],
-    },
-
-    {
-      type: 'game', title: 'Ghost Patrol', short: 'Game 2', minutes: 8,
+      type: 'game', title: 'Ghost Arcade: pick a game!', short: 'Arcade', icon: '🕹️', minutes: 4,
+      pick: { title: '🕹️ Pick your arcade game!', say: 'Your choice! Which game do you want to play? Win one to carry on – or play them all!' },
       rounds: [
         {
-          game: 'fixit', title: 'Ghost graffiti',
-          intro: 'Echo the ghost has sneaked homophone mistakes into the castle notices! Tap the wrong word, then tap the right twin to swap it in. Careful – some notices are already perfect.',
-          say: 'Read each sentence aloud in your head. Which word has the wrong meaning?',
-          sentences: [
-            { text: 'I can here the birds singing.', wrong: 'here', fix: 'hear', options: ['hair'], why: 'You hear with your ear!' },
-            { text: 'Their going to the beach today.', wrong: 'Their', fix: 'they\'re', options: ['there'], why: 'They are going → they\'re going.' },
-            { text: 'The knight rode into the castle at night.', ok: true, why: 'Both twins are right! A knight in armour, and night-time.' },
-            { text: 'We ate to many cakes at the party.', wrong: 'to', fix: 'too', options: ['two'], why: 'too many = more than enough.' },
-            { text: 'Hang your coats over their by the door.', wrong: 'their', fix: 'there', options: ['they\'re'], why: 'It is a place – over here works too, so it is there.' },
-            { text: 'Mum made pancakes with flower and eggs.', wrong: 'flower', fix: 'flour', options: ['floor'], why: 'Flour is the baking powder. A flower grows in the garden!' },
-            { text: 'The children put on their wellies.', ok: true, why: 'Whose wellies? Theirs – so their is right.' },
-            { text: 'We swam in the see on holiday.', wrong: 'see', fix: 'sea', options: ['she'], why: 'The salty water is the sea. You see with your eyes.' },
-          ],
-        },
-        {
-          game: 'runner', title: 'Twin Run',
+          game: 'runner', title: 'Twin Run', emoji: '🏃', blurb: 'Race past the signs and grab the ones with the RIGHT twin.',
           intro: 'Echo has mixed up the twins on the castle signs! Run past and collect only the signs with the **right twin** in them.',
           say: 'Read both signs, then pick the lane with the RIGHT twin! Jump the rocks and hold DASH to go faster.',
           prompt: 'Collect the signs with the RIGHT twin!',
@@ -296,11 +256,32 @@ window.LESSON = {
             { label: 'bake with flower', ok: false, why: 'Flour is the baking powder. A flower grows in the garden!' },
           ],
         },
+        {
+          game: 'steadyhand', title: 'Steady Hand', emoji: '✏️', blurb: 'Guide your pencil along the wiggly path – don\'t touch the sides!',
+          intro: 'Press on the green dot and follow the wiggly path all the way to the 🏁 – carefully! Pick Easy, Medium or Hard.',
+          say: 'Steady hands! Don\'t touch the sides!',
+          done: 'What a steady hand! Echo is shaking in its sheets.',
+        },
+        {
+          game: 'fixit', title: 'Ghost Graffiti', emoji: '👻', blurb: 'Catch the ghost\'s mistakes on the castle notices.',
+          intro: 'Echo the ghost has sneaked homophone mistakes into the castle notices! Tap the wrong word, then tap the right twin to swap it in. Careful – some notices are already perfect.',
+          say: 'Read each sentence aloud in your head. Which word has the wrong meaning?',
+          sentences: [
+            { text: 'I can here the birds singing.', wrong: 'here', fix: 'hear', options: ['hair'], why: 'You hear with your ear!' },
+            { text: 'Their going to the beach today.', wrong: 'Their', fix: 'they\'re', options: ['there'], why: 'They are going → they\'re going.' },
+            { text: 'The knight rode into the castle at night.', ok: true, why: 'Both twins are right! A knight in armour, and night-time.' },
+            { text: 'We ate to many cakes at the party.', wrong: 'to', fix: 'too', options: ['two'], why: 'too many = more than enough.' },
+            { text: 'Hang your coats over their by the door.', wrong: 'their', fix: 'there', options: ['they\'re'], why: 'It is a place – over here works too, so it is there.' },
+            { text: 'Mum made pancakes with flower and eggs.', wrong: 'flower', fix: 'flour', options: ['floor'], why: 'Flour is the baking powder. A flower grows in the garden!' },
+            { text: 'The children put on their wellies.', ok: true, why: 'Whose wellies? Theirs – so their is right.' },
+            { text: 'We swam in the see on holiday.', wrong: 'see', fix: 'sea', options: ['she'], why: 'The salty water is the sea. You see with your eyes.' },
+          ],
+        },
       ],
     },
 
     {
-      type: 'game', title: 'The Spell Test: Word Castle', short: 'Spell test', icon: '🪄', kind: 'Spelling test', minutes: 10,
+      type: 'game', title: 'The Spell Test: Word Castle', short: 'Spell test', icon: '🪄', kind: 'Spelling test', minutes: 6,
       rounds: [
         {
           game: 'spelltest', mode: 'peek', title: 'Look, Cover, Write, Check', scene: 'castle', prize: 'the hunters\' lookout',
@@ -309,8 +290,6 @@ window.LESSON = {
           words: [
             { word: 'their', clue: 'belongs to them', hint: 'the + ir' },
             { word: 'there', clue: 'a place (here is hiding inside)', hint: 't + here' },
-            { word: 'hear', clue: 'listen with your ears', hint: 'h + ear' },
-            { word: 'two', clue: 'the number 2', hint: 'tw like twins, then o' },
             { word: 'knight', clue: 'a soldier in armour', hint: 'silent k, then night' },
           ],
         },
@@ -322,12 +301,9 @@ window.LESSON = {
             { word: 'their', sentence: 'The children waved ___ flags.', clue: 'belongs to them', hint: 'Whose flags? Use the his/her test – the + ir.' },
             { word: 'there', sentence: 'Put the box over ___.', clue: 'a place', hint: 'here is hiding inside it.' },
             { word: 'hear', sentence: 'Can you ___ the thunder?', clue: 'listen with your ears', hint: 'It has ear inside it.' },
-            { word: 'here', sentence: 'Come and sit ___ next to me.', clue: 'this place', hint: 'Just four letters – h-e-r-e.' },
-            { word: 'too', sentence: 'My little brother wants to come ___.', clue: 'also', hint: 'One o too many!' },
             { word: 'two', sentence: 'A bird has ___ wings.', clue: 'the number 2', hint: 'tw like twins.' },
             { word: 'knight', sentence: 'The brave ___ fought the dragon.', clue: 'a soldier in armour', hint: 'A silent k at the start, then night.' },
             { word: 'flour', sentence: 'We need ___ to make pizza dough.', clue: 'white baking powder', hint: 'f-l-o-u-r. The garden one has a w.' },
-            { word: 'flower', sentence: 'A bee landed on the ___.', clue: 'it grows in the garden', hint: 'f-l-o-w-e-r.' },
             { word: 'sea', sentence: 'A whale swam in the deep blue ___.', clue: 'salty water', hint: 's-e-a. The looking one has two e letters.' },
           ],
         },
@@ -338,7 +314,6 @@ window.LESSON = {
           waves: [
             { spell: 'knight', clue: 'In armour (silent k!)', decoys: 'eo' },
             { spell: 'their', clue: 'Belongs to them', decoys: 'ya' },
-            { spell: 'flour', clue: 'Powder for baking', decoys: 'we' },
           ],
           done: 'LETTER BLASTER CLEAR! The castle is safe – nearly…',
         },
@@ -346,24 +321,7 @@ window.LESSON = {
     },
 
     {
-      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
-      say: 'Time to move! The twins sound the same – but the moves are different.',
-      wiggle: {
-        title: '👂 Twin Moves!',
-        seconds: 60,
-        moves: [
-          '🌊 SEA: make big waves with your arms!',
-          '👀 SEE: shade your eyes and look far, far away.',
-          '🌙 NIGHT: curl up and pretend to snore…',
-          '🛡️ KNIGHT: sword fight an invisible dragon!',
-          '🐻 BEAR: stomp around and growl!',
-          '2️⃣ TWO: hop TWO times… now two more!',
-        ],
-      },
-    },
-
-    {
-      type: 'quiz', title: 'Boss Battle: Echo the Mix-Up Ghost', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      type: 'quiz', title: 'Boss Battle: Echo the Mix-Up Ghost', short: 'Boss', kind: 'Boss battle', minutes: 5,
       say: 'ECHO THE MIX-UP GHOST is swapping words all over the Kingdom! Every right answer is a hit. Banish it, {name}!',
       boss: { name: 'Echo the Mix-Up Ghost', sprite: ECHO_GHOST, attack: '👻', lines: {
         intro: 'Wooo-ooo! I swap the twins… twins… twins! Nobody can HERE me coming!',
@@ -386,7 +344,6 @@ window.LESSON = {
         { type: 'gap', q: '___ coming to my party on Saturday!', options: ['They\'re', 'Their', 'There'], answer: 0, hint: 'Try the they are test.' },
         { type: 'gap', q: 'The players lifted ___ trophy.', options: ['their', 'there', 'they\'re'], answer: 0, hint: 'Whose trophy?' },
         { type: 'gap', q: 'Is ___ any juice left in the fridge?', options: ['there', 'their', 'they\'re'], answer: 0 },
-        { type: 'tf', q: 'A spellchecker always spots homophone mistakes.', answer: false, explain: 'Both twins are real words, so the computer thinks they are fine!' },
         { type: 'mcq', q: 'Which sentence is correct?', options: ['The knight rode through the night.', 'The night rode through the knight.', 'The knight rode through the knight.'], answer: 0 },
         { type: 'mcq', q: 'Which word could finish: "Please ___ me a story"?', options: ['read', 'red', 'reed'], answer: 0, explain: 'read sounds like red – but red is a colour and a reed is a tall plant!' },
         { type: 'mcq', q: 'The hunter tests "___ dog is barking" by swapping in "his": "His dog is barking" makes sense! So which word goes in the gap?', options: ['their', 'there', 'they\'re'], answer: 0, hint: 'If "his" or "our" fits, it is the belonging word.' },

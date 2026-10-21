@@ -52,6 +52,8 @@ window.LESSON = {
   title: 'Speech Marks Squad',
   emoji: '💬',
   home: '../index.html',
+  midBreak: false, // the Arcade stage is the fun break
+  layout: 2, // the compact (one video) version: older saved progress starts again from the top
   finishAch: 'speller',
   mascot: {
     name: 'Quill the Wizard',
@@ -71,7 +73,7 @@ window.LESSON = {
       pic: MARKS,
       hello: 'Welcome back to the WORD KINGDOM! Blabber the Bubble-Popper has popped every speech bubble in the storybooks. Now nobody knows who is talking!',
       question: 'In a comic, the words people say go in speech bubbles. How do you think a storybook shows who is talking?',
-      intro: 'Warm up, read, watch, put speech marks in the right gaps, fill the **hot-air balloon** with your spelling – then pop Blabber!',
+      intro: 'Warm up, read, watch, put speech marks in the right gaps, teach a robot, pick your own arcade game, fill the **hot-air balloon** with your spelling – then pop Blabber!',
       nameLabel: 'Player name:',
     },
 
@@ -94,7 +96,7 @@ window.LESSON = {
     },
 
     {
-      type: 'read', title: 'Talking in stories', short: 'Read 1', minutes: 5,
+      type: 'read', title: 'Talking in stories', short: 'Read 1', minutes: 4,
       say: 'Read each page carefully – the checks test if you really understood. Tap the yellow words for a 💎.',
       cards: [
         {
@@ -134,7 +136,7 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'How To Use Speech Marks', short: 'Video 1', minutes: 7,
+      type: 'video', title: 'How To Use Speech Marks', short: 'Video', minutes: 6,
       video: { id: 'u6pkcdEylTE', title: 'How To Use Speech Marks', channel: 'Learn and Play Online!', duration: '5:27' },
       say: 'Watch how speech bubbles turn into speech marks. Then answer my questions.',
       clues: [
@@ -145,7 +147,6 @@ window.LESSON = {
       ],
       questions: [
         { type: 'mcq', q: 'The video says speech marks have other names too. Which ones?', options: ['quotation marks or inverted commas', 'full stops or commas', 'thought bubbles or captions'], answer: 0 },
-        { type: 'mcq', q: 'Where were Pam\'s words "I made this pizza" at the very start?', options: ['in a speech bubble', 'on a menu', 'in a letter'], answer: 0 },
         { type: 'mcq', q: 'The part that says who is talking, like "said Pam", tells the reader…', options: ['who is talking and how they said it', 'where the story happens', 'what time it is'], answer: 0 },
         { type: 'tf', q: 'The video says the spoken words must always begin with a capital letter – even in the middle of a sentence.', answer: true },
         { type: 'mcq', q: '"What do you see?" asked Bob. Where does the question mark go?', options: ['inside the speech marks', 'outside the speech marks', 'after the word Bob'], answer: 0 },
@@ -154,7 +155,7 @@ window.LESSON = {
     },
 
     {
-      type: 'game', title: 'Squad Training', short: 'Game 1', minutes: 9,
+      type: 'game', title: 'Squad Training', short: 'Training', minutes: 5,
       rounds: [
         {
           game: 'speechmarks', title: 'Bubble to marks',
@@ -186,17 +187,6 @@ window.LESSON = {
             { label: 'The giant told everyone to be quiet.', emoji: '🤫', bucket: 'tell', hint: 'We are told what happened, not given his words.' },
           ],
         },
-        {
-          game: 'invaders', title: 'Spoken Word Blaster',
-          intro: 'Arcade round! Each wave shows a sentence. **Shoot only the words that are spoken** – leave the speaker and the said word alone!',
-          say: 'Which words come out of the speaker\'s mouth?',
-          waves: [
-            { prompt: '“Help me!” cried the cat. Shoot the SPOKEN words!', items: [{ label: 'Help', ok: true }, { label: 'me', ok: true }, { label: 'cried', ok: false, why: 'cried tells us HOW the cat spoke – the cat didn\'t say it.' }, { label: 'cat', ok: false, why: 'The cat is the speaker, not something it said.' }] },
-            { prompt: 'Mum said, “Brush your teeth.” Shoot the SPOKEN words!', items: [{ label: 'Brush', ok: true }, { label: 'teeth', ok: true }, { label: 'Mum', ok: false, why: 'Mum is the speaker.' }, { label: 'said', ok: false, why: 'said is outside the speech marks.' }] },
-            { prompt: '“Is it home time yet?” moaned Ravi. Shoot the SPOKEN words!', items: [{ label: 'home', ok: true }, { label: 'time', ok: true }, { label: 'yet', ok: true }, { label: 'moaned', ok: false, why: 'moaned tells us how Ravi spoke.' }, { label: 'Ravi', ok: false, why: 'Ravi is the speaker.' }] },
-          ],
-          done: 'BLASTER CLEAR! You can spot spoken words a mile off!',
-        },
       ],
     },
 
@@ -218,42 +208,28 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'How to Use Inverted Commas', short: 'Video 2', minutes: 6,
-      video: { id: 'sk7xCWbPyVs', title: 'How to Use Inverted Commas? | KS2 English Concept for Kids', channel: 'Twinkl Educational Publishing', duration: '3:42' },
-      say: 'Inverted commas is the other name for speech marks. Watch – and try the questions in the video too! Then answer mine.',
-      clues: [
-        'Which question did Freddie ask?',
-        'What would Daisy love to go hunting for?',
-        'What was wrong with Priyanka\'s sentence?',
-        'Where does the speech punctuation always go?',
-      ],
-      questions: [
-        { type: 'mcq', q: 'Freddie asked which way the cinema was. Which mark ended his spoken words?', options: ['a question mark', 'a full stop', 'an exclamation mark'], answer: 0 },
-        { type: 'mcq', q: 'Daisy would love to go hunting for…', options: ['fossils', 'treasure', 'dinosaurs'], answer: 0 },
-        { type: 'mcq', q: 'In the video, Priyanka\'s sentence had speech marks at the very start and the very end. Why was that wrong?', options: ['The marks should go round only the words Priyanka said', 'Priyanka should start with a small letter', 'It should not have a question mark'], answer: 0 },
-        { type: 'tf', q: 'Betsy\'s sentence was wrong because the comma was OUTSIDE the speech marks.', answer: true, explain: 'The comma belongs to the spoken words, so it goes inside.' },
-        { type: 'type', q: 'Aunty Felicity says "Let\'s add some compost." Write the word that comes straight after the FIRST speech mark.', answer: ['lets', 'let\'s'], placeholder: 'one word', hint: 'Which word does Aunty Felicity say first?' },
-        { type: 'mcq', q: 'The video says the speech punctuation (a comma, question mark, exclamation mark or full stop) always goes…', options: ['before the last speech mark', 'after the last speech mark', 'at the very start'], answer: 0 },
-      ],
-    },
-
-    {
-      type: 'game', title: 'Squad on Patrol', short: 'Game 2', minutes: 8,
+      type: 'game', title: 'Squad Arcade: pick a game!', short: 'Arcade', icon: '🕹️', minutes: 4,
+      pick: { title: '🕹️ Pick your arcade game!', say: 'Your choice! Which game do you want to play? Win one to carry on – or play them all!' },
       rounds: [
         {
-          game: 'speechmarks', title: 'Speaker first!',
-          intro: 'Now the speaker comes FIRST. Tap the gaps for the speech marks. Careful – one sentence only tells us what was said, so it needs **no** speech marks at all!',
-          say: 'Find the spoken words. Do they need marks?',
-          items: [
-            { text: 'Mum said, “Time for bed.”', who: '👩' },
-            { text: 'The knight shouted, “Charge!”', who: '🛡️' },
-            { text: 'Lily asked, “Can we go swimming?”', who: '👧' },
-            { text: 'Ben said that he was too tired to walk.', none: true, why: 'Ben\'s exact words aren\'t given – the sentence only TELLS us what he said. No speech marks!' },
-            { text: '“Shh,” whispered Gran, “the baby is asleep.”', who: '👵', hint: 'Gran\'s words are split in two! You need two pairs of speech marks.' },
+          game: 'invaders', title: 'Spoken Word Blaster', emoji: '🚀', blurb: 'Shoot only the words that are spoken.',
+          intro: 'Arcade round! Each wave shows a sentence. **Shoot only the words that are spoken** – leave the speaker and the said word alone!',
+          say: 'Which words come out of the speaker\'s mouth?',
+          waves: [
+            { prompt: '“Help me!” cried the cat. Shoot the SPOKEN words!', items: [{ label: 'Help', ok: true }, { label: 'me', ok: true }, { label: 'cried', ok: false, why: 'cried tells us HOW the cat spoke – the cat didn\'t say it.' }, { label: 'cat', ok: false, why: 'The cat is the speaker, not something it said.' }] },
+            { prompt: 'Mum said, “Brush your teeth.” Shoot the SPOKEN words!', items: [{ label: 'Brush', ok: true }, { label: 'teeth', ok: true }, { label: 'Mum', ok: false, why: 'Mum is the speaker.' }, { label: 'said', ok: false, why: 'said is outside the speech marks.' }] },
+            { prompt: '“Is it home time yet?” moaned Ravi. Shoot the SPOKEN words!', items: [{ label: 'home', ok: true }, { label: 'time', ok: true }, { label: 'yet', ok: true }, { label: 'moaned', ok: false, why: 'moaned tells us how Ravi spoke.' }, { label: 'Ravi', ok: false, why: 'Ravi is the speaker.' }] },
           ],
+          done: 'BLASTER CLEAR! You can spot spoken words a mile off!',
         },
         {
-          game: 'fixit', title: 'Said is tired!',
+          game: 'steadyhand', title: 'Steady Hand', emoji: '✏️', blurb: 'Guide your pencil along the wiggly path – don\'t touch the sides!',
+          intro: 'Press on the green dot and follow the wiggly path all the way to the 🏁 – carefully! Pick Easy, Medium or Hard.',
+          say: 'Steady hands! Don\'t touch the sides!',
+          done: 'What a steady hand! Blabber could never keep that still.',
+        },
+        {
+          game: 'fixit', title: 'Said is tired!', emoji: '🗣️', blurb: 'Swap tired old said for a better speaking word.',
           intro: 'Poor said is worn out from being used so much! Tap the word **said**, then swap in a word that shows HOW each person spoke.',
           say: 'Read each sentence. How would they REALLY say it?',
           noOk: true,
@@ -265,20 +241,11 @@ window.LESSON = {
             { text: '“What is your name?” said the teacher.', wrong: 'said', fix: 'asked', options: ['replied'], why: 'It is a question, so she asked.' },
           ],
         },
-        {
-          game: 'questions', title: 'Build the speech',
-          intro: 'Blabber has scrambled the words! Tap the tiles to **build each sentence** with the speech marks in the right places.',
-          say: 'Spoken words first, then who said it.',
-          questions: [
-            { type: 'build', q: 'Build it: the dragon roars "I want gold!"', answer: ['“I', 'want', 'gold!”', 'roared', 'the', 'dragon.'], extra: ['gold!', '“roared'], join: ' ', hint: 'The closing mark comes after the exclamation mark.' },
-            { type: 'build', q: 'Build it: Sam asks "Where is my sock?" – and Sam comes first.', answer: ['Sam', 'asked,', '“Where', 'is', 'my', 'sock?”'], extra: ['asked', 'sock”?'], join: ' ', hint: 'When the speaker comes first, a comma goes after the said word.' },
-          ],
-        },
       ],
     },
 
     {
-      type: 'game', title: 'The Spell Test: Up, Up and Away!', short: 'Spell test', icon: '🪄', kind: 'Spelling test', minutes: 10,
+      type: 'game', title: 'The Spell Test: Up, Up and Away!', short: 'Spell test', icon: '🪄', kind: 'Spelling test', minutes: 6,
       rounds: [
         {
           game: 'spelltest', mode: 'peek', title: 'Look, Cover, Write', scene: 'balloon', prize: 'the test balloon',
@@ -287,8 +254,6 @@ window.LESSON = {
           words: [
             { word: 'said', clue: 'what you did when you spoke', hint: 'It sounds like "sed" but it is spelt s-a-i-d.' },
             { word: 'asked', clue: 'what you did when you said a question', hint: 'ask + ed' },
-            { word: 'shouted', clue: 'spoke very loudly', hint: 'shout + ed' },
-            { word: 'replied', clue: 'answered someone', hint: 'reply: change the y to i, then add ed.' },
             { word: 'speech', clue: 'words that are spoken', hint: 'Double e in the middle: sp-ee-ch.' },
           ],
         },
@@ -303,10 +268,7 @@ window.LESSON = {
             { word: 'whispered', sentence: 'Gran ___ a secret.', clue: 'spoke very quietly', hint: 'It starts with wh: wh-is-per-ed.' },
             { word: 'replied', sentence: '“Yes, please,” ___ Mum.', clue: 'answered', hint: 'Change the y in reply to i, then add ed.' },
             { word: 'answered', sentence: 'Ella ___ the question.', clue: 'replied', hint: 'There is a silent w: an-s-w-er-ed.' },
-            { word: 'explained', sentence: 'The teacher ___ the rules.', clue: 'made it clear', hint: 'ex + plain + ed' },
             { word: 'giggled', sentence: '“That tickles!” ___ Ruby.', clue: 'laughed in a silly way', hint: 'Double g in the middle: gig-gled.' },
-            { word: 'question', sentence: 'A ___ ends with a question mark.', clue: 'something you ask', hint: 'It ends in -tion, which sounds like "chun" here.' },
-            { word: 'speech', sentence: '___ marks go round spoken words.', clue: 'the words that are spoken', hint: 'sp-ee-ch' },
           ],
         },
         {
@@ -316,7 +278,6 @@ window.LESSON = {
           waves: [
             { spell: 'said', clue: '“Hi,” ___ Tom. (the ai is tricky!)', decoys: 'ed' },
             { spell: 'asked', clue: 'Said a question', decoys: 'tz' },
-            { spell: 'whisper', clue: 'Speak very, very quietly', decoys: 'au' },
           ],
           done: 'LETTER BLASTER CLEAR! Your spelling speaks for itself!',
         },
@@ -324,24 +285,7 @@ window.LESSON = {
     },
 
     {
-      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
-      say: 'Time to move! Say each line out loud the way the said word tells you.',
-      wiggle: {
-        title: '🗣️ Say It Like This!',
-        seconds: 60,
-        moves: [
-          '🤫 "I am a tiny mouse," you WHISPERED, tiptoeing on the spot!',
-          '📢 "I am a giant!" you BOOMED, stomping your feet!',
-          '😂 "That tickles!" you GIGGLED, wiggling all over!',
-          '🐸 "Ribbit!" you CROAKED, doing three frog jumps!',
-          '😴 "So sleepy…" you YAWNED, stretching up high!',
-          '🦁 "I am the king!" you ROARED, making lion claws!',
-        ],
-      },
-    },
-
-    {
-      type: 'quiz', title: 'Boss Battle: Blabber the Bubble-Popper', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      type: 'quiz', title: 'Boss Battle: Blabber the Bubble-Popper', short: 'Boss', kind: 'Boss battle', minutes: 5,
       say: 'BLABBER THE BUBBLE-POPPER has popped every speech bubble in the Kingdom! Every right answer puts some speech marks back. Go, {name}!',
       boss: {
         name: 'Blabber', sprite: BLABBER, attack: ['💬', '📌'], spin: true,
@@ -366,14 +310,13 @@ window.LESSON = {
         button: 'Watch the bonus video ▶',
       },
       questions: [
-        { type: 'mcq', q: 'Speech marks show…', options: ['the exact words someone says', 'who the main character is', 'where a story happens'], answer: 0 },
         { type: 'mcq', q: 'Which one is punctuated correctly?', options: ['“Let\'s go,” said Ali.', '“Let\'s go”, said Ali.', 'Let\'s go, “said Ali.”'], answer: 0, hint: 'The comma belongs to the spoken words.' },
         { type: 'gap', q: '“Is it raining___” asked Max.', options: ['?', '!', ','], answer: 0 },
         { type: 'evidence', q: 'Which sentence gives someone\'s EXACT words?', passage: ['Kai said that he wanted a puppy.', '“Can we get a puppy?” asked Kai.', 'His mum told him to wait and see.'], answer: 'Can we get a puppy', hint: 'Which one could go straight into a speech bubble?' },
         { type: 'tf', q: '"Mum said that tea was ready." This sentence needs speech marks.', answer: false, explain: 'It only TELLS us what Mum said – her exact words aren\'t there.' },
         { type: 'build', q: 'Build it: Sam shouts "Look at me!"', answer: ['“Look', 'at', 'me!”', 'shouted', 'Sam.'], extra: ['me!', '“shouted'], join: ' ', hint: 'Spoken words first, with the ! inside the closing mark.' },
         { type: 'type', q: '"I\'m f-f-freezing," ___ the snowman. Write a speaking word that ISN\'T said.', answer: ['shivered', 'shouted', 'cried', 'whispered', 'moaned', 'complained', 'grumbled', 'sighed', 'yelled', 'called', 'groaned', 'replied', 'mumbled', 'muttered', 'exclaimed', 'wailed', 'screamed', 'stuttered', 'explained', 'sobbed', 'shrieked', 'chattered', 'whimpered', 'whined', 'squeaked', 'announced', 'gasped', 'stammered'], placeholder: 'a speaking word', hint: 'How would a cold snowman speak? Try shivered or moaned!' },
-        { type: 'oddone', q: 'Which speaking word is the odd one out?', items: ['whispered', 'muttered', 'mumbled', 'bellowed'], answer: 3, why: 'Why is bellowed the odd one out?', reasons: ['It means speaking very loudly – the others are quiet', 'It has the most letters', 'It is not a speaking word'], reason: 0 },
+        { type: 'oddone', q: 'Which speaking word is the odd one out?', items: ['whispered', 'muttered', 'mumbled', 'shouted'], answer: 3, why: 'Why is shouted the odd one out?', reasons: ['It means speaking very loudly – the others are quiet', 'It has the most letters', 'It is not a speaking word'], reason: 0 },
         { type: 'mcq', q: '“Help!” cried Ben. Which words did Ben actually say?', options: ['Help!', 'cried Ben', 'Help! cried Ben'], answer: 0 },
         { type: 'mcq', q: 'Which one is right?', options: ['Dad said, “Time for tea.”', 'Dad said “time for tea.”', 'Dad said, “Time for tea”.'], answer: 0, hint: 'Check for the comma, the capital letter and the full stop inside.' },
         { type: 'gap', q: 'Zara whispered___ “I have a secret.”', options: [',', '?', '!'], answer: 0, hint: 'When the speaker comes first, what goes after the said word?' },

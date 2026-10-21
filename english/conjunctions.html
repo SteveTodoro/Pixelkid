@@ -51,6 +51,8 @@ window.LESSON = {
   title: 'Conjunction Junction',
   emoji: '🚂',
   home: '../index.html',
+  midBreak: false, // the Arcade stage is the fun break
+  layout: 2, // the compact (one video) version: older saved progress starts again from the top
   finishAch: 'speller',
   mascot: {
     name: 'Quill the Wizard',
@@ -71,7 +73,7 @@ window.LESSON = {
       pic: COUPLED,
       hello: 'Welcome back to the WORD KINGDOM! Stopsy the Full-Stop Gremlin is chopping every sentence into teeny, choppy bits. Like this. See? It is. Very. Annoying.',
       question: 'How could you turn "I was hungry." and "I ate a sandwich." into ONE sentence?',
-      intro: 'Recap, read, watch, build sentences, fill up the **word train** with your spelling – then stop Stopsy the Full-Stop Gremlin!',
+      intro: 'Recap, read, watch, build sentences, crack a case, pick your own arcade game, fill up the **word train** with your spelling – then stop Stopsy the Full-Stop Gremlin!',
       nameLabel: 'Player name:',
     },
 
@@ -102,7 +104,7 @@ window.LESSON = {
     },
 
     {
-      type: 'read', title: 'Joining words', short: 'Read 1', minutes: 5,
+      type: 'read', title: 'Joining words', short: 'Read 1', minutes: 4,
       say: 'Read each page carefully – the checks test if you really understood. Tap the yellow words for a 💎.',
       cards: [
         {
@@ -139,7 +141,7 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'What are Conjunctions?', short: 'Video 1', minutes: 7,
+      type: 'video', title: 'What are Conjunctions?', short: 'Video', minutes: 6,
       video: { id: 'hLV_aqzcfrc', title: 'What are Conjunctions? | Grammar for Kids | Treetopix! Quick Learns', channel: 'Twinkl Kids TV', duration: '4:32' },
       say: 'Owl the deep thinker is learning about conjunctions from Twinklebot. Watch, then answer my questions.',
       clues: [
@@ -154,12 +156,11 @@ window.LESSON = {
         { type: 'mcq', q: 'Owl says, "I like the summer ___ it is sunny." Which conjunction gives the reason?', options: ['because', 'or', 'and'], answer: 0 },
         { type: 'tf', q: 'Twinklebot says there is only ever ONE right conjunction for a sentence.', answer: false, explain: 'There are lots of conjunctions that could work – but they change the meaning!' },
         { type: 'mcq', q: '"I like the summer although it is sunny." What does although do to the meaning?', options: ['It sounds like Owl likes summer even though he doesn\'t like the sun', 'It means exactly the same as because', 'It makes the sentence a question'], answer: 0 },
-        { type: 'mcq', q: 'What does Owl say he needs to do at the very end?', options: ['lie down', 'have a sandwich', 'play football'], answer: 0 },
       ],
     },
 
     {
-      type: 'game', title: 'Sentence Builder', short: 'Game 1', minutes: 9,
+      type: 'game', title: 'Sentence Builder', short: 'Builder', minutes: 5,
       rounds: [
         {
           game: 'sort', title: 'Which joining word?',
@@ -197,23 +198,6 @@ window.LESSON = {
             { a: '🛁 Wash your hands', b: 'before you eat your tea.' },
           ],
         },
-        {
-          game: 'runner', title: 'Junction Run',
-          intro: 'Your hero runs by itself and the words come two at a time – pick the lane with the right one! Collect only the **joining words** – leave the other words behind.',
-          say: 'Tap the top or bottom lane. Collect the CONJUNCTIONS!',
-          prompt: 'Collect the joining words!',
-          items: [
-            { label: 'and', ok: true },
-            { label: 'but', ok: true },
-            { label: 'because', ok: true },
-            { label: 'so', ok: true },
-            { label: 'when', ok: true },
-            { label: 'train', ok: false, why: 'train is a noun – a naming word.' },
-            { label: 'jump', ok: false, why: 'jump is a verb – a doing word.' },
-            { label: 'happy', ok: false, why: 'happy is an adjective – a describing word.' },
-          ],
-          done: 'JUNCTION RUN COMPLETE! You know your joining words!',
-        },
       ],
     },
 
@@ -245,44 +229,34 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'Subordinating Conjunctions', short: 'Video 2', minutes: 6,
-      video: { id: 'e8oYbgH3AZU', title: 'What Is a Subordinating Conjunction? | KS2 English Concept for Kids', channel: 'Twinkl Educational Publishing', duration: '2:50' },
-      say: 'A big name for some very useful joining words – and a funny trick to remember them! Watch, then answer my questions.',
-      clues: [
-        'What is the memory trick?',
-        'Where did the escaped hamster end up?',
-        'Why couldn\'t they go to school?',
-        'Which word means "at the same time"?',
-      ],
-      questions: [
-        { type: 'mcq', q: 'Which silly phrase helps you remember these joining words?', options: ['I SAW A WABUB', 'I SAW A BUS', 'A BIG RED TRAIN'], answer: 0 },
-        { type: 'mcq', q: 'In the video, where was the escaped hamster found?', options: ['eating birdseed in the cupboard', 'asleep in a shoe', 'on top of the fridge'], answer: 0 },
-        { type: 'type', q: '"I always count 120 seconds while brushing my teeth." Write the joining word.', answer: ['while'], placeholder: 'the joining word', hint: 'Which word tells you two things happen at the same time?' },
-        { type: 'mcq', q: '"Since it\'s been snowing all week, we\'ve been unable to go to school." Which word is the joining word?', options: ['since', 'snowing', 'school'], answer: 0 },
-        { type: 'tf', q: 'The video says these joining words can go at the start OR in the middle of a sentence.', answer: true },
-        { type: 'mcq', q: 'They played cards and waited for the cakes at the same time. Which joining word did the video use?', options: ['while', 'until', 'before'], answer: 0 },
-      ],
-    },
-
-    {
-      type: 'game', title: 'Stopsy\'s Chop Shop', short: 'Game 2', minutes: 8,
+      type: 'game', title: 'Junction Arcade: pick a game!', short: 'Arcade', icon: '🕹️', minutes: 4,
+      pick: { title: '🕹️ Pick your arcade game!', say: 'Your choice! Which game do you want to play? Win one to carry on – or play them all!' },
       rounds: [
         {
-          game: 'fixit', title: 'Wrong turn!',
-          intro: 'Stopsy has switched the joining words onto the wrong tracks! Tap the joining word that doesn\'t make sense, then tap the right one to swap it in. Some sentences are already perfect…',
-          say: 'Read each sentence aloud. Does it make sense?',
-          sentences: [
-            { text: 'I was hungry but I ate a sandwich.', wrong: 'but', fix: 'so', options: ['or'], why: 'Eating was the result of being hungry: so.' },
-            { text: 'Do you want a banana and an apple? You can only have one.', wrong: 'and', fix: 'or', options: ['so'], why: 'Only one – it is a choice: or.' },
-            { text: 'We stayed inside because it was raining.', ok: true, why: 'because gives the reason – perfect!' },
-            { text: 'Wash your hands so you eat.', wrong: 'so', fix: 'before', options: ['or'], why: 'Wash first, then eat: before.' },
-            { text: 'I like swimming because I don\'t like diving.', wrong: 'because', fix: 'but', options: ['so'], why: 'The two ideas don\'t match: but.' },
-            { text: 'Wait here until the bell rings.', ok: true, why: 'until tells you how long to wait – perfect!' },
-            { text: 'The cat ran off or the dog barked.', wrong: 'or', fix: 'when', options: ['but'], why: 'The cat ran off at the moment the dog barked: when.' },
+          game: 'runner', title: 'Junction Run', emoji: '🏃', blurb: 'Race along and grab the joining words.',
+          intro: 'Your hero runs by itself and the words come two at a time – pick the lane with the right one! Collect only the **joining words** – leave the other words behind.',
+          say: 'Tap the top or bottom lane. Collect the CONJUNCTIONS!',
+          prompt: 'Collect the joining words!',
+          items: [
+            { label: 'and', ok: true },
+            { label: 'but', ok: true },
+            { label: 'because', ok: true },
+            { label: 'so', ok: true },
+            { label: 'when', ok: true },
+            { label: 'train', ok: false, why: 'train is a noun – a naming word.' },
+            { label: 'jump', ok: false, why: 'jump is a verb – a doing word.' },
+            { label: 'happy', ok: false, why: 'happy is an adjective – a describing word.' },
           ],
+          done: 'JUNCTION RUN COMPLETE! You know your joining words!',
         },
         {
-          game: 'crossword', title: 'Conjunction Crossword',
+          game: 'steadyhand', title: 'Steady Hand', emoji: '✏️', blurb: 'Guide your pencil along the wiggly path – don\'t touch the sides!',
+          intro: 'Press on the green dot and follow the wiggly path all the way to the 🏁 – carefully! Pick Easy, Medium or Hard.',
+          say: 'Steady hands! Don\'t touch the sides!',
+          done: 'What a steady hand! Stopsy could never keep that smooth.',
+        },
+        {
+          game: 'crossword', title: 'Conjunction Crossword', emoji: '🧩', blurb: 'Every answer in the crossword is a joining word.',
           intro: 'Every answer is a joining word! Read the sentence clue and find the word that fits the gap.',
           say: 'Crossword time! Stuck? Press 💡 Hint for a free letter.',
           entries: [
@@ -296,22 +270,11 @@ window.LESSON = {
             { answer: 'IF', clue: '___ you shout, the baby will wake up.' },
           ],
         },
-        {
-          game: 'questions', title: 'Join the Train',
-          intro: 'Stopsy has chopped every long sentence into little ones! Couple the carriages back together – **build one sentence** with the joining word that makes sense.',
-          say: 'Read both parts aloud. Is it adding, a choice, a surprise, a result, a reason or a time?',
-          questions: [
-            { type: 'build', q: '"I fell over." "I hurt my knee." Join them.', answer: ['I', 'fell', 'over', 'and', 'I', 'hurt', 'my', 'knee.'], extra: ['or'], join: ' ', hint: 'Both things happened – add another idea.' },
-            { type: 'build', q: '"I got wet." "I forgot my umbrella." Join them with the REASON.', answer: ['I', 'got', 'wet', 'because', 'I', 'forgot', 'my', 'umbrella.'], extra: ['so', 'or'], join: ' ', hint: 'Why did you get wet?' },
-            { type: 'build', q: '"I ran fast." "I missed the bus." Join them – it is a surprise!', answer: ['I', 'ran', 'fast', 'but', 'I', 'missed', 'the', 'bus.'], extra: ['and', 'so'], join: ' ', hint: 'Which word joins ideas that don\'t match?' },
-            { type: 'build', q: 'Start with the joining word this time: "It was raining." "We played inside."', answer: ['Because', 'it', 'was', 'raining,', 'we', 'played', 'inside.'], extra: ['Or'], join: ' ', hint: 'When the joining word comes first, the comma goes between the two parts.' },
-          ],
-        },
       ],
     },
 
     {
-      type: 'game', title: 'The Spell Test: All Aboard!', short: 'Spell test', icon: '🪄', kind: 'Spelling test', minutes: 10,
+      type: 'game', title: 'The Spell Test: All Aboard!', short: 'Spell test', icon: '🪄', kind: 'Spelling test', minutes: 6,
       rounds: [
         {
           game: 'spelltest', mode: 'fix', title: 'Derailed Words', scene: 'train', prize: 'the test train',
@@ -321,8 +284,6 @@ window.LESSON = {
             { word: 'because', wrong: 'becuase', sentence: 'I smiled ___ I was happy.', hint: 'Big Elephants Can Always Understand Small Elephants!' },
             { word: 'before', wrong: 'befor', sentence: 'Wash your hands ___ you eat.', hint: 'It ends with a silent e: be-fore.' },
             { word: 'until', wrong: 'untill', sentence: 'Wait ___ the bell rings.', hint: 'Only ONE l at the end.' },
-            { word: 'while', wrong: 'wile', sentence: 'I sang ___ I painted.', hint: 'It starts with wh.' },
-            { word: 'although', wrong: 'althogh', sentence: 'I went out ___ it was cold.', hint: 'al + though' },
           ],
         },
         {
@@ -333,11 +294,8 @@ window.LESSON = {
             { word: 'because', sentence: 'We stayed in ___ it was raining.', clue: 'gives a reason', hint: 'Big Elephants Can Always Understand Small Elephants.' },
             { word: 'when', sentence: 'I cheered ___ we scored a goal.', clue: 'at the time that', hint: 'It starts with wh.' },
             { word: 'after', sentence: 'We had ice cream ___ lunch.', clue: 'later than', hint: 'af + ter' },
-            { word: 'before', sentence: 'Put your coat on ___ you go out.', clue: 'earlier than', hint: 'be + fore' },
             { word: 'while', sentence: 'Dad sang ___ he cooked.', clue: 'at the same time as', hint: 'wh + ile' },
             { word: 'until', sentence: 'Stir it ___ it bubbles.', clue: 'up to the time that', hint: 'un + til – only one l!' },
-            { word: 'although', sentence: 'I ate it ___ it was cold.', clue: 'even though', hint: 'al + though' },
-            { word: 'since', sentence: 'I have grown ___ last year.', clue: 'from that time', hint: 'It ends in ce, not se.' },
             { word: 'sentence', sentence: 'A capital letter starts a ___.', clue: 'a group of words that makes sense', hint: 'sen + ten + ce' },
             { word: 'together', sentence: 'Conjunctions join ideas ___.', clue: 'joined up with each other', hint: 'to + get + her' },
           ],
@@ -348,7 +306,6 @@ window.LESSON = {
           say: 'Shoot the letters IN ORDER!',
           waves: [
             { spell: 'but', clue: 'A joining word for two ideas that don\'t match', decoys: 'ae' },
-            { spell: 'until', clue: 'Wait ___ I get there (only one l!)', decoys: 'le' },
             { spell: 'because', clue: 'A joining word that gives a reason', decoys: 'kw' },
           ],
           done: 'LETTER BLASTER CLEAR! Your spelling is full steam ahead!',
@@ -357,24 +314,7 @@ window.LESSON = {
     },
 
     {
-      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
-      say: 'All aboard the joining-word train! Do each move, joined to the next one.',
-      wiggle: {
-        title: '🚂 Choo-Choo Moves!',
-        seconds: 60,
-        moves: [
-          '🚂 Chug your arms like train wheels AND stamp your feet!',
-          '🔀 Jump left OR jump right – you choose!',
-          '⏰ Touch your toes BEFORE you reach for the sky!',
-          '🐸 Hop like a frog UNTIL I say stop… STOP!',
-          '🌀 Spin round WHILE you clap your hands!',
-          '😴 Yawn and stretch BECAUSE you worked so hard!',
-        ],
-      },
-    },
-
-    {
-      type: 'quiz', title: 'Boss Battle: Stopsy the Full-Stop Gremlin', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      type: 'quiz', title: 'Boss Battle: Stopsy the Full-Stop Gremlin', short: 'Boss', kind: 'Boss battle', minutes: 5,
       say: 'STOPSY THE FULL-STOP GREMLIN has chopped every sentence in the Kingdom into tiny bits! Every right answer joins one back together. Go, {name}!',
       boss: {
         name: 'Stopsy', sprite: STOPSY, attack: '⚫',
@@ -399,7 +339,6 @@ window.LESSON = {
         button: 'Watch the bonus video ▶',
       },
       questions: [
-        { type: 'mcq', q: 'A conjunction is…', options: ['a joining word', 'a naming word', 'a describing word'], answer: 0 },
         { type: 'gap', q: 'I wanted a biscuit ___ the tin was empty.', options: ['but', 'or', 'so'], answer: 0 },
         { type: 'gap', q: 'Would you like a story ___ a song?', options: ['or', 'because', 'so'], answer: 0 },
         { type: 'gap', q: 'It was sunny ___ we went to the park.', options: ['so', 'or', 'until'], answer: 0 },
