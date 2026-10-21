@@ -48,6 +48,8 @@ window.LESSON = {
   title: 'How Does AI Work?',
   emoji: '🤖',
   home: '../index.html',
+  midBreak: false, // the Arcade stage is the fun break
+  layout: 2, // the compact (one video) version: older saved progress starts again from the top
   mascot: {
     name: 'Professor Bolt',
     sprite: Pixel.sprites.robot,
@@ -121,7 +123,7 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'What is Artificial Intelligence?', short: 'Video 1', minutes: 7,
+      type: 'video', title: 'What is Artificial Intelligence?', short: 'Video', minutes: 6,
       video: { id: 'ttIOdAdQaUE', title: 'What is Artificial Intelligence? | The Dr Binocs Show', channel: 'Peekaboo Kidz', duration: '5:42' },
       say: 'Dr Binocs is going to zoom in on AI! Watch, then come back for my questions.',
       clues: [
@@ -134,14 +136,13 @@ window.LESSON = {
         { type: 'mcq', q: 'Which of these did Dr Binocs say uses AI?', options: ['🚗 self-driving cars', '🥄 a wooden spoon', '🔔 a bicycle bell'], answer: 0 },
         { type: 'mcq', q: 'Intelligence is the ability to…', options: ['gain and use knowledge and skills', 'run really fast', 'grow taller'], answer: 0 },
         { type: 'tf', q: 'AI can look through lots of information very quickly.', answer: true },
-        { type: 'mcq', q: 'Where can robots with AI help people?', options: ['in factories and hospitals', 'only on the Moon', 'nowhere at all'], answer: 0 },
         { type: 'mcq', q: 'Dr Binocs said we should use AI…', options: ['responsibly, and not depend on it too much', 'for everything, all day long', 'only at midnight'], answer: 0 },
         { type: 'type', q: 'In 1997, a computer called Deep Blue beat the world champion at which game?', answer: ['chess'], placeholder: 'Type the game', hint: 'A board game with kings, queens and knights.' },
       ],
     },
 
     {
-      type: 'game', title: 'AI Spotter', short: 'Game 1', minutes: 7,
+      type: 'game', title: 'AI Spotter', short: 'Spotter', minutes: 5,
       rounds: [
         {
           game: 'sort', title: 'AI or not?',
@@ -176,21 +177,6 @@ window.LESSON = {
             { text: 'It is fine to tell an AI your home address.', answer: false, why: 'Never share personal information with an AI.' },
             { text: 'A calculator is a kind of AI.', answer: false, why: 'A calculator follows fixed rules. It never learns.' },
           ],
-        },
-        {
-          game: 'runner', title: 'AI Run',
-          intro: 'Your hero runs by itself and the words come two at a time – pick the lane with the right one! Collect the things that **use AI**.',
-          say: 'Tap the top or bottom lane. Collect the things that USE AI!',
-          prompt: 'Collect what USES AI – dodge what doesn\'t!',
-          items: [
-            { label: '🗣️ smart speaker', ok: true }, { label: '📱 face unlock', ok: true },
-            { label: '🚗 robot car', ok: true }, { label: '🌍 translator', ok: true },
-            { label: '💡 light switch', ok: false, why: 'A light switch just goes on and off – no learning.' },
-            { label: '✏️ pencil', ok: false, why: 'A pencil is not even a computer!' },
-            { label: '🧮 calculator', ok: false, why: 'A calculator follows fixed rules – it never learns.' },
-            { label: '🔦 torch', ok: false, why: 'A torch just shines.' },
-          ],
-          done: 'LEVEL COMPLETE! Things that LEARN from examples use AI.',
         },
       ],
     },
@@ -244,27 +230,7 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'How AI Learns', short: 'Video 2', minutes: 5,
-      video: { id: 'zXxuxJvRddU', title: 'How AI Learns Explained for Kids | What is Machine Learning?', channel: 'AI for Kids Mama Zayah', duration: '2:35' },
-      say: "A short one! Mia's mum explains how AI learns – a bit like learning football.",
-      clues: [
-        'What are the examples called?',
-        'How do we teach AI to recognise cats?',
-        'Does AI make mistakes?',
-        'What is this kind of learning called?',
-      ],
-      questions: [
-        { type: 'mcq', q: 'In the video, what are the examples that AI learns from called?', options: ['data', 'toys', 'homework'], answer: 0 },
-        { type: 'mcq', q: 'To teach an AI to recognise cats, we show it…', options: ['🐱 thousands of pictures of cats', '🐶 one picture of a dog', '🥣 a cat food bowl'], answer: 0 },
-        { type: 'type', q: 'AI finds ___ in the data, like whiskers and pointy ears. Type the missing word.', answer: ['patterns', 'pattern'], placeholder: 'Type the word', hint: 'Things that keep showing up again and again. It starts with p.' },
-        { type: 'tf', q: 'AI never makes mistakes.', answer: false, explain: 'Making mistakes is part of learning – for AI and for us!' },
-        { type: 'build', q: 'Build the name for this way of learning from examples.', answer: ['machine', 'learning'], extra: ['robot', 'dancing'], join: ' ' },
-        { type: 'mcq', q: 'In the video, Mia says learning like this is just like her…', options: ['⚽ practising football', '😴 going to sleep', '🍕 eating pizza'], answer: 0 },
-      ],
-    },
-
-    {
-      type: 'game', title: 'Robot Trainer', short: 'Game 2', minutes: 7,
+      type: 'game', title: 'Robot Trainer', short: 'Trainer', minutes: 5,
       rounds: [
         {
           game: 'trainai', title: 'Teach the robot',
@@ -285,8 +251,36 @@ window.LESSON = {
             { emoji: '🚕', colour: 'yellow', shape: 'boxy', is: 'taxi', truth: 'a TAXI', why: 'A taxi is not even a fruit! The AI only matched the colour. To fix it, we would need to train it with MORE, and DIFFERENT, examples.' },
           ],
         },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Robot Arcade: pick a game!', short: 'Arcade', icon: '🕹️', minutes: 4,
+      pick: { title: '🕹️ Pick your arcade game!', say: 'Your choice! Which game do you want to play? Win one to carry on – or play them all!' },
+      rounds: [
         {
-          game: 'mystery', title: 'Mystery AI Words',
+          game: 'runner', title: 'AI Run', emoji: '🏃', blurb: 'Race along and grab the things that use AI.',
+          intro: 'Your hero runs by itself and the words come two at a time – pick the lane with the right one! Collect the things that **use AI**.',
+          say: 'Tap the top or bottom lane. Collect the things that USE AI!',
+          prompt: 'Collect what USES AI – dodge what doesn\'t!',
+          items: [
+            { label: '🗣️ smart speaker', ok: true }, { label: '📱 face unlock', ok: true },
+            { label: '🚗 robot car', ok: true }, { label: '🌍 translator', ok: true },
+            { label: '💡 light switch', ok: false, why: 'A light switch just goes on and off – no learning.' },
+            { label: '✏️ pencil', ok: false, why: 'A pencil is not even a computer!' },
+            { label: '🧮 calculator', ok: false, why: 'A calculator follows fixed rules – it never learns.' },
+            { label: '🔦 torch', ok: false, why: 'A torch just shines.' },
+          ],
+          done: 'LEVEL COMPLETE! Things that LEARN from examples use AI.',
+        },
+        {
+          game: 'steadyhand', title: 'Steady Hand', emoji: '✏️', blurb: 'Guide your pencil along the wiggly path – don\'t touch the sides!',
+          intro: 'Press on the green dot and follow the wiggly path all the way to the 🏁 – carefully! Pick Easy, Medium or Hard.',
+          say: 'Steady hands! Don\'t touch the sides!',
+          done: 'What a steady hand! Steadier than any robot.',
+        },
+        {
+          game: 'mystery', title: 'Mystery AI Words', emoji: '🔍', blurb: 'Crack the clues to find the AI word.',
           intro: 'The Glitch scrambled the computer! Read the clue and work out the **AI word**. Solve it on the first clue for 3 gems!',
           say: 'The fewer clues you need, the more gems you win!',
           words: [
@@ -297,37 +291,6 @@ window.LESSON = {
           ],
         },
       ],
-    },
-
-    {
-      type: 'break', title: 'Brain Break', short: 'Break', minutes: 2,
-      say: 'Time to recharge your batteries! Copy my robot moves!',
-      wiggle: {
-        title: '🕺 Robot Moves!',
-        seconds: 60,
-        moves: [
-          '🤖 Robot walk! Stiff arms and legs, beep boop!',
-          '🔋 Power up! Jump 5 times to charge your battery.',
-          '📸 Be a camera! Freeze like a photo… click!',
-          '🔁 Glitch! Shake and wobble like a broken robot.',
-          '🧠 Brain training! Touch your nose, then your toes.',
-          '😌 Power down. Take a big, slow breath.',
-        ],
-      },
-      tryit: {
-        title: '🔍 Try it at home: AI Spotter',
-        intro: 'Go on an AI hunt with a grown-up!',
-        steps: [
-          'Look at each thing below. Do you think it uses AI? Tap the first box.',
-          'Ask your grown-up what they think. Tap the second box.',
-          'Did you agree? Talk about **why**!',
-        ],
-        table: {
-          cols: ['I think…', 'Grown-up says…'],
-          items: ['📺 TV that suggests shows', '🗣️ smart speaker', '🗺️ map app finding the fastest way', '🧮 calculator', '💡 light switch', '📷 camera that spots faces'],
-        },
-        tip: 'Tap once for ✅ (uses AI) and twice for ❌ (no AI).',
-      },
     },
 
     {
@@ -342,7 +305,6 @@ window.LESSON = {
       },
       questions: [
         { type: 'build', q: 'The Glitch scrambled the letters A and I! Build what AI stands for.', answer: ['artificial', 'intelligence'], extra: ['amazing', 'information'], join: ' ', hint: 'Artificial means made by people.' },
-        { type: 'mcq', q: 'Which of these uses AI?', options: ['📱 face unlock on a phone', '✏️ a pencil', '🔦 a torch'], answer: 0 },
         { type: 'tf', q: 'AI is alive and has feelings.', answer: false, explain: 'AI is a tool made by people.' },
         { type: 'type', q: 'The examples an AI learns from are called…', answer: 'data', placeholder: 'Type the word', hint: 'It is a short word starting with d.' },
         { type: 'mcq', q: 'AI looks for things that keep showing up in the data. These are called…', options: ['patterns', 'puddles', 'passwords'], answer: 0 },
@@ -351,7 +313,6 @@ window.LESSON = {
         { type: 'mcq', q: 'An AI was only ever shown red apples. Then it sees a green pear. What might happen?', options: ['It might wrongly say "apple"', 'It will always get it right', 'It will paint the pear red'], answer: 0, hint: 'Remember the lemon and the taxi!' },
         { type: 'mcq', q: 'The Glitch says "The Moon is made of cheese!" What should you do?', options: ['Check with a grown-up or a trusted book', 'Believe it', 'Tell everyone at school'], answer: 0 },
         { type: 'mcq', q: 'Which is OK to tell an AI?', options: ['🎨 my favourite colour', '🏠 my home address', '🔑 my password'], answer: 0 },
-        { type: 'mcq', q: 'To make an AI better at spotting dogs, you should show it…', options: ['lots of different dogs', 'one dog picture', 'only pictures of cats'], answer: 0 },
         { type: 'order', q: 'Put the steps of how AI learns in order.', items: ['📸 Collect lots of examples (data).', '🏋️ Train the AI so it finds patterns in the examples.', '🧪 Test it on new things – and check its answers!'], hint: 'You need the examples first!' },
       ],
     },

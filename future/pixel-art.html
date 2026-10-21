@@ -84,6 +84,8 @@ window.LESSON = {
   title: 'Pixel Art Studio',
   emoji: '🎨',
   home: '../index.html',
+  midBreak: false, // the Arcade stage is the fun break
+  layout: 2, // the compact (one video) version: older saved progress starts again from the top
   mascot: {
     name: 'Professor Bolt',
     sprite: Pixel.sprites.robot,
@@ -106,7 +108,7 @@ window.LESSON = {
       pic: Pixel.svg(ALIEN.target, ALIEN.colors),
       hello: "Beep boop! Welcome to the Pixel Art Studio! Today YOU become a game artist.",
       question: 'How do game artists make characters out of tiny squares?',
-      intro: 'Learn what pixels are, copy some pixel art, learn real design tricks – then **design your own game hero** and save it to your gallery!',
+      intro: 'Learn what pixels are, copy some pixel art, learn real design tricks, pick an arcade game – then **design your own game hero** and save it to your gallery!',
       nameLabel: 'Artist name:',
     },
 
@@ -175,7 +177,7 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'Coding with QMO: Pixel', short: 'Video 1', minutes: 4,
+      type: 'video', title: 'Coding with QMO: Pixel', short: 'Video', minutes: 4,
       video: { id: 'R65_SYq24Rg', title: 'Coding With QMO – Episode 8 | PIXEL', channel: 'Cozmo & Friends', duration: '2:51' },
       say: 'A short cartoon about pixels! Watch, then answer my questions.',
       clues: [
@@ -194,7 +196,7 @@ window.LESSON = {
     },
 
     {
-      type: 'game', title: 'Copy the Pixels', short: 'Game 1', minutes: 6,
+      type: 'game', title: 'Copy the Pixels', short: 'Copy', minutes: 6,
       rounds: [
         Object.assign({
           game: 'pixelcopy', title: 'Pixel heart',
@@ -261,44 +263,18 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'Draw an Ice Cream Cone', short: 'Video 2', minutes: 10,
-      video: { id: 'a1k19QIojQ8', title: 'How To Draw An Ice Cream Cone Pixel Art', channel: 'Art for Kids Hub', duration: '8:41' },
-      say: 'Watch how real artists make pixel art step by step. Look for the tricks you just learned!',
-      clues: [
-        'Which colour do they start with?',
-        'Which design trick means they repeat the same steps on both sides?',
-        'How do they make the ice cream look shiny?',
-        'What do they sprinkle on top?',
-      ],
-      questions: [
-        { type: 'mcq', q: 'What did they draw in pixel art?', options: ['🍦 an ice cream cone', '🐱 a cat', '🚀 a rocket'], answer: 0 },
-        { type: 'mcq', q: 'Which colour did they start drawing with?', options: ['black', 'pink', 'yellow'], answer: 0, hint: 'They drew the outline first…' },
-        { type: 'tf', q: 'The ice cream cone was symmetrical, so they repeated the same steps on both sides.', answer: true },
-        { type: 'mcq', q: 'How did they make the ice cream look shiny?', options: ['They left some pixels white as a highlight', 'They used glitter', 'They coloured it all black'], answer: 0 },
-        { type: 'mcq', q: 'What did they add on top of the pink ice cream?', options: ['sprinkles', 'a cherry', 'chocolate sauce'], answer: 0 },
-        { type: 'mcq', q: 'What can you do if a drawing video goes too fast?', options: ['Pause the video', 'Give up', 'Close your eyes'], answer: 0 },
-      ],
-    },
-
-    {
-      type: 'game', title: 'Symmetry Challenge', short: 'Game 2', minutes: 8,
+      type: 'game', title: 'Pixel Arcade: pick a game!', short: 'Arcade', icon: '🕹️', minutes: 4,
+      pick: { title: '🕹️ Pick your arcade game!', say: 'Your choice! Which game do you want to play? Win one to carry on – or play them all!' },
       rounds: [
         Object.assign({
-          game: 'pixelcopy', title: 'Mirror alien', mirror: true,
+          game: 'pixelcopy', title: 'Mirror Alien', emoji: '👾', blurb: 'Draw half an alien – the mirror draws the rest!', mirror: true,
           intro: 'The **🪞 Mirror** tool is ON. Paint the **left half** of the alien – the right half paints itself!',
           say: 'Mirror magic! Draw on one side of the purple line and watch the other side copy you.',
           tips: ['Only paint the **left half** – the mirror does the rest.', 'Start with the big green body, then add the eyes.', 'Antennae tips are **pink**!'],
           done: 'SYMMETRY MASTER! You drew half and got a whole alien!',
         }, ALIEN),
         {
-          game: 'wordsearch', title: 'Word Hunt',
-          intro: 'Find all the **art words** hidden in the grid. They go across ➡ or down ⬇.',
-          say: 'Hunt for the hidden words! Drag across a word – or tap the first letter, then the last.',
-          size: 10,
-          words: ['PIXEL', 'GRID', 'PALETTE', 'OUTLINE', 'SHADING', 'MIRROR', 'SCREEN', 'DESIGN'],
-        },
-        {
-          game: 'invaders', title: 'Pixel Invaders',
+          game: 'invaders', title: 'Pixel Invaders', emoji: '🚀', blurb: 'Shoot the symmetrical letters and the pixel screens.',
           intro: 'Read each mission at the top of the screen, then shoot only the right aliens!',
           say: 'Tap above an alien to fly there and fire!',
           waves: [
@@ -323,35 +299,13 @@ window.LESSON = {
             },
           ],
         },
+        {
+          game: 'steadyhand', title: 'Steady Hand', emoji: '✏️', blurb: 'Guide your pencil along the wiggly path – don\'t touch the sides!',
+          intro: 'Press on the green dot and follow the wiggly path all the way to the 🏁 – carefully! Pick Easy, Medium or Hard.',
+          say: 'Steady hands! Don\'t touch the sides!',
+          done: 'What a steady hand! Perfect for pixel art.',
+        },
       ],
-    },
-
-    {
-      type: 'break', title: 'Brain Break', short: 'Break', minutes: 2,
-      say: 'Rest your eyes and stretch your drawing hand!',
-      wiggle: {
-        title: '🕺 Pixel Moves!',
-        seconds: 60,
-        moves: [
-          '🟥 Be a pixel! Make yourself into a small square shape.',
-          '🤖 Blocky robot! Move only in straight lines and sharp corners.',
-          '🪞 Mirror me! Copy your grown-up like a mirror.',
-          '✋ Shake out your drawing hand. Wiggle all your fingers!',
-          '👀 Eye break! Look at something far away for 10 seconds.',
-          '😌 Take a big, slow breath.',
-        ],
-      },
-      tryit: {
-        title: '🔍 Try it at home: Pixel art without a screen',
-        intro: 'Pixel art works with all sorts of things! Pick one with a grown-up:',
-        steps: [
-          '**Squared paper** – colour in one square at a time.',
-          '**Hama / fuse beads** – make a pixel sprite, and a grown-up irons it.',
-          '**LEGO bricks** – build a flat pixel picture with 1×1 pieces.',
-          '**Sticky notes** – make a giant pixel picture on a window or wall!',
-        ],
-        tip: 'Copy your favourite design from today – or invent a brand-new one.',
-      },
     },
 
     {
@@ -388,13 +342,11 @@ window.LESSON = {
         { type: 'mcq', q: 'Pixel is short for…', options: ['picture element', 'pixie elephant', 'pick a pencil'], answer: 0 },
         { type: 'tf', q: 'One pixel can be two colours at the same time.', answer: false, explain: 'Each pixel is just one colour.' },
         { type: 'type', q: 'The set of colours you choose for a picture is called a…', answer: ['palette', 'pallet', 'palet', 'pallette', 'colour palette'], placeholder: 'one word', hint: 'It starts with p – artists hold one with paint on it!' },
-        { type: 'mcq', q: 'Old video games looked blocky because…', options: ['they could only use a few pixels', 'players liked squares', 'the TVs were broken'], answer: 0 },
         { type: 'type', q: 'Pixel artists usually draw on rows and columns of squares. What is that called?', answer: ['grid', 'a grid'], placeholder: 'one word', hint: 'It is like squared paper.' },
         { type: 'mcq', q: 'What do pixel artists often draw first?', options: ['the outline', 'the sprinkles', 'the sky'], answer: 0 },
         { type: 'hotspot', q: 'Tap the pixel that makes this heart look SHINY.', img: HEART_PIC, spots: HEART_SPOTS, answer: 0, hint: 'Look for a light pixel where the light shines.' },
         { type: 'mcq', q: 'Where does the darker shading colour go?', options: ['on the side in shadow', 'everywhere', 'only on the eyes'], answer: 0 },
         { type: 'tf', q: 'A symmetrical picture is the same on both sides.', answer: true },
-        { type: 'mcq', q: 'The 🪞 Mirror tool helps you…', options: ['draw both halves at once', 'make it rain', 'delete everything'], answer: 0 },
         { type: 'mcq', q: 'You make a mistake in your pixel art. What is the best thing to do?', options: ['Undo it and try again', 'Throw the tablet', 'Stop drawing forever'], answer: 0 },
         { type: 'order', q: 'Put the pixel art steps in order.', items: ['💡 Plan your idea.', '⬛ Draw the outline.', '🎨 Fill in the big colours.', '✨ Add shading and highlights.'], ends: ['START', 'END'], hint: 'Big shapes first, details last!' },
       ],
