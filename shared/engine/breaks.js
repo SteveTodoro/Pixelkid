@@ -4,7 +4,7 @@
  */
 PixelkidEngine.part('breaks', E => {
   'use strict';
-  const { AV, L, award, confetti, h, pic, pick, put, pxDraw, say, sfx, shake, shuffle } = E;
+  const { AV, GAMES, L, award, confetti, h, pic, pick, put, pxDraw, say, sfx, shake, shuffle } = E;
 
   // ---------- brain-break mini games: boss tic-tac-toe, steady hand, maze escape, hangman ----------
   // In every brain break unless the stage sets games: false (or a list, e.g. games: ['maze']).
@@ -102,11 +102,12 @@ PixelkidEngine.part('breaks', E => {
     return () => clearTimeout(timer);
   }
 
-  // Steady hand: drag along a wiggly path to the flag without touching the sides.
-  function steadyHand(area) {
+  // Steady hand: drag along a wiggly path to the flag without touching the sides. onWin (optional) hears every win.
+  function steadyHand(area, onWin) {
     const W = 640, H = 320;
     const LEVELS = [{ r: 28, amp: 60, name: 'Easy' }, { r: 21, amp: 90, name: 'Medium' }, { r: 15, amp: 110, name: 'Hard' }];
     const cv = h('canvas', { class: 'bg-canvas', width: W, height: H, 'aria-label': 'Steady hand path' });
+    cv._test = { get path() { return pts; }, get mode() { return mode; } };
     const status = h('div', { class: 'bg-status' });
     let lv = 0, pts = [], trail = [], mode = 'ready', redTimer = 0;
     const tabs = levelTabs(LEVELS.map(l => l.name), k => { lv = k; build(); });
@@ -147,6 +148,7 @@ PixelkidEngine.part('breaks', E => {
       const gem = award('break:wire', cv);
       status.textContent = (lv < LEVELS.length - 1 ? `You made it! Try ${LEVELS[lv + 1].name} next.` : 'WOW! The steadiest hands ever!') + (gem ? ' +1 💎' : '');
       say('What a steady hand!');
+      if (onWin) onWin();
     }
     cv.addEventListener('pointerdown', e => {
       const [x, y] = pos(e);
@@ -338,6 +340,15 @@ PixelkidEngine.part('breaks', E => {
     say('Guess the word one letter at a time. Don\'t let the balloons pop!');
     return () => document.removeEventListener('keydown', onKey);
   }
+
+  // Steady Hand as a lesson game round too (e.g. a choice in a pick-a-game Arcade): the first win finishes the round.
+  GAMES.steadyhand = function (r, key, done) {
+    let won = false;
+    const box = h('div', { class: 'game steadyhand' });
+    steadyHand(box, () => { if (!won) { won = true; done(); } });
+    box._test = { get won() { return won; } };
+    return box;
+  };
 
   return { brainGames };
 });
