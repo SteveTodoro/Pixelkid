@@ -57,6 +57,8 @@ window.LESSON = {
   title: 'Night & Day: The 24-Hour Clock',
   emoji: '🌙',
   home: '../index.html',
+  midBreak: false, // the Arcade stage is the fun break
+  layout: 2, // the compact (one video) version: older saved progress starts again from the top
   finishAch: 'miner',
   mascot: {
     name: 'Tock the Clock-Bot',
@@ -78,7 +80,7 @@ window.LESSON = {
       pic: LCD('19:30'),
       hello: "Welcome back to the MATHS MINE! In Thailand, train tickets and phones often show times like 19:30. Today you crack the 24-hour clock – and the calendar too!",
       question: 'A train leaves at 19:30. Is that in the morning or the evening? How could you tell?',
-      intro: 'Recap, read, watch, slide the sun round the Day Dial, count months on your knuckles – then beat **the Night Owl**!',
+      intro: 'Recap, read, watch, slide the sun round the Day Dial, count months on your knuckles, pick your own arcade game – then beat **the Night Owl**!',
       nameLabel: 'Player name:',
     },
 
@@ -106,7 +108,7 @@ window.LESSON = {
     },
 
     {
-      type: 'read', title: 'Hello, 24-hour clock!', short: 'Read 1', minutes: 7,
+      type: 'read', title: 'Hello, 24-hour clock!', short: 'Read 1', minutes: 6,
       say: 'Read each page carefully – the checks use NEW times. Tap the yellow words for a 💎.',
       cards: [
         {
@@ -153,7 +155,7 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: '12-hour and 24-hour times', short: 'Video 1', minutes: 7,
+      type: 'video', title: '12-hour and 24-hour times', short: 'Video', minutes: 6,
       video: { id: 'Ib84G7OQY1k', title: 'How Do You Convert Between Analogue and Digital 24 Hour Time?', channel: 'Twinkl Educational Publishing', duration: '4:46' },
       say: 'Watch how one time looks on three different clocks. Pause and try the puzzles before the video shows the answer!',
       clues: [
@@ -173,7 +175,7 @@ window.LESSON = {
     },
 
     {
-      type: 'game', title: 'Day Dial', short: 'Game 1', minutes: 11,
+      type: 'game', title: 'Day Dial', short: 'Day Dial', minutes: 7,
       rounds: [
         {
           game: 'daydial', title: 'Slide through the day', events: DAY, start: '6:00', step: 15, nudge: 5,
@@ -192,15 +194,6 @@ window.LESSON = {
           ],
         },
         {
-          game: 'match', title: 'Clock twins',
-          intro: 'Match each 12-hour time to its 24-hour twin.',
-          say: 'p.m.? Add 12 to the hour!',
-          pairs: [
-            { a: '6:00 a.m.', b: '06:00' }, { a: '2:00 p.m.', b: '14:00' }, { a: '5:30 p.m.', b: '17:30' },
-            { a: '9:15 p.m.', b: '21:15' }, { a: '11:45 a.m.', b: '11:45' }, { a: 'midnight', b: '00:00' },
-          ],
-        },
-        {
           game: 'questions', title: 'Train Timetable',
           intro: 'You are catching a train from Bangkok! Read the **timetable** carefully – it uses the 24-hour clock.',
           say: 'Find the right row first, then read across.',
@@ -211,41 +204,6 @@ window.LESSON = {
             { type: 'build', q: 'Grandma wants the train that arrives at 2:55 p.m. Build that time on the 24-hour clock.', answer: ['14', ':', '55'], extra: ['02', '12'], hint: '2 + 12 = 14.' },
             { type: 'oddone', q: 'Which time is the odd one out?', items: ['06:40', '08:10', '13:25', '10:50'], answer: 2, why: 'Why is 13:25 the odd one out?', reasons: ['It is the only p.m. time', 'It is the only time with a 5 in it', 'It is the earliest time'], reason: 0, hint: 'Three of them are in the morning…' },
           ],
-        },
-        {
-          game: 'invaders', title: 'P.M. Blaster',
-          intro: 'The Night Owl has sent time aliens! Read each mission at the top – then shoot ONLY the right times.',
-          say: 'Tap above an alien to fly there and fire! 12 or more means after midday.',
-          waves: [
-            {
-              prompt: 'Shoot the p.m. times – after midday!',
-              items: [
-                { label: '13:00', ok: true }, { label: '18:30', ok: true }, { label: '21:15', ok: true },
-                { label: '09:00', ok: false, why: '09:00 is 9 o\'clock in the morning.' },
-                { label: '06:30', ok: false, why: '06:30 is half past 6 in the morning.' },
-                { label: '11:15', ok: false, why: '11:15 is still before midday.' },
-              ],
-            },
-            {
-              prompt: 'Shoot the times that are 4-something in the afternoon!',
-              items: [
-                { label: '16:00', ok: true }, { label: '16:45', ok: true }, { label: '16:10', ok: true },
-                { label: '04:00', ok: false, why: '04:00 is 4 o\'clock in the morning – no adding!' },
-                { label: '14:00', ok: false, why: '14 − 12 = 2, so 14:00 is 2 p.m.' },
-                { label: '06:00', ok: false, why: '06:00 is 6 o\'clock in the morning.' },
-              ],
-            },
-            {
-              prompt: 'Shoot the a.m. times – before midday!',
-              items: [
-                { label: '07:45', ok: true }, { label: '00:15', ok: true }, { label: '10:30', ok: true },
-                { label: '19:00', ok: false, why: '19:00 is 7 o\'clock in the evening.' },
-                { label: '12:30', ok: false, why: '12:30 is just AFTER midday – half past 12 in the afternoon.' },
-                { label: '22:05', ok: false, why: '22:05 is 5 past 10 at night.' },
-              ],
-            },
-          ],
-          done: 'P.M. BLASTER CLEAR! The Night Owl is losing track of time…',
         },
       ],
     },
@@ -269,27 +227,7 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'The Knuckle Trick', short: 'Video 2', minutes: 6,
-      video: { id: 'v7VjC8PdwJ8', title: 'How Many Days are in a Month? | Knuckle Mnemonic', channel: 'The Good and the Beautiful Kids', duration: '4:21' },
-      say: 'Make two fists and join in with the video!',
-      clues: [
-        'What is a mnemonic?',
-        'What does a knuckle stand for? What about a space?',
-        'Which month is the only one with fewer than 30 days?',
-        'What do you do after July?',
-      ],
-      questions: [
-        { type: 'mcq', q: 'The video says a mnemonic device is…', options: ['a simple memory trick', 'a kind of calendar', 'a type of clock'], answer: 0 },
-        { type: 'mcq', q: 'In the trick, each knuckle stands for a month with…', options: ['31 days', '30 days', '28 days'], answer: 0 },
-        { type: 'mcq', q: 'Where do you start counting?', options: ['the little finger side of your left hand', 'the thumb of your right hand', 'your middle finger'], answer: 0 },
-        { type: 'mcq', q: 'After July you have run out of knuckles. What do you do next?', options: ['start on the first knuckle of your other hand for August', 'start again with January', 'put August in a dip'], answer: 0 },
-        { type: 'mcq', q: 'The video checks October. How many days does October have?', options: ['31', '30', '28'], answer: 0 },
-        { type: 'tf', q: 'Every 4 years, in a leap year, February has 29 days.', answer: true },
-      ],
-    },
-
-    {
-      type: 'game', title: 'Calendar Quest', short: 'Game 2', minutes: 8,
+      type: 'game', title: 'Calendar Quest', short: 'Calendar', minutes: 5,
       rounds: [
         {
           game: 'knuckles', title: 'Knuckle months',
@@ -326,34 +264,60 @@ window.LESSON = {
     },
 
     {
-      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
-      say: 'Time to move – all day long!',
-      wiggle: {
-        title: '🌅 Round-the-Clock Moves!',
-        seconds: 60,
-        moves: [
-          '🌅 06:00 – sunrise! Stretch up slowly, like the sun coming up.',
-          '🏫 08:30 – march on the spot all the way to school.',
-          '⚽ 16:00 – kick an invisible ball 10 times!',
-          '🛏️ 20:00 – tiptoe quietly to bed…',
-          '🦉 00:00 – midnight! Flap your wings like an owl: hoo-hoo!',
-          '✊ Knuckle check! Make two fists and tap each knuckle.',
-        ],
-      },
-      tryit: {
-        title: '🏠 Try it at home: 24-Hour Clock Spotter',
-        intro: 'With a grown-up, hunt around your home for clocks. Which ones use the 24-hour clock?',
-        steps: [
-          'Find each thing on the list and look at its clock.',
-          'Tap the first box if you found it.',
-          'Tap the second box if it shows 24-hour time (like 15:30, with no a.m. or p.m.).',
-        ],
-        table: {
-          cols: ['I found it', 'It uses 24-hour time'],
-          items: ['📱 a phone or tablet', '📺 the TV or TV box', '⏰ an alarm clock', '🚗 the car', '🎫 an old train or bus ticket'],
+      type: 'game', title: 'Night Arcade: pick a game!', short: 'Arcade', icon: '🕹️', minutes: 4,
+      pick: { title: '🕹️ Pick your arcade game!', say: 'Your choice! Which game do you want to play? Win one to carry on – or play them all!' },
+      rounds: [
+        {
+          game: 'invaders', title: 'P.M. Blaster', emoji: '🚀', blurb: 'Shoot the right 24-hour times.',
+          intro: 'The Night Owl has sent time aliens! Read each mission at the top – then shoot ONLY the right times.',
+          say: 'Tap above an alien to fly there and fire! 12 or more means after midday.',
+          waves: [
+            {
+              prompt: 'Shoot the p.m. times – after midday!',
+              items: [
+                { label: '13:00', ok: true }, { label: '18:30', ok: true }, { label: '21:15', ok: true },
+                { label: '09:00', ok: false, why: '09:00 is 9 o\'clock in the morning.' },
+                { label: '06:30', ok: false, why: '06:30 is half past 6 in the morning.' },
+                { label: '11:15', ok: false, why: '11:15 is still before midday.' },
+              ],
+            },
+            {
+              prompt: 'Shoot the times that are 4-something in the afternoon!',
+              items: [
+                { label: '16:00', ok: true }, { label: '16:45', ok: true }, { label: '16:10', ok: true },
+                { label: '04:00', ok: false, why: '04:00 is 4 o\'clock in the morning – no adding!' },
+                { label: '14:00', ok: false, why: '14 − 12 = 2, so 14:00 is 2 p.m.' },
+                { label: '06:00', ok: false, why: '06:00 is 6 o\'clock in the morning.' },
+              ],
+            },
+            {
+              prompt: 'Shoot the a.m. times – before midday!',
+              items: [
+                { label: '07:45', ok: true }, { label: '00:15', ok: true }, { label: '10:30', ok: true },
+                { label: '19:00', ok: false, why: '19:00 is 7 o\'clock in the evening.' },
+                { label: '12:30', ok: false, why: '12:30 is just AFTER midday – half past 12 in the afternoon.' },
+                { label: '22:05', ok: false, why: '22:05 is 5 past 10 at night.' },
+              ],
+            },
+          ],
+          done: 'P.M. BLASTER CLEAR! The Night Owl is losing track of time…',
         },
-        tip: 'Tap once for ✅ and twice for ❌. Many phones let you switch between the 12-hour and 24-hour clock in the settings!',
-      },
+        {
+          game: 'steadyhand', title: 'Steady Hand', emoji: '✏️', blurb: 'Guide your pencil along the wiggly path – don\'t touch the sides!',
+          intro: 'Press on the green dot and follow the wiggly path all the way to the 🏁 – carefully! Pick Easy, Medium or Hard.',
+          say: 'Steady hands! Don\'t touch the sides!',
+          done: 'What a steady hand! Even the Night Owl is impressed.',
+        },
+        {
+          game: 'match', title: 'Clock Twins', emoji: '⏰', blurb: 'Match each time to its 24-hour twin.',
+          intro: 'Match each 12-hour time to its 24-hour twin.',
+          say: 'p.m.? Add 12 to the hour!',
+          pairs: [
+            { a: '6:00 a.m.', b: '06:00' }, { a: '2:00 p.m.', b: '14:00' }, { a: '5:30 p.m.', b: '17:30' },
+            { a: '9:15 p.m.', b: '21:15' }, { a: '11:45 a.m.', b: '11:45' }, { a: 'midnight', b: '00:00' },
+          ],
+        },
+      ],
     },
 
     {
@@ -385,7 +349,6 @@ window.LESSON = {
         { type: 'type', q: 'Write 8:15 p.m. on the 24-hour clock.', answer: ['20:15', '2015'], placeholder: 'like 15:00', hint: 'p.m. means add 12 to the hour.' },
         { type: 'mcq', q: 'A 24-hour clock shows 06:40. When is that?', options: ['20 to 7 in the morning', '20 to 7 in the evening', '20 past 6 in the evening'], answer: 0, hint: '06 is less than 12, so it is the morning. 6:40 is 20 minutes before 7.' },
         { type: 'mcq', q: 'Which clock shows the same time as 14:30?', optionsHtml: true, options: [C('2:30'), C('4:30'), C('2:15')], answer: 0, hint: '14 − 12 = 2.' },
-        { type: 'gap', q: 'There are ___ hours in one day.', options: ['24', '12', '60'], answer: 0 },
         { type: 'mcq', q: 'On the 24-hour clock, midnight is…', options: ['00:00', '12:00', '24:60'], answer: 0 },
         { type: 'type', q: 'The train timetable says 17:05. Write it in 12-hour time with a.m. or p.m.', answer: ['5:05 pm', '5:05pm', '5:05 p.m.'], placeholder: 'like 3:00 p.m.', hint: 'Take away 12: 17 − 12 = ? And is it before or after midday?' },
         { type: 'type', q: 'How many days does September have?', answer: ['30', 'thirty'], after: 'days', placeholder: 'a number', hint: 'Use your knuckles! September lands in a dip.' },

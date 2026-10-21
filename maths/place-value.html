@@ -60,6 +60,8 @@ window.LESSON = {
   title: 'Place Value Party',
   emoji: '🎉',
   home: '../index.html',
+  midBreak: false, // the Arcade stage is the fun break
+  layout: 2, // the compact (one video) version: older saved progress starts again from the top
   finishAch: 'miner',
   mascot: {
     name: 'Professor Bolt',
@@ -80,7 +82,7 @@ window.LESSON = {
       pic: BLOCKS,
       hello: 'Welcome to the MATHS MINE party! Hundreds of guests are coming… but Jumble the Jester keeps swapping the digits on every invitation. 253 guests? 532? 325?!',
       question: 'Do 253 and 532 mean the same number? They use the same digits!',
-      intro: 'Warm up, build numbers with **hundreds, tens and ones**, crack a safe code – then stop Jumble the Jester!',
+      intro: 'Warm up, build numbers with **hundreds, tens and ones**, crack a safe code, pick your own arcade game – then stop Jumble the Jester!',
       nameLabel: 'Player name:',
     },
 
@@ -148,7 +150,7 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'Ones, Tens and Hundreds', short: 'Video 1', minutes: 7,
+      type: 'video', title: 'Ones, Tens and Hundreds', short: 'Video', minutes: 6,
       video: { id: '2KsY7-qLmd0', title: 'ONES, TENS AND HUNDREDS – The Place Value of Numbers – Math for Kids', channel: 'Smile and Learn – English', duration: '5:11' },
       say: 'A farmer needs help counting apples! Watch how groups of ten make it faster. Then answer my questions.',
       clues: [
@@ -163,12 +165,11 @@ window.LESSON = {
         { type: 'mcq', q: 'The second pile has 12 groups of ten. What does the farmer do with 10 of those groups?', options: ['puts them together to make one group of 100', 'throws them away', 'counts them one by one'], answer: 0 },
         { type: 'mcq', q: 'In 127, which digit is in the tens place?', options: ['2', '1', '7'], answer: 0 },
         { type: 'tf', q: 'The video says you count up to 9 in the ones place – then, at ten, you move to the tens place.', answer: true },
-        { type: 'mcq', q: 'What is the farmer going to make with all the apples?', options: ['apple pies', 'apple juice', 'toffee apples'], answer: 0 },
       ],
     },
 
     {
-      type: 'game', title: 'Block Party', short: 'Game 1', minutes: 10,
+      type: 'game', title: 'Block Party', short: 'Blocks', minutes: 6,
       rounds: [
         {
           game: 'placeblocks', title: 'Build the number',
@@ -184,30 +185,6 @@ window.LESSON = {
             ] },
             { text: 'The guest list says 316. Add 10 more guests – change the blocks!', start: 316, make: 326, yes: '10 more than 316 is 326. Only the tens changed!' },
           ],
-        },
-        {
-          game: 'match', title: 'Invitation match',
-          intro: 'Jumble mixed up the invitations! Match each number to its words.',
-          say: 'Read the hundreds first, then the rest.',
-          hint: 'Say the number aloud: how many hundreds?',
-          pairs: [
-            { a: '🎈 352', b: 'three hundred and fifty-two' },
-            { a: '🎂 325', b: 'three hundred and twenty-five' },
-            { a: '🎁 523', b: 'five hundred and twenty-three' },
-            { a: '🎉 503', b: 'five hundred and three' },
-            { a: '🧁 530', b: 'five hundred and thirty' },
-          ],
-        },
-        {
-          game: 'invaders', title: 'Digit Defenders',
-          intro: 'Arcade round! Read the target at the top and **shoot only the numbers that match it**.',
-          say: 'Look at the place of each digit!',
-          waves: [
-            { prompt: 'Shoot the numbers with 6 TENS!', items: [{ label: '264', ok: true }, { label: '760', ok: true }, { label: '668', ok: true }, { label: '626', ok: false, why: '626 has 2 tens. The 6s are hundreds and ones.' }, { label: '406', ok: false, why: '406 has 0 tens – the 6 is ones.' }] },
-            { prompt: 'Shoot the numbers BIGGER than 500!', items: [{ label: '510', ok: true }, { label: '701', ok: true }, { label: '599', ok: true }, { label: '490', ok: false, why: '490 has only 4 hundreds.' }, { label: '159', ok: false, why: '159 has only 1 hundred.' }] },
-            { prompt: 'Shoot the numbers where the 3 is worth 300!', items: [{ label: '372', ok: true }, { label: '309', ok: true }, { label: '237', ok: false, why: 'In 237 the 3 is in the tens place: 30.' }, { label: '423', ok: false, why: 'In 423 the 3 is only 3 ones.' }] },
-          ],
-          done: 'DIGIT DEFENDERS COMPLETE! Every digit in its place!',
         },
       ],
     },
@@ -240,25 +217,7 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'Partitioning Numbers', short: 'Video 2', minutes: 6,
-      video: { id: 'vZcR6VY9pDg', title: 'Partitioning Numbers: Standard and Non-Standard Forms', channel: 'Learn and Play Online!', duration: '3:38' },
-      say: 'You can split a number up in MORE than one way! Watch, then answer my questions.',
-      clues: [
-        'Which number does the video split up?',
-        'What happens when you break a ten into ones?',
-        'How many different ways does it find?',
-      ],
-      questions: [
-        { type: 'mcq', q: 'The video splits up the number 36. The usual way is…', options: ['3 tens and 6 ones', '36 tens', '6 tens and 3 ones'], answer: 0 },
-        { type: 'mcq', q: 'When you break one ten into ones, 36 becomes…', options: ['2 tens and 16 ones', '2 tens and 6 ones', '4 tens and 6 ones'], answer: 0, hint: 'One ten becomes 10 more ones.' },
-        { type: 'tf', q: 'Breaking a ten into ones changes the number into a smaller number.', answer: false, explain: 'It is still 36 – just split up a different way.' },
-        { type: 'type', q: 'If you break up ALL the tens in 36, how many ones do you have?', answer: ['36'], placeholder: 'a number', hint: 'Every ten is now ones.' },
-        { type: 'mcq', q: 'Which of these is ALSO 36?', options: ['1 ten and 26 ones', '1 ten and 6 ones', '3 tens and 16 ones'], answer: 0, hint: '10 + 26 = ?' },
-      ],
-    },
-
-    {
-      type: 'game', title: 'Party Games', short: 'Game 2', minutes: 9,
+      type: 'game', title: 'Break It Up!', short: 'Break it', minutes: 4,
       rounds: [
         {
           game: 'placeblocks', title: 'Break it up!', break: true,
@@ -271,35 +230,44 @@ window.LESSON = {
             { text: 'Make 120 with NO hundreds at all.', start: 120, make: 120, need: { h: 0, t: 12, o: 0 }, yes: '12 tens = 120!' },
           ],
         },
-        {
-          game: 'questions', title: 'Party planner',
-          intro: 'Help plan the party! Every answer uses **place value**.',
-          say: 'Think about which place each digit is in.',
-          questions: [
-            { type: 'order', q: 'Line up the party buses from the FEWEST passengers to the MOST.', items: ['199', '219', '291', '912'], ends: ['FEWEST', 'MOST'], hint: 'Look at the hundreds first.' },
-            { type: 'slider', q: 'Roughly where is 300 on this number line? Drag the marker.', min: 0, max: 1000, step: 50, ticks: 10, answer: 300, tolerance: 50, endsOnly: true, hideValue: true, hint: '300 is a little less than halfway (halfway is 500).' },
-            { type: 'oddone', q: 'Three of these are the same number. Which is the odd one out?', items: ['300 + 40 + 2', '342', 'three hundred and forty-two', '3 hundreds, 2 tens and 4 ones'], answer: 3, why: 'Why is that one the odd one out?', reasons: ['It makes 324, not 342', 'It is written in words', 'It has no hundreds'], reason: 0, hint: 'Work out the number each one makes.' },
-            { type: 'type', q: 'The party has 300 + 40 + 9 sausage rolls. How many is that?', answer: ['349'], placeholder: 'a number', hint: '3 hundreds, 4 tens and 9 ones.' },
-          ],
-        },
       ],
     },
 
     {
-      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
-      say: 'Party dance time! Count out loud as you move.',
-      wiggle: {
-        title: '🎉 Place Value Party Moves!',
-        seconds: 60,
-        moves: [
-          '1️⃣ Ones: 9 tiny tiptoe steps… 1, 2, 3…',
-          '🔟 Tens: 5 big jumps – 10, 20, 30, 40, 50!',
-          '💯 Hundreds: stretch up HIGH for 100, 200, 300!',
-          '🔁 Swap! Spin round once for every 10 ones you swap.',
-          '🎈 Pop like a balloon – crouch down and JUMP!',
-          '🎂 Blow out the candles: three big breaths.',
-        ],
-      },
+      type: 'game', title: 'Party Arcade: pick a game!', short: 'Arcade', icon: '🕹️', minutes: 4,
+      pick: { title: '🕹️ Pick your arcade game!', say: 'Your choice! Which game do you want to play? Win one to carry on – or play them all!' },
+      rounds: [
+        {
+          game: 'invaders', title: 'Digit Defenders', emoji: '🚀', blurb: 'Shoot the numbers that match the target.',
+          intro: 'Arcade round! Read the target at the top and **shoot only the numbers that match it**.',
+          say: 'Look at the place of each digit!',
+          waves: [
+            { prompt: 'Shoot the numbers with 6 TENS!', items: [{ label: '264', ok: true }, { label: '760', ok: true }, { label: '668', ok: true }, { label: '626', ok: false, why: '626 has 2 tens. The 6s are hundreds and ones.' }, { label: '406', ok: false, why: '406 has 0 tens – the 6 is ones.' }] },
+            { prompt: 'Shoot the numbers BIGGER than 500!', items: [{ label: '510', ok: true }, { label: '701', ok: true }, { label: '599', ok: true }, { label: '490', ok: false, why: '490 has only 4 hundreds.' }, { label: '159', ok: false, why: '159 has only 1 hundred.' }] },
+            { prompt: 'Shoot the numbers where the 3 is worth 300!', items: [{ label: '372', ok: true }, { label: '309', ok: true }, { label: '237', ok: false, why: 'In 237 the 3 is in the tens place: 30.' }, { label: '423', ok: false, why: 'In 423 the 3 is only 3 ones.' }] },
+          ],
+          done: 'DIGIT DEFENDERS COMPLETE! Every digit in its place!',
+        },
+        {
+          game: 'steadyhand', title: 'Steady Hand', emoji: '✏️', blurb: 'Guide your pencil along the wiggly path – don\'t touch the sides!',
+          intro: 'Press on the green dot and follow the wiggly path all the way to the 🏁 – carefully! Pick Easy, Medium or Hard.',
+          say: 'Steady hands! Don\'t touch the sides!',
+          done: 'What a steady hand! Jumble could never juggle that carefully.',
+        },
+        {
+          game: 'match', title: 'Invitation Match', emoji: '🎉', blurb: 'Match each party number to its words.',
+          intro: 'Jumble mixed up the invitations! Match each number to its words.',
+          say: 'Read the hundreds first, then the rest.',
+          hint: 'Say the number aloud: how many hundreds?',
+          pairs: [
+            { a: '🎈 352', b: 'three hundred and fifty-two' },
+            { a: '🎂 325', b: 'three hundred and twenty-five' },
+            { a: '🎁 523', b: 'five hundred and twenty-three' },
+            { a: '🎉 503', b: 'five hundred and three' },
+            { a: '🧁 530', b: 'five hundred and thirty' },
+          ],
+        },
+      ],
     },
 
     {
@@ -330,7 +298,6 @@ window.LESSON = {
       questions: [
         { type: 'mcq', q: 'In 738, what is the 3 worth?', options: ['30', '3', '300'], answer: 0 },
         { type: 'type', q: 'Write the number: 6 hundreds, 0 tens and 4 ones.', answer: ['604'], placeholder: 'a number', hint: 'Don\'t forget the 0 to hold the tens place!' },
-        { type: 'gap', q: '500 + 20 + 7 = ___', options: ['527', '5207', '572'], answer: 0 },
         { type: 'mcq', q: 'Jumble says 253 and 532 are the same. Which is greater?', options: ['532', '253', 'they are the same'], answer: 0, hint: 'Compare the hundreds.' },
         { type: 'type', q: 'What is 100 more than 389?', answer: ['489'], placeholder: 'a number', hint: 'Only the hundreds digit changes.' },
         { type: 'type', q: 'What is 10 less than 450?', answer: ['440'], placeholder: 'a number', hint: 'Only the tens digit changes.' },

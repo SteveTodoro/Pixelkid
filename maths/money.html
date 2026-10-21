@@ -53,6 +53,8 @@ window.LESSON = {
   title: 'Money Market',
   emoji: '💷',
   home: '../index.html',
+  midBreak: false, // the Arcade stage is the fun break
+  layout: 2, // the compact (one video) version: older saved progress starts again from the top
   finishAch: 'miner',
   mascot: {
     name: 'Professor Bolt',
@@ -73,7 +75,7 @@ window.LESSON = {
       pic: STALL,
       hello: 'Welcome to the Maths Mine market! Today YOU run a stall. But keep an eye on your till – Pinchy the Penny-Pincher Crab loves snipping customers\' change!',
       question: 'A lolly costs 40p and you pay with £1. How much should you get back?',
-      intro: 'Warm up, learn pounds and pence, work the **till** at your stall, investigate the fewest coins – then stop Pinchy!',
+      intro: 'Warm up, learn pounds and pence, work the **till** at your stall, investigate the fewest coins, pick your own arcade game – then stop Pinchy!',
       nameLabel: 'Player name:',
     },
 
@@ -134,7 +136,7 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'UK Notes & Coins', short: 'Video 1', minutes: 6,
+      type: 'video', title: 'UK Notes & Coins', short: 'Video', minutes: 6,
       video: { id: 'zyV_6FEWWQY', title: 'Learn UK Notes & Coins ► Pounds & Pence | Maths Skills', channel: 'Maple Online Learning', duration: '5:10' },
       say: 'All about pounds and pence! Watch, then answer my questions.',
       clues: [
@@ -154,7 +156,7 @@ window.LESSON = {
     },
 
     {
-      type: 'game', title: 'Your Market Stall', short: 'Game 1', minutes: 10,
+      type: 'game', title: 'Your Market Stall', short: 'Stall', minutes: 7,
       rounds: [
         {
           game: 'shop', title: 'Work the till',
@@ -169,18 +171,6 @@ window.LESSON = {
               { q: 'How else could you write £1.80?', options: ['180p', '18p', '1,800p'], answer: 0 },
             ] },
             { text: 'Last customer! They pay with a £2 coin.', customer: '🦉', buy: [{ name: 'notebook', emoji: '📒', price: 135 }], given: 200, yes: '£1.35 → £1.40 is 5p, → £2 is 60p. Change: 65p!' },
-          ],
-        },
-        {
-          game: 'match', title: 'Two ways to write it',
-          intro: 'Match each amount in pounds to the same amount in pence.',
-          say: 'Remember: £1 is 100p!',
-          pairs: [
-            { a: '£1.50', b: '150p' },
-            { a: '£2.05', b: '205p' },
-            { a: '£3', b: '300p' },
-            { a: '£1.07', b: '107p' },
-            { a: '£4.20', b: '420p' },
           ],
         },
       ],
@@ -214,43 +204,11 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'Who Invented Money?', short: 'Video 2', minutes: 7,
-      video: { id: 'GZ7y-yFdX9M', title: 'Who Invented Money? | The History of Money | Barter System of Exchange | The Dr Binocs Show', channel: 'Peekaboo Kidz', duration: '5:36' },
-      say: 'Dr Binocs zooms back in time to find out who invented money. Watch, then answer my questions.',
-      clues: [
-        'What does "barter" mean?',
-        'What did people use before coins?',
-        'Where were the first metal coins made?',
-        'What is paper money really made of?',
-      ],
-      questions: [
-        { type: 'mcq', q: 'Long ago, people would [[barter]]. That means they…', options: ['swapped things for other things', 'saved money in a bank', 'paid with cards'], answer: 0 },
-        { type: 'mcq', q: 'Why was bartering tricky?', options: ['It was hard to agree what things were worth', 'Nobody had anything to swap', 'It was against the law'], answer: 0 },
-        { type: 'mcq', q: 'Before coins, some people used… as money.', options: ['cowry shells, beads and stones', 'leaves', 'chocolate'], answer: 0 },
-        { type: 'mcq', q: 'The first metal coins came from Lydia (in Turkey today). What were they made of?', options: ['a mix of gold and silver', 'plastic', 'wood'], answer: 0 },
-        { type: 'mcq', q: 'Who first printed paper money, so people didn\'t have to carry heavy coins?', options: ['the Chinese', 'the Romans', 'the Vikings'], answer: 0 },
-        { type: 'tf', q: 'Paper money is really made of paper.', answer: false, explain: 'Dr Binocs says it\'s made from cotton and linen, a cloth made from a plant called flax.' },
-      ],
-    },
-
-    {
-      type: 'game', title: 'Market Day', short: 'Game 2', minutes: 8,
+      type: 'game', title: 'Market Arcade: pick a game!', short: 'Arcade', icon: '🕹️', minutes: 4,
+      pick: { title: '🕹️ Pick your arcade game!', say: 'Your choice! Which game do you want to play? Win one to carry on – or play them all!' },
       rounds: [
         {
-          game: 'sort', title: 'Can you afford it?',
-          intro: 'You have £1 to spend. Can you afford each one? Sort them!',
-          say: 'Is it £1 or less? Then you can afford it!',
-          buckets: [
-            { id: 'yes', label: 'YES – £1 IS ENOUGH', emoji: '✅' },
-            { id: 'no', label: 'NO – TOO MUCH', emoji: '❌' },
-          ],
-          items: [
-            { label: 'a comic for 85p', bucket: 'yes' }, { label: 'a pencil for 99p', bucket: 'yes' }, { label: '2 apples at 40p each', bucket: 'yes' },
-            { label: 'a ball for £1.20', bucket: 'no' }, { label: '3 cookies at 40p each', bucket: 'no' }, { label: 'a kite for 150p', bucket: 'no' },
-          ],
-        },
-        {
-          game: 'invaders', title: 'Coin Invaders',
+          game: 'invaders', title: 'Coin Invaders', emoji: '🚀', blurb: 'Shoot the right amounts of money.',
           intro: 'Arcade time! Read the mission at the top, then **shoot only the right amounts**. Watch out for the falling bombs!',
           say: 'Read the mission, then aim carefully!',
           waves: [
@@ -269,24 +227,25 @@ window.LESSON = {
           ],
           done: 'ALL WAVES CLEAR! Your money skills are rich!',
         },
+        {
+          game: 'steadyhand', title: 'Steady Hand', emoji: '✏️', blurb: 'Guide your pencil along the wiggly path – don\'t touch the sides!',
+          intro: 'Press on the green dot and follow the wiggly path all the way to the 🏁 – carefully! Pick Easy, Medium or Hard.',
+          say: 'Steady hands! Don\'t touch the sides!',
+          done: 'What a steady hand! Pinchy\'s claws could never do that.',
+        },
+        {
+          game: 'match', title: 'Two Ways to Write It', emoji: '💷', blurb: 'Match pounds to the same amount in pence.',
+          intro: 'Match each amount in pounds to the same amount in pence.',
+          say: 'Remember: £1 is 100p!',
+          pairs: [
+            { a: '£1.50', b: '150p' },
+            { a: '£2.05', b: '205p' },
+            { a: '£3', b: '300p' },
+            { a: '£1.07', b: '107p' },
+            { a: '£4.20', b: '420p' },
+          ],
+        },
       ],
-    },
-
-    {
-      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
-      say: 'Market moves! Do each one.',
-      wiggle: {
-        title: '🛒 Market Moves!',
-        seconds: 60,
-        moves: [
-          '🛒 Push a heavy shopping trolley – walk on the spot!',
-          '🍎 Reach up high for the apples on the top shelf!',
-          '🪙 Flip a coin – spin round once!',
-          '🦀 Pinchy is coming – scuttle sideways like a crab!',
-          '📢 Shout like a market trader: "Lovely bananas!"',
-          '💰 Count your money – touch your toes ten times!',
-        ],
-      },
     },
 
     {
@@ -313,7 +272,6 @@ window.LESSON = {
         text: 'Set up a pretend shop at home! Put price labels on some toys or snacks (all under £1, or under 100 baht). Take turns being the shopkeeper and giving change by counting on.',
       },
       questions: [
-        { type: 'mcq', q: 'How many pence make £1?', options: ['100', '10', '50'], answer: 0 },
         { type: 'type', q: 'Count these coins: 50p, 20p, 20p, 2p. How much altogether?', answer: ['92', '92p'], placeholder: 'how many p', hint: '50 + 20 + 20 = 90, then 2 more.' },
         { type: 'slider', q: 'A yo-yo costs 55p. You pay with £1. How much change?', min: 0, max: 100, step: 5, answer: 45, unit: 'p', hint: '55p → 60p is 5p, then 60p → 100p is 40p.' },
         { type: 'oddone', q: 'Which amount is NOT the same as the others?', items: ['£2.50', '250p', '2 pounds 50', '£25'], answer: 3, why: 'Why is £25 the odd one out?', reasons: ['£25 is twenty-five pounds – much more than £2.50', 'It has no p', 'It is the shortest'], reason: 0 },

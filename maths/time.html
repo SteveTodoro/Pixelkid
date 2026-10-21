@@ -44,6 +44,8 @@ window.LESSON = {
   title: 'Tick Tock Time',
   emoji: '⏰',
   home: '../index.html',
+  midBreak: false, // the Arcade stage is the fun break
+  layout: 2, // the compact (one video) version: older saved progress starts again from the top
   finishAch: 'miner',
   mascot: {
     name: 'Tock the Clock-Bot',
@@ -65,7 +67,7 @@ window.LESSON = {
       pic: H('3:45'),
       hello: "Welcome to the MATHS MINE! I'm Tock the Clock-Bot. Today you become a master of clocks!",
       question: 'The time is 3:45. So why do we call it quarter to FOUR, not quarter to three?',
-      intro: 'Warm up, read, watch, set the clocks yourself, blast some times – then stop **Count Clockula** from muddling every clock in the land!',
+      intro: 'Warm up, read, watch, set the clocks yourself, pick your own arcade game – then stop **Count Clockula** from muddling every clock in the land!',
       nameLabel: 'Player name:',
     },
 
@@ -135,7 +137,7 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'Quarter To Times', short: 'Video 1', minutes: 9,
+      type: 'video', title: 'Quarter To Times', short: 'Video', minutes: 9,
       video: { id: 'HKZOGR1pz1I', title: 'Telling the Time for Kids: Quarter To Times', channel: 'Learn and Play Online!', duration: '8:13' },
       say: 'This video is ALL about quarter to times – the tricky ones. Watch, then answer!',
       clues: [
@@ -155,7 +157,7 @@ window.LESSON = {
     },
 
     {
-      type: 'game', title: 'Clock Workshop', short: 'Game 1', minutes: 8,
+      type: 'game', title: 'Clock Workshop', short: 'Workshop', minutes: 6,
       rounds: [
         {
           game: 'clock', mode: 'set', title: 'Set the clock',
@@ -178,41 +180,6 @@ window.LESSON = {
             { label: '2:15', bucket: 'past', hint: '15 minutes have gone. That is the right side.' }, { label: '7:30', bucket: 'past', hint: 'Half past counts as PAST.' }, { label: '9:10', bucket: 'past' }, { label: '5:05', bucket: 'past' },
             { label: '1:45', bucket: 'to', hint: '45 is more than 30, so it is on the TO side.' }, { label: '6:50', bucket: 'to' }, { label: '10:35', bucket: 'to' }, { label: '12:40', bucket: 'to' },
           ],
-        },
-        {
-          game: 'invaders', title: 'Quarter Blaster',
-          intro: 'Arcade time! Read the digital time at the top, then **shoot the alien** with the same time in words. Watch out for the tricky hour!',
-          say: '◀ ▶ to move, tap FIRE to shoot. Check the hour!',
-          waves: [
-            {
-              prompt: 'Shoot: 2:45',
-              items: [
-                { label: 'quarter to 3', ok: true },
-                { label: 'quarter to 2', ok: false, why: '2:45 is heading TO 3 o\'clock, so it is quarter to 3.' },
-                { label: 'quarter past 2', ok: false, why: 'Quarter past 2 is 2:15.' },
-                { label: 'half past 2', ok: false, why: 'Half past 2 is 2:30.' },
-              ],
-            },
-            {
-              prompt: 'Shoot: 8:15',
-              items: [
-                { label: 'quarter past 8', ok: true },
-                { label: 'quarter to 8', ok: false, why: 'Quarter to 8 is 7:45.' },
-                { label: 'quarter past 9', ok: false, why: 'The hour is 8, not 9.' },
-                { label: "8 o'clock", ok: false, why: "8 o'clock is 8:00." },
-              ],
-            },
-            {
-              prompt: 'Shoot: 11:45',
-              items: [
-                { label: 'quarter to 12', ok: true },
-                { label: 'quarter to 11', ok: false, why: '11:45 is heading TO 12 o\'clock, so it is quarter to 12.' },
-                { label: 'quarter past 11', ok: false, why: 'Quarter past 11 is 11:15.' },
-                { label: 'half past 11', ok: false, why: 'Half past 11 is 11:30.' },
-              ],
-            },
-          ],
-          done: 'QUARTER BLASTER CLEAR! Clockula is getting nervous…',
         },
       ],
     },
@@ -257,27 +224,7 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: '5-Minute Intervals', short: 'Video 2', minutes: 5,
-      video: { id: 'Ge4JWvtZPzc', title: 'Telling the Time | 5 minute intervals', channel: "Mrs Roberts' Resources", duration: '4:01' },
-      say: 'Mrs Roberts shows how to count in 5s round the clock – on the PAST side and the TO side. Watch, then answer!',
-      clues: [
-        'Why is the hour hand shorter?',
-        'How many minutes is the 1 really worth?',
-        'What does the 11 mean on the TO side?',
-        'What do the big numbers stand for?',
-      ],
-      questions: [
-        { type: 'mcq', q: 'Mrs Roberts says the hour hand is shorter because…', options: ['it only needs to point at the big hour numbers', 'it is lazy', 'it is the newest hand'], answer: 0 },
-        { type: 'mcq', q: 'When the long hand points at the 1, it means…', options: ['5 minutes past', '1 minute past', '10 minutes past'], answer: 0, explain: 'From the 12 to the 1 the hand ticks past 5 little minute marks.' },
-        { type: 'type', q: 'When the long hand points at the 2, how many minutes past is it?', answer: ['10', 'ten'], after: 'minutes past', placeholder: 'Count in 5s', hint: 'Count in 5s: the 1 is 5, the 2 is…' },
-        { type: 'mcq', q: 'On the TO side, the long hand on the 11 means…', options: ['5 minutes to the next hour', '11 minutes past', '55 minutes to'], answer: 0 },
-        { type: 'mcq', q: 'For the TO side, Mrs Roberts asks you to think about…', options: ['how far the minute hand has to go to get back to the 12', 'how far the hour hand has gone', 'what number is at the bottom'], answer: 0 },
-        { type: 'tf', q: 'The big numbers on the clock stand for hours, AND for lots of 5 minutes.', answer: true },
-      ],
-    },
-
-    {
-      type: 'game', title: 'Clock Challenge', short: 'Game 2', minutes: 8,
+      type: 'game', title: 'Clock Challenge', short: 'Clocks', minutes: 6,
       rounds: [
         {
           game: 'clock', mode: 'set', title: 'Five-minute clocks',
@@ -298,8 +245,56 @@ window.LESSON = {
             { a: C('2:30'), b: 'half past 2' },
           ],
         },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Clock Arcade: pick a game!', short: 'Arcade', icon: '🕹️', minutes: 4,
+      pick: { title: '🕹️ Pick your arcade game!', say: 'Your choice! Which game do you want to play? Win one to carry on – or play them all!' },
+      rounds: [
         {
-          game: 'mystery', title: 'Mystery Clock Words',
+          game: 'invaders', title: 'Quarter Blaster', emoji: '🚀', blurb: 'Shoot the alien with the same time in words.',
+          intro: 'Arcade time! Read the digital time at the top, then **shoot the alien** with the same time in words. Watch out for the tricky hour!',
+          say: '◀ ▶ to move, tap FIRE to shoot. Check the hour!',
+          waves: [
+            {
+              prompt: 'Shoot: 2:45',
+              items: [
+                { label: 'quarter to 3', ok: true },
+                { label: 'quarter to 2', ok: false, why: '2:45 is heading TO 3 o\'clock, so it is quarter to 3.' },
+                { label: 'quarter past 2', ok: false, why: 'Quarter past 2 is 2:15.' },
+                { label: 'half past 2', ok: false, why: 'Half past 2 is 2:30.' },
+              ],
+            },
+            {
+              prompt: 'Shoot: 8:15',
+              items: [
+                { label: 'quarter past 8', ok: true },
+                { label: 'quarter to 8', ok: false, why: 'Quarter to 8 is 7:45.' },
+                { label: 'quarter past 9', ok: false, why: 'The hour is 8, not 9.' },
+                { label: "8 o'clock", ok: false, why: "8 o'clock is 8:00." },
+              ],
+            },
+            {
+              prompt: 'Shoot: 11:45',
+              items: [
+                { label: 'quarter to 12', ok: true },
+                { label: 'quarter to 11', ok: false, why: '11:45 is heading TO 12 o\'clock, so it is quarter to 12.' },
+                { label: 'quarter past 11', ok: false, why: 'Quarter past 11 is 11:15.' },
+                { label: 'half past 11', ok: false, why: 'Half past 11 is 11:30.' },
+              ],
+            },
+          ],
+          done: 'QUARTER BLASTER CLEAR! Clockula is getting nervous…',
+        },
+        {
+          game: 'steadyhand', title: 'Steady Hand', emoji: '✏️', blurb: 'Guide your pencil along the wiggly path – don\'t touch the sides!',
+          intro: 'Press on the green dot and follow the wiggly path all the way to the 🏁 – carefully! Pick Easy, Medium or Hard.',
+          say: 'Steady hands! Don\'t touch the sides!',
+          done: 'What a steady hand! Steadier than a minute hand.',
+        },
+        {
+          game: 'mystery', title: 'Mystery Clock Words', emoji: '🔍', blurb: 'Crack the clues to find the clock word.',
           intro: 'Tock has hidden some **clock words**! Read the clue and work out the word. Solve it on the first clue for 3 gems!',
           say: 'The fewer clues you need, the more gems you win!',
           words: [
@@ -309,37 +304,6 @@ window.LESSON = {
           ],
         },
       ],
-    },
-
-    {
-      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
-      say: 'Stand up – YOU are the clock now!',
-      wiggle: {
-        title: '⏰ Be a Clock!',
-        seconds: 60,
-        moves: [
-          "🙆 Both arms straight up – it's 12 o'clock!",
-          '👉 Keep one arm up, point the other arm out to the side – quarter past!',
-          '👇 Now point that arm straight down – half past!',
-          '👈 Swing it out to the other side – quarter to!',
-          '🔃 Spin round slowly clockwise, like the minute hand.',
-          '⏰ Be an alarm clock: jump on the spot and shout "BRRRING!"',
-        ],
-      },
-      tryit: {
-        title: '🏠 Try it at home: Clock Spotter',
-        intro: 'Find a clock with hands at home (or draw one). At each of these times, say the time out loud in clock words, then ask a grown-up to check.',
-        steps: [
-          'Tap the first box when you have read the clock in words, like "quarter to 8".',
-          'Tap the second box when a grown-up says you got it right.',
-          'Bonus: can you spot a digital clock too? Say its time in clock words!',
-        ],
-        table: {
-          cols: ['I read it', 'Grown-up check'],
-          items: ['🥣 at breakfast', '🍽️ at lunch or dinner', '📺 before TV or games', '🛁 at bath or bedtime'],
-        },
-        tip: 'Tap once for ✅ and twice for ❌. Remember: for a TO time, say the hour that is COMING!',
-      },
     },
 
     {
@@ -371,7 +335,6 @@ window.LESSON = {
         { type: 'mcq', q: 'What time does this clock show?', pic: C('5:15'), options: ['quarter past 5', 'quarter to 5', 'quarter past 3'], answer: 0, hint: 'The long hand on the 3 means quarter PAST. Which number has the short hand just passed?' },
         { type: 'mcq', q: 'What time does this clock show?', pic: C('8:45'), options: ['quarter to 9', 'quarter to 8', 'quarter past 9'], answer: 0, hint: 'For a TO time, look where the short hand is HEADING.' },
         { type: 'mcq', q: 'Which clock shows half past 11?', optionsHtml: true, options: [C('11:30'), C('12:30'), C('11:00')], answer: 0, hint: 'Half past: long hand on the 6, short hand just past the 11.' },
-        { type: 'type', q: 'When the long hand points at the 9, it is quarter ___ the next hour. Type the missing word.', answer: 'to', before: 'quarter', after: 'the next hour', hint: 'The 9 is on the LEFT side of the clock.' },
         { type: 'type', q: 'What time does this clock show? Write it in clock words.', pic: C('2:20'), answer: ['20 past 2', 'twenty past two', 'twenty past 2', '20 past two'], placeholder: 'like: 10 past 3', hint: 'Count in 5s up to the 4: 5, 10, 15, 20.' },
         { type: 'mcq', q: 'What time does this clock show?', pic: C('6:50'), options: ['10 to 7', '10 past 6', '10 to 6'], answer: 0, hint: 'The long hand is on the TO side, 10 minutes before the 12. Which hour is coming?' },
         { type: 'type', q: 'A digital clock shows 4:35. Write it in clock words.', answer: ['25 to 5', 'twenty five to five', 'twenty five to 5', '25 to five'], placeholder: 'like: 10 to 3', hint: '35 is more than 30, so it is a TO time. How many minutes until 5 o\'clock?' },

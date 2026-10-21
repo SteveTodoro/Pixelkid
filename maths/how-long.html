@@ -42,6 +42,8 @@ window.LESSON = {
   title: 'How Long? Time Hops',
   emoji: '⏳',
   home: '../index.html',
+  midBreak: false, // the Arcade stage is the fun break
+  layout: 2, // the compact (one video) version: older saved progress starts again from the top
   finishAch: 'miner',
   mascot: {
     name: 'Tock the Clock-Bot',
@@ -62,7 +64,7 @@ window.LESSON = {
       pic: `<div style="display:flex;flex-direction:column;align-items:center;gap:4px;font-size:1.6rem;color:#fff"><div style="width:100px">${C('3:45')}</div><span>⬇</span><div style="width:100px">${C('4:20')}</div></div>`,
       hello: 'Welcome back to the MATHS MINE! How long is a film? How long until the cake is ready? Today you become a TIME HOPPER and work out how long things take!',
       question: 'Cartoons start at 3:45 and finish at 4:20. How long is that? (Don\'t worry if you are not sure yet!)',
-      intro: 'Recap, read, watch, hop the frog along the time line, blast some Answer Invaders – then race **Slowcoach the Snail**!',
+      intro: 'Recap, read, watch, hop the frog along the time line, pick your own arcade game – then race **Slowcoach the Snail**!',
       nameLabel: 'Player name:',
     },
 
@@ -95,7 +97,7 @@ window.LESSON = {
     },
 
     {
-      type: 'read', title: 'How long does it take?', short: 'Read 1', minutes: 7,
+      type: 'read', title: 'How long does it take?', short: 'Read 1', minutes: 6,
       say: 'Read each page carefully – the checks use NEW times. Tap the yellow words for a 💎.',
       cards: [
         {
@@ -134,7 +136,7 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'Hopping on a Number Line', short: 'Video 1', minutes: 7,
+      type: 'video', title: 'Hopping on a Number Line', short: 'Video', minutes: 6,
       video: { id: 'pwVGOX2pRig', title: 'Elapsed Time on a Number Line', channel: 'eSpark', duration: '4:38' },
       say: 'In America, how long something takes is called "elapsed time". Watch Miss Akilah hop along a number line at the aquarium!',
       clues: [
@@ -154,7 +156,7 @@ window.LESSON = {
     },
 
     {
-      type: 'game', title: 'Time Hops', short: 'Game 1', minutes: 9,
+      type: 'game', title: 'Time Hops', short: 'Hops', minutes: 7,
       rounds: [
         {
           game: 'timehops', title: 'Frog hops', hops: [60, 10, 5, 1],
@@ -163,9 +165,7 @@ window.LESSON = {
           missions: [
             { from: '3:00', to: '3:25', text: '🏊 Swimming starts at **3:00** and ends at **3:25**. Hop from the start to the end!' },
             { from: '4:45', to: '5:15', text: '📺 A cartoon starts at **4:45** and ends at **5:15**. Hop to 5 o\'clock first!' },
-            { from: '9:50', to: '11:05', text: '🎨 Art club runs from **9:50** to **11:05**. Try a 1-hour hop!' },
             { from: '5:50', add: 25, text: '🍰 A cake goes in the oven at **5:50**. It bakes for **25 minutes**. When is it ready?' },
-            { from: '2:35', add: 50, text: '🚌 The bus leaves at **2:35**. The trip takes **50 minutes**. When does it arrive?' },
             { from: '6:52', to: '7:10', text: '🛁 Bath time goes from **6:52** to **7:10**. Use 1-minute hops to get to 7 o\'clock!' },
           ],
         },
@@ -179,12 +179,6 @@ window.LESSON = {
             { time: '2:35', start: '1:15', ask: '🚆 The train leaves at **1:15**. The journey takes **1 hour and 20 minutes**. When does it arrive?' },
             { time: '8:15', start: '7:30', ask: '🎮 You play a game from **7:30** for **45 minutes**. When must you stop?' },
           ],
-        },
-        {
-          game: 'order', title: 'Shortest to longest',
-          intro: 'Put these in order, from the SHORTEST time to the LONGEST.',
-          say: 'Think in minutes: 1 hour is 60 minutes!',
-          items: ['👏 90 seconds', '🍝 15 minutes', '🏊 half an hour', '⚽ 1 hour', '🎬 100 minutes'],
         },
       ],
     },
@@ -219,40 +213,11 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'Jumping Along a Timeline', short: 'Video 2', minutes: 8,
-      video: { id: 'ML6r7BEZo7M', title: 'Calculating Elapsed Time Using a Timeline', channel: 'EasyTeaching', duration: '5:46' },
-      say: 'Watch three timeline puzzles: food in the oven, a bus to Paris and a movie night. The bus one is BIG – just watch how the jumps work!',
-      clues: [
-        'What does "elapsed time" mean?',
-        'When is Jess\'s food ready?',
-        'Where does Chris\'s bus go?',
-        'Which way do you jump to find a START time?',
-      ],
-      questions: [
-        { type: 'mcq', q: 'The video says elapsed time is…', options: ['the time that passes from a start point to an end point', 'the time on the clock right now', 'a kind of timetable'], answer: 0 },
-        { type: 'mcq', q: 'Jess\'s food went in at 5:50 p.m. Why was the first jump 10 minutes?', options: ['it landed exactly on 6 o\'clock, which is easier', 'the food only needed 10 minutes', 'the oven beeped'], answer: 0 },
-        { type: 'mcq', q: 'The food cooked for 1 hour and 15 minutes. When was it ready?', options: ['7:05 p.m.', '6:05 p.m.', '7:15 p.m.'], answer: 0, hint: '10 minutes to 6:00, 1 hour to 7:00, then 5 more.' },
-        { type: 'mcq', q: 'Where did Chris\'s bus go?', options: ['from London to Paris', 'from Paris to London', 'from Bangkok to the beach'], answer: 0 },
-        { type: 'mcq', q: 'To find when Brad should START his movie, which way did the video jump?', options: ['backwards – taking time away', 'forwards – adding time', 'it did not jump at all'], answer: 0 },
-        { type: 'mcq', q: 'Brad wanted to finish by 8:45 p.m. The movie lasted 1 hour 32 minutes. When should he start?', options: ['7:13 p.m.', '7:45 p.m.', '10:17 p.m.'], answer: 0 },
-      ],
-    },
-
-    {
-      type: 'game', title: 'Time Detectives', short: 'Game 2', minutes: 8,
+      type: 'game', title: 'Snail Arcade: pick a game!', short: 'Arcade', icon: '🕹️', minutes: 4,
+      pick: { title: '🕹️ Pick your arcade game!', say: 'Your choice! Which game do you want to play? Win one to carry on – or play them all!' },
       rounds: [
         {
-          game: 'timehops', title: 'Timetable hops', clock: '24', hops: [60, 10, 5, 1],
-          intro: 'These times are on the **24-hour clock**. Hop the frog along to find out how long each journey takes!',
-          say: 'Same hops – just 24-hour times. Hop to the o\'clock first!',
-          missions: [
-            { from: '09:15', to: '10:45', text: '🚆 The train leaves Bangkok at **09:15** and reaches Ayutthaya at **10:45**. How long is the journey?' },
-            { from: '13:40', to: '14:25', text: '🚌 The bus leaves at **13:40** and arrives at **14:25**. How long is the trip?' },
-            { from: '16:55', add: 35, text: '🚢 The ferry leaves at **16:55**. The crossing takes **35 minutes**. When does it arrive?' },
-          ],
-        },
-        {
-          game: 'runner', title: 'Real Time Run',
+          game: 'runner', title: 'Real Time Run', emoji: '🏃', blurb: 'Race along and grab the REAL times.',
           intro: 'Slowcoach has scribbled some **impossible times**! Remember: an hour has 60 minutes, so the minutes on a clock only go up to 59. Collect the REAL times.',
           say: 'Pick the lane with the REAL time! Jump the rocks and hold DASH to go faster.',
           prompt: 'Collect the REAL times – dodge the impossible ones!',
@@ -270,43 +235,27 @@ window.LESSON = {
           ],
         },
         {
-          game: 'wordsearch', title: 'Time Hops word hunt', size: 10,
-          intro: 'Find the hidden time words!',
-          say: 'Drag across each word you spot.',
-          words: ['DURATION', 'START', 'END', 'HOP', 'MINUTES', 'HOURS', 'TIMELINE', 'LONGER'],
+          game: 'steadyhand', title: 'Steady Hand', emoji: '✏️', blurb: 'Guide your pencil along the wiggly path – don\'t touch the sides!',
+          intro: 'Press on the green dot and follow the wiggly path all the way to the 🏁 – carefully! Pick Easy, Medium or Hard.',
+          say: 'Steady hands! Don\'t touch the sides!',
+          done: 'What a steady hand! Slow and steady, just like a snail.',
+        },
+        {
+          game: 'match', title: 'Minute Match', emoji: '⏱️', blurb: 'Match the minutes to the hours.',
+          intro: 'Slowcoach has muddled the minutes and hours! Match each one to the same amount of time.',
+          say: 'Remember: 1 hour is 60 minutes!',
+          hint: '1 hour = 60 minutes. Add on the extra minutes.',
+          pairs: [
+            { a: '60 minutes', b: '1 hour' },
+            { a: '30 minutes', b: 'half an hour' },
+            { a: '15 minutes', b: 'a quarter of an hour' },
+            { a: '90 minutes', b: '1 and a half hours' },
+            { a: '75 minutes', b: '1 hour and 15 minutes' },
+            { a: '120 minutes', b: '2 hours' },
+          ],
+          done: 'All matched! You know your minutes and hours!',
         },
       ],
-    },
-
-    {
-      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
-      say: 'Time to move – how long can you keep going?',
-      wiggle: {
-        title: '🐸 Hop to It!',
-        seconds: 60,
-        moves: [
-          '🐸 Hop like a frog for 10 seconds!',
-          '🐌 Move as slowly as a snail for 10 seconds…',
-          '⏱️ Stand on one leg – how long can you last?',
-          '🏃 Run on the spot as fast as you can for 10 seconds!',
-          '🦘 One BIG jump = 1 hour hop. Three little jumps = 5-minute hops!',
-          '⏳ Freeze like a statue until the sand runs out!',
-        ],
-      },
-      tryit: {
-        title: '🏠 Try it at home: How Long Does It Take?',
-        intro: 'With a grown-up, write down the start time and the end time of things you do. Then work out how long each one took!',
-        steps: [
-          'Guess how long it will take. Tap the first box when you have guessed.',
-          'Look at a clock when you start and when you finish.',
-          'Hop on a time line (or count on) to find how long it really took. Tap the second box if your guess was close!',
-        ],
-        table: {
-          cols: ['I guessed', 'My guess was close'],
-          items: ['👟 putting on my shoes', '🥣 eating breakfast', '📖 reading a chapter', '🧸 tidying my toys'],
-        },
-        tip: 'Tap once for ✅ and twice for ❌. Tiny jobs can be timed in seconds – 60 seconds make a minute!',
-      },
     },
 
     {
@@ -329,7 +278,6 @@ window.LESSON = {
         },
       },
       questions: [
-        { type: 'mcq', q: 'Swimming starts at 4:00 and ends at 4:45. How long is it?', options: ['45 minutes', '4 minutes', '1 hour 45 minutes'], answer: 0 },
         { type: 'slider', q: 'A film starts at 3:50 and ends at 4:30. How long is it? Drag the marker.', min: 0, max: 60, step: 5, ticks: 12, answer: 40, unit: '', hint: 'Hop to 4:00 first: 10 minutes. Then 4:00 to 4:30.' },
         { type: 'mcq', q: 'Lunch starts at 12:15 and lasts 45 minutes. When does it end?', options: ['1:00', '12:60', '1:15'], answer: 0, hint: '12:15 + 45 minutes reaches the next o\'clock exactly.' },
         { type: 'mcq', q: 'This clock shows when a race starts. It lasts 20 minutes. Which clock shows when it ends?', pic: C('5:50'), optionsHtml: true, options: [C('6:10'), C('6:20'), C('5:30')], answer: 0, hint: '5:50 + 10 minutes = 6:00. Then 10 more.' },
