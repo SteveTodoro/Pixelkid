@@ -233,7 +233,7 @@ async function play(page, card, S) {
 module.exports = { open, answer, moveOn, wait };
 
 if (require.main === module) (async () => {
-  const index = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  const index = fs.readFileSync(path.join(ROOT, 'shared/library.js'), 'utf8');
   let files = args.filter(a => !a.startsWith('--'));
   const pages = !files.length;
   if (!files.length) files = [...index.matchAll(/file: '([^']+)'/g)].map(m => m[1]).filter(f => fs.existsSync(path.join(ROOT, f)));

@@ -42,18 +42,18 @@ Privacy: the repo is public. Never put the child's name in files, URLs or commit
 - **Roads and recaps:** the home page is a quest map, and each world is a road. A lesson in the same unit as the stop before it recaps that lesson. One that starts a new unit gets a 🔥 warm-up instead. `tools/lesson-check.js` enforces this.
 
 ## Workflow for a new or changed lesson
-1. Write the lesson data, copying the structure of the closest existing lesson. Add its `file` to `LIBRARY` in index.html.
+1. Write the lesson data, copying the structure of the closest existing lesson. Add its `file` to `LIBRARY` in `shared/library.js`.
 2. Run these checks:
    - `node tools/lesson-check.js <file>`
    - `node tools/activity-audit.js`
    - `node tools/emoji-audit.js`
    - `node tools/build-question-bank.js` (the map's challenger NPCs ask boss questions from it)
 3. After any change in `shared/`, run `npm install` once (jsdom), then `node tools/smoke.js`. It takes ~5 min and plays every lesson in a simulated browser. Drive new games through their `_test` hooks in a quick jsdom script too.
-4. Keep files under ~1,500 lines. The engine core is `shared/engine.js`, and games live in parts under `shared/engine/` (loaded per lesson through `PARTS`).
+4. Keep files under ~1,500 lines (lesson-check warns about bigger ones; `shared/engine.js` is over and should be split next time it changes). The engine core is `shared/engine.js`, and games live in parts under `shared/engine/` (loaded per lesson through `PARTS`).
 5. To see a page, serve the repo (`python3 -m http.server`). For screenshots, headless Chromium with `--screenshot` works. Seed `localStorage` `y3:progress:<lesson id>` to jump to a stage.
 
 ## Where things stand (October 2026)
-- **Compact format (21 Oct):** every lesson moves to 1 video + a 🕹️ pick-a-game Arcade (one arcade game, Steady Hand and one lesson game such as a fixit or crossword), no brain break, a shorter spell test and boss (see "Compact format" in TOPICS.md). Suffix Squad was the pilot, and the parent found it better. **Every lesson in all six worlds is now converted** (Science and Maths keep their hands-on stage, e.g. Ramp Lab, Soil Lab, clocks, blocks or the shop till, beside the Arcade; Future keeps Teach the robot, Pixel Studio and Poster Studio after it; World keeps the map, the Chef/Tea/Kitchen/Diner cooking stage and Say it!, and its Art Studio is an Arcade choice). All are waiting on the parent's playtest. Thailand's one video is still 9 minutes long, so a shorter one would help. Keep vocabulary at Year 3 level (e.g. invitation, not admiration).
+- **Compact format (21 Oct):** every lesson moves to 1 video + a 🕹️ pick-a-game Arcade (one arcade game, Steady Hand and one lesson game such as a fixit or crossword), no brain break, a shorter spell test and boss (see "Compact format" in TOPICS.md). Suffix Squad was the pilot, and the parent found it better. **Every lesson in all six worlds is now converted** (Science and Maths keep their hands-on stage, e.g. Ramp Lab, Soil Lab, clocks, blocks or the shop till, beside the Arcade; Future keeps Teach the robot, Pixel Studio and Poster Studio after it; World keeps the map, the Chef/Tea/Kitchen/Diner cooking stage and Say it!, and its Art Studio is an Arcade choice). All are waiting on the parent's playtest, and **no new lessons until then** (the parent, 21 Oct; the two compact Science lessons played so far were fine). Thailand's one video is still 9 minutes long, so a shorter one would help. Keep vocabulary at Year 3 level (e.g. invitation, not admiration).
 - **Science:** Magnets, Friction, the Plants unit (3 lessons) and the Rocks unit (Rock Stars, Fossil Hunters, Super Soil). Next: Fuel Your Body (the other branch).
 - **Maths:** the Time unit (4 lessons), Place Value Party, 3-Digit Add & Subtract and Money Market. Next: Measure It!, or Counting in 4s, 8s, 50s & 100s on the other branch.
 - **English:** Prefixes → Poetry Playground (the writing branch), and Theseus & the Minotaur (the first reading-branch lesson). Next: Fairy Tale Twist.
@@ -69,6 +69,3 @@ Privacy: the repo is public. Never put the child's name in files, URLs or commit
   - **Biomes:** each world has one in `ART[world]` in map-art.js: colours, cliff texture, beach, path style, scenery, things floating in the water, sea or space. A new world needs an `ART` entry.
   - **Road:** the road is hidden until unlocked, then drawn in (`y3:mapSeen`).
   - **Living layers:** waves, clouds, blinking hill eyes, and (Science only) a waterfall river at forks, all as light CSS animation.
-- **Open cleanup:**
-  - move `LIBRARY` out of index.html into `shared/library.js` (the tools parse it there)
-  - add a file-size warning to the tools

@@ -31,7 +31,7 @@ function loadLesson(file) {
 
 const text = t => String(t).replace(/\[\[([^\]|]+)(\|[^\]]*)?\]\]/g, '$1').replace(/\*\*/g, '');
 const needsLesson = q => q.pic || q.img || q.optionsHtml || q.html || /\bvideo\b|\bpicture\b|\bshown\b|\bthis (clock|map|graph|chart)\b|\babove\b|\bbelow\b/i.test(q.q || '');
-const index = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+const index = fs.readFileSync(path.join(ROOT, 'shared/library.js'), 'utf8');
 const lessons = [...index.matchAll(/id: '([^']+)'[^\n]*file: '([^']+)'/g)].map(m => ({ id: m[1], file: m[2] }));
 const bank = {};
 for (const { id, file } of lessons) {

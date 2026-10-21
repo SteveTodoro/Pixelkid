@@ -21,7 +21,7 @@ const ARCADE = ['invaders', 'runner', 'platformer', 'blocks', 'labyrinth'];
 const MCQ_LIMIT = 0.6;
 
 // lessons in the order the library lists them, grouped by world
-const index = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+const index = fs.readFileSync(path.join(ROOT, 'shared/library.js'), 'utf8');
 const worlds = [];
 for (const m of index.matchAll(/^  (\w+): \{\n\s+label: '([^']+)'([\s\S]*?)\n    \],/gm)) {
   worlds.push({ key: m[1], label: m[2], files: [...m[3].matchAll(/file: '([^']+)'/g)].map(f => f[1]) });

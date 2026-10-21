@@ -3,10 +3,11 @@
  * (answers in range, evidence answers found in the page, hotspot/slider answers that can be reached …).
  *   node tools/lesson-check.js                     every lesson in the library
  *   node tools/lesson-check.js english/a-or-an.html  just these lessons
- *   node tools/lesson-check.js --home=other.html     read the library (and its road map) from another home page
+ *   node tools/lesson-check.js --library=other.js    read the library (and its road map) from another file
  * It also checks the quest map. The stop before a lesson on its world's road is the lesson listed before it, or the one
  * named by `after:`. A lesson in the same unit as that stop must open with a recap of it ("Last time…", `from.url`);
  * a lesson that starts a new unit must open with a warm-up instead (a review stage whose `from` has no url).
+ * It warns (without failing) about files over 1,500 lines: the lessons it checks, and on a full run shared/ too.
  * Exits with code 1 when anything is wrong. Run it with tools/activity-audit.js after writing or changing a lesson.
  */
 'use strict';
@@ -204,7 +205,7 @@ function check(file) {
 }
 
 const args = process.argv.slice(2);
-const home = (args.find(a => a.startsWith('--home=')) || '--home=index.html').slice(7);
+const home = (args.find(a => a.startsWith('--library=')) || '--library=shared/library.js').slice(10);
 let files = args.filter(a => !a.startsWith('--'));
 const index = fs.readFileSync(path.join(ROOT, home), 'utf8');
 if (!files.length) files = [...index.matchAll(/file: '([^']+)'/g)].map(m => m[1]).filter(f => fs.existsSync(path.join(ROOT, f)));
@@ -239,5 +240,13 @@ for (const f of files) {
   if (errs.length) { bad += errs.length; console.log(`❌ ${f}\n${errs.map(e => '   ' + e).join('\n')}`); }
   else console.log(`✅ ${f}`);
 }
+// files over ~1,500 lines are hard to work on: split them (engine games go in parts under shared/engine/)
+const MAX_LINES = 1500;
+const LONG_OK = ['shared/pixel-icons.js', 'shared/question-bank.js']; // sprite and generated data, fine to be long
+const sized = args.some(a => !a.startsWith('--')) ? files
+  : [...files, ...['shared', 'shared/engine'].flatMap(d => fs.readdirSync(path.join(ROOT, d)).filter(f => f.endsWith('.js')).map(f => `${d}/${f}`))];
+const long = sized.filter(f => !LONG_OK.includes(f))
+  .map(f => [f, fs.readFileSync(path.join(ROOT, f), 'utf8').split('\n').length]).filter(([, n]) => n > MAX_LINES);
+if (long.length) console.log(`\n⚠️  Over ${MAX_LINES.toLocaleString('en-GB')} lines (split when you next change them):\n${long.map(([f, n]) => `   ${f}: ${n.toLocaleString('en-GB')} lines`).join('\n')}`);
 console.log(bad ? `\n${bad} problem${bad === 1 ? '' : 's'}.` : '\nAll good.');
 process.exit(bad ? 1 : 0);
