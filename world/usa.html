@@ -108,6 +108,8 @@ window.LESSON = {
   title: 'The USA: Space Rockets & Hot Dogs',
   emoji: '🇺🇸',
   home: '../index.html',
+  midBreak: false, // the Arcade stage is the fun break
+  layout: 2, // the compact (one video) version: older saved progress starts again from the top
   finishAch: 'traveller',
   stamp: { id: 'USA', name: 'the USA', flag: '🇺🇸' },
   mascot: {
@@ -132,12 +134,12 @@ window.LESSON = {
       pic: FLAG,
       hello: 'Howdy, {name}! Welcome back to AROUND THE WORLD! Today we take our longest flight yet – all the way to the USA! ✈️',
       question: 'Which country sent the first people to walk on the Moon?',
-      intro: 'Fly to the other side of the world, find out why it is night there when it is day at home, cook in an American diner, paint a rocket – then get the Statue of Liberty\'s torch back from Bigfoot to earn your next 🛂 passport stamp!',
+      intro: 'Fly to the other side of the world, find out why it is night there when it is day at home, cook in an American diner, pick an arcade game (or paint a rocket!) – then get the Statue of Liberty\'s torch back from Bigfoot to earn your next 🛂 passport stamp!',
       nameLabel: 'Traveller name:',
     },
 
     {
-      type: 'review', title: 'Warm-up: day, night and oceans', short: 'Warm-up', minutes: 4,
+      type: 'review', title: 'Warm-up: day, night and oceans', short: 'Warm-up', minutes: 3,
       say: "Our longest flight yet! Let's warm up with what you already know about the Earth. Read the notes, then test your memory!",
       from: { title: 'The Earth – what you already know', emoji: '🌏' },
       facts: [
@@ -164,7 +166,7 @@ window.LESSON = {
     },
 
     {
-      type: 'read', title: 'The other side of the world', short: 'Read 1', minutes: 6,
+      type: 'read', title: 'The other side of the world', short: 'Read 1', minutes: 5,
       say: 'The USA is a LONG way from home. Let\'s find out where it is!',
       cards: [
         {
@@ -211,7 +213,7 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'USA Facts for Kids', short: 'Video 1', minutes: 7,
+      type: 'video', title: 'USA Facts for Kids', short: 'Video', minutes: 6,
       video: { id: 'atZvLpk2NgM', title: 'USA Facts for Kids | American Culture in 5 minutes', channel: 'Happy Okapi', duration: '5:54' },
       say: 'Let\'s take a whistle-stop tour of the USA! Watch, then answer my questions.',
       clues: [
@@ -232,7 +234,7 @@ window.LESSON = {
     },
 
     {
-      type: 'game', title: 'Map Explorer', short: 'Game 1', minutes: 10,
+      type: 'game', title: 'Map Explorer', short: 'Map', minutes: 7,
       rounds: [
         {
           game: 'worldmap', title: 'Fly to the USA', view: 'world', labels: ['JPN', 'ENG'],
@@ -262,18 +264,11 @@ window.LESSON = {
             { find: 'atlantic', from: 'USA', dir: 'E', ask: 'Now go EAST until you reach the sea. Tap that ocean!', yes: 'The Atlantic Ocean – on the east coast. England is on the other side of it!', hint: 'East is to the right. Tap the water on the right.' },
           ],
         },
-        {
-          game: 'wordsearch', title: 'Word Hunt',
-          intro: 'Find all the **USA words** hidden in the grid. They go across ➡ or down ⬇.',
-          say: 'Hunt for the hidden words! Drag across a word – or tap the first letter, then the last.',
-          size: 10,
-          words: ['CANADA', 'MEXICO', 'STATES', 'ALASKA', 'HAWAII', 'PACIFIC', 'EAGLE', 'COAST'],
-        },
       ],
     },
 
     {
-      type: 'case', title: 'The Case of the Smudged Postcards', short: 'Case', minutes: 9,
+      type: 'case', title: 'The Case of the Smudged Postcards', short: 'Case', minutes: 8,
       say: 'A travel mystery! Answer each question to read one of Auntie Rosie\'s postcards. Then work out where she is now!',
       mystery: [
         'Auntie Rosie is travelling around the USA – on the other side of the world from Thailand! She sends a postcard from every stop.',
@@ -303,28 +298,7 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'The First Moon Walk', short: 'Video 2', minutes: 5,
-      video: { id: 'CbTaDOuSePk', title: 'Apollo 11 – The First Moon Walk', channel: 'Nat Geo Kids', duration: '2:46' },
-      say: '3… 2… 1… BLAST OFF! Watch how the astronauts got to the Moon, then answer my questions.',
-      clues: [
-        'How long did it take to get to the Moon?',
-        'What were the names of the three astronauts?',
-        'Which astronaut stayed in the spacecraft?',
-        'How did Buzz Aldrin save the day?',
-      ],
-      questions: [
-        { type: 'mcq', q: 'About how long did it take to get to the Moon?', options: ['about three days', 'about three minutes', 'about three years'], answer: 0, explain: 'Like a three-day road trip!' },
-        { type: 'type', q: 'Which state did Apollo 11 blast off from?', answer: ['Florida'], placeholder: 'a state', hint: 'It starts with F – a sunny state in the south-east.' },
-        { type: 'mcq', q: 'Which astronaut stayed behind, flying around the Moon?', options: ['Michael Collins', 'Neil Armstrong', 'Buzz Aldrin'], answer: 0 },
-        { type: 'mcq', q: 'What was the name of the little spacecraft that landed on the Moon?', options: ['the Eagle', 'the Rocket', 'the Moonbug'], answer: 0 },
-        { type: 'mcq', q: 'What did the astronauts carry on their backs?', options: ['oxygen to breathe', 'their lunch', 'a parachute'], answer: 0 },
-        { type: 'type', q: 'What did Buzz Aldrin use to fix the broken switch?', answer: ['pen', 'a pen', 'his pen', 'a felt pen', 'felt tip pen'], placeholder: 'something from a pencil case', hint: 'You write with it!' },
-        { type: 'mcq', q: 'Where did the astronauts land when they came back to Earth?', options: ['in the Pacific Ocean', 'on a beach in Thailand', 'on top of a skyscraper'], answer: 0 },
-      ],
-    },
-
-    {
-      type: 'game', title: 'American Diner', short: 'Game 2', minutes: 10,
+      type: 'game', title: 'American Diner', short: 'Diner', icon: '🌭', minutes: 7,
       rounds: [
         {
           game: 'cook', title: 'American Diner', yum: 'Awesome!',
@@ -388,10 +362,42 @@ window.LESSON = {
     },
 
     {
-      type: 'game', title: 'Space Studio', short: 'Game 3', icon: '🚀', minutes: 9,
+      type: 'game', title: 'USA Arcade: pick a game!', short: 'Arcade', icon: '🕹️', minutes: 4,
+      pick: { title: '🕹️ Pick your arcade game!', say: 'Your choice! Which game do you want to play? Win one to carry on – or play them all!' },
       rounds: [
         {
-          game: 'pixelcopy', title: 'USA Art Studio',
+          game: 'runner', title: 'Moon Run', emoji: '🏃', blurb: 'Run across the Moon and grab the USA things.',
+          intro: 'Bigfoot has mixed up things from all over the world! Run across the Moon and collect only the things that come from the **USA**.',
+          say: 'Pick the lane with the USA thing! Jump the moon rocks and hold DASH to go faster.',
+          prompt: 'Collect things from the USA!',
+          items: [
+            { label: 'Mickey Mouse', ok: true },
+            { label: 'basketball', ok: true },
+            { label: 'Grand Canyon', ok: true },
+            { label: 'Statue of Liberty', ok: true },
+            { label: 'Spider-Man', ok: true },
+            { label: 'Peppa Pig', ok: false, why: 'Peppa Pig was made in England.' },
+            { label: 'Songkran', ok: false, why: 'Songkran is the Thai New Year!' },
+            { label: 'Anpanman', ok: false, why: 'Anpanman comes from Japan.' },
+            { label: 'Big Ben', ok: false, why: 'Big Ben is in London, England.' },
+            { label: 'Mount Fuji', ok: false, why: 'Mount Fuji is in Japan.' },
+          ],
+        },
+        {
+          game: 'steadyhand', title: 'Steady Hand', emoji: '✏️', blurb: 'Guide your pencil along the wiggly path – don\'t touch the sides!',
+          intro: 'Press on the green dot and follow the wiggly path all the way to the 🏁 – carefully! Pick Easy, Medium or Hard.',
+          say: 'Steady hands! Don\'t touch the sides!',
+          done: 'What a steady hand! Ready to fly a rocket.',
+        },
+        {
+          game: 'wordsearch', title: 'Word Hunt', emoji: '🔎', blurb: 'Find the hidden USA words.',
+          intro: 'Find all the **USA words** hidden in the grid. They go across ➡ or down ⬇.',
+          say: 'Hunt for the hidden words! Drag across a word – or tap the first letter, then the last.',
+          size: 10,
+          words: ['CANADA', 'MEXICO', 'STATES', 'ALASKA', 'HAWAII', 'PACIFIC', 'EAGLE', 'COAST'],
+        },
+        {
+          game: 'pixelcopy', title: 'USA Art Studio', emoji: '🎨', blurb: 'Paint a rocket, the flag or the Statue of Liberty.',
           intro: 'Pick a picture to paint! Tap **✅ I\'m finished!** when you are happy – you get a score, and you can keep fixing it for 100%.',
           say: 'Will you paint a rocket, the flag, or the Statue of Liberty?',
           pickTitle: '🎨 What will you paint?',
@@ -416,57 +422,7 @@ window.LESSON = {
             }, LIBERTY),
           ],
         },
-        {
-          game: 'runner', title: 'Moon Run',
-          intro: 'Bigfoot has mixed up things from all over the world! Run across the Moon and collect only the things that come from the **USA**.',
-          say: 'Pick the lane with the USA thing! Jump the moon rocks and hold DASH to go faster.',
-          prompt: 'Collect things from the USA!',
-          items: [
-            { label: 'Mickey Mouse', ok: true },
-            { label: 'basketball', ok: true },
-            { label: 'Grand Canyon', ok: true },
-            { label: 'Statue of Liberty', ok: true },
-            { label: 'Spider-Man', ok: true },
-            { label: 'Peppa Pig', ok: false, why: 'Peppa Pig was made in England.' },
-            { label: 'Songkran', ok: false, why: 'Songkran is the Thai New Year!' },
-            { label: 'Anpanman', ok: false, why: 'Anpanman comes from Japan.' },
-            { label: 'Big Ben', ok: false, why: 'Big Ben is in London, England.' },
-            { label: 'Mount Fuji', ok: false, why: 'Mount Fuji is in Japan.' },
-          ],
-        },
       ],
-    },
-
-    {
-      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
-      say: 'Astronaut training starts NOW!',
-      wiggle: {
-        title: '🚀 Astronaut Training!',
-        seconds: 60,
-        moves: [
-          '🚀 Countdown! Crouch down low… 3… 2… 1… BLAST OFF – jump as high as you can!',
-          '🌕 Moon walk! Take big, slow, bouncy steps – there\'s hardly any gravity!',
-          '🏀 Slam dunk! Dribble the ball, then leap up and dunk it!',
-          '🦅 Be a bald eagle! Stretch your wings wide and soar around the room.',
-          '🗽 Be the Statue of Liberty! Hold your torch up high and stand very still.',
-          '🎆 4th of July fireworks! Crouch down, then burst up with your arms out – BOOM!',
-        ],
-      },
-      tryit: {
-        title: '🎈 Try it at home: Balloon Rocket',
-        intro: 'Rockets push hot gas DOWN so they shoot UP. A balloon works the same way! With a grown-up, thread a long string through a straw and tie it tight across a room. Tape a balloon to the straw.',
-        steps: [
-          'Before you test, tap the first box for each one: do you THINK it will reach the end of the string?',
-          'Blow up the balloon, pinch the end, tape it to the straw – then let go!',
-          'Tap the second box: did it REACH the end?',
-          'Which balloon flew furthest? Why do you think so?',
-        ],
-        table: {
-          cols: ['I think it reaches the end…', 'It reached the end…'],
-          items: ['🎈 one small puff of air', '🎈 half-full balloon', '🎈 big, full balloon'],
-        },
-        tip: 'Tap once for ✅ and twice for ❌. More air pushing out of the back = more push forwards – just like a real rocket!',
-      },
     },
 
     {
@@ -505,7 +461,6 @@ window.LESSON = {
         { type: 'mcq', q: 'Why is the Statue of Liberty green?', options: ['Her copper slowly changed colour in the rain and sea air', 'She was painted green', 'She is covered in grass'], answer: 0 },
         { type: 'tf', q: 'The footprints from the first Moon landing have already been washed away by rain.', answer: false, explain: 'There is no rain or wind on the Moon, so the footprints are still there!' },
         { type: 'mcq', q: 'An American boy asks for "fries and a cookie". What does he want?', options: ['chips and a biscuit', 'crisps and a cake', 'rice and a sweet'], answer: 0 },
-        { type: 'mcq', q: 'Which flag belongs to the USA?', options: ['red and white stripes with stars on blue', 'a red circle on white', 'a red cross on white'], answer: 0, hint: 'The red circle is Japan and the red cross is England!' },
       ],
     },
   ],

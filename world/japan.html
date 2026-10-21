@@ -135,6 +135,8 @@ window.LESSON = {
   title: 'Japan: Land of the Rising Sun',
   emoji: '🇯🇵',
   home: '../index.html',
+  midBreak: false, // the Arcade stage is the fun break
+  layout: 2, // the compact (one video) version: older saved progress starts again from the top
   finishAch: 'traveller',
   stamp: { id: 'JPN', name: 'Japan', flag: '🇯🇵' },
   mascot: {
@@ -160,12 +162,12 @@ window.LESSON = {
       pic: FLAG,
       hello: 'Konnichiwa! Welcome to AROUND THE WORLD! Grab your passport, {name} – our first flight is to JAPAN! ✈️',
       question: 'Which country gave us sushi, bullet trains, Pokémon AND Anpanman?',
-      intro: 'Find Japan on the map, learn to say hello in Japanese, make sushi, draw Anpanman – then chase away Grumbly Oni to earn your first 🛂 passport stamp!',
+      intro: 'Find Japan on the map, make sushi, learn to say hello in Japanese, pick an arcade game (or draw Anpanman!) – then chase away Grumbly Oni to earn your first 🛂 passport stamp!',
       nameLabel: 'Traveller name:',
     },
 
     {
-      type: 'read', title: 'Where in the world is Japan?', short: 'Read 1', minutes: 6,
+      type: 'read', title: 'Where in the world is Japan?', short: 'Read 1', minutes: 5,
       say: 'Read each page carefully – the checks test if you really understood it! Tap the yellow words for a 💎.',
       cards: [
         {
@@ -212,7 +214,7 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'Japan for Kids', short: 'Video 1', minutes: 7,
+      type: 'video', title: 'Japan for Kids', short: 'Video', minutes: 6,
       video: { id: 'QEC3MrWgnMU', title: 'Japan for Kids – A kids guide to Japan', channel: "Professor Propeller's Planet", duration: '4:11' },
       say: 'Professor Propeller is flying to Japan! Watch, then answer my questions.',
       clues: [
@@ -232,7 +234,7 @@ window.LESSON = {
     },
 
     {
-      type: 'game', title: 'Map Explorer', short: 'Game 1', minutes: 8,
+      type: 'game', title: 'Map Explorer', short: 'Map', minutes: 6,
       rounds: [
         {
           game: 'worldmap', title: 'Map Explorer', view: 'world',
@@ -251,22 +253,11 @@ window.LESSON = {
             },
           ],
         },
-        {
-          game: 'mystery', title: 'Mystery Japan Words',
-          intro: 'Can you crack the case? Read the clue and work out the **Japan word**. Solve it on the first clue for 3 gems!',
-          say: 'The fewer clues you need, the more gems you win!',
-          words: [
-            { word: 'island', clues: ['Japan has thousands of these.', 'It is land.', 'It has water all the way around it.'] },
-            { word: 'Tokyo', clues: ['More people live here than in any other city in the world.', 'The sun rises over it before it rises over Thailand.', 'It is the capital city of Japan.'] },
-            { word: 'volcano', clues: ['It is a mountain.', 'Mount Fuji is one.', 'Hot, melted rock can burst out of the top.'] },
-            { word: 'Pacific', clues: ['It is the biggest ocean on Earth.', 'Japan sits in it.', 'Its name starts with P.'], options: ['Pacific', 'Atlantic', 'Indian', 'Arctic'] },
-          ],
-        },
       ],
     },
 
     {
-      type: 'read', title: 'Life in Japan', short: 'Read 2', minutes: 6,
+      type: 'read', title: 'Life in Japan', short: 'Read 2', minutes: 5,
       say: 'Now let\'s meet the people of Japan – and learn their manners!',
       cards: [
         {
@@ -302,14 +293,6 @@ window.LESSON = {
           check: { type: 'evidence', q: 'Your friend thinks Sonic the Hedgehog was made by Nintendo. Find the sentence that tells you who really made him.', answer: 'Sega', hint: 'Look for the name of another Japanese company.', explain: 'Sega made Sonic – and Sega is from Japan too!' },
         },
         {
-          title: 'Super gadgets', pic: '🤖🥤🚽',
-          text: [
-            'Japan has millions of vending machines – about one for every 30 people! They sell hot soup, ice cream, umbrellas and even fresh eggs.',
-            'Some toilets have a control panel with buttons for a heated seat, a little shower – and a button that plays music or flushing sounds to cover up embarrassing noises!',
-          ],
-          check: { q: 'You press a button on a toilet in a Japanese hotel and it plays music. Why?', options: ['To cover up any embarrassing noises', 'Because it is a karaoke machine', 'To wake you up in the morning'], answer: 0 },
-        },
-        {
           title: 'Demons out, luck in!', pic: '👹🫘',
           text: [
             'Every February there is a festival called Setsubun. A grown-up puts on a scary oni (demon) mask, and the children throw roasted beans at them!',
@@ -321,27 +304,7 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'Let\'s Make Sushi', short: 'Video 2', minutes: 6,
-      video: { id: 't6psvVx3PVY', title: 'CBeebies Recipes | Japanese Sushi', channel: 'CBeebies', duration: '3:00' },
-      say: 'Watch how to roll sushi – you\'ll need these tricks in the Sushi Chef game next!',
-      clues: [
-        'What is the very first thing to do?',
-        'Which side of the seaweed goes down?',
-        'What do you put on your fingers before pressing the rice?',
-        'Who cuts the rolls?',
-      ],
-      questions: [
-        { type: 'mcq', q: 'What is the very first thing to do before making sushi?', options: ['Wash your hands', 'Cut the cucumber', 'Turn on the TV'], answer: 0 },
-        { type: 'mcq', q: 'The nori seaweed goes onto the sushi mat…', options: ['shiny side down', 'shiny side up', 'folded in half'], answer: 0 },
-        { type: 'type', q: 'What do you put on your fingers before pressing the rice onto the seaweed?', answer: ['water', 'a little water', 'some water'], placeholder: 'Type it', hint: 'It stops the sticky rice sticking to you.', explain: 'Wet fingers stop the sticky rice from sticking to you!' },
-        { type: 'mcq', q: 'Where do you lay the fillings, like cucumber and tuna mayo?', options: ['across the middle of the rice', 'all around the edges', 'on top of the rolled sushi'], answer: 0 },
-        { type: 'oddone', q: 'Three of these go into the sushi rice dressing. Which one does NOT?', items: ['rice vinegar', 'sugar', 'salt', 'chocolate sauce'], answer: 3, why: 'Why is chocolate sauce the odd one out?', reasons: ['It is not in the dressing – that is rice vinegar, sugar and salt', 'It is brown', 'It is the most expensive'], reason: 0 },
-        { type: 'mcq', q: 'Who cuts the sushi rolls into pieces?', options: ['a grown-up', 'the dog', 'nobody – you eat it whole'], answer: 0 },
-      ],
-    },
-
-    {
-      type: 'game', title: 'Sushi Chef', short: 'Game 2', minutes: 10,
+      type: 'game', title: 'Sushi Chef', short: 'Chef', icon: '🍣', minutes: 7,
       rounds: [
         {
           game: 'cook', title: 'Sushi Chef', yum: 'Oishii! (Delicious!)',
@@ -374,7 +337,7 @@ window.LESSON = {
             },
             {
               name: 'Tuna mayo maki roll', emoji: MAKI, customer: '👦',
-              fact: 'Tuna mayo is one of the most popular fillings for children in Japan – just like in the CBeebies video!',
+              fact: 'Tuna mayo is one of the most popular fillings for children in Japan!',
               steps: [
                 { add: 'nori', label: 'nori seaweed', emoji: NORI },
                 { add: 'rice', label: 'sushi rice', emoji: '🍚', makes: RICE_BED },
@@ -395,22 +358,11 @@ window.LESSON = {
             },
           ],
         },
-        {
-          game: 'cook', title: 'Sushi Rush!', yum: 'Oishii!', memory: true, par: 150,
-          intro: 'The sushi bar is BUSY! Cook these orders **from memory** – press 💡 Peek if you forget. Finish in under 2½ minutes for a bonus gem!',
-          say: 'Here come the customers! Can you remember the recipes?',
-          pantry: [{ add: 'chocolate', label: 'chocolate', emoji: '🍫', why: 'No chocolate in sushi!' }],
-          recipes: [
-            { name: 'Salmon nigiri', emoji: NIGIRI, customer: '🧑', steps: [{ add: 'rice', label: 'sushi rice', emoji: '🍚' }, { do: 'squeeze', label: 'Squeeze it into a pillow', makes: RICE_PILLOW }, { add: 'salmon', label: 'salmon slice', emoji: SALMON, makes: NIGIRI }] },
-            { name: 'Cucumber maki roll', emoji: MAKI, customer: '👴', steps: [{ add: 'nori', label: 'nori seaweed', emoji: NORI }, { add: 'rice', label: 'sushi rice', emoji: '🍚', makes: RICE_BED }, { add: 'cucumber', label: 'cucumber', emoji: '🥒' }, { do: 'roll', label: 'Roll it up', makes: MAKI_LOG }, { do: 'slice', label: 'Slice it', makes: MAKI }] },
-            { name: 'Onigiri rice ball', emoji: '🍙', customer: '🧒', steps: [{ add: 'rice', label: 'sushi rice', emoji: '🍚' }, { add: 'tuna', label: 'tuna mayo', emoji: '🐟' }, { do: 'squeeze', label: 'Squeeze it into a triangle', makes: RICE_TRI }, { add: 'nori', label: 'nori seaweed', emoji: NORI, makes: '🍙' }] },
-          ],
-        },
       ],
     },
 
     {
-      type: 'game', title: 'Japan Studio', short: 'Game 3', icon: '🎌', minutes: 10,
+      type: 'game', title: 'Say it in Japanese!', short: 'Say it!', icon: '🎌', minutes: 4,
       rounds: [
         {
           game: 'phrases', title: 'Say it in Japanese!', lang: 'ja-JP',
@@ -430,8 +382,53 @@ window.LESSON = {
           ],
           gesture: { kind: 'bow', say: 'こんにちは', intro: 'Now say hello the Japanese way – with a bow!', text: '🙇 In Japan, people bow to say hello. Swipe DOWN on your character to bow – twice!', yes: 'A perfect bow! Konnichiwa!' },
         },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Japan Arcade: pick a game!', short: 'Arcade', icon: '🕹️', minutes: 4,
+      pick: { title: '🕹️ Pick your arcade game!', say: 'Your choice! Which game do you want to play? Win one to carry on – or play them all!' },
+      rounds: [
         {
-          game: 'pixelcopy', title: 'Japan Art Studio',
+          game: 'invaders', title: 'Made in Japan', emoji: '🚀', blurb: 'Shoot the things that come from Japan.',
+          intro: 'Read each mission at the top of the screen, then shoot only the right aliens!',
+          say: 'Tap above an alien to fly there and fire!',
+          waves: [
+            {
+              prompt: 'Shoot the things that come from JAPAN!',
+              items: [
+                { label: 'Mario', ok: true }, { label: 'Pokémon', ok: true }, { label: 'Dragon Ball', ok: true }, { label: 'Sonic', ok: true }, { label: 'sushi', ok: true },
+                { label: 'pizza', ok: false, why: 'Pizza comes from Italy.' }, { label: 'kangaroos', ok: false, why: 'Kangaroos live in Australia.' }, { label: 'pyramids', ok: false, why: 'The pyramids are in Egypt.' },
+              ],
+            },
+            {
+              prompt: 'Shoot the things you would SEE in Japan!',
+              items: [
+                { label: 'Mount Fuji', ok: true }, { label: 'bullet train', ok: true }, { label: 'vending machines', ok: true }, { label: 'chopsticks', ok: true },
+                { label: 'Big Ben', ok: false, why: 'Big Ben is in London, England.' }, { label: 'polar bears', ok: false, why: 'Polar bears live in the Arctic, not Japan.' }, { label: 'Eiffel Tower', ok: false, why: 'The Eiffel Tower is in Paris, France.' },
+              ],
+            },
+          ],
+        },
+        {
+          game: 'steadyhand', title: 'Steady Hand', emoji: '✏️', blurb: 'Guide your pencil along the wiggly path – don\'t touch the sides!',
+          intro: 'Press on the green dot and follow the wiggly path all the way to the 🏁 – carefully! Pick Easy, Medium or Hard.',
+          say: 'Steady hands! Don\'t touch the sides!',
+          done: 'What a steady hand! As calm as a ninja.',
+        },
+        {
+          game: 'mystery', title: 'Mystery Japan Words', emoji: '🔍', blurb: 'Crack the clues to find the Japan word.',
+          intro: 'Can you crack the case? Read the clue and work out the **Japan word**. Solve it on the first clue for 3 gems!',
+          say: 'The fewer clues you need, the more gems you win!',
+          words: [
+            { word: 'island', clues: ['Japan has thousands of these.', 'It is land.', 'It has water all the way around it.'] },
+            { word: 'Tokyo', clues: ['More people live here than in any other city in the world.', 'The sun rises over it before it rises over Thailand.', 'It is the capital city of Japan.'] },
+            { word: 'volcano', clues: ['It is a mountain.', 'Mount Fuji is one.', 'Hot, melted rock can burst out of the top.'] },
+            { word: 'Pacific', clues: ['It is the biggest ocean on Earth.', 'Japan sits in it.', 'Its name starts with P.'], options: ['Pacific', 'Atlantic', 'Indian', 'Arctic'] },
+          ],
+        },
+        {
+          game: 'pixelcopy', title: 'Japan Art Studio', emoji: '🎨', blurb: 'Paint the flag, Anpanman or Squirtle.',
           intro: 'Pick a picture to paint! Tap **✅ I\'m finished!** when you are happy – you get a score, and you can keep fixing it for 100%.',
           say: 'Choose your picture! The more stars, the trickier it is.',
           pickTitle: '🎨 What will you paint?',
@@ -458,60 +455,7 @@ window.LESSON = {
             }, SQUIRTLE),
           ],
         },
-        {
-          game: 'invaders', title: 'Made in Japan',
-          intro: 'Read each mission at the top of the screen, then shoot only the right aliens!',
-          say: 'Tap above an alien to fly there and fire!',
-          waves: [
-            {
-              prompt: 'Shoot the things that come from JAPAN!',
-              items: [
-                { label: 'Mario', ok: true }, { label: 'Pokémon', ok: true }, { label: 'Dragon Ball', ok: true }, { label: 'Sonic', ok: true }, { label: 'sushi', ok: true },
-                { label: 'pizza', ok: false, why: 'Pizza comes from Italy.' }, { label: 'kangaroos', ok: false, why: 'Kangaroos live in Australia.' }, { label: 'pyramids', ok: false, why: 'The pyramids are in Egypt.' },
-              ],
-            },
-            {
-              prompt: 'Shoot the things you would SEE in Japan!',
-              items: [
-                { label: 'Mount Fuji', ok: true }, { label: 'bullet train', ok: true }, { label: 'vending machines', ok: true }, { label: 'chopsticks', ok: true },
-                { label: 'Big Ben', ok: false, why: 'Big Ben is in London, England.' }, { label: 'polar bears', ok: false, why: 'Polar bears live in the Arctic, not Japan.' }, { label: 'Eiffel Tower', ok: false, why: 'The Eiffel Tower is in Paris, France.' },
-              ],
-            },
-          ],
-        },
       ],
-    },
-
-    {
-      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
-      say: 'Time to move like a samurai!',
-      wiggle: {
-        title: '🥋 Samurai Stretches!',
-        seconds: 60,
-        moves: [
-          '🙇 Bow to your screen – say "konnichiwa"!',
-          '⚔️ Samurai pose! Feet wide, arms out like you are holding a sword.',
-          '🚄 Bullet train! Run on the spot as FAST as you can!',
-          '🗻 Mount Fuji! Make a pointy mountain with your arms above your head.',
-          '🫨 Earthquake! Wobble your whole body… then freeze!',
-          '🥷 Ninja! Tiptoe on the spot without making a sound.',
-        ],
-      },
-      tryit: {
-        title: '🍙 Try it at home: Sticky Rice Test',
-        intro: 'Japanese children make onigiri rice balls. With a grown-up, cook some short, sticky rice (sushi rice works best) and let it cool until it is just warm.',
-        steps: [
-          'Before you test, tap the first box for each guess: what do you THINK will happen?',
-          'Try to squeeze a rice ball with DRY hands. Then wet your hands with a little water and try again.',
-          'Tap the second box: what did you SEE?',
-          'Add a filling in the middle, wrap a strip of nori around it – and eat your onigiri! Itadakimasu!',
-        ],
-        table: {
-          cols: ['I think…', 'I saw…'],
-          items: ['🖐️ dry hands get covered in sticky rice', '💧 wet hands stop the rice sticking', '🍙 the rice ball holds its shape'],
-        },
-        tip: 'Tap once for ✅ and twice for ❌. Sushi chefs dip their fingers in water for the same reason!',
-      },
     },
 
     {
@@ -544,7 +488,6 @@ window.LESSON = {
         { type: 'mcq', q: 'Grumbly Oni says, "Japan is one giant island in the Atlantic!" What could you tell him?', options: ['No – it is lots of islands in the Pacific Ocean', 'Yes, that\'s right', 'No – it is in the middle of a desert'], answer: 0 },
         { type: 'type', q: 'What is the capital city of Japan?', answer: 'Tokyo', placeholder: 'Type the city', hint: 'It starts with T, and it is the biggest city in the world.' },
         { type: 'mcq', q: 'Why is Japan called the Land of the Rising Sun?', options: ['It is so far east that the sun seems to rise there first', 'The sun never sets there', 'It is the hottest country'], answer: 0 },
-        { type: 'mcq', q: 'The floor starts to shake at a school in Tokyo. What do the children do?', options: ['Hide under their desks', 'Run to the window', 'Keep writing'], answer: 0 },
         { type: 'mcq', q: 'You arrive at a Japanese friend\'s house. What should you do?', options: ['Bow and take off your shoes', 'Run in with muddy boots', 'Shout very loudly'], answer: 0 },
         { type: 'mcq', q: 'Your family is about to eat dinner in Japan. What do you all say?', options: ['itadakimasu', 'sayōnara', 'ohayō'], answer: 0 },
         { type: 'order', q: 'Put the steps for a maki roll in order.', items: ['🟩 Put nori on the mat', '🍚 Press on the rice', '🥒 Lay the filling across the middle', '🌀 Roll it up', '🔪 Slice it'], ends: ['START', 'END'], hint: 'The seaweed goes on first, and the slicing comes last.' },

@@ -78,6 +78,8 @@ window.LESSON = {
   title: 'The Immortal Jellyfish: Can It Live Forever?',
   emoji: '🪼',
   home: '../index.html',
+  midBreak: false, // the Arcade stage is the fun break
+  layout: 2, // the compact (one video) version: older saved progress starts again from the top
   finishAch: 'wonder',
   mascot: {
     name: 'Professor Bolt',
@@ -93,7 +95,6 @@ window.LESSON = {
     'life cycle': { emoji: '🔄', def: 'All the stages a living thing goes through, from being born to growing up and having young of its own.' },
     polyp: { emoji: '🪸', def: 'A tiny tube-shaped baby stage of a jellyfish that stays stuck to a rock.' },
     immortal: { emoji: '♾️', def: 'Able to live forever and never grow old.' },
-    cells: { emoji: '🧱', def: 'The tiny building blocks that every living thing is made of. You are made of millions and millions of them!' },
     predator: { emoji: '🐢', def: 'An animal that hunts and eats other animals.' },
     myth: { emoji: '🧚', def: 'A story or idea that lots of people believe, but that is not quite true.' },
   },
@@ -106,7 +107,7 @@ window.LESSON = {
       pic: TURRI,
       hello: "Beep boop! Welcome back to WONDERS OF THE WORLD! Today: a tiny jellyfish that can turn back time…",
       question: 'Could any animal grow old… and then turn back into a baby?',
-      intro: 'Read, watch, play **Fact or Fiction**, jump through the sea – then stop Captain Plastic from filling the ocean with bags! A new 🪼 jellyfish pet is waiting in the Wardrobe shop.',
+      intro: 'Read, watch, play **Fact or Fiction**, pick an arcade game – then stop Captain Plastic from filling the ocean with bags! A new 🪼 jellyfish pet is waiting in the Wardrobe shop.',
       nameLabel: 'Player name:',
     },
 
@@ -175,7 +176,7 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'Everything About Jellyfish', short: 'Video 1', minutes: 8,
+      type: 'video', title: 'Everything About Jellyfish', short: 'Video', minutes: 7,
       video: { id: 'n79XKtxu0xs', title: 'How Does A Jellyfish Sting? | Everything About Jellyfish | Dr Binocs Show', channel: 'Peekaboo Kidz', duration: '6:27' },
       say: 'Dr Binocs is zooming in on a jellyfish sting! Watch, then answer my questions.',
       clues: [
@@ -195,7 +196,7 @@ window.LESSON = {
     },
 
     {
-      type: 'game', title: 'Fact or Fiction?', short: 'Game 1', minutes: 8,
+      type: 'game', title: 'Fact or Fiction?', short: 'Facts', minutes: 6,
       rounds: [
         {
           game: 'truefalse', title: 'Fact or Fiction?',
@@ -207,10 +208,8 @@ window.LESSON = {
             { text: 'Jellyfish do not have a brain.', answer: true, why: 'They have a net of nerves instead.' },
             { text: 'A jellyfish on the beach is safe to touch if it is not moving.', answer: false, why: 'Even a jellyfish that is not moving can still sting!' },
             { text: 'Some jellyfish have tentacles longer than a blue whale.', answer: true, why: 'The lion\'s mane jellyfish does!' },
-            { text: 'Jellyfish breathe through gills, just like fish.', answer: false, why: 'Jellyfish have no gills. Oxygen soaks in from the water through their thin bodies.' },
             { text: 'A box jellyfish has 24 eyes.', answer: true, why: 'It is TRUE! A box jellyfish has 24 eyes – but no brain.' },
             { text: 'A jellyfish eats and poops through the same hole.', answer: true, why: 'Yuck – but true! It only has one opening.' },
-            { text: 'All jellyfish are as big as a dinner plate.', answer: false, why: 'Some are tiny, like the immortal jellyfish. Others are giants!' },
           ],
         },
         {
@@ -235,22 +234,11 @@ window.LESSON = {
             { label: 'can swim', emoji: '🏊', bucket: 'both', hint: 'They both swim – in very different ways!' },
           ],
         },
-        {
-          game: 'questions', title: 'Word Builder',
-          intro: 'Captain Plastic has chopped up the **ocean words**! Read the meaning, then tap the tiles to build each word again. Some tiles are traps!',
-          say: 'Say the word slowly, one chunk at a time, then build it.',
-          questions: [
-            { type: 'build', q: 'Build the word: the long, trailing arms that hang under a jellyfish.', answer: ['ten', 'ta', 'cles'], extra: ['tickle', 'cals'] },
-            { type: 'build', q: 'Build the word: an animal with no backbone.', answer: ['in', 'ver', 'te', 'brate'], extra: ['un', 'bright'], hint: 'in-VER-te-brate' },
-            { type: 'build', q: 'Build the word: the little tube with tentacles that a jellyfish grows from.', answer: ['pol', 'yp'], extra: ['ip', 'pul'] },
-            { type: 'build', q: 'Build the word: never dying of old age.', answer: ['im', 'mor', 'tal'], extra: ['in', 'tel'] },
-          ],
-        },
       ],
     },
 
     {
-      type: 'read', title: 'The jellyfish that turns back time', short: 'Read 2', minutes: 6,
+      type: 'read', title: 'The jellyfish that turns back time', short: 'Read 2', minutes: 5,
       say: 'Now for the BIGGEST wonder of all. Can a jellyfish really live forever?',
       cards: [
         {
@@ -278,14 +266,6 @@ window.LESSON = {
           check: { type: 'predict', q: 'An immortal jellyfish has had no food for weeks. What do you predict it will do?', options: ['Turn back into a polyp', 'Fly off to find food on land', 'Grow giant tentacles'], answer: 0, reveal: 'It shrinks into a blob and turns back into a polyp – then starts its life again!', then: { q: 'Which is most like that?', options: ['a butterfly turning back into a caterpillar', 'a puppy growing into a dog', 'a seed growing into a tree'], answer: 0, hint: 'The jellyfish goes BACKWARDS in its life.' } },
         },
         {
-          title: 'Rebuilding itself', pic: '🧱🔄🧱',
-          text: [
-            'Every living thing is made of tiny building blocks called [[cells]]. In you, a muscle cell stays a muscle cell for its whole life.',
-            'But the immortal jellyfish can change what its cells do, and use them to build a younger body. It is like taking apart a LEGO castle and building a new spaceship from the same bricks!',
-          ],
-          check: { q: 'Which is MOST like what the jellyfish does with its cells?', options: ['Using old bricks to build something new', 'Throwing all the bricks in the bin', 'Buying a box of brand-new bricks'], answer: 0 },
-        },
-        {
           title: 'Myth-buster!', pic: '❌♾️',
           text: [
             'You might hear that the immortal jellyfish can never die. That is a myth!',
@@ -305,27 +285,7 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'The Jellyfish That Never Dies', short: 'Video 2', minutes: 8,
-      video: { id: 'j7PQQ4x2wHY', title: 'Immortal Jellyfish - Turritopsis dohrnii | Mystery of Jellyfish That Never Die', channel: 'Peekaboo Kidz', duration: '6:39' },
-      say: 'Dr Binocs zooms in on the immortal jellyfish. Watch closely – some of it is tricky!',
-      clues: [
-        'What does Dr Binocs wish he could do at the start?',
-        'What does the tiny swimming baby stick itself onto?',
-        'What makes the immortal jellyfish turn back?',
-        'What are the protective caps compared to?',
-      ],
-      questions: [
-        { type: 'mcq', q: 'At the start, what does Dr Binocs wish he could do?', options: ['become a kid again', 'fly to the Moon', 'swim with sharks'], answer: 0 },
-        { type: 'type', q: 'Before it becomes a polyp, the tiny swimming baby sticks itself onto…', answer: ['coral', 'rock', 'a rock', 'coral or rock', 'rocks', 'a coral'], placeholder: 'something under the sea', hint: 'Something hard on the sea floor.' },
-        { type: 'mcq', q: 'When does the immortal jellyfish start turning back into a young polyp?', options: ['When it is starving, hurt or in danger', 'Every Tuesday', 'When it is happy and full'], answer: 0 },
-        { type: 'type', q: 'When it reverses, the jellyfish shrinks into a round blob. What does the video call it?', answer: ['cyst', 'a cyst', 'sist'], placeholder: 'one short word', hint: 'It sounds like "sist". (A tun was the tardigrade\'s trick!)' },
-        { type: 'mcq', q: 'The video compares the tiny caps that protect the jellyfish\'s DNA to…', options: ['the plastic tips on shoelaces', 'the lids on bottles', 'the helmets on cyclists'], answer: 0 },
-        { type: 'tf', q: 'The video says the immortal jellyfish can still be eaten by predators.', answer: true, explain: 'It is not truly invincible!' },
-      ],
-    },
-
-    {
-      type: 'game', title: 'Jelly Lab', short: 'Game 2', minutes: 8,
+      type: 'game', title: 'Jelly Lab', short: 'Lab', minutes: 5,
       rounds: [
         {
           game: 'order', title: 'Turning back time',
@@ -341,21 +301,25 @@ window.LESSON = {
           ],
         },
         {
-          game: 'crossword', title: 'Jellyfish Crossword',
-          intro: 'Solve the crossword! Tap a clue, then type the answer with the letter keys.',
-          say: 'Crossword time! Stuck? Press 💡 Hint for a free letter.',
-          entries: [
-            { answer: 'TENTACLE', clue: 'One of the long, stinging arms of a jellyfish' },
-            { answer: 'POLYP', clue: 'The baby stage of a jellyfish that is stuck to a rock' },
-            { answer: 'IMMORTAL', clue: 'Able to live forever' },
-            { answer: 'BELL', clue: 'The umbrella-shaped top of a jellyfish' },
-            { answer: 'BRAIN', clue: 'A jellyfish does not have one of these to think with' },
-            { answer: 'TURTLE', clue: 'A sea animal that loves to eat jellyfish' },
-            { answer: 'WATER', clue: 'A jellyfish is about 95% this' },
+          game: 'questions', title: 'Word Builder',
+          intro: 'Captain Plastic has chopped up the **ocean words**! Read the meaning, then tap the tiles to build each word again. Some tiles are traps!',
+          say: 'Say the word slowly, one chunk at a time, then build it.',
+          questions: [
+            { type: 'build', q: 'Build the word: the long, trailing arms that hang under a jellyfish.', answer: ['ten', 'ta', 'cles'], extra: ['tickle', 'cals'] },
+            { type: 'build', q: 'Build the word: an animal with no backbone.', answer: ['in', 'ver', 'te', 'brate'], extra: ['un', 'bright'], hint: 'in-VER-te-brate' },
+            { type: 'build', q: 'Build the word: the little tube with tentacles that a jellyfish grows from.', answer: ['pol', 'yp'], extra: ['ip', 'pul'] },
+            { type: 'build', q: 'Build the word: never dying of old age.', answer: ['im', 'mor', 'tal'], extra: ['in', 'tel'] },
           ],
         },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Jelly Arcade: pick a game!', short: 'Arcade', icon: '🕹️', minutes: 4,
+      pick: { title: '🕹️ Pick your arcade game!', say: 'Your choice! Which game do you want to play? Win one to carry on – or play them all!' },
+      rounds: [
         {
-          game: 'runner', title: 'Jelly Jump',
+          game: 'runner', title: 'Jelly Jump', emoji: '🏃', blurb: 'Race along and grab what a jellyfish HAS.',
           intro: 'Your hero runs by itself and the words come two at a time – pick the lane with the right one! Collect the things a **jellyfish HAS** – dodge the things it does **NOT** have.',
           say: 'Tap the top or bottom lane. What does a jellyfish have?',
           prompt: 'Collect what a jellyfish HAS – dodge what it doesn\'t!',
@@ -371,39 +335,27 @@ window.LESSON = {
             { label: '🫧 gills', ok: false, why: 'Fish have gills. Jellyfish soak up oxygen through their bodies.' },
           ],
         },
-      ],
-    },
-
-    {
-      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
-      say: 'Time to move like a jellyfish!',
-      wiggle: {
-        title: '🪼 Jelly Moves!',
-        seconds: 60,
-        moves: [
-          '☂️ Pulse! Open your arms wide, then squeeze them in – and again!',
-          '🌊 Drift! Sway from side to side like you are floating on a current.',
-          '⚡ Sting! Wiggle your fingers super fast like tiny tentacles.',
-          '🫧 Turn back time! Curl into a tiny blob on the floor…',
-          '🪸 …now grow slowly up into a polyp, and stretch up tall!',
-          '🐢 Turtle swim! Paddle your arms slowly like a sea turtle.',
-        ],
-      },
-      tryit: {
-        title: '🧪 Try it at home: Wobbly Jelly Test',
-        intro: 'A jellyfish is about 95% water – a bit like the jelly you eat! With a grown-up, make a bowl of jelly from a packet (the hot water is a grown-up job) and let it set in the fridge.',
-        steps: [
-          'Before you test, tap the first box for each guess: what do you THINK will happen?',
-          'Gently shake the bowl. Hold a toy behind it. Then put a spoonful on a warm plate for 10 minutes.',
-          'Tap the second box: what did you SEE?',
-          'Then eat the jelly – but never, ever eat a jellyfish!',
-        ],
-        table: {
-          cols: ['I think…', 'I saw…'],
-          items: ['〰️ it wobbles when shaken', '👀 I can see the toy through it', '💧 it goes runny when warm'],
+        {
+          game: 'steadyhand', title: 'Steady Hand', emoji: '✏️', blurb: 'Guide your pencil along the wiggly path – don\'t touch the sides!',
+          intro: 'Press on the green dot and follow the wiggly path all the way to the 🏁 – carefully! Pick Easy, Medium or Hard.',
+          say: 'Steady hands! Don\'t touch the sides!',
+          done: 'What a steady hand! Smooth as a drifting jellyfish.',
         },
-        tip: 'Tap once for ✅ and twice for ❌. Jellyfish are see-through and wobbly because they are mostly water too!',
-      },
+        {
+          game: 'crossword', title: 'Jellyfish Crossword', emoji: '🧩', blurb: 'Solve the jellyfish crossword.',
+          intro: 'Solve the crossword! Tap a clue, then type the answer with the letter keys.',
+          say: 'Crossword time! Stuck? Press 💡 Hint for a free letter.',
+          entries: [
+            { answer: 'TENTACLE', clue: 'One of the long, stinging arms of a jellyfish' },
+            { answer: 'POLYP', clue: 'The baby stage of a jellyfish that is stuck to a rock' },
+            { answer: 'IMMORTAL', clue: 'Able to live forever' },
+            { answer: 'BELL', clue: 'The umbrella-shaped top of a jellyfish' },
+            { answer: 'BRAIN', clue: 'A jellyfish does not have one of these to think with' },
+            { answer: 'TURTLE', clue: 'A sea animal that loves to eat jellyfish' },
+            { answer: 'WATER', clue: 'A jellyfish is about 95% this' },
+          ],
+        },
+      ],
     },
 
     {
@@ -438,7 +390,6 @@ window.LESSON = {
         { type: 'mcq', q: 'You spot a jellyfish lying still on the sand. What should you do?', options: ['Leave it alone and tell a grown-up', 'Pick it up – it can\'t sting now', 'Take it home as a pet'], answer: 0, hint: 'Even a jellyfish that is not moving can sting.' },
         { type: 'mcq', q: 'Captain Plastic says, "Jellyfish think with their big brains!" What could you tell him?', options: ['Wrong – they have a net of nerves, not a brain', 'Right – their brain is in their tentacles', 'Right – they have two brains'], answer: 0 },
         { type: 'mcq', q: 'An immortal jellyfish is hurt by a storm. What might it do?', options: ['Turn back into a polyp and start again', 'Grow a new brain', 'Swim to the beach for help'], answer: 0 },
-        { type: 'mcq', q: 'Which is most like what the immortal jellyfish can do?', options: ['a butterfly turning back into a caterpillar', 'a puppy growing into a dog', 'a seed growing into a tree'], answer: 0, hint: 'The jellyfish goes BACKWARDS to an earlier stage.' },
         { type: 'tf', q: 'An immortal jellyfish can never die.', answer: false, explain: 'It doesn\'t have to die of old age, but a predator can still eat it!' },
         { type: 'mcq', q: 'Why is a plastic bag in the sea dangerous for a sea turtle?', options: ['It looks like a jellyfish, so the turtle might eat it', 'It makes the water too cold', 'Turtles get tangled in sand'], answer: 0 },
         { type: 'mcq', q: 'Which of these helps sea turtles the MOST?', options: ['Using a bag again and putting litter in the bin', 'Buying a new plastic bag every day', 'Throwing rubbish in the sea'], answer: 0 },

@@ -77,6 +77,8 @@ window.LESSON = {
   title: 'Thailand: Welcome Home!',
   emoji: '🇹🇭',
   home: '../index.html',
+  midBreak: false, // the Arcade stage is the fun break
+  layout: 2, // the compact (one video) version: older saved progress starts again from the top
   finishAch: 'traveller',
   stamp: { id: 'THA', name: 'Thailand', flag: '🇹🇭' },
   mascot: {
@@ -101,7 +103,7 @@ window.LESSON = {
       pic: FLAG,
       hello: 'Sawasdee krap, {name}! After Japan and England, our plane is flying back HOME – to THAILAND! ✈️🏠',
       question: 'You live here – but how much do you REALLY know about Thailand?',
-      intro: 'Find Thailand\'s neighbours, discover why it is hot all year, cook mango sticky rice, draw an elephant – then catch the Mango Bandit to earn your third 🛂 passport stamp!',
+      intro: 'Find Thailand\'s neighbours, discover why it is hot all year, cook mango sticky rice, pick an arcade game (or draw an elephant!) – then catch the Mango Bandit to earn your third 🛂 passport stamp!',
       nameLabel: 'Traveller name:',
     },
 
@@ -124,7 +126,7 @@ window.LESSON = {
     },
 
     {
-      type: 'read', title: 'Thailand on the map', short: 'Read 1', minutes: 6,
+      type: 'read', title: 'Thailand on the map', short: 'Read 1', minutes: 5,
       say: 'You live here – but let\'s look at Thailand like a real geographer!',
       cards: [
         {
@@ -159,19 +161,11 @@ window.LESSON = {
           ],
           check: { type: 'type', q: 'It is August in Bangkok and there is a thunderstorm every afternoon. Which season is it?', answer: ['rainy season', 'rainy', 'the rainy season', 'monsoon', 'monsoon season', 'the monsoon'], after: 'season', placeholder: 'hot, rainy or cool?', hint: 'Look at the months for each season.', explain: 'The rainy season – June to October!' },
         },
-        {
-          title: 'Bangkok, the City of Angels', pic: '🏙️🛺',
-          text: [
-            'Bangkok is the [[capital]] of Thailand. More than 10 million people live there, and tuk-tuks, boats and the Skytrain zoom them around.',
-            'Thai people call it Krung Thep, which means "City of Angels". Its full name is the longest place name in the world – it has more than 160 letters!',
-          ],
-          check: { type: 'slider', q: 'Bangkok\'s full name is the longest place name in the world! How many letters does it have? Drag the marker.', min: 0, max: 200, step: 10, ticks: 10, answer: 160, tolerance: 10, unit: '', hint: 'Read the last sentence – it tells you the number.', explain: 'More than 160 letters!' },
-        },
       ],
     },
 
     {
-      type: 'video', title: 'Thailand for Kids', short: 'Video 1', minutes: 11,
+      type: 'video', title: 'Thailand for Kids', short: 'Video', minutes: 10,
       video: { id: '84j7dvY-6Uw', title: 'Thailand for kids – Facts and fun about Thailand', channel: "Professor Propeller's Planet", duration: '8:58' },
       say: 'Professor Propeller is visiting YOUR country! Watch, then answer my questions.',
       clues: [
@@ -192,7 +186,7 @@ window.LESSON = {
     },
 
     {
-      type: 'game', title: 'Map Explorer', short: 'Game 1', minutes: 9,
+      type: 'game', title: 'Map Explorer', short: 'Map', minutes: 6,
       rounds: [
         {
           game: 'worldmap', title: 'Thailand and its neighbours', view: 'home', colour: 'countries', equator: true,
@@ -212,10 +206,9 @@ window.LESSON = {
         },
         {
           game: 'worldmap', title: 'Around the world from home', view: 'world', equator: true, labels: ['JPN', 'ENG'],
-          intro: 'Now compare all three countries you have visited. Fly from home to each one!',
+          intro: 'Now compare home with the countries you have visited. Fly from home to England!',
           say: 'Grab the plane at your home 🏠!',
           tasks: [
-            { fly: 'JPN', hours: 6, zoom: [118, 22, 2], ask: 'Fly ✈️ from home to JAPAN again.', yes: 'Japan – about 6 hours!' },
             {
               fly: 'ENG', hours: 13, zoom: [50, 32, 1.8], ask: 'Now fly ✈️ from home to ENGLAND.', yes: 'England – about 13 hours!',
               then: [
@@ -224,16 +217,6 @@ window.LESSON = {
               ],
             },
             { find: 'africa', ask: 'The equator runs right through the middle of a continent with lions and giraffes. Tap it!', yes: 'Africa! It is hot there too.', hint: 'Follow the red line to the big continent on the left of Asia.' },
-          ],
-        },
-        {
-          game: 'mystery', title: 'Mystery Thailand Words',
-          intro: 'The Mango Bandit has hidden some **Thailand words**! Read the clue and work out the word. Solve it on the first clue for 3 gems!',
-          say: 'The fewer clues you need, the more gems you win!',
-          words: [
-            { word: 'monsoon', clues: ['It is a kind of weather.', 'It brings huge storms in the rainy season.', 'Farmers are happy when it comes, because rice needs lots of water.'] },
-            { word: 'equator', clues: ['It is not real – you can\'t see it!', 'It is an imaginary line all the way round the middle of the Earth.', 'The closer you live to it, the hotter it is.'] },
-            { word: 'neighbour', clues: ['Thailand has four of these.', 'Myanmar, Laos, Cambodia and Malaysia are all one.', 'It is a country that shares a border with yours.'], options: ['neighbour', 'capital', 'island', 'temple'] },
           ],
         },
       ],
@@ -251,31 +234,11 @@ window.LESSON = {
         { text: 'Most Thai meals are eaten with a spoon and chopsticks.', wrong: 'chopsticks', fix: 'fork', options: ['knife', 'fingers'], hint: 'What pushes the food onto the spoon?', why: 'A spoon and a fork! The fork pushes food onto the spoon. Chopsticks are mostly for noodle soup.' },
         { text: 'Songkran is the Thai New Year, in the coldest time of the year.', wrong: 'coldest', fix: 'hottest', options: ['wettest', 'darkest'], hint: 'Why are giant water fights so much fun in April?', why: 'Songkran (13 to 15 April) is in the hottest time of the year. Families also gently pour water over their grandparents\' hands to say thank you and ask for blessings.' },
       ],
-      outro: 'Khop khun krap – thank you! Now I know how to wai, where to put my feet, and what to eat with. Next stop: Songkran!',
+      outro: 'Khop khun krap – thank you! Now I know how to wai, where to put my feet, and what to eat with. Next stop: the kitchen!',
     },
 
     {
-      type: 'video', title: 'The Songkran Festival', short: 'Video 2', minutes: 9,
-      video: { id: 'sUCt3YIJmuA', title: 'The Songkran Festival in Thailand | Pleasant Goat Fun Class', channel: 'Pleasant Goat and Big Big Wolf', duration: '7:13' },
-      say: 'Pleasant Goat and friends are celebrating Songkran! Watch, then answer my questions.',
-      clues: [
-        'What date is Songkran in the video?',
-        'What does splashing someone mean?',
-        'Which fruit is called the king of fruits?',
-        'What are the rules for visiting the Grand Palace?',
-      ],
-      questions: [
-        { type: 'type', q: 'What date is it in the video when they celebrate Songkran?', answer: ['13 April', '13th April', 'April 13', 'April 13th', '13 apr'], placeholder: 'like 1 May', hint: 'It is in April – the hottest time of the year.' },
-        { type: 'mcq', q: 'At Songkran, what does splashing water on someone mean?', options: ['You are giving them blessings', 'You are angry with them', 'They need a bath'], answer: 0, explain: 'The more you get splashed, the more blessings you get!' },
-        { type: 'mcq', q: 'What do the yellow golden shower flowers stand for?', options: ['peace and good fortune', 'rain and storms', 'being hungry'], answer: 0 },
-        { type: 'type', q: 'Which spiky, smelly fruit is called the "king of fruits" in the video?', answer: ['durian', 'durians'], placeholder: 'a fruit', hint: 'It starts with d.' },
-        { type: 'mcq', q: 'What is unusual about durian?', options: ['It has a very strong smell, but people love the taste', 'It is bright blue', 'It grows under the sea'], answer: 0 },
-        { type: 'mcq', q: 'What must visitors do before going into the Grand Palace?', options: ['Take off their shoes and hats and wear long clothes', 'Bring a water gun', 'Sing a song'], answer: 0 },
-      ],
-    },
-
-    {
-      type: 'game', title: 'Thai Kitchen', short: 'Game 2', minutes: 10,
+      type: 'game', title: 'Thai Kitchen', short: 'Kitchen', icon: '🥭', minutes: 6,
       rounds: [
         {
           game: 'cook', title: 'Thai Kitchen', yum: 'Aroi mak! (Very delicious!)',
@@ -321,22 +284,11 @@ window.LESSON = {
             },
           ],
         },
-        {
-          game: 'cook', title: 'Night Market Rush!', yum: 'Aroi!', memory: true, par: 150,
-          intro: 'The night market is BUSY! Cook these orders **from memory** – press 💡 Peek if you forget. Finish in under 2½ minutes for a bonus gem!',
-          say: 'The night market is open! Can you remember the recipes?',
-          pantry: [{ add: 'scone', label: 'scone', emoji: '🧁', why: 'Scones are from England!' }],
-          recipes: [
-            { name: 'Cha yen (Thai iced tea)', emoji: CHA_YEN, customer: '🧑', steps: [{ add: 'ice', label: 'glass of ice', emoji: GLASS_ICE }, { do: 'pour', label: 'Pour in the Thai tea', makes: GLASS_TEA }, { add: 'milk', label: 'milk', emoji: '🥛', makes: CHA_YEN }, { do: 'stir', label: 'Stir it' }] },
-            { name: 'Mango sticky rice', emoji: MANGO_RICE, customer: '👴', steps: [{ add: 'sticky', label: 'sticky rice', emoji: '🍚', makes: STICKY }, { do: 'pour', label: 'Pour on the coconut milk 🥥', makes: STICKY_COCO }, { add: 'mango', label: 'mango', emoji: '🥭' }, { do: 'slice', label: 'Slice the mango', makes: MANGO_RICE }] },
-            { name: 'Pad thai', emoji: PAD_THAI, customer: '👦', steps: [{ add: 'noodles', label: 'rice noodles', emoji: NOODLES }, { add: 'egg', label: 'egg', emoji: '🥚' }, { add: 'prawns', label: 'prawns', emoji: '🦐' }, { do: 'stir', label: 'Stir-fry it in the wok', makes: PAD_THAI }, { add: 'peanuts', label: 'crushed peanuts', emoji: '🥜' }, { add: 'lime', label: 'lime', emoji: '🍋' }, { do: 'squeeze', label: 'Squeeze the lime', makes: PAD_THAI }] },
-          ],
-        },
       ],
     },
 
     {
-      type: 'game', title: 'Thai Studio', short: 'Game 3', icon: '🐘', minutes: 9,
+      type: 'game', title: 'Say it in Thai!', short: 'Say it!', icon: '🙏', minutes: 4,
       rounds: [
         {
           game: 'phrases', title: 'Say it in Thai!', lang: 'th-TH',
@@ -356,29 +308,15 @@ window.LESSON = {
           ],
           gesture: { kind: 'wai', say: 'สวัสดีครับ', intro: 'Now say hello the Thai way – with a wai!', text: '🙏 Slide the right hand across until your palms press together – a perfect wai! Do it twice.', yes: 'A beautiful wai! Sawasdee krap!' },
         },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Thai Arcade: pick a game!', short: 'Arcade', icon: '🕹️', minutes: 4,
+      pick: { title: '🕹️ Pick your arcade game!', say: 'Your choice! Which game do you want to play? Win one to carry on – or play them all!' },
+      rounds: [
         {
-          game: 'pixelcopy', title: 'Thai Art Studio',
-          intro: 'Pick a picture to paint! Tap **✅ I\'m finished!** when you are happy – you get a score, and you can keep fixing it for 100%.',
-          say: 'Will you paint the Thai flag or a Thai elephant?',
-          pickTitle: '🎨 What will you paint?',
-          choices: [
-            {
-              label: 'Thai flag', level: 1, target: DRAW_THAI_FLAG, colors: { r: '#d32f2f', w: W, b: '#1f3c88' }, names: { '#d32f2f': 'red', [W]: 'white', '#1f3c88': 'blue' },
-              say: 'Five stripes: red, white, a fat blue one, white, red!',
-              tips: ['Paint the top and bottom stripes **red**.', 'Next come two **white** stripes.', 'The fat stripe in the middle is **blue** – it stands for the King.'],
-              done: 'The Thai flag – the Trairanga, or "three colours"!',
-            },
-            Object.assign({
-              label: 'Thai elephant', level: 3, mirror: true,
-              intro: 'Copy the elephant – Thailand\'s national animal! The **🪞 Mirror** is ON, so paint one half and the other half copies you.',
-              say: 'Start with the big dark-grey ears, then the head and trunk!',
-              tips: ['Paint the **dark grey** ears first.', 'Use **🪣 Fill** for the grey head.', 'Add **black** eyes and **white** tusks.', 'Don\'t forget the long trunk!'],
-              done: 'WHAT A BEAUTIFUL ELEPHANT! Chang (elephant) would be proud!',
-            }, ELEPHANT),
-          ],
-        },
-        {
-          game: 'invaders', title: 'Songkran Splash',
+          game: 'invaders', title: 'Songkran Splash', emoji: '💦', blurb: 'Splash the neighbours and the Thai things.',
           intro: 'Read each mission at the top of the screen, then splash only the right aliens!',
           say: 'Tap above an alien to fly there and splash!',
           waves: [
@@ -398,39 +336,44 @@ window.LESSON = {
             },
           ],
         },
-      ],
-    },
-
-    {
-      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
-      say: 'Time for a Muay Thai workout!',
-      wiggle: {
-        title: '🥊 Muay Thai Moves!',
-        seconds: 60,
-        moves: [
-          '🙏 Start with a wai – fighters always show respect first!',
-          '🥊 Jab, jab! Punch the air – left, right, left, right!',
-          '🦵 Knee strike! Lift one knee up high, then the other!',
-          '🐘 Elephant walk! Swing one arm in front of you like a trunk and stomp slowly.',
-          '🛺 Tuk-tuk! Run on the spot and go "tuk-tuk-tuk"!',
-          '💦 Songkran! Pretend to splash water over your friends!',
-        ],
-      },
-      tryit: {
-        title: '🪷 Try it at home: Krathong Float Test',
-        intro: 'A good krathong floats – and doesn\'t harm the river. With a grown-up, find a slice of bread, a leaf, a piece of plastic foam and a small stone, and fill a sink or bowl with water.',
-        steps: [
-          'Before you test, tap the first box for each one: do you THINK it will float?',
-          'Gently place each thing on the water.',
-          'Tap the second box: did it FLOAT?',
-          'Which would make the best krathong: one that floats AND is safe for fish?',
-        ],
-        table: {
-          cols: ['I think it floats…', 'It floated…'],
-          items: ['🍞 bread', '🍃 leaf', '⬜ plastic foam', '🪨 stone'],
+        {
+          game: 'steadyhand', title: 'Steady Hand', emoji: '✏️', blurb: 'Guide your pencil along the wiggly path – don\'t touch the sides!',
+          intro: 'Press on the green dot and follow the wiggly path all the way to the 🏁 – carefully! Pick Easy, Medium or Hard.',
+          say: 'Steady hands! Don\'t touch the sides!',
+          done: 'What a steady hand! Calm as an elephant.',
         },
-        tip: 'Tap once for ✅ and twice for ❌. Plastic foam floats well – but it never rots away, so it is bad for rivers!',
-      },
+        {
+          game: 'mystery', title: 'Mystery Thailand Words', emoji: '🔍', blurb: 'Crack the clues to find the Thailand word.',
+          intro: 'The Mango Bandit has hidden some **Thailand words**! Read the clue and work out the word. Solve it on the first clue for 3 gems!',
+          say: 'The fewer clues you need, the more gems you win!',
+          words: [
+            { word: 'monsoon', clues: ['It is a kind of weather.', 'It brings huge storms in the rainy season.', 'Farmers are happy when it comes, because rice needs lots of water.'] },
+            { word: 'equator', clues: ['It is not real – you can\'t see it!', 'It is an imaginary line all the way round the middle of the Earth.', 'The closer you live to it, the hotter it is.'] },
+            { word: 'neighbour', clues: ['Thailand has four of these.', 'Myanmar, Laos, Cambodia and Malaysia are all one.', 'It is a country that shares a border with yours.'], options: ['neighbour', 'capital', 'island', 'temple'] },
+          ],
+        },
+        {
+          game: 'pixelcopy', title: 'Thai Art Studio', emoji: '🎨', blurb: 'Paint the Thai flag or an elephant.',
+          intro: 'Pick a picture to paint! Tap **✅ I\'m finished!** when you are happy – you get a score, and you can keep fixing it for 100%.',
+          say: 'Will you paint the Thai flag or a Thai elephant?',
+          pickTitle: '🎨 What will you paint?',
+          choices: [
+            {
+              label: 'Thai flag', level: 1, target: DRAW_THAI_FLAG, colors: { r: '#d32f2f', w: W, b: '#1f3c88' }, names: { '#d32f2f': 'red', [W]: 'white', '#1f3c88': 'blue' },
+              say: 'Five stripes: red, white, a fat blue one, white, red!',
+              tips: ['Paint the top and bottom stripes **red**.', 'Next come two **white** stripes.', 'The fat stripe in the middle is **blue** – it stands for the King.'],
+              done: 'The Thai flag – the Trairanga, or "three colours"!',
+            },
+            Object.assign({
+              label: 'Thai elephant', level: 3, mirror: true,
+              intro: 'Copy the elephant – Thailand\'s national animal! The **🪞 Mirror** is ON, so paint one half and the other half copies you.',
+              say: 'Start with the big dark-grey ears, then the head and trunk!',
+              tips: ['Paint the **dark grey** ears first.', 'Use **🪣 Fill** for the grey head.', 'Add **black** eyes and **white** tusks.', 'Don\'t forget the long trunk!'],
+              done: 'WHAT A BEAUTIFUL ELEPHANT! Chang (elephant) would be proud!',
+            }, ELEPHANT),
+          ],
+        },
+      ],
     },
 
     {
@@ -469,7 +412,6 @@ window.LESSON = {
         { type: 'mcq', q: 'At Songkran, why do families pour water over their grandparents\' hands?', options: ['To show respect and ask for blessings', 'To wash off the mud', 'To make them laugh'], answer: 0 },
         { type: 'tf', q: 'The elephant is Thailand\'s national animal.', answer: true, explain: 'It is! And the kindest way to see one is at a sanctuary.' },
         { type: 'mcq', q: 'What do you need for mango sticky rice?', options: ['sticky rice, coconut milk and mango', 'bread, butter and jam', 'nori, rice and cucumber'], answer: 0, hint: 'The other two are from England and Japan!' },
-        { type: 'mcq', q: 'Which flag is Thailand\'s?', options: ['red, white and blue stripes', 'a red circle on white', 'a red cross on white'], answer: 0 },
       ],
     },
   ],

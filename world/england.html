@@ -138,6 +138,8 @@ window.LESSON = {
   title: 'England: Castles, Kings & Cups of Tea',
   emoji: '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
   home: '../index.html',
+  midBreak: false, // the Arcade stage is the fun break
+  layout: 2, // the compact (one video) version: older saved progress starts again from the top
   finishAch: 'traveller',
   stamp: { id: 'ENG', name: 'England', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿' },
   mascot: {
@@ -162,12 +164,12 @@ window.LESSON = {
       pic: ukFlag(3),
       hello: 'Hello, {name}! Welcome back to AROUND THE WORLD! Fasten your seatbelt – today we fly to ENGLAND! ✈️',
       question: 'Which country has a King, red buses, fish and chips – and Peppa Pig?',
-      intro: 'Learn to read a compass, find the four countries of the UK, build a flag, make afternoon tea – then win back the Crown Jewels from Sir Scorch the Dragon to earn your next 🛂 passport stamp!',
+      intro: 'Learn to read a compass, find the four countries of the UK, make afternoon tea, pick an arcade game (or paint a flag!) – then win back the Crown Jewels from Sir Scorch the Dragon to earn your next 🛂 passport stamp!',
       nameLabel: 'Traveller name:',
     },
 
     {
-      type: 'review', title: 'Warm-up: our world', short: 'Warm-up', minutes: 4,
+      type: 'review', title: 'Warm-up: our world', short: 'Warm-up', minutes: 3,
       say: "Before we fly, let's warm up with what you already know about maps and the world. Read the notes, then test your memory!",
       from: { title: 'Maps and the world you already know', emoji: '🌍' },
       facts: [
@@ -194,7 +196,7 @@ window.LESSON = {
     },
 
     {
-      type: 'read', title: 'Where in the world is England?', short: 'Read 1', minutes: 6,
+      type: 'read', title: 'Where in the world is England?', short: 'Read 1', minutes: 5,
       say: 'Time to learn how to read a map like a real explorer!',
       cards: [
         {
@@ -229,19 +231,11 @@ window.LESSON = {
           ],
           check: { type: 'type', q: 'A family moves from Cardiff to London. Which country are they moving FROM?', answer: ['Wales'], placeholder: 'a country', hint: 'Cardiff is the capital of which country?', explain: 'Cardiff is in Wales – they are moving from Wales to England.' },
         },
-        {
-          title: 'Four seasons', pic: '🌸☀️🍂❄️',
-          text: [
-            'England has four seasons. In spring, flowers bloom and lambs are born. Summer is warm, with long, light evenings – it can stay light until 10 o\'clock at night!',
-            'In autumn, the leaves turn orange and fall off the trees. Winter is cold and the days are short.',
-          ],
-          check: { type: 'type', q: 'It is October in London. Crunchy orange leaves are falling off the trees. Which season is it?', answer: ['autumn', 'fall'], placeholder: 'a season', hint: 'Which season do leaves fall in?', explain: 'Autumn – the leaves turn orange and fall.' },
-        },
       ],
     },
 
     {
-      type: 'video', title: 'The Four Countries of the UK', short: 'Video 1', minutes: 6,
+      type: 'video', title: 'The Four Countries of the UK', short: 'Video', minutes: 5,
       video: { id: 'ncqDJW4EhmE', title: 'UK Geography / UK Country', channel: 'Kids Learning Tube', duration: '3:02' },
       say: 'Sing along and learn the four countries of the UK and their capitals!',
       clues: [
@@ -261,7 +255,7 @@ window.LESSON = {
     },
 
     {
-      type: 'game', title: 'Map Explorer', short: 'Game 1', minutes: 10,
+      type: 'game', title: 'Map Explorer', short: 'Map', minutes: 8,
       rounds: [
         {
           game: 'worldmap', title: 'Fly to England', view: 'world',
@@ -312,7 +306,7 @@ window.LESSON = {
     },
 
     {
-      type: 'read', title: 'Castles, Kings & Cups of Tea', short: 'Read 2', minutes: 6,
+      type: 'read', title: 'Castles, Kings & Cups of Tea', short: 'Read 2', minutes: 5,
       say: 'Now let\'s explore England\'s history and fun traditions!',
       cards: [
         {
@@ -348,22 +342,6 @@ window.LESSON = {
           check: { type: 'type', q: 'Your English friend asks, "Fancy a cuppa?" What drink are they offering you?', answer: ['tea', 'a cup of tea', 'cup of tea', 'a tea'], placeholder: 'a drink', hint: 'People in the UK drink about 100 million cups of it every day!', explain: 'A cuppa is a cup of tea – usually with milk.' },
         },
         {
-          title: 'Football and fish and chips', pic: '⚽🐟🍟',
-          text: [
-            'Football, rugby, cricket and tennis all got their first rules in England. Today millions of people watch the football Premier League every weekend.',
-            'A favourite treat is fish and chips: fish fried in crispy batter with chunky chips, often eaten at the seaside.',
-          ],
-          check: { type: 'evidence', q: 'It is Saturday afternoon in England. Lots of people are cheering in a huge stadium. Tap the sentence that tells you what they are probably watching.', answer: 'premier league', hint: 'What do millions of people watch every weekend?', explain: 'Football! Millions watch the Premier League every weekend.' },
-        },
-        {
-          title: 'A bear from Peru', pic: '🧸🍊',
-          text: [
-            'One of England\'s most famous characters is Paddington: a polite little bear from Peru in a blue coat and a red hat.',
-            'He was found at Paddington station in London, and he loves marmalade sandwiches – he keeps one under his hat for emergencies!',
-          ],
-          check: { type: 'evidence', q: 'What would Paddington most like for his lunch? Tap the sentence that tells you.', answer: 'marmalade sandwiches', hint: 'What does he keep under his hat?', explain: 'A marmalade sandwich, of course!' },
-        },
-        {
           title: 'Peppa Pig', pic: '🐷',
           text: [
             'Peppa Pig is a cartoon made in England. Children in more than 180 countries watch it – maybe you have too!',
@@ -375,33 +353,81 @@ window.LESSON = {
     },
 
     {
-      type: 'video', title: 'A Guide to London', short: 'Video 2', minutes: 6,
-      video: { id: 'KtqVoo8iqeo', title: 'A Guide to London for Kids', channel: 'Twinkl Kids TV', duration: '3:22' },
-      say: 'Let\'s take a tour of London! Watch, then answer my questions.',
-      clues: [
-        'What wild animals live in some London parks?',
-        'What is the Tube?',
-        'What is really called Big Ben?',
-        'What can Tower Bridge do?',
-      ],
-      questions: [
-        { type: 'mcq', q: 'Which part of England is London in?', options: ['the south-east', 'the far north', 'the middle of the sea'], answer: 0 },
-        { type: 'type', q: 'Which wild animals can you see in Richmond Park?', answer: ['deer', 'a deer', 'deers'], placeholder: 'an animal', hint: 'They have antlers!' },
-        { type: 'mcq', q: 'What is the Tube?', options: ['An underground railway – the oldest in the world', 'A giant water slide', 'A tall tower'], answer: 0 },
-        { type: 'mcq', q: 'What is kept in the Tower of London?', options: ['the Crown Jewels', 'the world\'s biggest teapot', 'a dinosaur'], answer: 0 },
-        { type: 'mcq', q: 'The name Big Ben really belongs to…', options: ['the giant bell inside the tower', 'the tallest guard', 'the river'], answer: 0, explain: 'The tower itself is called the Elizabeth Tower.' },
-        { type: 'mcq', q: 'What can Tower Bridge do?', options: ['Lift up in two parts to let big boats through', 'Spin around in a circle', 'Float down the river'], answer: 0 },
+      type: 'game', title: 'Afternoon Tea', short: 'Tea', icon: '☕', minutes: 6,
+      rounds: [
+        {
+          game: 'cook', title: 'Afternoon Tea', yum: 'Scrumptious!',
+          intro: 'Now run an English tea room! **Drag** ingredients onto the plate, then pour, slice or stir.',
+          say: 'Welcome to your tea room! Your first customer would like a cuppa.',
+          pantry: [{ add: 'rice', label: 'sushi rice', emoji: '🍚', why: 'That\'s for sushi! Wrong country.' }, { add: 'ketchup', label: 'ketchup', emoji: '🍅', why: 'Ketchup on a scone? No thank you!' }],
+          recipes: [
+            {
+              name: 'Cup of tea with milk', emoji: MILKY_TEA, customer: '👵',
+              fact: 'Most people in England have their tea with a splash of milk. "Fancy a cuppa?" means "Would you like a cup of tea?"',
+              steps: [{ add: 'cup', label: 'teacup', emoji: CUP }, { do: 'pour', label: 'Pour the tea from the teapot 🫖', makes: TEA }, { add: 'milk', label: 'milk', emoji: '🥛', makes: MILKY_TEA }, { do: 'stir', label: 'Stir it' }],
+            },
+            {
+              name: 'Scone with jam and cream', emoji: SCONE_FULL, customer: '🧑',
+              fact: 'Scones are a favourite at afternoon tea – warm, with strawberry jam and a big dollop of clotted cream.',
+              steps: [{ add: 'scone', label: 'scone', emoji: SCONE }, { do: 'slice', label: 'Slice it in half', makes: SCONE_OPEN }, { add: 'jam', label: 'strawberry jam', emoji: '🍓', makes: SCONE_JAM }, { add: 'cream', label: 'clotted cream', emoji: '🍦', makes: SCONE_FULL }],
+            },
+            {
+              name: 'Cucumber sandwiches', emoji: '🥪', customer: '💂',
+              fact: 'At a posh afternoon tea, the sandwiches are tiny and the crusts are cut off!',
+              steps: [{ add: 'bread', label: 'bread', emoji: '🍞' }, { add: 'butter', label: 'butter', emoji: '🧈' }, { add: 'cucumber', label: 'cucumber', emoji: '🥒' }, { add: 'bread', label: 'bread', emoji: '🍞' }, { do: 'slice', label: 'Cut into little triangles', makes: '🥪' }],
+            },
+          ],
+        },
       ],
     },
 
     {
-      type: 'game', title: 'Flags & Afternoon Tea', short: 'Game 2', minutes: 10,
+      type: 'game', title: 'London Arcade: pick a game!', short: 'Arcade', icon: '🕹️', minutes: 4,
+      pick: { title: '🕹️ Pick your arcade game!', say: 'Your choice! Which game do you want to play? Win one to carry on – or play them all!' },
       rounds: [
         {
-          game: 'pixelcopy', title: 'Flag Studio',
-          intro: 'Pick a flag of the UK and paint it! Tap **✅ I\'m finished!** when you are happy – you get a score, and you can keep fixing it for 100%.',
-          say: 'Which flag will you paint? The Union Jack is the trickiest!',
-          pickTitle: '🎨 Which flag will you paint?',
+          game: 'runner', title: 'London Dash', emoji: '🏃', blurb: 'Dash through London and grab the English things.',
+          intro: 'Your hero runs by itself and the words come two at a time – pick the lane with the right one! Collect the things that come **from England** – dodge things from other countries.',
+          say: 'Tap the top or bottom lane. Collect the ENGLISH things!',
+          prompt: 'Collect things from ENGLAND – dodge the rest!',
+          items: [
+            { label: '🚌 red bus', ok: true },
+            { label: '🏰 Tower of London', ok: true },
+            { label: '☕ cup of tea', ok: true },
+            { label: '👑 Crown Jewels', ok: true },
+            { label: '💂 Royal Guard', ok: true },
+            { label: '🍣 sushi', ok: false, why: 'Sushi comes from Japan!' },
+            { label: '🛺 tuk-tuk', ok: false, why: 'Tuk-tuks zoom around Thailand.' },
+            { label: '🦘 kangaroo', ok: false, why: 'Kangaroos live in Australia.' },
+            { label: '🗻 Mount Fuji', ok: false, why: 'Mount Fuji is in Japan.' },
+          ],
+          done: 'LONDON DASH COMPLETE! You know your England from your Japan!',
+        },
+        {
+          game: 'steadyhand', title: 'Steady Hand', emoji: '✏️', blurb: 'Guide your pencil along the wiggly path – don\'t touch the sides!',
+          intro: 'Press on the green dot and follow the wiggly path all the way to the 🏁 – carefully! Pick Easy, Medium or Hard.',
+          say: 'Steady hands! Don\'t touch the sides!',
+          done: 'What a steady hand! As still as the King\'s Guard.',
+        },
+        {
+          game: 'crossword', title: 'England Crossword', emoji: '🧩', blurb: 'Solve the England crossword.',
+          intro: 'Solve the crossword! Tap a clue, then type the answer with the letter keys.',
+          say: 'Crossword time! Stuck? Press 💡 Hint for a free letter.',
+          entries: [
+            { answer: 'LONDON', clue: 'The capital city of England and the UK' },
+            { answer: 'NORTH', clue: 'The direction at the top of most maps' },
+            { answer: 'WALES', clue: 'The UK country with a red dragon on its flag' },
+            { answer: 'SCONE', clue: 'A little cake eaten with jam and cream' },
+            { answer: 'CASTLE', clue: 'A big, strong building where kings and queens lived long ago' },
+            { answer: 'TEA', clue: 'England\'s favourite hot drink' },
+            { answer: 'KING', clue: 'Charles III is the ____ of the UK' },
+          ],
+        },
+        {
+          game: 'pixelcopy', title: 'England Art Studio', emoji: '🎨', blurb: 'Paint a UK flag or a Royal Guard.',
+          intro: 'Pick a flag of the UK – or a Royal Guard – and paint it! Tap **✅ I\'m finished!** when you are happy – you get a score, and you can keep fixing it for 100%.',
+          say: 'What will you paint? The Union Jack and the Royal Guard are the trickiest!',
+          pickTitle: '🎨 What will you paint?',
           choices: [
             {
               label: 'England', level: 1, target: DRAW_ENGLAND, colors: FLAG_COLORS, names: FLAG_NAMES,
@@ -427,109 +453,16 @@ window.LESSON = {
               tips: ['Fill the flag **blue**.', 'Paint the **white** X (Scotland), then the thin **red** X (Ireland) inside it.', 'Last, the big **red** cross with a **white** edge (England).'],
               done: 'THE UNION JACK! Three flags in one – brilliant painting!',
             },
-          ],
-        },
-        {
-          game: 'cook', title: 'Afternoon Tea', yum: 'Scrumptious!',
-          intro: 'Now run an English tea room! **Drag** ingredients onto the plate, then pour, slice or stir.',
-          say: 'Welcome to your tea room! Your first customer would like a cuppa.',
-          pantry: [{ add: 'rice', label: 'sushi rice', emoji: '🍚', why: 'That\'s for sushi! Wrong country.' }, { add: 'ketchup', label: 'ketchup', emoji: '🍅', why: 'Ketchup on a scone? No thank you!' }],
-          recipes: [
-            {
-              name: 'Cup of tea with milk', emoji: MILKY_TEA, customer: '👵',
-              fact: 'Most people in England have their tea with a splash of milk. "Fancy a cuppa?" means "Would you like a cup of tea?"',
-              steps: [{ add: 'cup', label: 'teacup', emoji: CUP }, { do: 'pour', label: 'Pour the tea from the teapot 🫖', makes: TEA }, { add: 'milk', label: 'milk', emoji: '🥛', makes: MILKY_TEA }, { do: 'stir', label: 'Stir it' }],
-            },
-            {
-              name: 'Scone with jam and cream', emoji: SCONE_FULL, customer: '🧑',
-              fact: 'Scones are a favourite at afternoon tea – warm, with strawberry jam and a big dollop of clotted cream.',
-              steps: [{ add: 'scone', label: 'scone', emoji: SCONE }, { do: 'slice', label: 'Slice it in half', makes: SCONE_OPEN }, { add: 'jam', label: 'strawberry jam', emoji: '🍓', makes: SCONE_JAM }, { add: 'cream', label: 'clotted cream', emoji: '🍦', makes: SCONE_FULL }],
-            },
-            {
-              name: 'Cucumber sandwiches', emoji: '🥪', customer: '💂',
-              fact: 'At a posh afternoon tea, the sandwiches are tiny and the crusts are cut off!',
-              steps: [{ add: 'bread', label: 'bread', emoji: '🍞' }, { add: 'butter', label: 'butter', emoji: '🧈' }, { add: 'cucumber', label: 'cucumber', emoji: '🥒' }, { add: 'bread', label: 'bread', emoji: '🍞' }, { do: 'slice', label: 'Cut into little triangles', makes: '🥪' }],
-            },
-          ],
-        },
-        {
-          game: 'crossword', title: 'England Crossword',
-          intro: 'Solve the crossword! Tap a clue, then type the answer with the letter keys.',
-          say: 'Crossword time! Stuck? Press 💡 Hint for a free letter.',
-          entries: [
-            { answer: 'LONDON', clue: 'The capital city of England and the UK' },
-            { answer: 'NORTH', clue: 'The direction at the top of most maps' },
-            { answer: 'WALES', clue: 'The UK country with a red dragon on its flag' },
-            { answer: 'SCONE', clue: 'A little cake eaten with jam and cream' },
-            { answer: 'CASTLE', clue: 'A big, strong building where kings and queens lived long ago' },
-            { answer: 'TEA', clue: 'England\'s favourite hot drink' },
-            { answer: 'KING', clue: 'Charles III is the ____ of the UK' },
+            Object.assign({
+              label: 'Royal Guard', level: 3, mirror: true,
+              intro: 'Copy the Royal Guard! The **🪞 Mirror** is ON – paint one half and the other half copies you.',
+              say: 'Start with his tall black bearskin hat, then the red coat!',
+              tips: ['Paint the tall **black** hat first.', 'Use **🪣 Fill** for big areas like the red coat.', 'Add the **gold** chin strap and buttons.', 'Finish with the **white** belt and black boots.'],
+              done: 'ATTEN-TION! Your Royal Guard is standing perfectly still!',
+            }, GUARD),
           ],
         },
       ],
-    },
-
-    {
-      type: 'game', title: 'London Studio', short: 'Game 3', icon: '💂', minutes: 8,
-      rounds: [
-        Object.assign({
-          game: 'pixelcopy', title: 'Draw a Royal Guard', mirror: true,
-          intro: 'Copy the Royal Guard! The **🪞 Mirror** is ON – paint one half and the other half copies you.',
-          say: 'Start with his tall black bearskin hat, then the red coat!',
-          tips: ['Paint the tall **black** hat first.', 'Use **🪣 Fill** for big areas like the red coat.', 'Add the **gold** chin strap and buttons.', 'Finish with the **white** belt and black boots.'],
-          done: 'ATTEN-TION! Your Royal Guard is standing perfectly still!',
-        }, GUARD),
-        {
-          game: 'runner', title: 'London Dash',
-          intro: 'Your hero runs by itself and the words come two at a time – pick the lane with the right one! Collect the things that come **from England** – dodge things from other countries.',
-          say: 'Tap the top or bottom lane. Collect the ENGLISH things!',
-          prompt: 'Collect things from ENGLAND – dodge the rest!',
-          items: [
-            { label: '🚌 red bus', ok: true },
-            { label: '🐟 fish & chips', ok: true },
-            { label: '☕ cup of tea', ok: true },
-            { label: '👑 Crown Jewels', ok: true },
-            { label: '💂 Royal Guard', ok: true },
-            { label: '🍣 sushi', ok: false, why: 'Sushi comes from Japan!' },
-            { label: '🛺 tuk-tuk', ok: false, why: 'Tuk-tuks zoom around Thailand.' },
-            { label: '🦘 kangaroo', ok: false, why: 'Kangaroos live in Australia.' },
-            { label: '🗻 Mount Fuji', ok: false, why: 'Mount Fuji is in Japan.' },
-          ],
-          done: 'LONDON DASH COMPLETE! You know your England from your Japan!',
-        },
-      ],
-    },
-
-    {
-      type: 'break', title: 'Brain Break', short: 'Break', minutes: 3,
-      say: 'Time to march like the King\'s Guard!',
-      wiggle: {
-        title: '💂 Royal Guard Workout!',
-        seconds: 60,
-        moves: [
-          '💂 Stand to attention! Arms by your sides – don\'t move a muscle… for 5 seconds!',
-          '🥾 March on the spot! Knees up high – left, right, left, right!',
-          '🧭 Point NORTH (up)… SOUTH (down)… EAST (right)… WEST (left)! Faster!',
-          '🐉 Be St George! Lunge forward and fight the dragon!',
-          '🐷 Be Peppa Pig! Jump up and down in muddy puddles – SPLASH!',
-          '👑 Walk like a king or queen – slowly, with your nose in the air!',
-        ],
-      },
-      tryit: {
-        title: '☂️ Try it at home: Best Umbrella Test',
-        intro: 'Every country gets rain – Bangkok actually gets more rain in a year than London! So which material makes the best umbrella? Find a paper towel, a piece of plastic bag, a scrap of cotton cloth and some kitchen foil.',
-        steps: [
-          'Before you test, tap the first box for each one: do you THINK water will get through?',
-          'Hold each material over a cup and drip a spoonful of water on top.',
-          'Tap the second box: did the water go THROUGH into the cup?',
-          'Which would make the best umbrella? Which would be the worst?',
-        ],
-        table: {
-          cols: ['I think it stays dry…', 'It stayed dry…'],
-          items: ['🧻 paper towel', '🛍️ plastic bag', '👕 cotton cloth', '✨ kitchen foil'],
-        },
-        tip: 'Tap once for ✅ and twice for ❌. Materials that keep water out are called waterproof!',
-      },
     },
 
     {
@@ -565,7 +498,6 @@ window.LESSON = {
         { type: 'mcq', q: 'You are on a ferry from England to France. Which way are you sailing?', options: ['South', 'North', 'West'], answer: 0 },
         { type: 'mcq', q: 'A flight to Japan takes about 6 hours, and a flight to England about 13 hours. What does that tell you?', options: ['England is further from Thailand than Japan is', 'Japan is further away', 'They are next to each other'], answer: 0 },
         { type: 'mcq', q: 'Your friend says Peppa Pig is a cartoon from Japan. What could you tell them?', options: ['No – Peppa Pig was made in England', 'Yes, that\'s right', 'No – Peppa Pig was made in Thailand'], answer: 0 },
-        { type: 'predict', q: 'A tall ship needs to sail under Tower Bridge. What do you predict will happen?', options: ['The bridge lifts up in two parts', 'The ship has to turn back', 'The bridge sinks'], answer: 0, reveal: 'The road in the middle lifts up in two parts to let the ship through!', then: { q: 'So Tower Bridge was built to…', options: ['open up for big boats', 'float down the river', 'spin around in a circle'], answer: 0 } },
         { type: 'order', q: 'Put the steps for an English cup of tea in order.', items: ['☕ Get a teacup', '🫖 Pour the tea into the cup', '🥛 Add a splash of milk to the tea'], hint: 'The milk goes into the tea, so the tea goes in first.' },
         { type: 'tf', q: 'The Union Jack has a dragon on it for Wales.', answer: false, explain: 'Wales isn\'t on the Union Jack – its dragon has its own flag!' },
         { type: 'mcq', q: 'In the old legend, what did St George fight to save a town?', options: ['a dragon', 'an oni', 'a giant jellyfish'], answer: 0 },
