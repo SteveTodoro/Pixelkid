@@ -71,6 +71,9 @@
   const listFor = c => c === 'skin' ? A.SKINS : c === 'hairColor' ? A.HAIR_COLOURS : c === 'scene' ? A.SCENES : c === 'costume' ? A.COSTUMES : A.ITEMS.filter(i => i.cat === c);
   const lookWith = (c, id) => Object.assign({}, saved.look, c === 'costume' ? A.byId(id).parts : { [c]: id });
   const priceOf = it => A.priceOf(it, saved);
+  // a costume costs only the pieces you don't own yet: list the priced pieces, owned and missing
+  const costumeParts = it => Object.values(it.parts).map(A.byId).filter(p => p && p.price);
+  const partOwned = it => it.parts && costumeParts(it).some(p => A.owns(p, saved));
   const isWearing = it => it.parts ? Object.entries(it.parts).every(([c, id]) => saved.look[c] === id) : saved.look[cat] === it.id;
 
   let previewAnim = null;
@@ -98,7 +101,7 @@
     if (isWearing(it)) return ['✔ Wearing', 'wearing'];
     if (A.owns(it, saved)) return ['Owned', 'owned'];
     if (it.unlock) return [A.levelOfUnlock(it.unlock) ? '🔒 Level ' + A.levelOfUnlock(it.unlock) : '🔒 Secret', 'locked'];
-    return ['💎 ' + priceOf(it), A.wallet().balance >= priceOf(it) ? 'buy' : 'pricey'];
+    return ['💎 ' + priceOf(it) + (partOwned(it) ? ' left' : ''), A.wallet().balance >= priceOf(it) ? 'buy' : 'pricey'];
   }
   function drawGrid() {
     const grid = $('grid'); grid.replaceChildren();
@@ -128,13 +131,19 @@
       btn('👕 Wear it!', 'green', () => { A.wear(it.id); saved = A.load(); sfx.buy(); toast('LOOKING GOOD!', `You put on: ${it.name}`, '😎'); render(); });
     } else if (it.unlock) {
       msg('🔒 ' + A.unlockText(it.unlock));
-    } else if (A.wallet().balance >= priceOf(it)) {
-      btn(`🛒 Buy for 💎 ${priceOf(it)}`, 'gold', () => {
-        if (!A.buy(it.id)) return;
-        A.wear(it.id); saved = A.load(); sfx.buy(); confetti(); toast('NEW GEAR UNLOCKED!', it.name, '🛍️'); render();
-      });
     } else {
-      msg(`You need 💎 ${priceOf(it) - A.wallet().balance} more gems. Play a lesson to earn them!`);
+      if (partOwned(it)) {
+        const ps = costumeParts(it), missing = ps.filter(p => !A.owns(p, saved));
+        msg(`You already have ${ps.length - missing.length} of the ${ps.length} pieces, so you only pay for: ${missing.map(p => p.name).join(', ')}.`);
+      }
+      if (A.wallet().balance >= priceOf(it)) {
+        btn(`🛒 Buy for 💎 ${priceOf(it)}`, 'gold', () => {
+          if (!A.buy(it.id)) return;
+          A.wear(it.id); saved = A.load(); sfx.buy(); confetti(); toast('NEW GEAR UNLOCKED!', it.name, '🛍️'); render();
+        });
+      } else {
+        msg(`You need 💎 ${priceOf(it) - A.wallet().balance} more gems. Play a lesson to earn them!`);
+      }
     }
     btn('↺ Back to my outfit', 'ghost', () => { selected = null; look = Object.assign({}, saved.look); sfx.tap(); render(); });
   }
