@@ -63,18 +63,24 @@
 .qb-text { display: flex; flex-direction: column; min-width: 0; }
 .qbanner b { font-family: var(--pixel); font-size: 1.15rem; color: #ffd43b; text-transform: uppercase; letter-spacing: .5px; line-height: 1.15; }
 .qbanner small { font-family: Lexend, sans-serif; font-weight: 600; font-size: .78rem; color: #dfe7ff; }
-/* a stop: a small round dot with the lesson's icon */
-.qdot { position: absolute; z-index: 2; width: 34px; height: 34px; transform: translate(-50%, -50%); display: grid; place-items: center; padding: 0; cursor: pointer; border-radius: 50%;
-  background: #ffd43b; border: 3px solid #000; box-shadow: inset -3px -3px 0 rgba(0,0,0,.22), inset 3px 3px 0 rgba(255,255,255,.65), 0 3px 0 #000; -webkit-tap-highlight-color: transparent; }
-.qdot .qi { font-size: 18px; line-height: 1; }
+/* a stop: a round badge with the lesson's icon, big enough for a finger. Red: a new quest, orange: started, green: cleared */
+.qdot { position: absolute; z-index: 2; width: 48px; height: 48px; transform: translate(-50%, -50%); display: grid; place-items: center; padding: 0; cursor: pointer; border-radius: 50%;
+  background: #ff5a4a; border: 3px solid #000; box-shadow: inset -4px -4px 0 rgba(0,0,0,.22), inset 4px 4px 0 rgba(255,255,255,.55), 0 4px 0 #000; -webkit-tap-highlight-color: transparent; }
+.qdot .qi { font-size: 26px; line-height: 1; }
 .qdot:hover, .qdot:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
-.qdot.going { background: #ffd43b; box-shadow: inset -3px -3px 0 rgba(0,0,0,.22), inset 3px 3px 0 rgba(255,255,255,.65), 0 0 0 3px #ff8c1a, 0 0 0 5px #000; }
-.qdot.done { background: #a7e07a; }
-.qstar { position: absolute; top: -12px; right: -12px; font-size: 18px; line-height: 1; color: #ffd43b; text-shadow: 2px 0 #000, -2px 0 #000, 0 2px #000, 0 -2px #000; pointer-events: none; }
-.qdot .qlabel { top: calc(100% + 8px); max-width: 140px; font-size: .78rem; padding: 2px 6px; background: rgba(0,0,0,.82); }
+.qdot.going { background: #ff9f1a; box-shadow: inset -4px -4px 0 rgba(0,0,0,.22), inset 4px 4px 0 rgba(255,255,255,.55), 0 0 0 4px #fff, 0 0 0 7px #000; }
+.qdot.done { background: #7fd65a; }
+/* a cleared stop's medal for the boss score */
+.qstar { position: absolute; top: -13px; right: -13px; font-size: 22px; line-height: 1; color: #ffd43b; text-shadow: 2px 0 #000, -2px 0 #000, 0 2px #000, 0 -2px #000; pointer-events: none; }
+.qstar.silver { color: #e3e8ef; } .qstar.bronze { color: #e0915a; }
+/* its name on a little wooden sign */
+.qdot .qlabel { top: calc(100% + 9px); max-width: 150px; font-size: .9rem; padding: 2px 8px; color: #3a2410; background: #f6dfa8; border: 2px solid #000; box-shadow: 0 3px 0 rgba(0,0,0,.35); }
 /* the next quest flashes, like SMW's uncleared levels */
 .qdot.next { animation: qdotglow 1s steps(2) infinite; }
-@keyframes qdotglow { 50% { background: #ff6b3d; box-shadow: inset -3px -3px 0 rgba(0,0,0,.22), inset 3px 3px 0 rgba(255,255,255,.5), 0 0 0 4px #fff, 0 0 0 7px #000; } }
+@keyframes qdotglow { 50% { background: #ffd43b; box-shadow: inset -4px -4px 0 rgba(0,0,0,.22), inset 4px 4px 0 rgba(255,255,255,.5), 0 0 0 4px #fff, 0 0 0 7px #000; } }
+/* a quest still in the fog: just a grey "?" */
+.qdot.hidden { width: 26px; height: 26px; cursor: default; pointer-events: none; background: #9aa3ad; color: #fff; font: 700 15px/1 Lexend, sans-serif; border-width: 2px;
+  box-shadow: inset -2px -2px 0 rgba(0,0,0,.2), inset 2px 2px 0 rgba(255,255,255,.4), 0 2px 0 #000; }
 /* START: a little house; the goal: a big castle on a red ring */
 .qdot.start { width: 46px; height: 46px; border-radius: 0; background: none; border: 0; box-shadow: none; }
 .qdot.start .qi { font-size: 40px; filter: drop-shadow(3px 3px 0 rgba(0,0,0,.25)); }
@@ -105,9 +111,10 @@
 html.q-paused .qmap *, html.q-paused .qmap, html.q-paused .qsea::before, html.q-paused .qsea::after { animation-play-state: paused !important; }
 @media (prefers-reduced-motion: reduce) { .qglint, .qsea::before, .qsea::after, .qcloud, .qeyes, .qflutter, .qdot.next { animation: none; } }
 @media (max-width: 479px) {
-  .qdot { width: 28px; height: 28px; }
-  .qdot .qi { font-size: 15px; }
-  .qdot .qlabel { max-width: 110px; font-size: .7rem; }
+  .qdot { width: 40px; height: 40px; }
+  .qdot .qi { font-size: 22px; }
+  .qdot .qlabel { max-width: 120px; font-size: .76rem; }
+  .qdot.hidden { width: 22px; height: 22px; font-size: 13px; }
   .qdot.goal { width: 58px; height: 58px; } .qdot.goal .qi { font-size: 44px; }
   .qbanner b { font-size: .95rem; } .qb-icon { font-size: 1.5rem; }
 }
@@ -143,3 +150,20 @@ html.q-paused .qriver::before { animation-play-state: paused !important; }
 @keyframes qsnow2 { to { transform: translate(48px, 96px); } }
 @media (prefers-reduced-motion: reduce) { .qsnowfall { display: none; } }
 html.q-paused .qsnowfall::before, html.q-paused .qsnowfall::after { animation-play-state: paused !important; }
+/* the world ahead under fog: rows with no open quest yet. Puffy pixel edges, wisps drifting through; it lifts when a row opens */
+.qfog { position: absolute; z-index: 1; pointer-events: none; --fog: rgba(236,242,250,.9);
+  background: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2048%2024'%20shape-rendering='crispEdges'%3E%3Crect%20x='3'%20y='3'%20width='12'%20height='1'%20fill='rgba(255%2C255%2C255%2C.35)'/%3E%3Crect%20x='26'%20y='8'%20width='16'%20height='1'%20fill='rgba(255%2C255%2C255%2C.3)'/%3E%3Crect%20x='9'%20y='14'%20width='10'%20height='1'%20fill='rgba(255%2C255%2C255%2C.35)'/%3E%3Crect%20x='33'%20y='19'%20width='9'%20height='1'%20fill='rgba(255%2C255%2C255%2C.3)'/%3E%3C/svg%3E") 0 0 / 192px 96px, var(--fog);
+  animation: qfogdrift 30s steps(48) infinite; }
+.qfog::before, .qfog::after { content: ""; position: absolute; left: 0; right: 0; height: 16px; background: var(--fog);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2016%204'%20shape-rendering='crispEdges'%3E%3Crect%20x='0'%20y='3'%20width='16'%20height='1'/%3E%3Crect%20x='1'%20y='2'%20width='14'%20height='1'/%3E%3Crect%20x='2'%20y='1'%20width='5'%20height='1'/%3E%3Crect%20x='9'%20y='1'%20width='5'%20height='1'/%3E%3Crect%20x='3'%20y='0'%20width='3'%20height='1'/%3E%3Crect%20x='10'%20y='0'%20width='3'%20height='1'/%3E%3C/svg%3E") 0 0 / 64px 16px repeat-x;
+  mask: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2016%204'%20shape-rendering='crispEdges'%3E%3Crect%20x='0'%20y='3'%20width='16'%20height='1'/%3E%3Crect%20x='1'%20y='2'%20width='14'%20height='1'/%3E%3Crect%20x='2'%20y='1'%20width='5'%20height='1'/%3E%3Crect%20x='9'%20y='1'%20width='5'%20height='1'/%3E%3Crect%20x='3'%20y='0'%20width='3'%20height='1'/%3E%3Crect%20x='10'%20y='0'%20width='3'%20height='1'/%3E%3C/svg%3E") 0 0 / 64px 16px repeat-x; }
+.qfog::before { top: -16px; }
+.qfog::after { bottom: -16px; transform: scaleY(-1); }
+.qfog.lift { animation: qfogdrift 30s steps(48) infinite, qfoglift .8s steps(8) .3s forwards; }
+@keyframes qfogdrift { to { background-position: 192px 0, 0 0; } }
+@keyframes qfoglift { to { opacity: 0; transform: translateY(-24px); } }
+.qmap.b-maths .qfog { --fog: rgba(40,28,20,.86); } /* the mine's unexplored tunnels are dark */
+.qmap.b-future .qfog { --fog: rgba(54,42,112,.92); }
+.qmap.b-english .qfog { --fog: rgba(192,210,232,.94); }
+.qmap.b-wonders .qfog { --fog: rgba(250,246,230,.9); }
+@media (prefers-reduced-motion: reduce) { .qfog { animation: none; } }

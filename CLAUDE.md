@@ -67,5 +67,6 @@ Privacy: the repo is public. Never put the child's name in files, URLs or commit
 - **Quest map:** a Super Mario World–style overworld, live in every world.
   - **Code:** `shared/map.js` (layout, reveal, hero, NPCs, cards, banner), `shared/map-art.js` (the landscape kit) and `shared/map.css`.
   - **Biomes:** each world has one in `ART[world]` in map-art.js: colours, cliff texture, beach, path style, scenery, things floating in the water, sea or space. A new world needs an `ART` entry.
-  - **Road:** the road is hidden until unlocked, then drawn in (`y3:mapSeen`).
+  - **Road:** the road is hidden until unlocked, then drawn in (`y3:mapSeen`). Rows with no open stop lie under biome-tinted fog with grey "?" dots for their quests; the fog lifts when a row opens, and NPCs never stand in it.
+  - **Stops:** 48px badges (red new, orange started, green cleared) with wooden name signs; a cleared stop's star is a gold/silver/bronze medal for the boss score (≥90% / ≥70%).
   - **Living layers:** waves, clouds, blinking hill eyes, and (Science only) a waterfall river at forks, all as light CSS animation.

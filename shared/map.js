@@ -65,7 +65,7 @@ function drawMap(key, lessons, stateOf) {
   const W = mapWidth = map.clientWidth;
   const small = W < 600, S = 3; // S: the hero's pixel size
   // HALF: half a stop dot's height (the hero stands on top of it). CELL: the least room a stop needs across a row.
-  const ROW = small ? 168 : 196, HALF = small ? 13 : 16, HERO_H = 20 * S + 26, CELL = small ? 130 : 150;
+  const ROW = small ? 176 : 208, HALF = small ? 20 : 24, HERO_H = 20 * S + 26, CELL = small ? 130 : 160;
   let seed = [...key].reduce((n, c) => (n * 31 + c.charCodeAt(0)) >>> 0, 7); // seeded, so the scenery stays put between visits
   const rnd = () => (seed = (seed * 1103515245 + 12345) >>> 0) / 4294967296;
 
@@ -102,7 +102,7 @@ function drawMap(key, lessons, stateOf) {
       if (n > r.cells.length) spots4marks.push({ x: at(n - 1), y, unit: r.unit });
       const xs = r.cells.map(t => t.x).concat(n > r.cells.length ? [at(n - 1)] : []);
       const minX = Math.min(...xs), maxX = Math.max(...xs), side = Math.max(w / 2, 100);
-      rowBoxes.push({ x0: Math.max(x0, minX - side), x1: Math.min(x1, maxX + side), top: y - ROW / 2, bot: y + ROW / 2, minX, maxX }); // (minX/maxX: where its stops are)
+      rowBoxes.push({ x0: Math.max(x0, minX - side), x1: Math.min(x1, maxX + side), top: y - ROW / 2, bot: y + ROW / 2, minX, maxX, cells: r.cells }); // (minX/maxX: where its stops are)
       bottom = Math.max(bottom, y);
       dir = -dir; y += ROW;
     });
@@ -160,7 +160,7 @@ function drawMap(key, lessons, stateOf) {
   leaves.forEach(s => roadBox(toGoal(s)));
   [start, goal, ...stops].forEach(s => {
     if (s.vis === false) { boxes.push([s.x - 24, s.y - 24, s.x + 24, s.y + 24]); return; } // a hidden stop: just its dot, so scenery can grow round it
-    boxes.push([s.x - 75, s.y - HALF - 8, s.x + 75, s.y + HALF + 58]); // the stop and its name tag
+    boxes.push([s.x - 80, s.y - HALF - 8, s.x + 80, s.y + HALF + 66]); // the stop and its name tag
     boxes.push([s.x - 50, s.y - HALF - HERO_H, s.x + 50, s.y - HALF]); // where the hero stands on it (and its tag)
   });
   const room = (x, y) => Math.min(x, W - x, y, H - y, ...boxes.map(([a, b, c, d]) => Math.hypot(Math.max(a - x, 0, x - c), Math.max(b - y, 0, y - d))));
@@ -170,6 +170,15 @@ function drawMap(key, lessons, stateOf) {
     if (T.land(p.x, p.y, 8, 6)) spots.push(p);
   }
   const landmarks = [];
+  // the world ahead lies under fog (like SMW's unexplored map): a row with no open stop yet is covered, with a "?" where
+  // each of its quests will be, so the player can see how far there is to go. When a row's first stop opens, its fog lifts.
+  const openHere = c => c === start || c.vis, freshHere = c => c !== start && fresh.has(c.l.id);
+  const fogs = rowBoxes.map((r, i) => {
+    if (!r.cells) return null; // (START standing alone above the roads)
+    const lifts = r.cells.some(freshHere) && !r.cells.some(c => openHere(c) && !freshHere(c));
+    return r.cells.some(openHere) && !lifts ? null : { t: T.ts[i], lifts };
+  }).filter(Boolean);
+  const fogged = (x, y) => fogs.some(({ t, lifts }) => !lifts && x > t.x0 - 12 && x < t.x1 + 12 && y > t.top - 20 && y < t.cb + 20);
 
   // each topic's landmark: in its spot at the end of the topic's row, or else the roomiest spot near the topic's open stops.
   // Tap it to see the topic's name and how much of it is cleared. Topics not reached yet have none.
@@ -197,7 +206,7 @@ function drawMap(key, lessons, stateOf) {
   // people by the road (shared/npcs.js): each one turns up once the stop they live by is cleared
   const npcAt = {}; // where each person by the road stands, and the stop they live by
   const clear = p => Math.min(room(p.x, p.y), room(p.x, p.y - 10 * S), room(p.x, p.y - 20 * S - 24)); // feet, middle and the marker over their head
-  const stand = p => T.land(p.x, p.y - 30, 12, 30); // all of them on the ground
+  const stand = p => T.land(p.x, p.y - 30, 12, 30) && !fogged(p.x, p.y - 30); // all of them on the ground, out of the fog
   if (window.NPC && window.Avatar) NPC.forWorld(key).forEach(n => {
     const home = n.at ? stops.find(s => s.l.title === n.at) : null;
     if (n.at && !cleared(home)) return;
@@ -251,6 +260,14 @@ function drawMap(key, lessons, stateOf) {
     const p = spots[Math.floor(rnd() * spots.length)];
     if (p && room(p.x, p.y) > 20) put('qdeco small qflutter', p.x, p.y - 20, '🦋').style.animationDelay = -(rnd() * 3).toFixed(1) + 's';
   }
+  // the fog over the rows not reached yet (see fogs above)
+  fogs.forEach(({ t, lifts }) => {
+    const f = document.createElement('div');
+    f.className = 'qfog' + (lifts ? ' lift' : '');
+    Object.assign(f.style, { left: t.x0 - 12 + 'px', top: t.top - 4 + 'px', width: t.x1 - t.x0 + 24 + 'px', height: t.cb - t.top + 4 + 'px', animationDelay: -(rnd() * 30).toFixed(1) + 's' });
+    map.append(f);
+    if (lifts) setTimeout(() => f.remove(), 1400);
+  });
   // the landmarks: a little sign on the mountain top, to tap for the topic
   landmarks.forEach(it => {
     const d = document.createElement('button');
@@ -299,10 +316,13 @@ function drawMap(key, lessons, stateOf) {
   };
   dot('start', start, '🏡', 'START').onclick = () => goTo(start, () => showBanner(start));
   stops.forEach(s => {
-    if (!s.vis) return;
+    if (!s.vis) { const q = put('qdot hidden', s.x, s.y, '?'); q.setAttribute('aria-hidden', 'true'); return; } // a quest still in the fog
     const glow = glowsNext(stops, s);
     const b = dot(s.st + (glow ? ' next' : '') + (fresh.has(s.l.id) ? ' fresh' : ''), s, s.l.emoji, s.l.title);
-    if (s.st === 'done') { const st = document.createElement('span'); st.className = 'qstar'; st.textContent = '★'; b.append(st); }
+    if (s.st === 'done') { // a cleared stop's star is a medal for the boss score: gold, silver or bronze
+      const rec = records[s.l.id] || {}, score = rec.total ? rec.best / rec.total : 1;
+      const st = document.createElement('span'); st.className = 'qstar ' + (score >= 0.9 ? 'gold' : score >= 0.7 ? 'silver' : 'bronze'); st.textContent = '★'; b.append(st);
+    }
     b.setAttribute('aria-label', `${s.l.title}: ${{ done: 'cleared', going: 'started', new: 'open' }[s.st]}`);
     b.onclick = () => { showBanner(s); goTo(s, () => questCard(s, glow)); };
   });
