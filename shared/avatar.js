@@ -594,6 +594,17 @@
     };
   }
   const dataURL = (look, opts) => draw(look, opts).toDataURL();
+  // just the pet on its own (the boss cut scene moves it separately from the hero); flip: facing the other way
+  function petURL(id, scale = 4, flip = false) {
+    const p = byId(id), c = document.createElement('canvas');
+    if (!p || !p.rows || !p.rows.length) return null;
+    const rows = flip ? p.rows.map(r => [...r].reverse().join('')) : p.rows;
+    c.width = rows[0].length * scale; c.height = rows.length * scale;
+    paint(c.getContext('2d'), rows, p.pal, 0, 0, scale);
+    return c.toDataURL();
+  }
+  // pets with their own boss finishing move (shared/engine/boss.js): when one is out, it always does the final blow
+  const PET_FINISHERS = { 'pet-dog': 'bite', 'pet-annoying-dog': 'bite', 'pet-dragon': 'fire', 'pet-phoenix': 'fire' };
 
   const sceneDef = () => SCENES.find(s => s.id === load().look.scene) || SCENES[0];
 
@@ -651,7 +662,7 @@
     ask();
     document.body.append(ov);
   }
-  window.Avatar = { ITEMS, SKINS, HAIR_COLOURS, SCENES, COSTUMES, CATS, UNLOCK_TEXT, LEVEL_REWARDS, levelInfo, levelOfUnlock, unlockText, newRewards, markSeen, DEFAULT_LOOK, byId, load, save, wallet, earn, achievements, owns, priceOf, buy, give, spend, wear, draw, animate, movePose, dataURL, isFree, applyScene, sceneBox, sceneDef, STARTERS, needsStarter, pickStarter, showPicker };
+  window.Avatar = { ITEMS, SKINS, HAIR_COLOURS, SCENES, COSTUMES, CATS, UNLOCK_TEXT, LEVEL_REWARDS, levelInfo, levelOfUnlock, unlockText, newRewards, markSeen, DEFAULT_LOOK, byId, load, save, wallet, earn, achievements, owns, priceOf, buy, give, spend, wear, draw, animate, movePose, dataURL, petURL, PET_FINISHERS, isFree, applyScene, sceneBox, sceneDef, STARTERS, needsStarter, pickStarter, showPicker };
   // every page that loads this file shows the player's chosen scene
   applyScene(load().look.scene);
 })();

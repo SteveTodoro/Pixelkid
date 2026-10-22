@@ -512,6 +512,8 @@ a { color: var(--brand-dark); }
 .cs-hero.emoji { font-size: clamp(3.4rem, 10vw, 5.4rem); line-height: 1; }
 .cs-hero.cs-charge { animation: cscharge .25s steps(2) infinite; filter: brightness(1.6) drop-shadow(0 0 10px #ffd54f) drop-shadow(0 0 4px #fff); }
 .cs-hero.cs-cheer { animation: cheer .6s steps(3) infinite; filter: drop-shadow(0 0 8px #ffd54f); }
+.cs-pet { position: absolute; left: calc(8% + clamp(64px, 14vw, 112px) + 6px); bottom: 28px; z-index: 2; width: clamp(40px, 8vw, 64px); image-rendering: pixelated; filter: drop-shadow(3px 3px 0 #000); }
+.cs-pet.cs-cheer { animation: cheer .6s steps(3) infinite .3s; }
 .cs-boss { position: absolute; right: 8%; bottom: 28px; width: clamp(110px, 26vw, 190px); }
 .cs-boss svg { width: 100%; height: auto; display: block; }
 .cs-boss.emoji { font-size: clamp(5rem, 16vw, 8rem); line-height: 1; text-align: center; }

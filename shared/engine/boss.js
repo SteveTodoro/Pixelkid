@@ -277,6 +277,7 @@ PixelkidEngine.part('boss', E => {
   // ---------- the finishing-move cut scene ----------
   // Plays full screen after the "Final blow!" button, then calls done(). First the player taps to fill a power meter, then one of three finishers at random:
   // a giant hammer squashes the boss flat, an uppercut launches it into the sky, or it explodes into its own pixels.
+  // A pet with its own move (Avatar.PET_FINISHERS) always does the final blow instead: the dogs sneak up and bite, the dragon and phoenix breathe fire.
   function finisher(b, lines, done) {
     if (calm()) { done(); return; }
     let over = false;
@@ -284,11 +285,13 @@ PixelkidEngine.part('boss', E => {
     const step = async ms => { await wait(ms); if (over) throw STOP; };
     const hero = heroImg('cs-hero');
     const boss = pic(b.sprite || b.emoji || '👾', 'cs-boss');
+    const petId = AV && AV.load().look.pet, petSrc = petId && AV.petURL(petId);
+    const pet = petSrc ? h('img', { class: 'cs-pet', src: petSrc, alt: 'Your pet' }) : null;
     const bubble = h('div', { class: 'fight-bubble from-boss cs-bubble' });
     const caption = h('div', { class: 'cs-text', 'aria-live': 'polite' });
     const parts = h('canvas', { class: 'cs-parts', 'aria-hidden': 'true' });
     const skip = h('button', { class: 'btn ghost cs-skip', type: 'button', onclick() { sfx.tap(); finish(); } }, 'Skip ▶');
-    const stage = h('div', { class: 'cs-stage' }, h('div', { class: 'cs-floor' }), hero, boss, bubble);
+    const stage = h('div', { class: 'cs-stage' }, h('div', { class: 'cs-floor' }), hero, pet, boss, bubble);
     const scene = h('div', { class: 'cutscene', role: 'dialog', 'aria-label': `Final blow! ${b.name} is defeated` },
       h('div', { class: 'cs-bar top' }), h('div', { class: 'cs-bar bottom' }), stage, parts, caption, skip);
     const onKey = e => { if (e.key === 'Escape') finish(); };
@@ -319,19 +322,19 @@ PixelkidEngine.part('boss', E => {
     }
     const fling = list => { bits.push(...list); if (!raf) raf = requestAnimationFrame(frame); };
     // the boss bursts into its own pixels (pixel-art sprites), or into coloured chunks (emoji bosses)
-    function shatter(power = 1) {
+    function shatter(power = 1, colours = null) {
       const r = boss.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
       const svg = boss.querySelector('svg'), list = [];
       if (svg && svg.viewBox.baseVal && svg.viewBox.baseVal.width) {
         const vb = svg.viewBox.baseVal, sr = svg.getBoundingClientRect(), px = sr.width / vb.width, py = sr.height / vb.height;
         for (const rc of svg.querySelectorAll('rect')) {
           const x = sr.left + (+rc.getAttribute('x') + 0.5) * px, y = sr.top + (+rc.getAttribute('y') + 0.5) * py;
-          list.push({ x, y, s: Math.max(4, Math.round(Math.min(px, py))), c: rc.getAttribute('fill'), g: 0.42, life: 0, max: 140,
+          list.push({ x, y, s: Math.max(4, Math.round(Math.min(px, py))), c: colours ? pick(colours) : rc.getAttribute('fill'), g: 0.42, life: 0, max: 140,
             vx: (x - cx) / r.width * 18 * power + (Math.random() - 0.5) * 6, vy: (y - cy) / r.height * 10 * power - 6 - Math.random() * 8 });
         }
       } else {
         for (let k = 0; k < 70; k++) list.push({ x: cx + (Math.random() - 0.5) * r.width * 0.6, y: cy + (Math.random() - 0.5) * r.height * 0.6,
-          s: pick([6, 9, 12]), c: pick(['#e53935', '#ffd54f', '#ffffff', '#8e5cff', '#2ee6d6']), g: 0.42, life: 0, max: 140,
+          s: pick([6, 9, 12]), c: pick(colours || ['#e53935', '#ffd54f', '#ffffff', '#8e5cff', '#2ee6d6']), g: 0.42, life: 0, max: 140,
           vx: (Math.random() - 0.5) * 22 * power, vy: -Math.random() * 16 - 4 });
       }
       fling(list);
@@ -404,6 +407,68 @@ PixelkidEngine.part('boss', E => {
       boss.style.visibility = 'hidden';
       shout('KABOOM!', 'big');
     }
+    // pet finisher: the pet tiptoes up while the boss looks away, leaps, bites, and the boss runs off the screen
+    async function bite() {
+      const c = centre(boss), p = centre(pet), lift = c.r.height * 0.45;
+      const dx = c.r.left + c.r.width * 0.2 - p.x, at = (x, y = 0, rest = '') => ({ transform: `translate(${x}px, ${y}px) ${rest}` });
+      shout('SNEAK ATTACK!');
+      anim(boss, [{ transform: 'none' }, { transform: 'scaleX(-1)' }], 120, 'steps(1)'); // the boss looks the other way
+      pet.style.transformOrigin = '50% 100%';
+      seq([392, 0, 440, 0, 392, 0, 440, 0], 0.17, 'triangle', 0.03); // tiptoe, tiptoe…
+      await move(pet, Array.from({ length: 9 }, (_, k) => at(dx * 0.6 * k / 8, k % 2 ? -6 : 0, 'scaleY(.8)')), 1400, 'linear');
+      const sr = stage.getBoundingClientRect();
+      const alert = h('div', { class: 'cs-prop twinkle', 'aria-hidden': 'true', style: `left:${c.x - sr.left - 20}px;top:${c.r.top - sr.top - 64}px` }, '❗');
+      stage.append(alert);
+      anim(boss, [{ transform: 'scaleX(-1)' }, { transform: 'none' }], 120, 'steps(1)'); // …it turns round, too late!
+      tone(1320, 0, 0.12, 'square', 0.05);
+      await step(450);
+      alert.remove();
+      sfx.whoosh();
+      await move(pet, [at(dx * 0.6, 0, 'scaleY(.8)'), at(dx * 0.85, -lift * 1.4, 'rotate(20deg)'), at(dx, -lift, 'rotate(10deg)')], 260, 'ease-out');
+      sfx.bossHit(); flash(); quake();
+      shout('CHOMP!', 'big');
+      for (let k = 0; k < 3; k++) { // it hangs on and the boss shakes
+        anim(boss, [{ transform: 'translateX(-10px)' }, { transform: 'translateX(10px)' }, { transform: 'none' }], 200, 'steps(3)');
+        tone(160, 0, 0.08, 'sawtooth', 0.08);
+        await step(280);
+      }
+      await move(pet, [at(dx, -lift, 'rotate(10deg)'), at(dx, 0)], 200, 'ease-in');
+      dust(c.x, c.r.bottom - 6, 18);
+      shout('RUN AWAY!');
+      seq([700, 600, 700, 600, 700, 600], 0.06, 'square', 0.04);
+      anim(boss, [{ transform: 'none' }, { transform: 'translateX(900px)' }], 700, 'ease-in');
+      await move(pet, [at(dx, 0), { transform: 'none' }], 600);
+      boss.style.visibility = 'hidden';
+      sfx.ding();
+      shout('GOOD DOG!');
+    }
+    // pet finisher: the pet flies up and breathes a stream of fire over the boss, which chars and crumbles into ash
+    async function fire() {
+      const c = centre(boss), flames = ['#ff5722', '#ff9800', '#ffd54f', '#fff3c4', '#e53935'];
+      shout('FIRE BREATH!');
+      sfx.charge();
+      await move(pet, [{ transform: 'none' }, { transform: 'translateY(-70px) scale(1.3)' }], 400, 'ease-out');
+      shout('ROAR!', 'big');
+      anim(boss, [{ filter: 'none' }, { filter: 'brightness(.3) sepia(1)' }], 1400, 'steps(6)');
+      for (let t = 0; t < 1500; t += 60) {
+        const m = pet.getBoundingClientRect(), mx = m.right - m.width * 0.15, my = m.top + m.height * 0.55;
+        fling(Array.from({ length: 10 }, () => {
+          const tx = c.x + (Math.random() - 0.5) * c.r.width * 0.8, ty = c.y + (Math.random() - 0.5) * c.r.height * 0.8, f = 22 + Math.random() * 10;
+          return { x: mx, y: my, s: pick([6, 9, 12]), c: pick(flames), g: -0.05, life: 0, max: f + 12, vx: (tx - mx) / f * 1.15, vy: (ty - my) / f };
+        }));
+        tone(90 + Math.random() * 60, 0, 0.07, 'sawtooth', 0.04); // crackle
+        await step(60);
+      }
+      // smoke drifts up off the charred boss
+      fling(Array.from({ length: 24 }, () => ({ x: c.x + (Math.random() - 0.5) * c.r.width * 0.7, y: c.r.top + Math.random() * c.r.height * 0.5,
+        s: pick([9, 12]), c: pick(['#616161', '#9e9e9e', '#424242']), g: -0.06, life: 0, max: 70, vx: (Math.random() - 0.5) * 2, vy: -1 - Math.random() * 2 })));
+      shout('TOASTED!', 'big');
+      anim(pet, [{ transform: 'translateY(-70px) scale(1.3)' }, { transform: 'none' }], 500, 'ease-in');
+      await step(900);
+      sfx.boom(); flash(); quake(); shatter(0.8, ['#3e2723', '#212121', '#5d4037', '#757575', '#ff5722']);
+      boss.style.visibility = 'hidden';
+      shout('CRISPY!');
+    }
 
     // the player taps (or presses space) to fill the power meter; it drains slowly when they stop, then the blow lands
     async function powerUp() {
@@ -461,7 +526,10 @@ PixelkidEngine.part('boss', E => {
         await step(700);
         hero.classList.remove('cs-charge');
         boss.classList.remove('cs-dizzy');
-        await pick([hammer, launch, explode])();
+        const petMove = AV && pet && AV.PET_FINISHERS[petId];
+        const blow = petMove ? { bite, fire }[petMove] : pick([hammer, launch, explode]);
+        scene._test = Object.assign(scene._test || {}, { finisher: blow.name });
+        await blow();
         await step(1100);
         // the boss's last words, then victory!
         bubble.textContent = fill(lines.defeat); bubble.classList.add('show', 'ghost'); replay(bubble, 'pop');
@@ -469,6 +537,7 @@ PixelkidEngine.part('boss', E => {
         sfx.win(); confetti(160);
         hero.getAnimations().forEach(x => { if (x.constructor === Animation) x.cancel(); }); // let the CSS cheer take over
         hero.classList.add('cs-cheer'); shout('VICTORY!', 'big gold');
+        if (pet) { pet.getAnimations().forEach(x => { if (x.constructor === Animation) x.cancel(); }); pet.classList.add('cs-cheer'); }
         skip.textContent = '🏆 See my score ▶'; skip.className = 'btn gold big cs-skip'; skip.focus();
       } catch (e) { if (e !== STOP) throw e; }
     })();
