@@ -180,27 +180,38 @@ function drawMap(key, lessons, stateOf) {
   }).filter(Boolean);
   const fogged = (x, y) => fogs.some(({ t, lifts }) => !lifts && x > t.x0 - 12 && x < t.x1 + 12 && y > t.top - 20 && y < t.cb + 20);
 
-  // each topic's landmark: in its spot at the end of the topic's row, or else the roomiest spot near the topic's open stops.
+  // each topic's landmark: in its spot at the end of the topic's last row, or else the roomiest spot near the topic's open stops
+  // (or, with no room for a mountain, just its ribbon).
   // Tap it to see the topic's name and how much of it is cleared. Topics not reached yet have none.
   const unitStops = s => { const run = [s]; for (let c = s; (c = c.kids.find(k => k.l.unit === s.l.unit));) run.push(c); return run; };
   stops.filter(s => !s.parent || s.parent.l.unit !== s.l.unit).forEach(s => {
     const run = unitStops(s), icon = LANDMARK[s.l.unit];
     if (!icon || !run.some(t => t.vis)) return;
-    let best = spots4marks.find(m => m.unit === s.l.unit && m.x >= s.x0 && m.x <= s.x1 && m.y >= s.y && m.y <= run[run.length - 1].y
-      && run.some(t => t.vis && t.y === m.y)); // only on a row that is open
+    let best = spots4marks.find(m => m.unit === s.l.unit && m.x >= s.x0 && m.x <= s.x1 && m.y >= s.y && m.y <= run[run.length - 1].y); // (on a row still in fog, its sign and ribbon show through)
+    let flat = false;
     if (!best) {
       const lastY = run.filter(t => t.vis).reduce((y, t) => Math.max(y, t.y), s.y);
+      const near = p => p.x >= s.x0 && p.x <= s.x1 && p.y >= s.y - ROW / 2 && p.y <= lastY + ROW / 2;
       let br = 0;
-      spots.forEach(p => {
-        if (p.x < s.x0 || p.x > s.x1 || p.y < s.y - ROW / 2 || p.y > lastY + ROW / 2) return;
-        const r = room(p.x, p.y); if (r > br) { br = r; best = p; }
-      });
-      if (br < (small ? 34 : 40)) return;
+      spots.forEach(p => { if (near(p)) { const r = room(p.x, p.y); if (r > br) { br = r; best = p; } } });
+      if (br < (small ? 34 : 40)) { // no room for a mountain: just the ribbon, flat on the nearest open patch of ground
+        const first = run.find(t => t.vis), clearOf = (x0, y0, x1, y1) => !boxes.some(([a, b, c, d]) => c > x0 && a < x1 && d > y0 && b < y1);
+        best = null;
+        for (const half of [74, 36]) { // the whole ribbon, or else a short one: just the icon and the count
+          let bd = Infinity;
+          spots.forEach(p => {
+            const d = Math.hypot(p.x - first.x, p.y - first.y);
+            if (d < bd && near(p) && !fogged(p.x, p.y) && T.land(p.x, p.y, half - 8, 12) && clearOf(p.x - half, p.y - 16, p.x + half, p.y + 16)) { bd = d; best = p; }
+          });
+          if (best) { flat = half; break; }
+        }
+        if (!best) return;
+      }
     }
     const ready = run.filter(t => t.l.file), n = ready.filter(cleared).length;
-    landmarks.push({ x: best.x, y: best.y, icon, title: s.l.unit,
+    if (flat) { boxes.push([best.x - flat, best.y - 18, best.x + flat, best.y + 18]); } else boxes.push([best.x - 66, best.y - 62, best.x + 66, best.y + 68]); // (with its ribbon underneath)
+    landmarks.push({ x: best.x, y: best.y, icon, title: s.l.unit, n, of: ready.length, flat,
       card: () => openCard({ icon, tag: 'TOPIC', title: s.l.unit, stat: `${n} of ${ready.length} quest${ready.length === 1 ? '' : 's'} cleared here` + (run.length > ready.length ? `, and ${run.length - ready.length} more coming soon.` : '.') }) });
-    boxes.push([best.x - 50, best.y - 50, best.x + 50, best.y + 40]);
   });
 
   // people by the road (shared/npcs.js): each one turns up once the stop they live by is cleared
@@ -254,7 +265,7 @@ function drawMap(key, lessons, stateOf) {
     boxes.push([p.x - f.rx - 6, p.y - f.ry - 10, p.x + f.rx + 6, p.y + f.ry + 6]);
     left--;
   }
-  landmarks.forEach(it => scenery.push({ kind: 'mountain', x: it.x, y: it.y + 34 }));
+  landmarks.forEach(it => { if (!it.flat) scenery.push({ kind: 'mountain', x: it.x, y: it.y + 34 }); });
   MapArt.live(map, MapArt.paint(ground, T, key, scenery, W, H, rnd), W, H, rnd, rivers.map(r => Object.assign({ bot: goalTop }, r)), key, T);
   if ((MapArt.ART[key] || {}).critters !== false) for (let k = 0, n = 1 + Math.floor(rnd() * 2); k < n; k++) { // a butterfly or two
     const p = spots[Math.floor(rnd() * spots.length)];
@@ -268,12 +279,19 @@ function drawMap(key, lessons, stateOf) {
     map.append(f);
     if (lifts) setTimeout(() => f.remove(), 1400);
   });
-  // the landmarks: a little sign on the mountain top, to tap for the topic
+  // the landmarks: the topic's sign on the mountain top and a ribbon at its foot with the topic's name and how much of it
+  // is cleared (gold once it all is), so each row of the road says what it is about. Tap either for the topic's card.
   landmarks.forEach(it => {
     const d = document.createElement('button');
-    d.type = 'button'; d.className = 'qmark peak'; d.style.left = it.x + 'px'; d.style.top = it.y + 'px'; d.title = it.title;
-    const sign = document.createElement('span'); sign.className = 'qpk'; sign.textContent = it.icon; d.append(sign);
-    d.setAttribute('aria-label', it.title); d.onclick = it.card; map.append(d);
+    d.type = 'button'; d.className = 'qmark ' + (it.flat ? 'flat' : 'peak'); d.style.left = it.x + 'px'; d.style.top = it.y + 'px'; d.title = it.title;
+    d.innerHTML = '<span class="qpk"></span><span class="qrib"><b></b><span class="qrib-n"></span></span>';
+    d.querySelector('.qpk').textContent = it.icon;
+    if (it.flat) d.querySelector('.qrib').prepend(d.querySelector('.qpk')); // (no mountain: the sign's icon goes in the ribbon)
+    if (it.flat && it.flat < 74) d.classList.add('short'); // (no room for its name either)
+    d.querySelector('b').textContent = it.title;
+    d.querySelector('.qrib-n').textContent = it.of && it.n === it.of ? '★' : `${it.n}/${it.of}`;
+    if (it.of && it.n === it.of) d.querySelector('.qrib').classList.add('done');
+    d.setAttribute('aria-label', `${it.title}: ${it.n} of ${it.of} cleared`); d.onclick = it.card; map.append(d);
   });
 
   // where the hero stands: on a quest already started; else, when the only open quests are the branches of one fork,

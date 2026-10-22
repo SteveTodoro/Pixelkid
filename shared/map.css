@@ -12,7 +12,7 @@
 .qnpc-mark { position: absolute; top: -26px; min-width: 24px; padding: 0 4px; text-align: center; font-family: var(--pixel); font-weight: 700; font-size: 1rem; line-height: 22px; color: #000; background: #fff; border: 2px solid #000; }
 .qnpc-mark.ask { color: #000; background: #ffd43b; animation: qbob 1s steps(2) infinite; }
 /* a topic's landmark (a mountain painted on the ground, see .qmark.peak below). Tap it for the topic's name */
-.qmark { position: absolute; z-index: 1; transform: translate(-50%, -60%); padding: 0; font-size: 3.6rem; line-height: 1; background: none; border: 0; cursor: pointer; filter: drop-shadow(5px 5px 0 rgba(0,0,0,.25)); -webkit-tap-highlight-color: transparent; }
+.qmark { position: absolute; z-index: 2; transform: translate(-50%, -60%); padding: 0; font-size: 3.6rem; line-height: 1; background: none; border: 0; cursor: pointer; filter: drop-shadow(5px 5px 0 rgba(0,0,0,.25)); -webkit-tap-highlight-color: transparent; }
 .qmark:hover, .qmark:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
 .qmark::after { content: ""; position: absolute; left: 10%; right: 10%; bottom: -6px; height: 12px; background: rgba(0,0,0,.18); z-index: -1; }
 .qlabel { position: absolute; top: calc(100% + 14px); left: 50%; transform: translateX(-50%); width: max-content; max-width: 150px; padding: 2px 7px; text-align: center;
@@ -117,12 +117,31 @@ html.q-paused .qmap *, html.q-paused .qmap, html.q-paused .qsea::before, html.q-
   .qdot.hidden { width: 22px; height: 22px; font-size: 13px; }
   .qdot.goal { width: 58px; height: 58px; } .qdot.goal .qi { font-size: 44px; }
   .qbanner b { font-size: .95rem; } .qb-icon { font-size: 1.5rem; }
+  .qrib { max-width: 116px; } .qrib b { font-size: .66rem; }
+  .qpk { width: 40px; height: 34px; font-size: 24px; }
 }
 /* a topic's landmark in the landscape: a painted mountain, with a little sign on top to tap for the topic */
 .qmark.peak { width: 100px; height: 80px; font-size: 0; transform: translate(-50%, -62%); filter: none; }
 .qmark.peak::after { display: none; }
-.qpk { position: absolute; left: 50%; top: -6px; transform: translateX(-30%); display: grid; place-items: center; width: 34px; height: 30px; font-size: 20px; background: #fff8e0; border: 3px solid #000; box-shadow: 0 3px 0 rgba(0,0,0,.3); }
-.qpk::after { content: ""; position: absolute; left: 50%; top: 100%; width: 4px; height: 12px; margin-left: -2px; background: #6b4425; border: solid #000; border-width: 0 2px 2px; }
+.qpk { position: absolute; left: 50%; top: -18px; transform: translateX(-30%); display: grid; place-items: center; width: 46px; height: 40px; font-size: 28px; background: #fff8e0; border: 3px solid #000; box-shadow: 0 3px 0 rgba(0,0,0,.3); }
+.qpk::after { content: ""; position: absolute; left: 50%; top: 100%; width: 4px; height: 10px; margin-left: -2px; background: #6b4425; border: solid #000; border-width: 0 2px 2px; }
+/* the topic's ribbon at the mountain's foot: its name and how much of it is cleared (numbers in Lexend) */
+.qrib { position: absolute; left: 50%; top: calc(100% + 8px); transform: translateX(-50%); display: flex; align-items: center; gap: 6px; width: max-content; max-width: 140px; padding: 2px 8px;
+  background: #e53935; color: #fff; border: 2px solid #000; box-shadow: 0 3px 0 rgba(0,0,0,.35); font-size: 0; }
+.qrib::before, .qrib::after { content: ""; position: absolute; z-index: -1; top: 6px; width: 12px; height: 100%; background: #a32020; border: 2px solid #000; }
+.qrib::before { left: -10px; } .qrib::after { right: -10px; }
+.qrib b { font-family: var(--pixel); font-size: .74rem; line-height: 1.1; text-transform: uppercase; letter-spacing: .3px; text-align: center; }
+.qrib-n { flex: none; font: 700 .78rem/1 Lexend, sans-serif; color: #ffd43b; }
+.qrib.done { background: var(--gold, #ffd43b); color: #000; } .qrib.done::before, .qrib.done::after { background: #c9971c; } .qrib.done .qrib-n { color: #000; }
+.qmark:hover .qrib, .qmark:focus-visible .qrib { outline: 3px solid #fff; }
+/* a topic with no room for its mountain: just the ribbon, with the icon in it */
+.qmark.flat { transform: translate(-50%, -50%); filter: none; }
+.qmark.flat::after { display: none; }
+.qmark.flat:hover, .qmark.flat:focus-visible { outline: 0; }
+.qmark.flat .qrib { position: static; transform: none; }
+.qmark.flat .qpk { position: static; transform: none; width: auto; height: auto; font-size: 18px; background: none; border: 0; box-shadow: none; }
+.qmark.flat .qpk::after { display: none; }
+.qmark.flat.short .qrib b { display: none; }
 /* a river between a fork's branches: water streaming down to a foam splash where it lands */
 .qriver { position: absolute; width: 56px; margin-left: -28px; overflow: hidden; background: var(--sea); pointer-events: none; }
 .qriver::before { content: ""; position: absolute; left: 0; right: 0; top: -64px; bottom: 0; background: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2012%2016'%20shape-rendering='crispEdges'%3E%3Crect%20x='2'%20y='0'%20width='1'%20height='1'%20fill='%23ffffff'/%3E%3Crect%20x='2'%20y='1'%20width='1'%20height='1'%20fill='%23ffffff'/%3E%3Crect%20x='9'%20y='1'%20width='1'%20height='1'%20fill='%23a9d6ff'/%3E%3Crect%20x='2'%20y='2'%20width='1'%20height='1'%20fill='%23a9d6ff'/%3E%3Crect%20x='9'%20y='2'%20width='1'%20height='1'%20fill='%23ffffff'/%3E%3Crect%20x='9'%20y='3'%20width='1'%20height='1'%20fill='%23ffffff'/%3E%3Crect%20x='5'%20y='4'%20width='1'%20height='1'%20fill='%23ffffff'/%3E%3Crect%20x='5'%20y='5'%20width='1'%20height='1'%20fill='%23ffffff'/%3E%3Crect%20x='5'%20y='6'%20width='1'%20height='1'%20fill='%23a9d6ff'/%3E%3Crect%20x='1'%20y='8'%20width='1'%20height='1'%20fill='%23a9d6ff'/%3E%3Crect%20x='10'%20y='8'%20width='1'%20height='1'%20fill='%23ffffff'/%3E%3Crect%20x='1'%20y='9'%20width='1'%20height='1'%20fill='%23ffffff'/%3E%3Crect%20x='10'%20y='9'%20width='1'%20height='1'%20fill='%23ffffff'/%3E%3Crect%20x='1'%20y='10'%20width='1'%20height='1'%20fill='%23ffffff'/%3E%3Crect%20x='10'%20y='10'%20width='1'%20height='1'%20fill='%23a9d6ff'/%3E%3Crect%20x='7'%20y='12'%20width='1'%20height='1'%20fill='%23ffffff'/%3E%3Crect%20x='7'%20y='13'%20width='1'%20height='1'%20fill='%23ffffff'/%3E%3Crect%20x='3'%20y='14'%20width='1'%20height='1'%20fill='%23a9d6ff'/%3E%3Crect%20x='7'%20y='14'%20width='1'%20height='1'%20fill='%23a9d6ff'/%3E%3Crect%20x='3'%20y='15'%20width='1'%20height='1'%20fill='%23ffffff'/%3E%3C/svg%3E") 4px 0 / 48px 64px; animation: qfall 1.2s steps(16) infinite; }
