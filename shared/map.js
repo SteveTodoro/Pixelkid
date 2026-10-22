@@ -61,7 +61,13 @@ function drawMap(key, lessons, stateOf) {
   map.className = 'qmap';
   const banner = document.createElement('div'); // SMW-style: the name of the stop the hero is on (or you pointed at)
   banner.className = 'qbanner'; banner.setAttribute('aria-live', 'polite');
-  mapWrap.replaceChildren(banner, map);
+  // the map is drawn on an old treasure map: a parchment border with singed edges (painted by MapArt.frame below)
+  const frame = document.createElement('div'), edge = document.createElement('canvas');
+  frame.className = 'qframe'; edge.className = 'qedge';
+  const F = mapWrap.clientWidth < 640 ? 20 : 32; // (the border's width)
+  frame.style.padding = F + 'px';
+  frame.append(edge, map);
+  mapWrap.replaceChildren(banner, frame);
   const W = mapWidth = map.clientWidth;
   const small = W < 600, S = 3; // S: the hero's pixel size
   // HALF: half a stop dot's height (the hero stands on top of it). CELL: the least room a stop needs across a row.
@@ -121,6 +127,7 @@ function drawMap(key, lessons, stateOf) {
   const goalTop = bottom + ROW / 2, CLIFF = small ? 24 : 32; // (CLIFF: as tall as shared/map-art.js draws the cliffs)
   const meet = goalTop + 26, goal = { x: W / 2, y: meet + 86 }, H = goal.y + 66 + CLIFF + 20;
   map.style.height = H + 'px';
+  MapArt.frame(edge, frame.clientWidth, frame.clientHeight, F, key);
 
   // the road: square pixel corners. Along a row it runs straight; from one row to the next it drops down the cliff (a ladder),
   // runs across just below it, then on to the next stop. The lanes meet just above the goal.
@@ -522,4 +529,4 @@ qBack.addEventListener('click', e => { if (e.target === qBack) closeCard(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !qBack.hidden) closeCard(); });
 // a new width (phone turned, window resized) lays the road out again
 let resizeT = 0;
-window.addEventListener('resize', () => { clearTimeout(resizeT); resizeT = setTimeout(() => { if (mapWrap.querySelector('.qmap') && mapWrap.firstChild.clientWidth !== mapWidth) render(); }, 200); });
+window.addEventListener('resize', () => { clearTimeout(resizeT); resizeT = setTimeout(() => { const m = mapWrap.querySelector('.qmap'); if (m && m.clientWidth !== mapWidth) render(); }, 200); });

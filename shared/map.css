@@ -1,7 +1,10 @@
 /* Pixelkid quest map – the home page's overworld: each world's lessons are stops on a road from START to the world's goal.
  * Used by index.html with shared/map.js and shared/map-art.js. */
 .qmap-wrap { position: relative; z-index: 1; max-width: 1040px; margin: 16px auto 0; padding: 0 16px 90px; }
-.qmap { position: relative; overflow: hidden; border: 4px solid #000; box-shadow: var(--bevel), 0 6px 0 rgba(0,0,0,.25); background: var(--sea, #3d8fe4); }
+.qmap { position: relative; overflow: hidden; border: 3px solid #5a3a1c; background: var(--sea, #3d8fe4); }
+/* the treasure map: the map sits on a parchment border with singed edges (shared/map-art.js paints it onto .qedge) */
+.qframe { position: relative; }
+.qedge { position: absolute; left: 0; top: 0; image-rendering: pixelated; pointer-events: none; filter: drop-shadow(0 6px 0 rgba(0,0,0,.25)); }
 .qmap > svg { position: absolute; inset: 0; }
 .qdeco { position: absolute; transform: translate(-50%, -50%) scale(var(--s, 1)); font-size: 1.9rem; line-height: 1; pointer-events: none; filter: drop-shadow(3px 3px 0 rgba(0,0,0,.25)); }
 .qdeco.small { font-size: 1.2rem; }

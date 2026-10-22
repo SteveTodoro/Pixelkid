@@ -9,6 +9,7 @@
  *   MapArt.scenery(world, rnd) → a scenery kind ('hill', 'trees', …); MapArt.FOOT[kind] = its footprint { rx, ry }
  *   MapArt.paint(canvas, T, world, items, W, H, rnd) → the hill eyes [{ x, y, gap }] (painted once)
  *   MapArt.paths(edges, T, world, W, H) → SVG markup for the road; edges: [{ pts, fresh }] (fresh ones draw themselves in)
+ *   MapArt.frame(canvas, w, h, F, world) → paints the treasure-map border round the map: parchment, F pixels wide, singed edges
  *   MapArt.live(map, eyes, W, H, rnd, rivers, world, T) → adds the water, clouds, eyes and floating things; rivers: [{ x, top, bot }]
  *     (between a fork's branches) get falling water and a foam splash where they reach the land below, in a world with waterfall: true
  */
@@ -314,6 +315,38 @@
     return `<defs>${defs}</defs><g fill="none" stroke-linecap="square" shape-rendering="crispEdges">${out}</g>`;
   }
 
+  // ---------- the treasure-map frame: a parchment border round the map, its outer edge burnt ----------
+  // Along each edge the burn eats in a little way (a wandering depth, with now and then a deeper notch), the corners burn
+  // rounder, and from the burnt edge inwards the paper goes char black, scorched brown, singed orange, then parchment.
+  // Its own seeded randomness, so it doesn't move the scenery, and each world's edge stays the same between visits.
+  function frame(cv, w, h, F, key) {
+    const cols = Math.ceil(w / P), rows = Math.ceil(h / P), B = Math.round(F / P), max = B >= 7 ? 3 : 2;
+    cv.width = cols * P; cv.height = rows * P; cv.style.width = cols * P + 'px'; cv.style.height = rows * P + 'px';
+    const g = cv.getContext('2d');
+    if (!g || !g.fillRect || !cols || !rows) return;
+    let seed = [...key].reduce((n, c) => (n * 31 + c.charCodeAt(0)) >>> 0, 99);
+    const rnd = () => (seed = (seed * 1103515245 + 12345) >>> 0) / 4294967296;
+    const burns = n => {
+      const a = []; let d = 1, notch = 0;
+      for (let i = 0; i < n; i++) {
+        if (!notch && rnd() < 0.04) notch = 1 + Math.floor(rnd() * 3);
+        d = Math.max(0, Math.min(max - 1, d + Math.floor(rnd() * 3) - 1));
+        a.push(notch ? (notch--, max) : d);
+      }
+      return a;
+    };
+    const top = burns(cols), bot = burns(cols), left = burns(rows), right = burns(rows);
+    const SINGE = ['#24160b', '#4a2a12', '#8a4f1f', '#c98b45'];
+    for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) {
+      if (i === B && j >= B && j < rows - B) i = cols - B; // (the middle is under the map)
+      const corner = Math.max(0, 3 - Math.min(i, cols - 1 - i) - Math.min(j, rows - 1 - j));
+      const dist = Math.min(j - top[i], rows - 1 - j - bot[i], i - left[j], cols - 1 - i - right[j]) - corner;
+      if (dist < 0) continue;
+      g.fillStyle = dist < SINGE.length ? SINGE[dist] : rnd() < 0.07 ? '#dfc086' : '#efd7a3';
+      g.fillRect(i * P, j * P, P, P);
+    }
+  }
+
   // ---------- the living layers: the sea, drifting clouds, blinking hill eyes ----------
   function live(map, eyes, W, H, rnd, rivers = [], key, T) {
     const A = art(key);
@@ -355,5 +388,5 @@
   // everything stops moving while the page is hidden
   document.addEventListener('visibilitychange', () => document.documentElement.classList.toggle('q-paused', document.hidden));
 
-  window.MapArt = { has: key => !!ART[key], ART, P, FOOT, terrain, scenery, paint, paths, live, ponds: key => art(key).ponds ?? 1 };
+  window.MapArt = { has: key => !!ART[key], ART, P, FOOT, terrain, scenery, paint, paths, frame, live, ponds: key => art(key).ponds ?? 1 };
 })();
