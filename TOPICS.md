@@ -79,6 +79,8 @@ Inspired by "amazing facts" videos (e.g. Zack D Films). Each lesson is one wonde
 
 **Boss ammo & dodge rounds:** `attack` can be one emoji, a list (`['💧', '☂️']`) or `Pixel.svg` pictures (e.g. a ninja star); `spin: true` makes them twirl. Dodge rounds mix a wall/laser pattern (pink crusher walls closing in from the sides, flashing laser beams) with a bullet pattern (rain, sweep, aimed, ring, spiral, bounce); `patterns: ['crush', 'spiral']` picks a boss's own set.
 
+**Finishing moves:** the boss's "Final blow!" cut scene lives in `shared/engine/finishers.js` (loaded by every lesson and by the Wardrobe, which previews moves on a practice dummy). The player picks a move in the Wardrobe's 💥 Finishers tab (`look.finisher`); "Surprise me" (the default) lets an active pet with its own move do it, otherwise it picks any owned move. Moves so far: Hammer Time, Uppercut, Super Combo (free), Sneak Bite (owning a dog), Fire Breath (owning the dragon or phoenix), Babality (★ shop). A new move = an async function in `MOVES` in finishers.js + a `finisher` item in avatar.js with `move: '<name>'` (a pet move uses `unlock: 'pet:<pet ids>'`). Planned next: boss drops, a move themed on a boss that beating it unlocks.
+
 **Wonders style:** a "Fact or Fiction?" `truefalse` round, plus a "Myth-buster!" card in every lesson. Use kid-safe videos only (Peekaboo Kidz, Wild Kratts, SciShow Kids, Nat Geo Kids, TED-Ed as a bonus). Check every Zack D Films Short first, because some are gory or scary.
 
 ## 🗺️ Around the World (countries & culture – curated, beyond the curriculum)

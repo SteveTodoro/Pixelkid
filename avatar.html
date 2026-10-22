@@ -8,6 +8,7 @@
   <script src="shared/pixel.js"></script>
   <script src="shared/pixel-icons.js"></script>
   <script src="shared/avatar.js"></script>
+  <script src="shared/engine/finishers.js"></script>
 </head>
 <body class="future">
   <header class="topbar">
@@ -100,7 +101,7 @@
   function status(it) {
     if (isWearing(it)) return ['✔ Wearing', 'wearing'];
     if (A.owns(it, saved)) return ['Owned', 'owned'];
-    if (it.unlock) return [A.levelOfUnlock(it.unlock) ? '🔒 Level ' + A.levelOfUnlock(it.unlock) : '🔒 Secret', 'locked'];
+    if (it.unlock) return [A.levelOfUnlock(it.unlock) ? '🔒 Level ' + A.levelOfUnlock(it.unlock) : A.finisherPets(it).length ? '🔒 Pet move' : '🔒 Secret', 'locked'];
     return ['💎 ' + priceOf(it) + (partOwned(it) ? ' left' : ''), A.wallet().balance >= priceOf(it) ? 'buy' : 'pricey'];
   }
   function drawGrid() {
@@ -109,8 +110,9 @@
       const [label, cls] = status(it);
       const b = document.createElement('button');
       b.type = 'button'; b.className = `wd-item ${cls}` + (it.special ? ' special' : '') + (selected === it ? ' sel' : '');
-      const img = document.createElement('img');
-      img.src = A.dataURL(lookWith(cat, it.id), { scale: 4, pet: cat === 'pet', pad: cat === 'move' ? 2 : 0, pose: cat === 'move' ? A.movePose(it.id) : null }); img.alt = '';
+      let img = document.createElement('img');
+      if (cat === 'finisher') { img = document.createElement('span'); img.className = 'wd-fin'; img.textContent = it.icon; } // a finisher is a move, not a look
+      else img.src = A.dataURL(lookWith(cat, it.id), { scale: 4, pet: cat === 'pet', pad: cat === 'move' ? 2 : 0, pose: cat === 'move' ? A.movePose(it.id) : null }); img.alt = '';
       if (cat === 'scene') { img.style.background = A.sceneBox(it.id); img.classList.add('wd-scene'); }
       const n = document.createElement('span'); n.className = 'wd-iname'; n.textContent = it.name;
       const s = document.createElement('span'); s.className = 'wd-badge'; s.textContent = label;
@@ -126,9 +128,14 @@
     const msg = text => { const p = document.createElement('p'); p.className = 'wd-msg'; p.textContent = text; box.append(p); };
     if (!selected) { msg('👆 Tap something to try it on!'); return; }
     const it = selected;
-    if (isWearing(it)) { msg(`✔ You're wearing the ${it.name}.`); return; }
+    // finishers: watch one against a practice dummy before choosing it
+    if (it.cat === 'finisher') {
+      if (it.move) btn('▶ Watch it', 'blue', () => { sfx.tap(); window.PixelkidFinishers.play({ boss: { name: 'Practice dummy', sprite: window.PixelkidFinishers.dummy() }, preview: true, finisher: it.id, done() {} }); });
+      else msg('🎲 A different finishing move every boss battle! If your pet has its own move, it joins in.');
+    }
+    if (isWearing(it)) { msg(it.cat === 'finisher' ? `✔ This is your finishing move.` : `✔ You're wearing the ${it.name}.`); return; }
     if (A.owns(it, saved)) {
-      btn('👕 Wear it!', 'green', () => { A.wear(it.id); saved = A.load(); sfx.buy(); toast('LOOKING GOOD!', `You put on: ${it.name}`, '😎'); render(); });
+      btn(it.cat === 'finisher' ? '💥 Use this move!' : '👕 Wear it!', 'green', () => { A.wear(it.id); saved = A.load(); sfx.buy(); toast(it.cat === 'finisher' ? 'NEW FINISHER!' : 'LOOKING GOOD!', it.cat === 'finisher' ? `Your final blow: ${it.name}` : `You put on: ${it.name}`, '😎'); render(); });
     } else if (it.unlock) {
       msg('🔒 ' + A.unlockText(it.unlock));
     } else {

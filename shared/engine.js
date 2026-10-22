@@ -1424,7 +1424,7 @@
 
   // ---------- the engine's parts (shared/engine/*.js) ----------
   // The games and the boss battle live in their own files, and a lesson only loads the ones it uses: PARTS says which
-  // file holds which game (games, breaks and boss are used by every lesson; stages holds the teach, case and investigate stages). Each part is a function that gets E, the helpers
+  // file holds which game (games, breaks, boss and finishers – the boss's finishing moves – are used by every lesson; stages holds the teach, case and investigate stages). Each part is a function that gets E, the helpers
   // it needs from here, and adds its games to GAMES (or returns what the core calls, like renderQuiz).
   const E = { AV, CUR, GAMES, L, M, RKEY, ROBOT_PAL, SPR, WARDROBE, achieve, arcadeCanvas, award, canSpeak,
     canvasFont, complete, confetti, draggable, dropGame, emojiAt, esc, fill, fmt, gameLoop, go, h, heroImg, holdButton, keys,
@@ -1452,7 +1452,7 @@
       else if (o && typeof o === 'object') { if (typeof o.game === 'string') games.add(o.game); Object.values(o).forEach(walk); }
     })(lesson.stages);
     const stages = lesson.stages.some(s => ['teach', 'case', 'investigate'].includes(s.type)) ? ['stages'] : [];
-    return ['games', 'breaks', 'boss', ...stages, ...Object.keys(PARTS).filter(p => PARTS[p].some(g => games.has(g)))];
+    return ['games', 'breaks', 'boss', 'finishers', ...stages, ...Object.keys(PARTS).filter(p => PARTS[p].some(g => games.has(g)))];
   }
   window.PixelkidEngine = { part(name, make) { Object.assign(E, make(E) || {}); } };
   const here = document.currentScript && document.currentScript.src;

@@ -194,6 +194,15 @@
     { id: 'move-flex', cat: 'move', name: 'Muscle flex', price: 40, rows: [] },
     { id: 'move-dab', cat: 'move', name: 'Dab', price: 0, unlock: 'lvl:8', rows: [] },
     { id: 'move-jump', cat: 'move', name: 'Victory jump', price: 0, unlock: 'lvl:14', rows: [] },
+    // ----- finishers: the boss "Final blow!" move (shared/engine/finishers.js has the moves; icon = the shop tile)
+    // unlock 'pet:a,b': owning either pet teaches the move, and that pet joins in for it
+    { id: 'fin-random', cat: 'finisher', name: 'Surprise me!', icon: '🎲', price: 0, rows: [] },
+    { id: 'fin-hammer', cat: 'finisher', name: 'Hammer Time', icon: '🔨', move: 'hammer', price: 0, rows: [] },
+    { id: 'fin-launch', cat: 'finisher', name: 'Uppercut', icon: '👊', move: 'launch', price: 0, rows: [] },
+    { id: 'fin-explode', cat: 'finisher', name: 'Super Combo', icon: '💥', move: 'explode', price: 0, rows: [] },
+    { id: 'fin-bite', cat: 'finisher', name: 'Sneak Bite', icon: '🐶', move: 'bite', price: 0, unlock: 'pet:pet-dog,pet-annoying-dog', rows: [] },
+    { id: 'fin-fire', cat: 'finisher', name: 'Fire Breath', icon: '🔥', move: 'fire', price: 0, unlock: 'pet:pet-dragon,pet-phoenix', rows: [] },
+    { id: 'fin-baby', cat: 'finisher', name: 'Babality', icon: '🍼', move: 'babality', price: 120, special: true, rows: [] },
     { id: 'pet-none', cat: 'pet', name: 'No pet', price: 0, rows: [] },
     { id: 'pet-cat', cat: 'pet', eyes: [[2, 3], [5, 3]], name: 'Pixel cat', price: 40, rows: ['.o....o.', '.oo..oo.', '.oooooo.', '.ogoogo.', '.oooooo.', '..oppo..', '.oooooo.', '.o.oo.o.'], pal: { o: '#ff8c1a', g: '#2e9e3e', p: '#ff7eb6' } },
     { id: 'pet-dog', cat: 'pet', name: 'Pixel dog', price: 40, rows: ['bb....bb', 'bbbbbbbb', '.bkbbkb.', '.bbbbbb.', '.bbkkbb.', '..bbbb..', '.bbbbbb.', '.b.bb.b.'], pal: { b: '#a86b3c', k: '#1b1b1b' } },
@@ -385,9 +394,9 @@
   };
   const CATS = [
     ['costume', '🎭 Costumes'], ['skin', '🙂 Skin'], ['hair', '💇 Hair'], ['hairColor', '🎨 Hair colour'], ['top', '👕 Tops'], ['legs', '👖 Bottoms'],
-    ['shoes', '👟 Shoes'], ['hat', '🎩 Hats'], ['extra', '✨ Extras'], ['pet', '🐾 Pets'], ['move', '🕺 Moves'], ['scene', '🌄 Scenes'],
+    ['shoes', '👟 Shoes'], ['hat', '🎩 Hats'], ['extra', '✨ Extras'], ['pet', '🐾 Pets'], ['move', '🕺 Moves'], ['finisher', '💥 Finishers'], ['scene', '🌄 Scenes'],
   ];
-  const DEFAULT_LOOK = { skin: 'skin1', hairColor: 'hc-brown', hair: 'hair-short', top: 'tee-grey', legs: 'jeans', shoes: 'trainers', hat: 'hat-none', extra: 'extra-none', pet: 'pet-none', move: 'move-none', scene: 'scene-sunny' };
+  const DEFAULT_LOOK = { skin: 'skin1', hairColor: 'hc-brown', hair: 'hair-short', top: 'tee-grey', legs: 'jeans', shoes: 'trainers', hat: 'hat-none', extra: 'extra-none', pet: 'pet-none', move: 'move-none', finisher: 'fin-random', scene: 'scene-sunny' };
   const byId = id => ITEMS.find(i => i.id === id) || SKINS.find(i => i.id === id) || HAIR_COLOURS.find(i => i.id === id) || SCENES.find(i => i.id === id) || COSTUMES.find(i => i.id === id);
 
   // ---------- saved state + wallet ----------
@@ -418,8 +427,11 @@
     } catch (e) { /* ignore */ }
     return all;
   }
-  const unlockText = u => levelOfUnlock(u) ? `Reach player level ${levelOfUnlock(u)} to unlock` : UNLOCK_TEXT[u] || 'Keep playing to unlock!';
-  const unlocked = u => levelOfUnlock(u) ? levelInfo().level >= levelOfUnlock(u) : !!achievements()[u];
+  const petsOf = u => /^pet:/.test(u || '') ? u.slice(4).split(',') : [];
+  const unlockText = u => levelOfUnlock(u) ? `Reach player level ${levelOfUnlock(u)} to unlock`
+    : petsOf(u).length ? `Get the ${petsOf(u).map(p => byId(p).name).join(' or ')} pet to unlock` : UNLOCK_TEXT[u] || 'Keep playing to unlock!';
+  const unlocked = u => levelOfUnlock(u) ? levelInfo().level >= levelOfUnlock(u)
+    : petsOf(u).length ? petsOf(u).some(p => owns(byId(p))) : !!achievements()[u];
   function isFree(it) { return !it.price && !it.unlock; }
   const partsOf = it => Object.values(it.parts).map(byId);
   function owns(it, a = load()) {
@@ -603,8 +615,9 @@
     paint(c.getContext('2d'), rows, p.pal, 0, 0, scale);
     return c.toDataURL();
   }
-  // pets with their own boss finishing move (shared/engine/boss.js): when one is out, it always does the final blow
-  const PET_FINISHERS = { 'pet-dog': 'bite', 'pet-annoying-dog': 'bite', 'pet-dragon': 'fire', 'pet-phoenix': 'fire' };
+  // the pets that know a finisher (its unlock 'pet:a,b'), and each pet's own move: { 'pet-dog': 'bite', … }
+  const finisherPets = it => petsOf(it.unlock);
+  const PET_FINISHERS = Object.fromEntries(ITEMS.filter(i => i.cat === 'finisher').flatMap(i => finisherPets(i).map(p => [p, i.move])));
 
   const sceneDef = () => SCENES.find(s => s.id === load().look.scene) || SCENES[0];
 
@@ -662,7 +675,7 @@
     ask();
     document.body.append(ov);
   }
-  window.Avatar = { ITEMS, SKINS, HAIR_COLOURS, SCENES, COSTUMES, CATS, UNLOCK_TEXT, LEVEL_REWARDS, levelInfo, levelOfUnlock, unlockText, newRewards, markSeen, DEFAULT_LOOK, byId, load, save, wallet, earn, achievements, owns, priceOf, buy, give, spend, wear, draw, animate, movePose, dataURL, petURL, PET_FINISHERS, isFree, applyScene, sceneBox, sceneDef, STARTERS, needsStarter, pickStarter, showPicker };
+  window.Avatar = { ITEMS, SKINS, HAIR_COLOURS, SCENES, COSTUMES, CATS, UNLOCK_TEXT, LEVEL_REWARDS, levelInfo, levelOfUnlock, unlockText, newRewards, markSeen, DEFAULT_LOOK, byId, load, save, wallet, earn, achievements, owns, priceOf, buy, give, spend, wear, draw, animate, movePose, dataURL, petURL, PET_FINISHERS, finisherPets, isFree, applyScene, sceneBox, sceneDef, STARTERS, needsStarter, pickStarter, showPicker };
   // every page that loads this file shows the player's chosen scene
   applyScene(load().look.scene);
 })();

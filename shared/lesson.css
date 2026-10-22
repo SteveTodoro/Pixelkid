@@ -532,6 +532,8 @@ a { color: var(--brand-dark); }
 .cs-bubble.ghost { opacity: .85; }
 .cs-prop { position: absolute; z-index: 2; font-size: clamp(5rem, 16vw, 8rem); line-height: 1; pointer-events: none; filter: drop-shadow(4px 4px 0 #000); }
 .cs-prop.twinkle { font-size: 3rem; }
+.cs-gear { position: absolute; z-index: 2; pointer-events: none; filter: drop-shadow(2px 2px 0 #000); }
+.cs-gear svg { width: 100%; height: auto; display: block; }
 .projectile.cs-shot { font-size: 3.4rem; }
 .projectile.pic-shot svg { width: 100%; height: 100%; display: block; }
 .cs-parts { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
@@ -863,6 +865,7 @@ a { color: var(--brand-dark); }
   background: #f4f4f4; border: 3px solid #000; box-shadow: inset -3px -3px 0 #a5a5a5, inset 3px 3px 0 #fff;
 }
 .wd-item img { height: 80px; image-rendering: pixelated; }
+.wd-fin { display: grid; place-items: center; height: 80px; font-size: 3.4rem; line-height: 1; }
 .wd-item img.wd-scene { width: 96px; height: 80px; object-fit: contain; object-position: center bottom; padding: 4px 0 0; border: 2px solid #000; }
 .wd-item.sel { outline: 4px solid var(--gold); outline-offset: -1px; background: #fffbe0; }
 .wd-iname { font-weight: 600; font-size: .9rem; text-align: center; line-height: 1.15; }
