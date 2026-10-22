@@ -4,6 +4,7 @@
 // Each lesson follows the one listed before it on the world's road; `after: '<title>'` starts a branch after another lesson.
 // A lesson in the same unit as the stop before it opens with a recap of that lesson; a lesson that starts a new unit opens
 // with a warm-up instead (a review stage whose `from` has no url). tools/lesson-check.js checks both.
+// On the quest map a stop's sign shows the title up to its colon (or `mapTitle`, for a long title without one).
 const LIBRARY = {
   science: {
     label: '🔬 Science Lab', tab: '🔬 Science',
@@ -37,7 +38,7 @@ const LIBRARY = {
       { title: 'Perimeter Fences', emoji: '🐑', unit: 'Measurement' },
       { title: 'Bar Chart Bonanza', emoji: '📊', unit: 'Statistics' },
       // the road forks after Place Value: adding & measuring one way, multiplying & dividing the other
-      { title: 'Counting in 4s, 8s, 50s & 100s', emoji: '🐸', unit: 'Number', after: 'Place Value Party' },
+      { title: 'Counting in 4s, 8s, 50s & 100s', mapTitle: 'Counting in Steps', emoji: '🐸', unit: 'Number', after: 'Place Value Party' },
       { title: 'Times Tables Tower (3, 4, 8)', emoji: '🏰', unit: 'Multiplication & Division' },
       { title: 'Fraction Pizza Shop', emoji: '🍕', unit: 'Fractions' },
       { title: 'Shape Explorers', emoji: '🔺', unit: 'Geometry' },
@@ -87,7 +88,7 @@ const LIBRARY = {
       { title: "Your Body's Secret Superpowers", emoji: '🧠', unit: 'Your Amazing Body' },
       { title: 'Oops! Accidental Inventions', emoji: '🍭', unit: 'Incredible Inventions' },
       { title: 'The Wright Brothers Take Off', emoji: '✈️', unit: 'Incredible Inventions' },
-      { title: 'The Eiffel Tower Grows in Summer', emoji: '🗼', unit: 'Incredible Inventions' },
+      { title: 'The Eiffel Tower Grows in Summer', mapTitle: 'The Growing Eiffel Tower', emoji: '🗼', unit: 'Incredible Inventions' },
       // the road forks after the Jellyfish: living things (and inventions) one way, places on the planet the other
       { title: 'Pyramids of Giza', emoji: '🔺', unit: 'Ancient Wonders', after: 'The Immortal Jellyfish: Can It Live Forever?' },
       { title: 'The Great Wall of China', emoji: '🧱', unit: 'Ancient Wonders' },

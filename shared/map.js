@@ -119,7 +119,7 @@ function drawMap(key, lessons, stateOf) {
   const leaves = stops.filter(s => !s.kids.length);
   // the goal has its own strip of ground below the lowest row, and the lanes meet on it
   const goalTop = bottom + ROW / 2, CLIFF = small ? 24 : 32; // (CLIFF: as tall as shared/map-art.js draws the cliffs)
-  const meet = goalTop + 26, goal = { x: W / 2, y: meet + 76 }, H = goal.y + 50 + CLIFF + 20;
+  const meet = goalTop + 26, goal = { x: W / 2, y: meet + 86 }, H = goal.y + 66 + CLIFF + 20;
   map.style.height = H + 'px';
 
   // the road: square pixel corners. Along a row it runs straight; from one row to the next it drops down the cliff (a ladder),
@@ -163,6 +163,7 @@ function drawMap(key, lessons, stateOf) {
     boxes.push([s.x - 80, s.y - HALF - 8, s.x + 80, s.y + HALF + 66]); // the stop and its name tag
     boxes.push([s.x - 50, s.y - HALF - HERO_H, s.x + 50, s.y - HALF]); // where the hero stands on it (and its tag)
   });
+  boxes.push([goal.x - 70, goal.y - 80, goal.x + 70, goal.y + 60]); // the goal is bigger, with its flag
   const room = (x, y) => Math.min(x, W - x, y, H - y, ...boxes.map(([a, b, c, d]) => Math.hypot(Math.max(a - x, 0, x - c), Math.max(b - y, 0, y - d))));
   const spots = []; // open ground (terrace tops), on a jittered grid
   for (let y = 30; y < H - 20; y += 20) for (let x = 20; x < W - 10; x += 20) {
@@ -336,7 +337,7 @@ function drawMap(key, lessons, stateOf) {
   stops.forEach(s => {
     if (!s.vis) { const q = put('qdot hidden', s.x, s.y, '?'); q.setAttribute('aria-hidden', 'true'); return; } // a quest still in the fog
     const glow = glowsNext(stops, s);
-    const b = dot(s.st + (glow ? ' next' : '') + (fresh.has(s.l.id) ? ' fresh' : ''), s, s.l.emoji, s.l.title);
+    const b = dot(s.st + (glow ? ' next' : '') + (fresh.has(s.l.id) ? ' fresh' : ''), s, s.l.emoji, mapName(s.l));
     if (s.st === 'done') { // a cleared stop's star is a medal for the boss score: gold, silver or bronze
       const rec = records[s.l.id] || {}, score = rec.total ? rec.best / rec.total : 1;
       const st = document.createElement('span'); st.className = 'qstar ' + (score >= 0.9 ? 'gold' : score >= 0.7 ? 'silver' : 'bronze'); st.textContent = '★'; b.append(st);
@@ -345,6 +346,7 @@ function drawMap(key, lessons, stateOf) {
     b.onclick = () => { showBanner(s); goTo(s, () => questCard(s, glow)); };
   });
   const g = dot('goal' + (allClear ? ' clear' : ''), goal, goalIcon, allClear ? 'WORLD CLEAR!' : goalName);
+  g.insertAdjacentHTML('afterbegin', '<span class="qflag"></span>'); // a pennant flying over the goal (it glows once the world is clear)
   g.onclick = () => { showBanner(goal); goalCard(); };
   // a stretch of road that opened since the last visit draws itself in, then its new stop pops up with a sparkle
   if (fresh.size) {
@@ -430,6 +432,7 @@ function drawMap(key, lessons, stateOf) {
   }
 
   if (!window.Avatar || !at) return;
+  const shade = put('qshade', 0, 0, ''); // the hero's shadow on the ground
   const cv = document.createElement('canvas');
   cv.className = 'qhero';
   map.append(cv);
@@ -440,11 +443,21 @@ function drawMap(key, lessons, stateOf) {
     place(x, y, lift = this.lift) {
       this.x = x; this.y = y; this.lift = lift;
       cv.style.left = x - 6 * S + 'px'; cv.style.top = y - lift - 20 * S + 4 + 'px';
+      shade.style.left = x + 'px'; shade.style.top = y - lift + 2 + 'px';
       tag.style.left = x + 'px'; tag.style.top = y - lift - 20 * S - 4 + 'px';
     },
     // standing still: the "NEXT QUEST!" tag only shows on the stop it is about
-    settle() { tag.hidden = !!this.npc || this.node !== at; mapHero.look(0); showBanner(this.node); },
+    // (beside its head instead, when above it the tag would cover a stop's name or a topic's sign)
+    settle() {
+      tag.hidden = !!this.npc || this.node !== at; tag.classList.remove('side', 'left');
+      if (!tag.hidden && covers(tag)) { tag.classList.add('side'); if (covers(tag) || tag.getBoundingClientRect().right > map.getBoundingClientRect().right) tag.classList.add('left'); }
+      mapHero.look(0); showBanner(this.node);
+    },
   };
+  function covers(el) {
+    const r = el.getBoundingClientRect();
+    return [...map.querySelectorAll('.qlabel, .qrib, .qpk')].some(o => { const q = o.getBoundingClientRect(); return q.width && r.left < q.right && r.right > q.left && r.top < q.bottom && r.bottom > q.top; });
+  }
   const inView = () => { const r = cv.getBoundingClientRect(); return r.top > 60 && r.bottom < innerHeight - 20; };
   const marks = get('y3:mapAt', {}), from = stops.find(s => s.l.id && s.l.id === marks[key]);
   if (at.l.id) { marks[key] = at.l.id; try { localStorage.setItem('y3:mapAt', JSON.stringify(marks)); } catch (e) { /* ignore */ } }
@@ -466,6 +479,9 @@ function drawMap(key, lessons, stateOf) {
     walk(pts, () => mapHero.play() || mapHero.blink(), fresh.size ? 1500 : 700); // a short pause first, so the eye finds the hero (and new road draws in)
   } else if (!inView()) setTimeout(() => cv.scrollIntoView({ block: 'center', behavior: 'smooth' }), 400);
 }
+
+// a stop's name on the map: its title up to the colon, or its `mapTitle` (the banner and quest card show the whole title)
+const mapName = l => l.mapTitle || l.title.split(': ')[0];
 
 // a stop's quest card: what it is, how far you got, and the button to play it
 function questCard(s, isNext) {
