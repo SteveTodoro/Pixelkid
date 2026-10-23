@@ -160,7 +160,7 @@ window.LESSON = {
       questions: [
         { type: 'mcq', q: 'The name igneous comes from the Latin word "ignis". What does ignis mean?', options: ['fire', 'water', 'stone'], answer: 0 },
         { type: 'mcq', q: 'Which two rocks does the video say are igneous?', options: ['pumice and granite', 'sandstone and coal', 'slate and marble'], answer: 0 },
-        { type: 'mcq', q: 'Where does the video say sedimentary rocks are often found?', options: ['on ocean and lake beds', 'inside volcanoes', 'on the Moon'], answer: 0 },
+        { type: 'mcq', q: 'Where does the video say sedimentary rocks are often found?', options: ['on ocean and lake beds', 'deep inside volcanoes', 'up on the Moon\'s surface'], answer: 0 },
         { type: 'tf', q: 'The video says metamorphic rocks are made when rocks MELT completely.', answer: false, explain: 'Heat and pressure change them – but they don\'t melt.' },
         { type: 'type', q: 'The Taj Mahal in India is made from which metamorphic rock?', answer: ['marble'], placeholder: 'a rock', hint: 'It starts with m.' },
       ],
@@ -174,7 +174,7 @@ window.LESSON = {
           intro: 'Welcome to the Rock Lab! Pick a rock and a test. Every result goes in your table – just like a real geologist.',
           missions: [
             { text: 'Look closely at the granite and the sandstone with the 🔍 magnifying glass.', need: ['granite:look', 'sandstone:look'], yes: 'Granite has crystals locked together. Sandstone has grains with tiny gaps.', ask: [
-              { type: 'predict', q: 'Which rock do you think will soak up a drop of water?', options: ['sandstone – water can get into the gaps', 'granite – the crystals drink it', 'neither of them'], answer: 0, reveal: 'Let\'s find out in the next mission!', then: { q: 'What could water squeeze into?', options: ['the gaps between the sand grains', 'the shiny crystals', 'nowhere at all'], answer: 0 } },
+              { type: 'predict', q: 'Which rock do you think will soak up a drop of water?', options: ['sandstone – water can get into the gaps', 'granite – the shiny crystals drink it', 'neither of them – rocks are waterproof'], answer: 0, reveal: 'Let\'s find out in the next mission!', then: { q: 'What could water squeeze into?', options: ['the gaps between the sand grains', 'inside the shiny, sparkly crystals', 'nowhere – it all ran off the top'], answer: 0 } },
             ] },
             { text: 'Do the 💧 water drop test on the sandstone, the slate and the chalk.', need: ['sandstone:water', 'slate:water', 'chalk:water'], yes: 'Sandstone and chalk soaked it up. Slate kept it out!', ask: [
               { q: 'Which rock was impermeable – it kept the water out?', options: ['slate', 'sandstone', 'chalk'], answer: 0 },
@@ -183,7 +183,7 @@ window.LESSON = {
               { q: 'Which rock would you use for a kitchen worktop that gets knives and hot pans on it?', options: ['granite', 'chalk', 'it doesn\'t matter'], answer: 0, hint: 'Which rock didn\'t scratch?' },
             ] },
             { text: 'Try the 🪣 sink or float test on the pumice and the slate.', need: ['pumice:float', 'slate:float'], yes: 'A rock that FLOATS! Pumice is full of air bubbles.', ask: [
-              { q: 'Why can pumice float?', options: ['it is full of holes that hold air', 'it is made of wood', 'the water pushes all rocks up'], answer: 0 },
+              { q: 'Why can pumice float?', options: ['it is full of holes that hold air', 'it is really made of wood, not rock', 'the water pushes all rocks up'], answer: 0 },
             ] },
           ],
         },
@@ -221,9 +221,9 @@ window.LESSON = {
         { icon: '💧', clue: 'A permeable rock soaks water in, and the water can seep right through it. An impermeable rock keeps water out.',
           q: { q: 'You drip water on a rock and it sits on top as a little round drop. What does that tell you?', options: ['the rock keeps water out', 'the rock soaks water up', 'the rock is very soft'], answer: 0 } },
         { icon: '🖍️', clue: 'Chalk is so soft you can draw with it. Rain slowly soaks into it and wears it away.',
-          q: { type: 'predict', q: 'A chalk statue stands outside in the rain for 100 years. What do you predict?', options: ['it slowly wears away and goes blobby', 'it stays exactly the same', 'it turns into marble'], answer: 0, reveal: 'Chalk is soft and permeable – rain slowly wears it away.', then: { q: 'So is chalk a good rock for a roof?', options: ['no – it soaks up rain and wears away', 'yes – it is the best', 'only on sunny days'], answer: 0 } } },
+          q: { type: 'predict', q: 'A chalk statue stands outside in the rain for 100 years. What do you predict?', options: ['it slowly wears away and goes blobby', 'it stays exactly the same forever', 'it turns into shiny marble'], answer: 0, reveal: 'Chalk is soft and permeable – rain slowly wears it away.', then: { q: 'So is chalk a good rock for a roof?', options: ['no – it soaks up rain and wears away', 'yes – it is the best rock to use', 'only on sunny days, not rainy ones'], answer: 0 } } },
         { icon: '🏖️', clue: 'Sandstone is made of sand grains with tiny gaps between them. Water seeps into the gaps.',
-          q: { q: 'Why does water soak into sandstone?', options: ['there are tiny gaps between its grains', 'it is very hard', 'it is made of crystals'], answer: 0 } },
+          q: { q: 'Why does water soak into sandstone?', options: ['there are tiny gaps between its grains', 'it is very hard and heavy, like granite', 'it is made of shiny crystals'], answer: 0 } },
         { icon: '🏠', clue: 'Slate splits into thin, flat sheets – and it is impermeable. Builders have used slate tiles on roofs for hundreds of years.',
           q: { type: 'oddone', q: 'Which rock is the odd one out?', items: ['chalk', 'sandstone', 'pumice', 'slate'], answer: 3, why: 'Why is slate the odd one out?', reasons: ['It is impermeable – the others soak up water', 'It is the softest', 'It floats'], reason: 0 } },
       ],
@@ -306,7 +306,7 @@ window.LESSON = {
         { type: 'mcq', q: 'A geologist scratches a rock with a paper clip and white powder goes everywhere. The rock is…', options: ['soft, like chalk', 'very hard, like granite', 'magnetic'], answer: 0 },
         { type: 'oddone', q: 'Which rock is the odd one out?', items: ['granite', 'pumice', 'chalk'], answer: 2, why: 'Why is chalk the odd one out?', reasons: ['It is sedimentary – the others are igneous', 'It is the hardest', 'It floats'], reason: 0 },
         { type: 'order', q: 'Put these rocks from SOFTEST to HARDEST, using your Rock Lab scratch tests.', items: ['chalk', 'sandstone', 'granite'], ends: ['SOFTEST', 'HARDEST'], hint: 'Which one got the deepest scratch?' },
-        { type: 'mcq', q: 'Why do sedimentary rocks often have stripes?', options: ['sand and mud settled in layers, one on top of another', 'lava cooled in stripes', 'they were painted'], answer: 0 },
+        { type: 'mcq', q: 'Why do sedimentary rocks often have stripes?', options: ['sand and mud settled in layers, one on top of another', 'lava cooled in stripes as it ran down the side of a volcano', 'people painted them on, a long time ago'], answer: 0 },
         { type: 'predict', q: 'You drip water onto a piece of granite. What do you predict?', options: ['the drop stays on top', 'it soaks straight in', 'the granite melts'], answer: 0, reveal: 'The drop sits on top – granite\'s crystals are locked tightly together.', then: { q: 'So granite is…', options: ['impermeable', 'permeable', 'soft'], answer: 0 } },
         { type: 'type', q: 'Which kind of scientist studies rocks?', answer: ['geologist', 'a geologist'], placeholder: 'one word', hint: 'You have been one all lesson! It starts with g.' },
       ],

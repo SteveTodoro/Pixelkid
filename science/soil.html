@@ -122,7 +122,7 @@ window.LESSON = {
             '[[soil]] is a mix of tiny bits of rock, rotted bits of dead plants and animals, water and air. It is full of living things too, like worms and beetles.',
             'The rotted plant and animal bits are called [[humus]]. Humus is dark, and it is full of food for plants.',
           ],
-          check: { q: 'One garden\'s soil is very dark, almost black. What does that tell you?', options: ['It has lots of humus, so it is good for plants', 'It has been burnt in a fire', 'It is made of black rocks only'], answer: 0, hint: 'Which part of soil is dark?' },
+          check: { q: 'One garden\'s soil is very dark, almost black. What does that tell you?', options: ['It has lots of humus, so it is good for plants', 'It has been burnt in a fire, so it is black', 'It is made of black rocks and nothing else'], answer: 0, hint: 'Which part of soil is dark?' },
         },
         {
           title: 'Soil starts as rock', pic: '🌧️🧊🪨',
@@ -130,7 +130,7 @@ window.LESSON = {
             'Rain, ice, wind and even plant roots slowly break rocks into smaller and smaller pieces. This is called [[weathering]].',
             'It is very slow. Making just the top layer of soil can take about a hundred years.',
           ],
-          check: { q: 'Rainwater gets into a crack in a rock, then freezes overnight. What happens to the crack?', options: ['The ice pushes it wider, until bits break off', 'The ice glues the rock back together', 'Nothing – ice can\'t change rock'], answer: 0, hint: 'Water gets bigger when it freezes.' },
+          check: { q: 'Rainwater gets into a crack in a rock, then freezes overnight. What happens to the crack?', options: ['The ice pushes it wider, until bits break off', 'The ice glues the rock back together again', 'Nothing – ice is too soft to change rock'], answer: 0, hint: 'Water gets bigger when it freezes.' },
         },
         {
           title: 'Layers under your feet', pic: SOILPROFILE,
@@ -170,10 +170,10 @@ window.LESSON = {
         'How can you tell if soil is full of organic matter?',
       ],
       questions: [
-        { type: 'mcq', q: 'The video says soil is mostly made of…', options: ['tiny bits of rock', 'old leaves', 'water'], answer: 0 },
+        { type: 'mcq', q: 'The video says soil is mostly made of…', options: ['tiny bits of rock', 'old leaves and twigs', 'water and nothing else'], answer: 0 },
         { type: 'type', q: 'When rocks are broken into small pieces by wind, water or ice, scientists call it…', answer: ['weathering'], placeholder: 'one word', hint: 'It sounds like the weather!' },
         { type: 'mcq', q: 'Very hard rocks like quartz weather slowly and make…', options: ['grainy sand', 'sticky clay', 'humus'], answer: 0 },
-        { type: 'mcq', q: 'How can you tell a soil has lots of organic matter (dead plant and animal bits)?', options: ['It is dark, nearly black', 'It is bright orange', 'It smells of flowers'], answer: 0 },
+        { type: 'mcq', q: 'How can you tell a soil has lots of organic matter (dead plant and animal bits)?', options: ['It is dark, nearly black', 'It is bright orange', 'It smells of sweet flowers'], answer: 0 },
         { type: 'mcq', q: 'About how long does it take to make the top layer of soil?', options: ['about 100 years', 'about 1 week', 'about 1 day'], answer: 0 },
       ],
     },
@@ -221,9 +221,9 @@ window.LESSON = {
         { icon: '💧', clue: 'In a drain test, only 10 ml of 100 ml of water came through the field soil.',
           q: { type: 'slider', q: 'So how much of the 100 ml stayed IN the field soil?', min: 0, max: 100, step: 10, answer: 90, unit: ' ml', hint: '100 take away 10.' } },
         { icon: '🌧️', clue: 'The rain gauge shows the same rain fell on the field and the garden, and the caretaker says the drains are clear.',
-          q: { q: 'What does this clue rule out?', options: ['Robin\'s and Hedgehog\'s theories', 'Wiggle\'s theory', 'nothing at all'], answer: 0, hint: 'Same rain, and the drains are fine…' } },
+          q: { q: 'What does this clue rule out?', options: ['Robin\'s and Hedgehog\'s theories', 'only Wiggle\'s theory about the worms', 'nothing at all – no theories'], answer: 0, hint: 'Same rain, and the drains are fine…' } },
         { icon: '🪱', clue: 'There are hardly any worm tunnels in the field soil.',
-          q: { q: 'Why does that make the puddles worse?', options: ['Without tunnels, water can\'t soak down so easily', 'Worms drink the puddles', 'Worms make it rain'], answer: 0 } },
+          q: { q: 'Why does that make the puddles worse?', options: ['Without tunnels, water can\'t soak down so easily', 'Worms drink up all the puddles every single night', 'Worms make it rain, so there is more water'], answer: 0 } },
       ],
       solve: {
         q: 'Who was right about the soggy field?',
@@ -244,7 +244,7 @@ window.LESSON = {
           missions: [
             { text: 'Shake the garden soil in the jar, then watch it settle.', need: ['garden:shake'], yes: 'Look at those layers!', ask: [
               { q: 'Which part settled at the very bottom?', options: ['the stones', 'the clay', 'the humus'], answer: 0 },
-              { q: 'What floated on top of the water?', options: ['bits of dead plants (humus)', 'the sand', 'the stones'], answer: 0 },
+              { q: 'What floated on top of the water?', options: ['bits of dead plants (humus)', 'the tiny, light grains of sand', 'the small, round stones'], answer: 0 },
             ] },
             { text: 'Now shake the clay soil. Is its biggest layer different?', need: ['clay:shake'], yes: 'A very different jar!', ask: [
               { q: 'Which layer was biggest in the clay soil jar?', options: ['clay', 'stones', 'sand'], answer: 0 },
@@ -254,7 +254,7 @@ window.LESSON = {
               { q: 'Which soil would leave a puddle on top after the rain?', options: ['clay soil', 'sandy soil'], answer: 0 },
             ] },
             { text: 'Last test: pour water through the garden soil.', need: ['garden:drain'], yes: 'Every test done – brilliant science!', ask: [
-              { q: 'Garden soil let some water through, but held on to some too. Why is that good for most plants?', options: ['The roots get a drink, but don\'t sit in a puddle', 'Plants hate water', 'It makes the soil lighter'], answer: 0 },
+              { q: 'Garden soil let some water through, but held on to some too. Why is that good for most plants?', options: ['The roots get a drink, but don\'t sit in a puddle', 'Plants hate water, so it all needs to run away fast', 'It makes the soil lighter to carry home'], answer: 0 },
             ] },
           ],
         },
@@ -335,14 +335,14 @@ window.LESSON = {
       questions: [
         { type: 'type', q: 'Rain, ice, wind and roots breaking rock into tiny pieces is called…', answer: ['weathering'], placeholder: 'one word' },
         { type: 'hotspot', q: 'Tap the topsoil.', img: SOILPROFILE, spots: [{ x: 50, y: 25, r: 13, label: 'topsoil' }, { x: 50, y: 53, r: 13, label: 'that\'s the subsoil – paler, with stones' }, { x: 50, y: 83, r: 13, label: 'that\'s the bedrock – solid rock' }], answer: 0 },
-        { type: 'mcq', q: 'Why is topsoil so good for plants?', options: ['It is full of humus – food for plants', 'It is the hardest layer', 'It has no water in it'], answer: 0 },
+        { type: 'mcq', q: 'Why is topsoil so good for plants?', options: ['It is full of humus – food for plants', 'It is the hardest and rockiest layer of all', 'It has no water in it at all'], answer: 0 },
         { type: 'oddone', q: 'Which one is NOT made from something that was once alive?', items: ['humus', 'rotted leaves', 'worm poo', 'grains of sand'], answer: 3, why: 'Why is sand the odd one out?', reasons: ['Sand comes from rock', 'Sand is yellow', 'Sand is at the beach'], reason: 0 },
         { type: 'gap', q: 'Water rushes through ___ soil because there are big gaps between the grains.', options: ['sandy', 'clay', 'concrete'], answer: 0 },
         { type: 'slider', q: '100 ml of water went into some clay soil, and only 20 ml came out. How much stayed in the soil?', min: 0, max: 100, step: 10, answer: 80, unit: ' ml' },
-        { type: 'mcq', q: 'In a shaken soil jar, why do stones settle first?', options: ['They are the biggest and heaviest', 'They are the lightest', 'They float'], answer: 0 },
+        { type: 'mcq', q: 'In a shaken soil jar, why do stones settle first?', options: ['They are the biggest and heaviest', 'They are the lightest of all', 'They float on top of the water'], answer: 0 },
         { type: 'tf', q: 'Worm tunnels help air and water reach plant roots.', answer: true },
         { type: 'order', q: 'Put the layers in order, from the top of the ground to deep down.', items: ['🌱 grass', '🟫 topsoil', '🟨 subsoil', '🪨 bedrock'], ends: ['TOP', 'DEEP DOWN'] },
-        { type: 'mcq', q: 'Why would covering a garden in concrete be bad for worms and plants?', options: ['No air, water or dead leaves could get into the soil', 'Concrete is too colourful', 'Worms like concrete'], answer: 0 },
+        { type: 'mcq', q: 'Why would covering a garden in concrete be bad for worms and plants?', options: ['No air, water or dead leaves could get into the soil', 'Concrete is too grey and boring for the worms to like', 'Worms like concrete better than soil'], answer: 0 },
       ],
     },
   ],
