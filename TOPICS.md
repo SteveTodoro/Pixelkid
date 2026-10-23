@@ -174,7 +174,7 @@ One country per lesson: find it on the map, then the history and culture childre
 **Keep lessons varied (check with `node tools/activity-audit.js`):**
 - At most ONE word puzzle (`crossword` or `wordsearch`) per lesson, and none in about half of lessons. Never in two lessons in a row of the same world. Other vocabulary practice: `build`, picture↔word `match`, `type`.
 - Don't repeat an arcade game (`invaders`, `runner`, `platformer`, `blocks`) from the previous lesson of the same world.
-- **No giveaway lengths:** the right answer must not be the longest option. Write wrong answers about as long and as plausible as the right one, and make the short one right just as often (activity-audit flags a right answer 40%+ longer than every other option; `--long` lists them). Kids spot the pattern and stop reading.
+- **No giveaway lengths:** the right answer must not be the longest option. Write wrong answers about as long and as plausible as the right one, and make the short one right just as often (activity-audit flags a right answer 40%+ and 6+ letters longer than every other option; `--long` lists them). Kids spot the pattern and stop reading.
 - **At least 3 typed questions per lesson** (`type`), because typing stops button-spamming. Only ask for words the lesson has already taught (on the page or in the video) before the question.
 - Multiple choice should be at most 60% of a lesson's questions. Mix in `evidence` and `type` reading checks, `hotspot` for pictures and diagrams, `slider` for numbers, and `oddone` / `predict` for reasoning.
 - Every activity must make the child do the lesson's thinking (recall, apply, explain, predict, create). A game only wraps that thinking.

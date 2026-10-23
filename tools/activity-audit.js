@@ -9,7 +9,7 @@
  *   - multiple choice is more than 60% of the lesson's questions (reading checks count too)
  *   - exactly the same stage order as the lesson before it in the same world
  *   - fewer than 3 typed questions (typing stops button-spamming)
- *   - a multiple-choice answer that is clearly the longest option (40%+ longer than the next): kids learn to pick
+ *   - a multiple-choice answer that is clearly the longest option (40%+ and 6+ letters longer than the next): kids learn to pick
  *     the longest answer instead of reading. --long lists them.
  */
 'use strict';
@@ -53,7 +53,7 @@ function audit(file) {
   for (const m of src.matchAll(/options: \[((?:'(?:[^'\\]|\\.)*'(?:, )?)+)\], answer: (\d)/g)) {
     const opts = [...m[1].matchAll(/'((?:[^'\\]|\\.)*)'/g)].map(x => x[1]), len = opts.map(o => o.length), a = +m[2];
     const others = len.filter((_, k) => k !== a);
-    if (opts.length >= 3 && len[a] >= Math.max(...others) * LONG_RATIO) long.push(opts[a]);
+    if (opts.length >= 3 && len[a] >= Math.max(...others) * LONG_RATIO && len[a] - Math.max(...others) >= 6) long.push(opts[a]); // (short numbers like 11 vs 9 don't count)
   }
   return { file, stages, games, arcade, qs, long };
 }
