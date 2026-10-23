@@ -23,6 +23,8 @@ Privacy: the repo is public. Never put the child's name in files, URLs or commit
 - **Variety matters a lot** (the parent found lessons formulaic once):
   - at most ONE word puzzle (crossword or word search) per lesson, and none in about half of them
   - multiple choice ≤ 60% of questions
+  - at least 3 typed questions per lesson (typing stops him spamming buttons to guess), but only for words already taught
+  - the right answer must not be the longest option: he learned to pick the longest one instead of reading
   - use the hands-on question types
   - don't repeat the previous lesson's arcade game or second-read stage type (teach / case / investigate)
   - `node tools/activity-audit.js` checks all of this

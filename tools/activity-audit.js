@@ -8,6 +8,9 @@
  *     it is part of every spell test)
  *   - multiple choice is more than 60% of the lesson's questions (reading checks count too)
  *   - exactly the same stage order as the lesson before it in the same world
+ *   - fewer than 3 typed questions (typing stops button-spamming)
+ *   - a multiple-choice answer that is clearly the longest option (40%+ longer than the next): kids learn to pick
+ *     the longest answer instead of reading. --long lists them.
  */
 'use strict';
 const fs = require('fs');
@@ -19,6 +22,7 @@ const QUESTIONS = ['mcq', 'tf', 'gap', 'order', 'evidence', 'hotspot', 'slider',
 const PUZZLES = ['crossword', 'wordsearch'];
 const ARCADE = ['invaders', 'runner', 'platformer', 'blocks', 'labyrinth'];
 const MCQ_LIMIT = 0.6;
+const TYPE_MIN = 3, LONG_RATIO = 1.4;
 
 // lessons in the order the library lists them, grouped by world
 const index = fs.readFileSync(path.join(ROOT, 'shared/library.js'), 'utf8');
@@ -44,10 +48,17 @@ function audit(file) {
   const qs = types.filter(t => QUESTIONS.includes(t));
   const plainChecks = [...src.matchAll(/(?:check|q|solve): \{(?![^{}]*\btype:)/g)].length; // case clues and solves are questions too
   for (let k = 0; k < plainChecks; k++) qs.push('mcq');
-  return { file, stages, games, arcade, qs };
+  // multiple-choice answers that give themselves away by being much longer than every other option
+  const long = [];
+  for (const m of src.matchAll(/options: \[((?:'(?:[^'\\]|\\.)*'(?:, )?)+)\], answer: (\d)/g)) {
+    const opts = [...m[1].matchAll(/'((?:[^'\\]|\\.)*)'/g)].map(x => x[1]), len = opts.map(o => o.length), a = +m[2];
+    const others = len.filter((_, k) => k !== a);
+    if (opts.length >= 3 && len[a] >= Math.max(...others) * LONG_RATIO) long.push(opts[a]);
+  }
+  return { file, stages, games, arcade, qs, long };
 }
 
-const warnOnly = process.argv.includes('--warn');
+const warnOnly = process.argv.includes('--warn'), listLong = process.argv.includes('--long');
 let total = 0;
 for (const w of worlds) {
   let prev = null;
@@ -63,6 +74,9 @@ for (const w of worlds) {
     const mcq = a.qs.filter(t => t === 'mcq').length;
     if (a.qs.length && mcq / a.qs.length > MCQ_LIMIT) warn.push(`multiple choice is ${Math.round(mcq / a.qs.length * 100)}% of questions (max ${MCQ_LIMIT * 100}%)`);
     if (prev && prev.stages.join() === a.stages.join()) warn.push('same stage order as the lesson before');
+    const typed = a.qs.filter(t => t === 'type').length;
+    if (typed < TYPE_MIN) warn.push(`only ${typed} typed question${typed === 1 ? '' : 's'} (at least ${TYPE_MIN})`);
+    if (a.long.length) warn.push(`${a.long.length} right answer${a.long.length === 1 ? ' is' : 's are'} clearly the longest option` + (listLong ? ':\n' + a.long.map(x => `         – ${x}`).join('\n') : ' (--long lists them)'));
     total += warn.length;
     if (!warnOnly || warn.length) {
       out.push(`  ${file}`,
