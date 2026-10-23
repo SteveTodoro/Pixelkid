@@ -202,7 +202,7 @@
     { id: 'fin-explode', cat: 'finisher', name: 'Super Combo', icon: '💥', move: 'explode', price: 0, rows: [] },
     { id: 'fin-bite', cat: 'finisher', name: 'Sneak Bite', icon: '🐶', move: 'bite', price: 0, unlock: 'pet:pet-dog,pet-annoying-dog', rows: [] },
     { id: 'fin-fire', cat: 'finisher', name: 'Fire Breath', icon: '🔥', move: 'fire', price: 0, unlock: 'pet:pet-dragon,pet-phoenix', rows: [] },
-    { id: 'fin-baby', cat: 'finisher', name: 'Babality', icon: '🍼', move: 'babality', price: 120, special: true, rows: [] },
+    { id: 'fin-baby', cat: 'finisher', name: 'Babality', icon: '🍼', move: 'babality', price: 50, special: true, rows: [] },
     { id: 'pet-none', cat: 'pet', name: 'No pet', price: 0, rows: [] },
     { id: 'pet-cat', cat: 'pet', eyes: [[2, 3], [5, 3]], name: 'Pixel cat', price: 40, rows: ['.o....o.', '.oo..oo.', '.oooooo.', '.ogoogo.', '.oooooo.', '..oppo..', '.oooooo.', '.o.oo.o.'], pal: { o: '#ff8c1a', g: '#2e9e3e', p: '#ff7eb6' } },
     { id: 'pet-dog', cat: 'pet', name: 'Pixel dog', price: 40, rows: ['bb....bb', 'bbbbbbbb', '.bkbbkb.', '.bbbbbb.', '.bbkkbb.', '..bbbb..', '.bbbbbb.', '.b.bb.b.'], pal: { b: '#a86b3c', k: '#1b1b1b' } },

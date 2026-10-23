@@ -316,13 +316,13 @@ PixelkidEngine.part('boss', E => {
             hpText.textContent = 'STUNNED! Finish it!'; el.classList.remove('enraged'); el.classList.add('stunned');
             banner(el, 'FINISH IT!', 'ko'); bossTalk.say(lines.stunned, 0); heroTalk.say('Time for the FINAL BLOW!', 0);
           } else if (dodgeDue) {
-            if (!half) { half = true; el.classList.add('enraged'); }
+            if (!half) { half = true; el.classList.add('enraged'); if (window.Music) Music.faster(); }
             hpText.textContent = `HP ${hp}/${total} · ${b.name} is getting angry!`;
             bossTalk.say(rounds ? (lines.dodge || 'Dodge THIS!') : lines.angry, 2600);
           } else if (hp === 1) {
             hpText.textContent = `HP ${hp}/${total} · One more hit!`; bossTalk.say(lines.last);
           } else if (!half && hp <= total / 2) {
-            half = true; el.classList.add('enraged');
+            half = true; el.classList.add('enraged'); if (window.Music) Music.faster();
             hpText.textContent = `HP ${hp}/${total} · ${b.name} is getting angry!`; bossTalk.say(lines.angry, 2600);
           } else {
             hpText.textContent = `HP ${hp}/${total} · Keep going!`; bossTalk.say(pick(lines.hurt), 1600);
@@ -367,15 +367,17 @@ PixelkidEngine.part('boss', E => {
 
     function begin() {
       boss = s.boss ? bossFight(s.boss, qs.length) : null;
+      if (boss && window.Music) Music.play('boss');
       const qArea = h('div', { class: 'q-area' });
       put(area, boss && boss.el, qArea, boss && boss.hero);
-      runQuestions(qArea, qs, { key: 'quiz', boss, done: score => (boss ? boss.finale(() => results(score)) : results(score)), lost: gameOver, lastLabel: s.boss ? '⚔️ Final blow!' : 'See my score 🏆', kind: boss ? 'Boss battle' : 'Quiz' });
+      runQuestions(qArea, qs, { key: 'quiz', boss, done: score => { if (window.Music) Music.stop(); return boss ? boss.finale(() => results(score)) : results(score); }, lost: gameOver, lastLabel: s.boss ? '⚔️ Final blow!' : 'See my score 🏆', kind: boss ? 'Boss battle' : 'Quiz' });
       nav.hideNext();
     }
 
     // the boss took all 3 hearts: no completion, just a retry
     function gameOver(score) {
       const lines = Object.assign({}, BOSS_LINES, s.boss.lines);
+      if (window.Music) Music.stop();
       sfx.bad();
       say('Don\'t give up, {name}! Have a quick look back at the pages, then try again!');
       put(area, h('div', { class: 'results lose' },

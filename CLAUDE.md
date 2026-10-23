@@ -13,7 +13,7 @@ Privacy: the repo is public. Never put the child's name in files, URLs or commit
 - The parent plays the lessons with him and gives feedback after playtests. Ask how the latest playtest went before building more of the same.
 
 ## Look and feel (locked – don't redesign unless asked)
-- Blocky pixel / video-game look: Pixelify Sans for headings and buttons, Lexend for reading text, bevelled stone panels, sky and grass strip, hotbar stage bar, XP/levels, 💎 gems, chiptune sfx. Never use real Minecraft/Roblox logos or textures.
+- Blocky pixel / video-game look: Pixelify Sans for headings and buttons, Lexend for reading text, bevelled stone panels, sky and grass strip, hotbar stage bar, XP/levels, 💎 gems, chiptune sfx and music (`shared/music.js`: a map theme per world and a boss theme; 🎵 on the home page turns it off). Never use real Minecraft/Roblox logos or textures.
 - **Numbers in Lexend**, never the pixel font (its 5 looks like an S and its 2 like an 8).
 - **Pixel icons, not emoji**: `shared/pixel-icons.js` swaps emoji for 16×16 pixel sprites automatically. Any emoji you use in a lesson needs an icon, so run `node tools/emoji-audit.js` and draw missing ones with `def()`. No face/people emoji without a pixel sprite. Flags, arrows and ✔/❌ stay as text.
 - Hero celebrations glow (the aura), they don't spin or jump; the parent found big movements exaggerated.

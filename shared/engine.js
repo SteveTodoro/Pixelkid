@@ -243,7 +243,7 @@
   const xpFill = h('div', { class: 'xp-fill' });
   const muteBtn = h('button', {
     class: 'icon-btn', type: 'button', 'aria-label': 'Sound on or off',
-    onclick() { settings.muted = !settings.muted; saveSettings(); muteBtn.textContent = settings.muted ? '🔇' : '🔊'; },
+    onclick() { settings.muted = !settings.muted; saveSettings(); muteBtn.textContent = settings.muted ? '🔇' : '🔊'; if (window.Music) Music.refresh(Music.playing()); },
   }, settings.muted ? '🔇' : '🔊');
   const topbar = h('header', { class: 'topbar' },
     h('div', { class: 'hud-row' },
@@ -379,6 +379,7 @@
   }
   function go(i, backwards = false) {
     if (cleanup) { cleanup(); cleanup = null; }
+    if (window.Music) Music.stop(); // the boss tune stops when you leave the battle
     state.stage = Math.max(0, Math.min(L.stages.length - 1, i));
     state.maxStage = Math.max(state.maxStage, state.stage);
     enteringBackwards = backwards;
@@ -1456,6 +1457,8 @@
   }
   window.PixelkidEngine = { part(name, make) { Object.assign(E, make(E) || {}); } };
   const here = document.currentScript && document.currentScript.src;
+  // the boss battle music (shared/music.js); the lesson works without it
+  if (!window.Music) document.head.append(h('script', { src: new URL('music.js', here || location.href).href }));
   Promise.all(partsFor(L).map(p => new Promise((ok, fail) => {
     const s = document.createElement('script');
     s.src = new URL(`engine/${p}.js`, here || location.href).href;

@@ -13,6 +13,7 @@
   <script src="shared/question-bank.js"></script>
   <script src="shared/npcs.js"></script>
   <script src="shared/map-art.js"></script>
+  <script src="shared/music.js"></script>
   <style>
     /* header: the player stands in the world on a grass block (like a game's title screen), the title and HUD beside it */
     .lib-head { position: relative; z-index: 1; display: grid; grid-template-columns: auto auto; justify-content: center; align-items: end; gap: 40px; padding: 44px 16px 4px; }
@@ -102,6 +103,8 @@
     .grownups a { padding: 4px 10px; font-family: var(--pixel); font-weight: 700; font-size: .85rem; color: #fff; background: rgba(0,0,0,.45); text-decoration: none; }
     .grownups a:hover, .grownups a:focus-visible { background: #000; outline: 3px solid #fff; }
     .hud-bag { padding: 0; cursor: pointer; font: inherit; font-size: 2rem; color: inherit; }
+    .hud-music[aria-pressed="false"] { opacity: .55; }
+    .hud-music[aria-pressed="false"]::after { content: ''; position: absolute; left: 8px; right: 8px; top: 50%; height: 4px; background: #e53935; transform: rotate(-35deg); }
     .hud-bag:hover, .hud-bag:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
   </style>
 </head>
@@ -128,6 +131,7 @@
         </div>
         <div class="hud-gems" id="gems" title="Gems to spend">💎<b></b></div>
         <button class="hud-gems hud-bag" id="bag" type="button" title="My backpack">🎒<b></b></button>
+        <button class="hud-gems hud-bag hud-music" id="music" type="button" aria-label="Music on or off" aria-pressed="true">🎵</button>
       </div>
     </div>
   </header>
@@ -234,6 +238,20 @@ function refreshHud() {
 }
 refreshHud();
 document.getElementById('bag').addEventListener('click', () => window.NPC && NPC.backpack());
+// each world's map has its own theme tune; browsers only allow sound after a tap, so it starts on the first one.
+// 🎵 turns music off everywhere (the boss battles too); the lesson 🔊 button still mutes the sound effects.
+const musicBtn = document.getElementById('music');
+const musicOn = () => get('y3:settings', {}).music !== false;
+const themeTune = () => window.Music && Music.play('map-' + current);
+musicBtn.setAttribute('aria-pressed', String(musicOn()));
+musicBtn.addEventListener('click', e => {
+  e.stopPropagation();
+  const st = get('y3:settings', {}); st.music = !musicOn();
+  try { localStorage.setItem('y3:settings', JSON.stringify(st)); } catch (err) { /* ignore */ }
+  musicBtn.setAttribute('aria-pressed', String(st.music));
+  if (window.Music) Music.refresh(st.music && 'map-' + current);
+});
+['pointerdown', 'keydown'].forEach(ev => document.addEventListener(ev, themeTune, { once: true }));
 
 const tabs = document.getElementById('tabs');
 // Around the World: the passport shows a stamp for every country lesson finished
@@ -287,6 +305,7 @@ function render() {
   const all = LIBRARY[current].lessons;
   const stateOf = l => { const rec = records[l.id]; return rec && rec.done ? 'done' : rec && rec.stars ? 'going' : 'new'; };
   (mode === 'lessons' ? drawGrid : drawMap)(current, all, stateOf);
+  if (window.Music && Music.playing()) themeTune(); // switching worlds switches the tune
 }
 render();
 </script>
