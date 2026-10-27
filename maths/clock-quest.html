@@ -17,6 +17,7 @@
 const C = (t, o) => Clock.svg(t, o);                                   // a plain clock
 const H = t => Clock.svg(t, { halves: true, ring: 'pastto' });         // with the PAST / TO helper
 const R = t => Clock.svg(t, { roman: true });                          // Roman numerals
+const M = t => Clock.svg(t, { ring: 'minutes' });                      // with the 5–55 minute numbers
 
 // the boss: the Time Bandit, who steals minutes from everyone's day
 const BANDIT = Pixel.svg([
@@ -64,9 +65,9 @@ window.LESSON = {
     {
       type: 'welcome', title: 'Clock Quest', short: 'Start', minutes: 1,
       pic: C('6:52'),
-      hello: "Welcome back to the MATHS MINE! Last time you mastered past and to. Today we read clocks to the EXACT minute!",
-      question: 'The long hand is pointing between two numbers. How can you tell exactly what time it is?',
-      intro: 'Recap, read, watch, read and set the clocks, crack a case, set Roman numeral clocks, pick your own arcade game – then catch the **Time Bandit**!',
+      hello: "Welcome back to the MATHS MINE! Today we read clocks to the EXACT minute!",
+      question: 'The long hand is between two numbers. How can you tell the exact time?',
+      intro: 'Recap, read, watch, set clocks, crack a case, pick an arcade game – then catch the **Time Bandit**!',
       nameLabel: 'Player name:',
     },
 
@@ -89,37 +90,37 @@ window.LESSON = {
 
     {
       type: 'read', title: 'To the exact minute', short: 'Read 1', minutes: 6,
-      say: 'Read each page carefully – the checks use NEW clocks. Tap the yellow words for a 💎.',
+      say: 'Short pages! The checks use NEW clocks. Tap the yellow words for a 💎.',
       cards: [
         {
           title: '60 tiny steps', pic: C('3:00'),
           text: [
-            'Look at the little marks round the edge. There are 60 of them – one for every minute in an hour.',
-            'Each minute is made of 60 even tinier bits of time, called [[second|second]]s.',
+            'There are 60 little marks round the edge. One mark = 1 minute.',
+            'Each minute is made of 60 tiny [[second|second]]s.',
           ],
-          check: { type: 'type', q: 'The long hand moves from one little mark to the very next one. How much time has passed?', answer: ['1 minute', '1', 'one minute', 'a minute', 'one', '1 min'], placeholder: 'like: 5 minutes', hint: 'There are 60 marks – one for every…', explain: 'One little mark = 1 minute.' },
+          check: { type: 'type', q: 'The long hand moves from one little mark to the next. How long is that?', answer: ['1 minute', '1', 'one minute', 'a minute', 'one', '1 min'], placeholder: 'like: 5 minutes', hint: 'There are 60 marks – one for every…', explain: 'One little mark = 1 minute.' },
         },
         {
           title: 'Short hand first!', pic: C('4:56'),
           text: [
-            'Always read the short hand first. Here it is between the 4 and the 5. That means it is still 4-something – even though it is nearly at the 5!',
-            'It only becomes 5-something when the long hand reaches the 12 again.',
+            'Read the short hand first. Here it is between the 4 and the 5, so it is still 4-something!',
+            'It only becomes 5-something when the long hand reaches the 12.',
           ],
           check: { q: 'The short hand is between the 8 and the 9, very close to the 9. The time is…', options: ['8-something', '9-something', "exactly 9 o'clock"], answer: 0, hint: 'Has the short hand actually reached the 9 yet?' },
         },
         {
-          title: 'Count 5s, then 1s', pic: C('2:38'),
+          title: 'Count 5s, then 1s', pic: M('2:38'),
           text: [
-            'For the long hand, count in 5s up to the last number it has passed. Then count on the little marks in 1s.',
-            'Here: 5, 10, 15, 20, 25, 30, 35… then 36, 37, 38. The time is 2:38.',
+            'Count the long hand in 5s up to the last number it passed. Then count the little marks in 1s.',
+            '5, 10, 15, 20, 25, 30, 35… then 36, 37, 38. It is 2:38.',
           ],
-          check: { type: 'type', q: 'The long hand is 2 little marks after the 4. How many minutes past the hour is it?', answer: ['22', 'twenty two'], after: 'minutes past', placeholder: 'a number', hint: 'Count in 5s to the 4 first: 5, 10, 15, 20. Then 2 more.', explain: '20, then 21, 22!' },
+          check: { type: 'type', q: 'The long hand is 2 little marks after the 4. How many minutes past is that?', answer: ['22', 'twenty two'], after: 'minutes past', placeholder: 'a number', hint: 'Count in 5s to the 4 first: 5, 10, 15, 20. Then 2 more.', explain: '20, then 21, 22!' },
         },
         {
           title: 'Minutes to, to the minute', pic: H('7:52'),
           text: [
-            'A digital clock shows this time as 7:52 – 52 minutes past 7.',
-            'From the long hand, count on to the 12: 53, 54… 60. That is 8 more minutes. So it is also 8 minutes to 8!',
+            'A digital clock shows this as 7:52.',
+            'Count on from 52 to 60: 8 more minutes. So it is also 8 minutes to 8!',
           ],
           check: { type: 'type', q: 'A clock says 3:56. How many minutes to 4 o\'clock?', answer: ['4', 'four'], after: 'minutes to 4', placeholder: 'a number', hint: 'Count on from 56 to 60: 57, 58…', explain: '57, 58, 59, 60 – 4 minutes to 4!' },
         },
@@ -129,7 +130,7 @@ window.LESSON = {
     {
       type: 'video', title: 'Time to the Minute', short: 'Video', minutes: 9,
       video: { id: 'Bqo6-DMzdB8', title: 'Telling the Time for Kids: To the Minute', channel: 'Learn and Play Online!', duration: '8:05' },
-      say: 'Watch how to read a clock to the minute. Grab a pencil and try each clock before the video does!',
+      say: 'Watch how to read a clock to the minute. Try each clock before the video does!',
       clues: [
         'Why are there 60 lines on the clock?',
         'How many little lines are between each number?',
@@ -140,7 +141,7 @@ window.LESSON = {
         { type: 'mcq', q: 'Why are there 60 little lines on the clock face?', options: ['there are 60 minutes in an hour', 'there are 60 hours in one whole day', 'there are 60 seconds in a day'], answer: 0 },
         { type: 'type', q: 'How many little lines are there BETWEEN each number?', answer: ['4', 'four'], after: 'little lines', placeholder: 'a number', explain: '4 little lines in between, plus the line at the number, makes jumps of 5.' },
         { type: 'mcq', q: 'The video says you should always look at which hand first?', options: ['the hour hand', 'the minute hand', 'the second hand'], answer: 0 },
-        { type: 'type', q: 'The hour hand is past the 10. The minute hand points at the line at the 7. Write the time like a digital clock.', answer: ['10:35'], placeholder: 'like 4:20', hint: 'Count in 5s up to the 7.', explain: '5, 10, 15, 20, 25, 30, 35 – it is 10:35.' },
+        { type: 'type', q: 'The hour hand is past the 10. The minute hand points at the 7. Write the time like a digital clock.', answer: ['10:35'], placeholder: 'like 4:20', hint: 'Count in 5s up to the 7.', explain: '5, 10, 15, 20, 25, 30, 35 – it is 10:35.' },
         { type: 'mcq', q: 'How did the video find 6:52?', options: ['count in 5s up to 50, then 51, 52', 'count in 1s all the way from the 12', 'look at the hour hand only'], answer: 0 },
         { type: 'tf', q: 'When the minute hand reaches the 12, the minutes start again from 0, because a new hour has begun.', answer: true },
       ],
@@ -150,15 +151,15 @@ window.LESSON = {
       type: 'game', title: 'Minute Mission', short: 'Minutes', minutes: 6,
       rounds: [
         {
-          game: 'clock', mode: 'read', title: 'Read the clock',
-          intro: 'What time does each clock show? Tap the HOUR first (the short hand), then type the MINUTES (the long red hand).',
+          game: 'clock', mode: 'read', title: 'Read the clock', ring: 'minutes',
+          intro: 'Tap the HOUR (short hand), then type the MINUTES (long red hand). The brown numbers help you count in 5s.',
           say: 'Short hand first! Then count 5s and 1s.',
           times: ['1:20', '4:07', '6:52', '9:38', '11:14', '2:46'],
         },
         {
           game: 'clock', mode: 'set', title: 'Set it to the minute', show: 'digital', step: 1, helper: 'off', start: '12:00',
-          intro: 'Now set each clock to the digital time. Drag the red hand – or use the + and − buttons for single minutes.',
-          say: 'Get close by dragging, then use the buttons to get it exactly right!',
+          intro: 'Set each clock to the digital time. Drag the red hand, then use + and − for single minutes.',
+          say: 'Drag close, then use the buttons!',
           times: ['3:08', '7:23', '10:51', '5:36'],
         },
       ],
@@ -166,29 +167,29 @@ window.LESSON = {
 
     {
       type: 'case', title: 'The Case of the Missing Cake', short: 'Case', minutes: 7,
-      say: 'A clock mystery! Answer each question to uncover a clue about a.m., p.m. and Roman numerals. Then solve it!',
+      say: 'A clock mystery! Answer each question to get a clue. Then solve it!',
       mystery: [
-        'Someone ate the birthday cake at the clock shop! It was on the counter at **3:25 p.m.**, and gone at **3:35 p.m.**',
+        'Someone ate the birthday cake at the clock shop! It vanished between **3:25 p.m.** and **3:35 p.m.**',
         'Three suspects told us where they were. 🦉 **Owl:** "I was asleep from XI o\'clock in the morning until IV in the afternoon." 🐶 **Dog:** "I was at the park from midday until 5 p.m." 🐱 **Cat:** "At half past 3, I was fast asleep in my basket. It was 3:30 a.m."',
-        'One of them has an alibi for the wrong time. Find the clues, then work out who it was.',
+        'One alibi is for the wrong time. Find the clues, then work out who it was.',
       ],
       clues: [
-        { icon: '🌅', clue: 'a.m. means from midnight to midday – the morning. p.m. means from midday to midnight – the afternoon and evening. Every time happens twice a day!',
+        { icon: '🌅', clue: 'a.m. is from midnight to midday (the morning). p.m. is from midday to midnight (afternoon and evening).',
           q: { q: 'You eat your breakfast at 7:30. How do we write that?', options: ['7:30 a.m.', '7:30 p.m.', '7:30 midnight'], answer: 0, hint: 'Is breakfast before or after midday?' } },
-        { icon: '🕛', clue: '12 o\'clock in the middle of the day is midday, also called noon. 12 o\'clock in the middle of the night is midnight – a brand new day begins.',
+        { icon: '🕛', clue: '12 o\'clock in the day is midday (or noon). 12 o\'clock at night is midnight, when a new day begins.',
           q: { q: 'You are fast asleep in bed and the clock shows 3 o\'clock. What time is it?', options: ['3 a.m.', '3 p.m.', 'midday'], answer: 0, hint: 'Is it before or after midday?' } },
-        { icon: '🏛️', clue: 'Roman numerals: I is 1, V is 5 and X is 10. A small one AFTER a big one means add (VI is 6, XI is 11). A small one BEFORE a big one means take away (IV is 4, IX is 9).',
+        { icon: '🏛️', clue: 'Roman numerals: I is 1, V is 5, X is 10. Small one AFTER a big one: add (VI is 6). Small one BEFORE: take away (IV is 4).',
           q: { type: 'type', q: 'Use the Roman numeral rule: write the Roman numeral for 7.', answer: ['VII'], placeholder: 'Roman numeral letters', hint: '7 is 5 add 2. V is 5. Where do the I letters go to ADD?', explain: 'VII – V is 5, add I and I: 5 + 2 = 7.' } },
-        { icon: '⏱️', clue: '60 seconds make 1 minute, 60 minutes make 1 hour and 24 hours make 1 day. A clap takes about 1 second, brushing your teeth about 2 minutes, and a film about 2 hours.',
+        { icon: '⏱️', clue: '60 seconds = 1 minute. 60 minutes = 1 hour. A clap takes about 1 second. Brushing your teeth takes about 2 minutes.',
           q: { q: 'Which of these would take about 1 MINUTE?', options: ['singing "Happy Birthday" three times', 'blinking your eyes once, very fast', 'a whole school day, from bell to bell'], answer: 0, hint: 'A minute is 60 seconds – longer than a blink, much shorter than a day.' } },
       ],
       solve: {
         q: 'The cake vanished between 3:25 p.m. and 3:35 p.m. Who ate it?',
-        options: ['🐱 Cat – her alibi is for 3:30 a.m., in the middle of the night', '🦉 Owl – XI to IV doesn\'t cover the afternoon', '🐶 Dog – midday is in the middle of the night'],
+        options: ['🐱 Cat – her alibi is for 3:30 a.m.', '🦉 Owl – XI to IV doesn\'t cover the afternoon', '🐶 Dog – midday is in the middle of the night'],
         answer: 0, hint: 'Check each alibi with your clues. Does it cover half past 3 in the AFTERNOON?',
-        explain: 'Owl slept from 11 a.m. (XI) to 4 p.m. (IV), and Dog was at the park from midday to 5 p.m. – both cover the afternoon. But Cat\'s alibi was for 3:30 a.m., in the middle of the night!',
+        explain: 'Owl (XI to IV) and Dog (midday to 5 p.m.) cover the afternoon. Cat\'s alibi was for 3:30 a.m. – the middle of the night!',
       },
-      closed: 'Cat confessed – with icing on her whiskers! She hoped nobody knew the difference between a.m. and p.m. But you did. Case closed, time detective!',
+      closed: 'Cat confessed – with icing on her whiskers! Case closed, time detective!',
     },
 
     {
@@ -228,7 +229,7 @@ window.LESSON = {
       rounds: [
         {
           game: 'runner', title: 'TO-Time Runner', emoji: '🏃', blurb: 'Race along and grab the TO times.',
-          intro: 'Your hero runs by itself and the words come two at a time – pick the lane with the right one! Collect only the times that are **TO times** (more than 30 minutes past) – dodge the PAST times.',
+          intro: 'Pick the lane with a **TO time** (more than 30 minutes past). Dodge the PAST times!',
           say: 'Tap the top or bottom lane. Collect the TO times!',
           prompt: 'Collect the TO times!',
           items: [
@@ -262,7 +263,7 @@ window.LESSON = {
 
     {
       type: 'quiz', title: 'Boss Battle: The Time Bandit', short: 'Boss', kind: 'Boss battle', minutes: 7,
-      say: 'Oh no! The TIME BANDIT is stealing minutes from everyone\'s day – nobody will get to school on time! Every right answer is a hit. Catch him, {name}!',
+      say: 'Oh no! The TIME BANDIT is stealing everyone\'s minutes! Every right answer is a hit. Catch him, {name}!',
       boss: {
         name: 'The Time Bandit', sprite: BANDIT, attack: '⏳',
         lines: {
@@ -286,7 +287,7 @@ window.LESSON = {
         button: 'Watch the bonus video ▶',
       },
       questions: [
-        { type: 'type', q: 'What time does this clock show? Write it like a digital clock.', pic: C('3:27'), answer: ['3:27'], placeholder: 'like 4:20', hint: 'Short hand first – which number has it just passed? Then count 5s and 1s.' },
+        { type: 'type', q: 'What time does this clock show? Write it like a digital clock.', pic: C('3:27'), answer: ['3:27'], placeholder: 'like 4:20', hint: 'Short hand first. Then count 5s and 1s.' },
         { type: 'mcq', q: 'What time does this clock show?', pic: C('8:53'), options: ['8:53', '9:53', '8:47'], answer: 0, hint: 'The short hand has NOT reached the 9 yet.' },
         { type: 'mcq', q: 'Which clock shows 6:12?', optionsHtml: true, options: [C('6:12'), C('6:02'), C('7:12')], answer: 0, hint: '12 minutes: count 5, 10 up to the 2, then 2 more marks.' },
         { type: 'gap', q: 'There are ___ seconds in a minute.', options: ['60', '100', '12'], answer: 0 },

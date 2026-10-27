@@ -78,9 +78,9 @@ window.LESSON = {
     {
       type: 'welcome', title: 'Night & Day', short: 'Start', minutes: 1,
       pic: LCD('19:30'),
-      hello: "Welcome back to the MATHS MINE! In Thailand, train tickets and phones often show times like 19:30. Today you crack the 24-hour clock – and the calendar too!",
+      hello: "Welcome back to the MATHS MINE! In Thailand, train tickets show times like 19:30. Today you crack the 24-hour clock – and the calendar!",
       question: 'A train leaves at 19:30. Is that in the morning or the evening? How could you tell?',
-      intro: 'Recap, read, watch, slide the sun round the Day Dial, count months on your knuckles, pick your own arcade game – then beat **the Night Owl**!',
+      intro: 'Recap, read, watch, slide the Day Dial, count months on your knuckles, pick an arcade game – then beat **the Night Owl**!',
       nameLabel: 'Player name:',
     },
 
@@ -94,7 +94,7 @@ window.LESSON = {
         'Roman numerals: I = 1, V = 5, X = 10. IV is 4 and IX is 9.',
       ],
       questions: [
-        { type: 'mcq', q: 'What time does this clock show?', pic: C('4:38'), options: ['4:38', '5:38', '4:43'], answer: 0, hint: 'Short hand first – it has not reached the 5 yet. Then count 5s to the 7 and 3 more marks.' },
+        { type: 'mcq', q: 'What time does this clock show?', pic: C('4:38'), options: ['4:38', '5:38', '4:43'], answer: 0, hint: 'Short hand first: not at the 5 yet. Then count 5s to the 7, and 3 more.' },
         { type: 'mcq', q: 'You wake up at 7 o\'clock in the morning. How do we write that?', options: ['7:00 a.m.', '7:00 p.m.', '7:00 midnight'], answer: 0 },
         { type: 'tf', q: 'There are 60 seconds in a minute AND 60 minutes in an hour.', answer: true },
         { type: 'mcq', q: 'Which Roman numeral means 4?', options: ['IV', 'VI', 'XI'], answer: 0, hint: 'Take 1 away from 5: put the I BEFORE the V.' },
@@ -109,44 +109,44 @@ window.LESSON = {
 
     {
       type: 'read', title: 'Hello, 24-hour clock!', short: 'Read 1', minutes: 6,
-      say: 'Read each page carefully – the checks use NEW times. Tap the yellow words for a 💎.',
+      say: 'Short pages! The checks use NEW times. Tap the yellow words for a 💎.',
       cards: [
         {
           title: 'One day, 24 hours', pic: TXT('☀️ 12<br>+ 12 🌙<br>= 24 hours'),
           text: [
-            'In one day, the short hand goes round the clock twice: 12 hours of a.m. and 12 more hours of p.m. 12 + 12 = 24 hours.',
-            'The [[24-hour clock]] does not start again at midday. It just keeps counting: 13, 14, 15… all the way up to 23!',
+            'In one day the short hand goes round twice: 12 hours of a.m. + 12 hours of p.m. = 24 hours.',
+            'The [[24-hour clock]] keeps counting after midday: 13, 14, 15… up to 23!',
           ],
           check: { type: 'type', q: 'On the 24-hour clock, what time is it one hour after 12:00?', answer: ['13:00', '1300'], placeholder: 'like 07:45', hint: 'The 24-hour clock keeps counting after 12.', explain: '12, then 13 – it is 13:00!' },
         },
         {
           title: 'Morning times', pic: LCD('07:45'),
           text: [
-            'Morning times look nearly the same on both clocks. But a 24-hour clock always shows 4 digits, so a 0 goes in front.',
-            'So 7:45 a.m. is 07:45. You say it "oh-seven forty-five".',
+            'A 24-hour clock always shows 4 digits. Morning times get a 0 in front.',
+            'So 7:45 a.m. is 07:45. Say it "oh-seven forty-five".',
           ],
-          check: { type: 'type', q: 'How does a 24-hour clock show ten past 9 in the morning?', answer: ['09:10', '0910'], placeholder: 'like 07:45', hint: 'Morning: no adding. Remember the 0 in front – a 24-hour clock always shows 4 digits.', explain: '09:10 – "oh-nine ten".' },
+          check: { type: 'type', q: 'How does a 24-hour clock show ten past 9 in the morning?', answer: ['09:10', '0910'], placeholder: 'like 07:45', hint: 'Morning: no adding. Put a 0 in front.', explain: '09:10 – "oh-nine ten".' },
         },
         {
           title: 'Afternoon? Add 12!', pic: TXT('3 p.m.<br>3 + 12 = 15<br>') + LCD('15:00'),
           text: [
-            'For p.m. times, add 12 to the hour. 3 p.m. is 3 + 12 = 15, so it is 15:00. The minutes stay the same.',
-            'Going back is easy too: take away 12. 18:30 is 18 − 12 = 6, so it is half past 6 in the evening.',
+            'p.m. time? Add 12 to the hour: 3 p.m. → 3 + 12 = 15 → 15:00.',
+            'Going back? Take away 12: 18:30 → 18 − 12 = 6 → half past 6 in the evening.',
           ],
           check: { type: 'type', q: 'A cartoon starts at 4:20 in the afternoon. Write it on the 24-hour clock.', answer: ['16:20', '1620'], placeholder: 'like 15:00', hint: 'Afternoon means add 12 to the 4.', explain: '4 + 12 = 16, so it is 16:20.' },
         },
         {
           title: 'Midnight and midday', pic: LCD('00:00'),
           text: [
-            'At [[midnight]] a new day starts, so the 24-hour clock shows 00:00. Then 00:01, 00:02… The first hour of the day is all 00-something!',
-            'Midday is 12:00. After 23:59 the clock does not show 24:00 – it goes back to 00:00 for the next day.',
+            'At [[midnight]] a new day starts: 00:00. Then 00:01, 00:02…',
+            'Midday is 12:00. After 23:59 the clock goes back to 00:00.',
           ],
           check: { q: 'A clock shows 00:15. When is it?', options: ['15 minutes after midnight', 'quarter past 12 in the afternoon', 'quarter to midnight'], answer: 0, hint: '00 hours is the very start of the day.' },
         },
         {
           title: 'Why do we need it?', pic: '🚆 🚌 ✈️',
           text: [
-            'Trains, buses, planes and lots of phones use the 24-hour clock. A list of times like that is called a [[timetable]].',
+            'Trains, buses, planes and phones use the 24-hour clock. A list of times like that is a [[timetable]].',
             'In Thailand, train tickets show times like 19:30. Nobody can mix up the morning train with the evening one!',
           ],
           check: { type: 'evidence', q: 'Why is "19:30" better than "7:30" on a train ticket? Tap the sentence that tells you.', answer: 'Nobody can mix up', hint: 'Find the sentence about the morning and evening trains.', explain: '19:30 can only mean the evening – nobody misses their train!' },
@@ -157,7 +157,7 @@ window.LESSON = {
     {
       type: 'video', title: '12-hour and 24-hour times', short: 'Video', minutes: 6,
       video: { id: 'Ib84G7OQY1k', title: 'How Do You Convert Between Analogue and Digital 24 Hour Time?', channel: 'Twinkl Educational Publishing', duration: '4:46' },
-      say: 'Watch how one time looks on three different clocks. Pause and try the puzzles before the video shows the answer!',
+      say: 'Watch one time on three different clocks. Try each puzzle before the video shows the answer!',
       clues: [
         'What does a 12-hour clock show that a 24-hour clock does not?',
         'How is 6:45 p.m. written on a 24-hour clock?',
@@ -179,8 +179,8 @@ window.LESSON = {
       rounds: [
         {
           game: 'daydial', title: 'Slide through the day', events: DAY, start: '6:00', step: 15, nudge: 5,
-          intro: 'Drag along the day to move the sun and moon – watch the clocks change! One clock is 🔒 locked in each mission, so you have to work it out.',
-          say: 'Drag the sun from morning to night. What happens to the 24-hour clock after midday?',
+          intro: 'Drag the sun and moon along the day. One clock is 🔒 locked in each mission – work it out!',
+          say: 'What happens to the 24-hour clock after midday?',
           missions: [
             { time: '7:00', show: '12', yes: '7:00 a.m. is 07:00 – morning times just get a 0 in front!' },
             { time: '15:00', show: '12', yes: '3 p.m. + 12 = 15:00. Home time!' },
@@ -195,7 +195,7 @@ window.LESSON = {
         },
         {
           game: 'questions', title: 'Train Timetable',
-          intro: 'You are catching a train from Bangkok! Read the **timetable** carefully – it uses the 24-hour clock.',
+          intro: 'You are catching a train from Bangkok! The timetable uses the 24-hour clock.',
           say: 'Find the right row first, then read across.',
           html: TIMETABLE,
           questions: [
@@ -210,9 +210,9 @@ window.LESSON = {
 
     {
       type: 'teach', title: 'Teach Professor Bolt: days, months and years', short: 'Teach', minutes: 4,
-      say: 'Professor Bolt is teaching you about days, months and years – but his memory chip is wobbly! Fix his mistakes.',
+      say: 'Professor Bolt\'s memory chip is wobbly! Fix his mistakes.',
       robot: { name: 'Professor Bolt', emoji: '🤖' },
-      intro: 'Hello! I am Professor Bolt. I have learned ALL about days, months and years. Let me teach YOU! (My memory chip is a little bit wobbly…)',
+      intro: 'Hello! I am Professor Bolt. Let me teach YOU about days, months and years! (My memory chip is a bit wobbly…)',
       lines: [
         { text: 'One day has 12 hours, and one hour has 60 minutes.', wrongAt: 3, fix: '24', options: ['60', '7'], hint: 'Count the hours from one midnight to the next.', why: 'A whole day and night is 24 hours. 12 hours is only half a day!' },
         { text: 'There are 12 months in one year, from January to December.', ok: true, why: 'Right! January, February, March… all the way to December makes 12 months.' },
@@ -228,7 +228,7 @@ window.LESSON = {
       rounds: [
         {
           game: 'knuckles', title: 'Knuckle months',
-          intro: 'Make two fists like these! Tap along the knuckles and dips in order to find out how long each month is.',
+          intro: 'Make two fists like these! Tap the knuckles and dips in order to find how long each month is.',
           say: 'Start on the left little finger knuckle: January!',
           ask: [
             { type: 'mcq', q: 'Your birthday is on 30 April. What is the date the next day?', options: ['1 May', '31 April', '29 April'], answer: 0, hint: 'April is in a dip, so it only has 30 days.' },
@@ -237,7 +237,7 @@ window.LESSON = {
         },
         {
           game: 'sort', title: 'How many days?',
-          intro: 'Sort the months: 31 days, 30 days, or the shortest month of all? Use your knuckles!',
+          intro: 'Sort the months: 31 days, 30 days, or 28 or 29? Use your knuckles!',
           say: 'Knuckles have 31, dips have 30!',
           buckets: [
             { id: 'k', label: '31 days', emoji: '✊' },
@@ -266,7 +266,7 @@ window.LESSON = {
       rounds: [
         {
           game: 'invaders', title: 'P.M. Blaster', emoji: '🚀', blurb: 'Shoot the right 24-hour times.',
-          intro: 'The Night Owl has sent time aliens! Read each mission at the top – then shoot ONLY the right times.',
+          intro: 'Read each mission at the top. Then shoot ONLY the right times!',
           say: 'Tap above an alien to fly there and fire! 12 or more means after midday.',
           waves: [
             {
@@ -319,7 +319,7 @@ window.LESSON = {
 
     {
       type: 'quiz', title: 'Boss Battle: The Night Owl', short: 'Boss', kind: 'Boss battle', minutes: 7,
-      say: 'Oh no! The NIGHT OWL has muddled every clock in town – nobody knows if it is morning or night! Every right answer is a hit. Bring back the day, {name}!',
+      say: 'Oh no! The NIGHT OWL has muddled every clock in town! Every right answer is a hit. Bring back the day, {name}!',
       boss: {
         name: 'The Night Owl', sprite: OWL, attack: ['🌙', '⭐'], spin: true,
         lines: {
@@ -344,7 +344,7 @@ window.LESSON = {
       },
       questions: [
         { type: 'type', q: 'Write 8:15 p.m. on the 24-hour clock.', answer: ['20:15', '2015'], placeholder: 'like 15:00', hint: 'p.m. means add 12 to the hour.' },
-        { type: 'mcq', q: 'A 24-hour clock shows 06:40. When is that?', options: ['20 to 7 in the morning', '20 to 7 in the evening', '20 past 6 in the evening'], answer: 0, hint: '06 is less than 12, so it is the morning. 6:40 is 20 minutes before 7.' },
+        { type: 'mcq', q: 'A 24-hour clock shows 06:40. When is that?', options: ['20 to 7 in the morning', '20 to 7 in the evening', '20 past 6 in the evening'], answer: 0, hint: '06 is less than 12, so it is morning. 6:40 is 20 to 7.' },
         { type: 'mcq', q: 'Which clock shows the same time as 14:30?', optionsHtml: true, options: [C('2:30'), C('4:30'), C('2:15')], answer: 0, hint: '14 − 12 = 2.' },
         { type: 'mcq', q: 'On the 24-hour clock, midnight is…', options: ['00:00', '12:00', '24:60'], answer: 0 },
         { type: 'type', q: 'The train timetable says 17:05. Write it in 12-hour time with a.m. or p.m.', answer: ['5:05 pm', '5:05pm', '5:05 p.m.'], placeholder: 'like 3:00 p.m.', hint: 'Take away 12: 17 − 12 = ? And is it before or after midday?' },

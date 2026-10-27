@@ -62,9 +62,9 @@ window.LESSON = {
     {
       type: 'welcome', title: 'How Long?', short: 'Start', minutes: 1,
       pic: `<div style="display:flex;flex-direction:column;align-items:center;gap:4px;font-size:1.6rem;color:#fff"><div style="width:100px">${C('3:45')}</div><span>⬇</span><div style="width:100px">${C('4:20')}</div></div>`,
-      hello: 'Welcome back to the MATHS MINE! How long is a film? How long until the cake is ready? Today you become a TIME HOPPER and work out how long things take!',
-      question: 'Cartoons start at 3:45 and finish at 4:20. How long is that? (Don\'t worry if you are not sure yet!)',
-      intro: 'Recap, read, watch, hop the frog along the time line, pick your own arcade game – then race **Slowcoach the Snail**!',
+      hello: 'Welcome back to the MATHS MINE! Today you become a TIME HOPPER and work out how long things take!',
+      question: 'Cartoons start at 3:45 and finish at 4:20. How long is that? (Just guess!)',
+      intro: 'Recap, read, watch, hop the frog along the time line, pick an arcade game – then race **Slowcoach the Snail**!',
       nameLabel: 'Player name:',
     },
 
@@ -79,7 +79,7 @@ window.LESSON = {
       ],
       questions: [
         { type: 'mcq', q: 'What is 6:20 p.m. on the 24-hour clock?', options: ['18:20', '06:20', '16:20'], answer: 0, hint: 'p.m. means add 12 to the 6.' },
-        { type: 'mcq', q: 'The bus leaves at 13:45. When is that?', options: ['quarter to 2 in the afternoon', 'quarter to 1 in the afternoon', 'quarter past 1 in the morning'], answer: 0, hint: '13 − 12 = 1, so it is 1:45. Is 1:45 quarter past, or quarter to the NEXT hour?' },
+        { type: 'mcq', q: 'The bus leaves at 13:45. When is that?', options: ['quarter to 2 in the afternoon', 'quarter to 1 in the afternoon', 'quarter past 1 in the morning'], answer: 0, hint: '13 − 12 = 1, so it is 1:45. Which hour is coming next?' },
         { type: 'mcq', q: 'How many days does July have?', options: ['31', '30', '28'], answer: 0, hint: 'July is the last knuckle on your left hand.' },
         { type: 'tf', q: '00:10 is 10 minutes after midnight.', answer: true },
       ],
@@ -98,29 +98,29 @@ window.LESSON = {
 
     {
       type: 'read', title: 'How long does it take?', short: 'Read 1', minutes: 6,
-      say: 'Read each page carefully – the checks use NEW times. Tap the yellow words for a 💎.',
+      say: 'Short pages! The checks use NEW times. Tap the yellow words for a 💎.',
       cards: [
         {
           title: 'Start, end and in between', pic: '🚩 ➡ 🏁',
           text: [
-            'Everything that happens has a [[start time]] and an [[end time]]. The time in between is called the [[duration]] – how long it takes.',
-            'A swimming lesson might start at 4:00 and end at 4:30. It lasts 30 minutes.',
+            'Things have a [[start time]] and an [[end time]]. How long they take is the [[duration]].',
+            'Swimming from 4:00 to 4:30 lasts 30 minutes.',
           ],
           check: { type: 'type', q: 'Football practice starts at 5:00 and finishes at 6:00. How long does it last?', answer: ['1 hour', '1', 'one hour', 'an hour', '60 minutes', '60', '1 hr', '1h'], placeholder: 'like: 30 minutes', hint: 'From 5 o\'clock to 6 o\'clock…', explain: 'From 5:00 to 6:00 is 1 hour.' },
         },
         {
           title: 'Hop along a time line', pic: TXT('🐸<br>+10 +10 +5'),
           text: [
-            'A [[time line]] is like a number line for time. Put the start time on the left, then hop along to the end time.',
-            'Add up the sizes of all your hops – that is how long it took!',
+            'A [[time line]] is a number line for time. Start on the left and hop to the end time.',
+            'Add up your hops – that is how long it took!',
           ],
           check: { type: 'slider', q: 'You hop 10 minutes, then 10 minutes, then 5 minutes. How long is that altogether? Drag the marker.', min: 0, max: 30, step: 5, ticks: 6, answer: 25, unit: ' min', hint: '10 + 10 + 5 = ?', explain: '10 + 10 + 5 = 25 minutes.' },
         },
         {
           title: 'Hop to the o\'clock first', pic: TXT('3:45<br>⬇ +15<br>4:00<br>⬇ +20<br>4:20'),
           text: [
-            'From 3:45 to 4:20 is tricky in one go. So first hop to the next o\'clock: from 3:45 to 4:00 is 15 minutes.',
-            'Then hop on from 4:00 to 4:20. That is 20 more minutes. 15 + 20 = 35 minutes altogether.',
+            'First hop to the next o\'clock: 3:45 to 4:00 is 15 minutes.',
+            'Then 4:00 to 4:20 is 20 more. 15 + 20 = 35 minutes.',
           ],
           check: { type: 'type', q: 'A film starts at 2:50 and ends at 3:30. How long is the film?', answer: ['40', '40 minutes', 'forty', '40 mins'], after: 'minutes', placeholder: 'a number', hint: '2:50 to 3:00 is 10 minutes. Then 3:00 to 3:30 is…', explain: '10 + 30 = 40 minutes.' },
         },
@@ -128,7 +128,7 @@ window.LESSON = {
           title: 'Don\'t take away like normal numbers!', pic: TXT('❌ 420 − 345 = 75<br>✅ 35 minutes'),
           text: [
             'Time is not like normal numbers. An hour has 60 minutes, not 100!',
-            'If you do 420 − 345, you get 75. But from 3:45 to 4:20 is really 35 minutes. Hopping on a time line never gets tricked.',
+            '420 − 345 gives 75. But 3:45 to 4:20 is really 35 minutes. Hopping never gets tricked.',
           ],
           check: { type: 'evidence', q: 'Why can\'t you work out how long by taking away times like normal numbers? Tap the sentence that explains it.', answer: 'An hour has 60 minutes', hint: 'How many minutes are in an hour?', explain: 'An hour has 60 minutes, not 100 – so normal take-away gets tricked.' },
         },
@@ -138,7 +138,7 @@ window.LESSON = {
     {
       type: 'video', title: 'Hopping on a Number Line', short: 'Video', minutes: 6,
       video: { id: 'pwVGOX2pRig', title: 'Elapsed Time on a Number Line', channel: 'eSpark', duration: '4:38' },
-      say: 'In America, how long something takes is called "elapsed time". Watch Miss Akilah hop along a number line at the aquarium!',
+      say: 'In America, how long something takes is called "elapsed time". Watch Miss Akilah hop along a number line!',
       clues: [
         'What mistake do some children make with time?',
         'How long was the bus ride?',
@@ -160,8 +160,8 @@ window.LESSON = {
       rounds: [
         {
           game: 'timehops', title: 'Frog hops', hops: [60, 10, 5, 1],
-          intro: 'Help the frog hop along the time line! Tap the hop buttons to jump from the start to the end, then add up your hops.',
-          say: 'Big hops first, then little ones. Hop to the o\'clock if you can!',
+          intro: 'Tap the hop buttons to jump the frog from the start to the end. Then add up your hops.',
+          say: 'Big hops first. Hop to the o\'clock if you can!',
           missions: [
             { from: '3:00', to: '3:25', text: '🏊 Swimming starts at **3:00** and ends at **3:25**. Hop from the start to the end!' },
             { from: '4:45', to: '5:15', text: '📺 A cartoon starts at **4:45** and ends at **5:15**. Hop to 5 o\'clock first!' },
@@ -171,8 +171,8 @@ window.LESSON = {
         },
         {
           game: 'clock', mode: 'set', title: 'When does it end?', step: 5, helper: 'off',
-          intro: 'Each clock shows the START time. Move the hands on to the END time!',
-          say: 'Drag the long red hand forward. Count the 5s as you go!',
+          intro: 'Each clock shows the START. Move the hands on to the END time!',
+          say: 'Drag the red hand forward. Count in 5s!',
           times: [
             { time: '4:25', start: '3:55', ask: '🍿 The film starts at **3:55**. It lasts **30 minutes**. When does it end?' },
             { time: '11:15', start: '10:40', ask: '⚽ Football starts at **10:40** and lasts **35 minutes**. When does it end?' },
@@ -185,12 +185,12 @@ window.LESSON = {
 
     {
       type: 'investigate', title: 'Time puzzles: estimate, then hop', short: 'Investigate', minutes: 8,
-      say: 'Let\'s investigate time puzzles! First guess, then use the frog to find the exact answer.',
+      say: 'Time puzzles! Guess first, then use the frog to check.',
       question: 'How can we work out exactly when something ends – or how long it takes?',
       predict: { q: 'A film starts at 5:40 and lasts 1 hour and 15 minutes. Have a quick guess: when does it end?', options: ['about 6:55', 'about 6:15', 'about 7:40'], answer: 0 },
       test: {
         game: 'timehops', title: 'Frog hops', hops: [60, 10, 5, 1],
-        intro: 'Now find the exact answers. Hop the frog along the time line: big hops first, to the next o\'clock if you can.',
+        intro: 'Now find the exact answers. Big hops first, to the next o\'clock if you can.',
         say: 'Big hops first, then little ones!',
         missions: [
           { from: '5:40', add: 75, text: '🎬 The film starts at **5:40** and lasts **1 hour and 15 minutes**. Hop on to find when it ends!' },
@@ -205,10 +205,10 @@ window.LESSON = {
         { q: 'A timetable says the train leaves Bangkok at 09:15 and reaches Ayutthaya at 10:45. How long is the journey?', options: ['1 hour and 30 minutes', '30 minutes', '1 hour and 45 minutes'], answer: 0, hint: 'Hop 45 minutes to 10:00, then 45 more.' },
       ],
       result: [
-        'To find when something **ends**, start at the start time and hop **forwards**: hop to the next o\'clock first, then the rest. A pizza goes in at 5:40 and cooks for 30 minutes: hop 20 to 6:00, then 10 more – it is ready at 6:10.',
-        'To find when something **started**, hop **backwards** from the end time. A show ended at 4:15 and lasted 30 minutes: back 15 to 4:00, back 15 more – it started at 3:45.',
-        'When the minutes come to more than 60, swap 60 of them for an hour: 75 minutes is 1 hour and 15 minutes, and 90 minutes is 1 and a half hours.',
-        'A [[timetable]] tells you when a train leaves and arrives. Hop from one time to the other to find how long the journey is.',
+        'When does it end? Hop forwards from the start: to the next o\'clock first, then the rest. 5:40 + 30 minutes: hop 20 to 6:00, then 10 more = 6:10.',
+        'When did it start? Hop backwards from the end. 4:15 − 30 minutes: back 15 to 4:00, back 15 more = 3:45.',
+        'More than 60 minutes? Swap 60 of them for an hour: 75 minutes = 1 hour 15 minutes. 90 minutes = 1 and a half hours.',
+        'A [[timetable]] shows when a train leaves and arrives. Hop from one to the other to find how long the trip is.',
       ],
     },
 
@@ -218,7 +218,7 @@ window.LESSON = {
       rounds: [
         {
           game: 'runner', title: 'Real Time Run', emoji: '🏃', blurb: 'Race along and grab the REAL times.',
-          intro: 'Slowcoach has scribbled some **impossible times**! Remember: an hour has 60 minutes, so the minutes on a clock only go up to 59. Collect the REAL times.',
+          intro: 'Slowcoach scribbled some **impossible times**! Minutes only go up to 59. Collect the REAL times.',
           say: 'Pick the lane with the REAL time! Jump the rocks and hold DASH to go faster.',
           prompt: 'Collect the REAL times – dodge the impossible ones!',
           items: [
@@ -242,7 +242,7 @@ window.LESSON = {
         },
         {
           game: 'match', title: 'Minute Match', emoji: '⏱️', blurb: 'Match the minutes to the hours.',
-          intro: 'Slowcoach has muddled the minutes and hours! Match each one to the same amount of time.',
+          intro: 'Match each one to the same amount of time.',
           say: 'Remember: 1 hour is 60 minutes!',
           hint: '1 hour = 60 minutes. Add on the extra minutes.',
           pairs: [
@@ -260,7 +260,7 @@ window.LESSON = {
 
     {
       type: 'quiz', title: 'Boss Battle: Slowcoach the Snail', short: 'Boss', kind: 'Boss battle', minutes: 7,
-      say: 'Oh no! SLOWCOACH THE SNAIL has slimed every clock, and now nobody knows how long anything takes! Every right answer is a hit. Speed things up, {name}!',
+      say: 'Oh no! SLOWCOACH THE SNAIL has slimed every clock! Every right answer is a hit. Speed things up, {name}!',
       boss: {
         name: 'Slowcoach the Snail', sprite: SNAIL, attack: ['🐌', '⏳'], spin: true,
         lines: {
