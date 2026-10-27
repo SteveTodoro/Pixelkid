@@ -16,6 +16,7 @@
 // ---------- clock pictures for this lesson ----------
 const C = (t, o) => Clock.svg(t, o);                                   // a plain clock
 const H = t => Clock.svg(t, { halves: true, ring: 'pastto' });         // with the PAST / TO helper
+const M = t => Clock.svg(t, { ring: 'minutes' });                      // with the 5–55 minute numbers
 // tap zones over the 12 numbers of a plain clock C(…), for hotspot questions (index 0 = the 12, 3 = the 3 …)
 const CLOCK_SPOTS = Array.from({ length: 12 }, (_, i) => ({ x: 50 + 34 * Math.sin(i * Math.PI / 6), y: 50 - 34 * Math.cos(i * Math.PI / 6), r: 8, label: `the ${i || 12}` }));
 
@@ -66,8 +67,8 @@ window.LESSON = {
       type: 'welcome', title: 'Tick Tock Time', short: 'Start', minutes: 1,
       pic: H('3:45'),
       hello: "Welcome to the MATHS MINE! I'm Tock the Clock-Bot. Today you become a master of clocks!",
-      question: 'The time is 3:45. So why do we call it quarter to FOUR, not quarter to three?',
-      intro: 'Warm up, read, watch, set the clocks yourself, pick your own arcade game – then stop **Count Clockula** from muddling every clock in the land!',
+      question: 'The time is 3:45. Why do we call it quarter to FOUR?',
+      intro: 'Warm up, read, watch, set the clocks, pick an arcade game – then stop **Count Clockula**!',
       nameLabel: 'Player name:',
     },
 
@@ -90,48 +91,43 @@ window.LESSON = {
     },
 
     {
-      type: 'read', title: 'Past and To', short: 'Read 1', minutes: 6,
-      say: 'Read each page carefully – the checks use NEW clocks. Tap the yellow words for a 💎.',
+      type: 'read', title: 'Past and To', short: 'Read 1', minutes: 5,
+      say: 'Short pages! The checks use NEW clocks. Tap the yellow words for a 💎.',
       cards: [
         {
           title: 'Two hands, two jobs', pic: C('10:10'),
           text: [
-            'The short [[hour hand]] tells you the hour. It moves slowly – from one number to the next takes a whole hour.',
-            'The long [[minute hand]] zooms round. One trip all the way round the clock takes 60 minutes – that is one hour.',
+            'The short [[hour hand]] tells you the hour.',
+            'The long [[minute hand]] goes all the way round in 60 minutes. That is one hour.',
           ],
-          check: { q: 'The long hand starts on the 12 and goes all the way round, back to the 12. How much time has passed?', options: ['one hour', 'one minute', '12 hours'], answer: 0 },
+          check: { q: 'The long hand goes from the 12 all the way round, back to the 12. How long was that?', options: ['one hour', 'one minute', '12 hours'], answer: 0 },
         },
         {
-          title: 'Cut the clock in half', pic: H('12:00'),
+          title: 'The clock code', pic: H('12:00'),
           text: [
-            'Imagine a line from the 12 down to the 6. When the long hand is on the right side, we say PAST – minutes after the hour we just had.',
-            'When the long hand is on the left side, we say TO – minutes left until the next hour arrives.',
+            'Look where the long hand points:',
+            "On the 12 → o'clock",
+            'On the 3 → quarter past',
+            'On the 6 → half past',
+            'On the 9 → quarter to',
           ],
-          check: { type: 'hotspot', q: 'Tap a number where the long hand would make it a TO time.', img: C('12:00'), spots: CLOCK_SPOTS, answer: [7, 8, 9, 10, 11], hint: 'TO times are on the LEFT side of the line.', explain: 'Any number on the left side – 7, 8, 9, 10 or 11 – means TO.' },
+          check: { type: 'hotspot', q: 'Tap where the long hand points at half past.', img: C('12:00'), spots: CLOCK_SPOTS, answer: 6, hint: 'Half past is halfway round – straight down.', explain: 'Half past: the long hand is on the 6.' },
         },
         {
           title: 'Quarter past', pic: H('2:15'),
           text: [
-            'Split the clock into 4 equal parts. Each part is a [[quarter]] of an hour: 15 minutes.',
-            'When the long hand has gone one quarter of the way round, it points at the 3. The short hand has just gone past the 2, so this is quarter past 2.',
+            'Long hand on the 3 = quarter past. A [[quarter]] of an hour is 15 minutes.',
+            'The short hand has just passed the 2. So it is quarter past 2.',
           ],
-          check: { type: 'type', q: 'The long hand is on the 3. The short hand is just past the 9. Write the time in words.', answer: ['quarter past 9', 'quarter past nine', 'a quarter past 9', 'a quarter past nine'], placeholder: 'like: half past 2', hint: 'The long hand on the 3 means quarter PAST. Which hour has the short hand just passed?', explain: 'Quarter past 9!' },
+          check: { type: 'type', q: 'Long hand on the 3. Short hand just past the 9. Write the time in words.', answer: ['quarter past 9', 'quarter past nine', 'a quarter past 9', 'a quarter past nine'], placeholder: 'like: half past 2', hint: 'Long hand on the 3 = quarter past. Which number has the short hand just passed?', explain: 'Quarter past 9!' },
         },
         {
-          title: 'Quarter to – the tricky one!', pic: H('3:45'),
+          title: 'Quarter to: say the NEXT hour', pic: H('3:45'),
           text: [
-            'When the long hand points at the 9, it has gone three quarters of the way round. There is just one quarter of an hour LEFT until the next o\'clock.',
-            'So we name the hour that is COMING. Look at the short hand: it is nearly at the 4. So this is quarter to 4.',
+            'Long hand on the 9 = quarter to. Only 15 minutes are left until the next hour.',
+            'The short hand is nearly at the 4. So we say quarter to 4, not quarter to 3!',
           ],
-          check: { q: 'The long hand is on the 9. The short hand is between the 6 and the 7 – very close to the 7. What time is it?', options: ['quarter to 7', 'quarter to 6', 'quarter past 6'], answer: 0, hint: 'For a TO time, which hour is the short hand heading towards?' },
-        },
-        {
-          title: 'Myth-buster: read the number you passed?', pic: '🕵️‍♂️❌',
-          text: [
-            'Lots of people say: "Just read the number the short hand has passed." That works for PAST times – but not for TO times!',
-            'At quarter to 4, the short hand has passed the 3. But we say the hour it is heading to: 4.',
-          ],
-          check: { q: 'Tock sees the long hand on the 9 and the short hand nearly on the 6. He says "quarter to 5". What should he say?', options: ['quarter to 6', 'quarter past 5', 'quarter to 5 is right'], answer: 0 },
+          check: { q: 'Long hand on the 9. Short hand nearly at the 6. Tock says "quarter to 5". What is right?', options: ['quarter to 6', 'quarter past 5', 'quarter to 5'], answer: 0, hint: 'Which number is the short hand heading TO?' },
         },
       ],
     },
@@ -139,7 +135,7 @@ window.LESSON = {
     {
       type: 'video', title: 'Quarter To Times', short: 'Video', minutes: 9,
       video: { id: 'HKZOGR1pz1I', title: 'Telling the Time for Kids: Quarter To Times', channel: 'Learn and Play Online!', duration: '8:13' },
-      say: 'This video is ALL about quarter to times – the tricky ones. Watch, then answer!',
+      say: 'This video is all about quarter to. Watch, then answer!',
       clues: [
         'How many minutes are in a quarter of an hour?',
         'Which number does the minute hand point at for quarter to?',
@@ -147,78 +143,76 @@ window.LESSON = {
         'What would a digital clock show at quarter to one?',
       ],
       questions: [
-        { type: 'slider', q: 'The video says there are 60 minutes in an hour and 30 in half an hour. Drag the marker to a QUARTER of an hour.', min: 0, max: 60, step: 5, ticks: 12, answer: 15, unit: '', hint: 'Half an hour is 30 minutes. A quarter is half of that.', explain: 'A quarter of an hour is 15 minutes.' },
-        { type: 'hotspot', q: 'For a quarter TO time, where does the minute hand point? Tap the number.', img: C('12:00'), spots: CLOCK_SPOTS, answer: 9, hint: 'Three quarters of the way round the clock.' },
+        { type: 'slider', q: 'Half an hour is 30 minutes. Drag the marker to a QUARTER of an hour.', min: 0, max: 60, step: 5, ticks: 12, answer: 15, unit: '', hint: 'A quarter is half of 30.', explain: 'A quarter of an hour is 15 minutes.' },
+        { type: 'hotspot', q: 'For quarter TO, where does the minute hand point? Tap the number.', img: C('12:00'), spots: CLOCK_SPOTS, answer: 9, hint: 'Three quarters of the way round.' },
         { type: 'mcq', q: 'Why do we say quarter TO?', options: ['A quarter of an hour is left until the next hour', 'The minute hand has gone a quarter of the way round', 'The big hand is pointing straight at the number 4'], answer: 0 },
-        { type: 'mcq', q: 'In the video, a digital clock at quarter to one reads…', options: ['12:45', '1:45', '1:15'], answer: 0, explain: 'We are still in the 12th hour, so it is 12:45!' },
-        { type: 'mcq', q: 'The minute hand is on the 9 and the hour hand is almost at the 7. The video says the time is…', options: ['quarter to 7', 'quarter to 6', 'quarter past 7'], answer: 0 },
+        { type: 'mcq', q: 'In the video, a digital clock at quarter to one reads…', options: ['12:45', '1:45', '1:15'], answer: 0, explain: 'It is still 12-something, so it is 12:45!' },
+        { type: 'mcq', q: 'Minute hand on the 9, hour hand almost at the 7. What time is it?', options: ['quarter to 7', 'quarter to 6', 'quarter past 7'], answer: 0 },
         { type: 'tf', q: 'Quarter to 3 and 2:45 are the same time.', answer: true },
       ],
     },
 
     {
-      type: 'game', title: 'Clock Workshop', short: 'Workshop', minutes: 6,
+      type: 'game', title: 'Quarter Drill', short: 'Drill', minutes: 6,
       rounds: [
         {
           game: 'clock', mode: 'set', title: 'Set the clock',
-          intro: 'Drag the long red minute hand round the clock – the short hand moves too, just like a real clock! Then press ✔ Check.',
-          say: "Drag the red hand! Use the 💡 Helper if you're not sure which side.",
+          intro: 'Drag the long red hand. The short hand moves too! Then press ✔ Check.',
+          say: "12 = o'clock, 3 = quarter past, 6 = half past, 9 = quarter to!",
           helper: 'on', start: '12:00',
-          times: ['4:00', '7:30', '2:15', '5:45', '9:15', '11:45'],
+          times: ['4:00', '7:30', '2:15', '5:45', '9:15', '6:30', '11:45', '1:45'],
         },
         {
-          game: 'sort', title: 'Past or To?',
-          intro: "Is each digital time an o'clock, a PAST time or a TO time? Sort them into the right chest.",
-          say: 'Up to 30 minutes is PAST. More than 30 is TO!',
-          buckets: [
-            { id: 'oclock', label: "O'CLOCK", emoji: '🔝' },
-            { id: 'past', label: 'PAST (right side)', emoji: '➡️' },
-            { id: 'to', label: 'TO (left side)', emoji: '⬅️' },
-          ],
-          items: [
-            { label: '4:00', bucket: 'oclock' }, { label: '11:00', bucket: 'oclock' },
-            { label: '2:15', bucket: 'past', hint: '15 minutes have gone. That is the right side.' }, { label: '7:30', bucket: 'past', hint: 'Half past counts as PAST.' }, { label: '9:10', bucket: 'past' }, { label: '5:05', bucket: 'past' },
-            { label: '1:45', bucket: 'to', hint: '45 is more than 30, so it is on the TO side.' }, { label: '6:50', bucket: 'to' }, { label: '10:35', bucket: 'to' }, { label: '12:40', bucket: 'to' },
+          game: 'questions', title: 'Name that clock',
+          intro: 'Quick fire! Look at the long hand first, then the short hand.',
+          say: 'Long hand first! Then the short hand.',
+          questions: [
+            { type: 'mcq', q: 'What time is it?', pic: C('6:15'), options: ['quarter past 6', 'quarter to 6', 'quarter past 3'], answer: 0, hint: 'Long hand on the 3 = quarter past.' },
+            { type: 'mcq', q: 'What time is it?', pic: C('9:30'), options: ['half past 9', 'half past 6', 'quarter to 9'], answer: 0, hint: 'Long hand on the 6 = half past. Which number has the short hand just passed?' },
+            { type: 'type', q: 'Write this time in words.', pic: C('10:45'), answer: ['quarter to 11', 'quarter to eleven', 'a quarter to 11', 'a quarter to eleven'], placeholder: 'like: half past 2', hint: 'Long hand on the 9 = quarter to. Which hour is coming next?', explain: 'Quarter to 11!' },
+            { type: 'mcq', q: 'Which clock shows quarter to 3?', optionsHtml: true, options: [C('2:45'), C('3:45'), C('3:15')], answer: 0, hint: "Quarter to 3 comes BEFORE 3 o'clock. The short hand is nearly at the 3." },
+            { type: 'type', q: 'Write this time in words.', pic: C('4:15'), answer: ['quarter past 4', 'quarter past four', 'a quarter past 4', 'a quarter past four'], placeholder: 'like: half past 2', hint: 'Long hand on the 3 = quarter past.', explain: 'Quarter past 4!' },
+            { type: 'mcq', q: 'What time is it?', pic: C('1:45'), options: ['quarter to 2', 'quarter to 1', 'quarter past 9'], answer: 0, hint: 'Long hand on the 9 = quarter to. Say the NEXT hour.' },
           ],
         },
       ],
     },
 
     {
-      type: 'read', title: 'Five-minute jumps', short: 'Read 2', minutes: 6,
-      say: 'Now the long hand can point at ANY number. Read carefully – it is all about counting in 5s!',
+      type: 'read', title: 'Five-minute jumps', short: 'Read 2', minutes: 5,
+      say: 'Now the long hand can point at ANY number. Count in 5s!',
       cards: [
         {
-          title: 'Every number is worth 5', pic: H('12:00'),
+          title: 'Secret minute numbers', pic: M('12:00'),
           text: [
-            'Look closely: between one number and the next there are 5 little marks. Each mark is 1 minute.',
-            'So when the long hand points at the 1, five minutes have gone. At the 2, ten minutes. Count in 5s: 5, 10, 15, 20, 25, 30!',
+            'For the long hand, every number has a secret minute number. Count in 5s to find it!',
+            'The 1 means 5 minutes. The 2 means 10. The 3 means 15. Then 20, 25, 30…',
           ],
-          check: { type: 'type', q: 'The long hand is pointing at the 4. How many minutes past the hour is that?', answer: ['20', 'twenty'], after: 'minutes past', placeholder: 'Count in 5s', hint: 'Count in 5s from the 12: 5, 10, 15…', explain: '5, 10, 15, 20 – it is 20 minutes past.' },
+          check: { type: 'type', q: 'The long hand points at the 4. How many minutes past is that?', answer: ['20', 'twenty'], after: 'minutes past', placeholder: 'Count in 5s', hint: 'Count in 5s from the 12: 5, 10, 15…', explain: '5, 10, 15, 20 – it is 20 minutes past.' },
         },
         {
           title: 'Minutes past', pic: H('9:10'),
           text: [
-            'On the right side we say how many minutes PAST. Say the minutes first, then the hour.',
-            'The long hand is on the 2 – that is 10 minutes. The short hand has just passed the 9. So this is 10 past 9.',
+            'Right side = PAST. Say the minutes, then the hour.',
+            'Long hand on the 2 = 10 minutes. Short hand just past the 9. So it is 10 past 9.',
           ],
-          check: { q: 'The long hand is on the 5. The short hand has just gone past the 1. What time is it?', options: ['25 past 1', '5 past 1', '25 to 1'], answer: 0, hint: 'Count in 5s up to the 5. Which side is it on?' },
+          check: { q: 'Long hand on the 5. Short hand just past the 1. What time is it?', options: ['25 past 1', '5 past 1', '25 past 5'], answer: 0, hint: 'Count in 5s up to the 5. Which number has the short hand passed?' },
         },
         {
           title: 'Minutes to', pic: H('6:40'),
           text: [
-            'On the left side, count BACKWARDS from the 12 to find how many minutes are left: the 11 is 5 to, the 10 is 10 to, the 9 is quarter to, the 8 is 20 to, the 7 is 25 to.',
-            'Here the long hand is on the 8 and the short hand is nearly at the 7. It is 20 to 7.',
+            'Left side = TO. Count back from the 12: the 11 is 5 to, the 10 is 10 to, the 8 is 20 to.',
+            'Long hand on the 8, short hand nearly at the 7. So it is 20 to 7.',
           ],
-          check: { q: 'The long hand is on the 10. The short hand is nearly at the 4. What time is it?', options: ['10 to 4', '10 past 4', '10 to 3'], answer: 0 },
+          check: { q: 'Long hand on the 10. Short hand nearly at the 4. What time is it?', options: ['10 to 4', '10 past 4', '10 to 3'], answer: 0, hint: 'Left side, so TO. Which hour is coming?' },
         },
         {
           title: 'Digital clocks count on', pic: '📱 4:50',
           text: [
-            'A [[digital]] clock never says TO. It always counts the minutes PAST the hour, all the way up to 59.',
-            'So 4:50 means 50 minutes past 4. On an [[analogue]] clock that is 10 minutes before 5 o\'clock: 10 to 5!',
+            'A [[digital]] clock never says TO. 4:50 means 50 minutes past 4.',
+            "On an [[analogue]] clock that is 10 minutes before 5 o'clock. So it is 10 to 5!",
           ],
-          check: { type: 'type', q: 'A microwave shows 7:55. Write it in clock words.', answer: ['5 to 8', 'five to eight', '5 to eight', 'five to 8'], placeholder: 'like: 10 past 3', hint: '55 minutes past 7… how many minutes until 8 o\'clock?', explain: 'Only 5 minutes until 8 o\'clock, so it is 5 to 8.' },
+          check: { type: 'type', q: 'A microwave shows 7:55. Write it in clock words.', answer: ['5 to 8', 'five to eight', '5 to eight', 'five to 8'], placeholder: 'like: 10 past 3', hint: "How many minutes until 8 o'clock?", explain: "Only 5 minutes until 8 o'clock, so it is 5 to 8." },
         },
       ],
     },
@@ -227,23 +221,17 @@ window.LESSON = {
       type: 'game', title: 'Clock Challenge', short: 'Clocks', minutes: 6,
       rounds: [
         {
-          game: 'clock', mode: 'set', title: 'Five-minute clocks',
-          intro: 'Set each clock to the time in words. The helper is OFF this time – press 💡 Helper if you need it.',
-          say: 'Count in 5s! Right side for PAST, left side for TO.',
-          helper: 'off', start: '12:00',
-          times: ['9:10', '1:25', '6:40', '3:50', '10:35', '7:55'],
+          game: 'clock', mode: 'read', title: 'Count in 5s', ring: 'minutes',
+          intro: 'Tap the hour, then type the minutes. The brown numbers round the outside show the secret minutes!',
+          say: 'The 2 means 10. Count in 5s!',
+          times: ['9:10', '1:25', '4:20', '6:40', '3:50', '7:05'],
         },
         {
-          game: 'match', title: 'Clock pairs', html: true,
-          intro: 'Match each clock to its time in words.',
-          say: 'Tap a clock, then tap its time!',
-          pairs: [
-            { a: C('4:20'), b: '20 past 4' },
-            { a: C('4:40'), b: '20 to 5' },
-            { a: C('8:05'), b: '5 past 8' },
-            { a: C('7:55'), b: '5 to 8' },
-            { a: C('2:30'), b: 'half past 2' },
-          ],
+          game: 'clock', mode: 'set', title: 'Five-minute clocks',
+          intro: 'Set each clock. The helper is OFF – tap 💡 Helper if you need it.',
+          say: 'Count in 5s! Right side PAST, left side TO.',
+          helper: 'off', start: '12:00',
+          times: ['9:10', '1:25', '6:40', '3:50', '10:35', '7:55'],
         },
       ],
     },
@@ -308,7 +296,7 @@ window.LESSON = {
 
     {
       type: 'quiz', title: 'Boss Battle: Count Clockula', short: 'Boss', kind: 'Boss battle', minutes: 7,
-      say: 'Oh no! COUNT CLOCKULA is muddling every clock in the land so nobody knows when to wake up! Every right answer is a hit. Stop him, {name}!',
+      say: 'Oh no! COUNT CLOCKULA is muddling every clock! Every right answer is a hit. Stop him, {name}!',
       boss: {
         name: 'Count Clockula', sprite: CLOCKULA, attack: '⏰',
         lines: {
@@ -332,15 +320,15 @@ window.LESSON = {
         button: 'Watch the bonus video ▶',
       },
       questions: [
-        { type: 'mcq', q: 'What time does this clock show?', pic: C('5:15'), options: ['quarter past 5', 'quarter to 5', 'quarter past 3'], answer: 0, hint: 'The long hand on the 3 means quarter PAST. Which number has the short hand just passed?' },
-        { type: 'mcq', q: 'What time does this clock show?', pic: C('8:45'), options: ['quarter to 9', 'quarter to 8', 'quarter past 9'], answer: 0, hint: 'For a TO time, look where the short hand is HEADING.' },
+        { type: 'mcq', q: 'What time does this clock show?', pic: C('5:15'), options: ['quarter past 5', 'quarter to 5', 'quarter past 3'], answer: 0, hint: 'Long hand on the 3 = quarter past.' },
+        { type: 'mcq', q: 'What time does this clock show?', pic: C('8:45'), options: ['quarter to 9', 'quarter to 8', 'quarter past 9'], answer: 0, hint: 'Long hand on the 9 = quarter to. Say the NEXT hour.' },
+        { type: 'type', q: 'Write this clock in words.', pic: C('7:45'), answer: ['quarter to 8', 'quarter to eight', 'a quarter to 8', 'a quarter to eight'], placeholder: 'like: half past 2', hint: 'Long hand on the 9 = quarter to. Which hour is coming?' },
         { type: 'mcq', q: 'Which clock shows half past 11?', optionsHtml: true, options: [C('11:30'), C('12:30'), C('11:00')], answer: 0, hint: 'Half past: long hand on the 6, short hand just past the 11.' },
-        { type: 'type', q: 'What time does this clock show? Write it in clock words.', pic: C('2:20'), answer: ['20 past 2', 'twenty past two', 'twenty past 2', '20 past two'], placeholder: 'like: 10 past 3', hint: 'Count in 5s up to the 4: 5, 10, 15, 20.' },
-        { type: 'mcq', q: 'What time does this clock show?', pic: C('6:50'), options: ['10 to 7', '10 past 6', '10 to 6'], answer: 0, hint: 'The long hand is on the TO side, 10 minutes before the 12. Which hour is coming?' },
-        { type: 'type', q: 'A digital clock shows 4:35. Write it in clock words.', answer: ['25 to 5', 'twenty five to five', 'twenty five to 5', '25 to five'], placeholder: 'like: 10 to 3', hint: '35 is more than 30, so it is a TO time. How many minutes until 5 o\'clock?' },
-        { type: 'mcq', q: 'Clockula cast a spell! Which clock shows 25 to 4?', optionsHtml: true, options: [C('3:35'), C('4:35'), C('3:25')], answer: 0, hint: '25 to 4 is BEFORE 4 o\'clock. The short hand should be nearly at the 4, not past it.' },
+        { type: 'type', q: 'Write this clock in words.', pic: C('2:20'), answer: ['20 past 2', 'twenty past two', 'twenty past 2', '20 past two'], placeholder: 'like: 10 past 3', hint: 'The 4 means 20 minutes. Count in 5s: 5, 10, 15, 20.' },
+        { type: 'mcq', q: 'What time does this clock show?', pic: C('6:50'), options: ['10 to 7', '10 past 6', '10 to 6'], answer: 0, hint: 'Left side, so TO. Which hour is coming?' },
+        { type: 'type', q: 'A digital clock shows 4:35. Write it in clock words.', answer: ['25 to 5', 'twenty five to five', 'twenty five to 5', '25 to five'], placeholder: 'like: 10 to 3', hint: '35 is more than 30, so it is a TO time. How many minutes until 5?' },
+        { type: 'mcq', q: 'Clockula cast a spell! Which clock shows quarter past 10?', optionsHtml: true, options: [C('10:15'), C('10:45'), C('3:50')], answer: 0, hint: 'Quarter past: long hand on the 3, short hand just past the 10.' },
         { type: 'tf', q: 'At quarter to 6, the short hand points exactly at the 6.', answer: false, explain: 'It is just BEFORE the 6 – there is still a quarter of an hour to go!' },
-        { type: 'mcq', q: 'Sam\'s bus comes at 10 to 9. Sam gets to the bus stop at quarter to 9. What happens?', options: ['Sam is 5 minutes early', 'Sam is 5 minutes late', 'Sam is exactly on time'], answer: 0, hint: 'Quarter to 9 is 8:45. 10 to 9 is 8:50. Which comes first?' },
         { type: 'order', q: 'Put these times in order, earliest first.', items: ['quarter past 7', 'half past 7', 'quarter to 8', "8 o'clock"], ends: ['EARLIEST', 'LATEST'], hint: 'Imagine the long hand going round from the 3…' },
       ],
     },
