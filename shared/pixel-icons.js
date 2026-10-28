@@ -3741,8 +3741,47 @@
   def('🧸', over(rec(CRITTER, { x: 'o', X: 'O' }), { 13: '   kkOOrkrOkk   ', 14: '     kkrkrk     ' }));
   def('🐹 🐭', rec(CRITTER, { x: 't', X: 'T', t: 'w' }));
   def('🐷 🐽', rec(CRITTER, { x: 'p', X: 'P', t: 'P' }));
-  def('🐑', rec(CRITTER, { x: 'w', X: 'W', t: 'G' }));
-  def('🐂 🐄 🐃', over(rec(CRITTER, { x: 'N', X: 'h', t: 't' }), { 0: 'kk            kk', 1: 'kwk.kkk..kkk.kwk', 2: '.kwkNhNk.kNhNkwk' }));
+  // sheep side-on (the front-facing critter read as a bear): a woolly cloud with a grey face and legs
+  def('🐑', [
+    '................',
+    '................',
+    '......kk.kk.....',
+    '....kkwwkwwkk...',
+    '.kkkwwwwwwwwwk..',
+    'kgggkwwwwwwwwwk.',
+    'kgkgkwwwwwwwwwk.',
+    'kggggkwwwwwwwWk.',
+    '.kggkwwwwwwwwWk.',
+    '..kkkwwwwwwwWWk.',
+    '....kWWWWWWWWk..',
+    '.....kkkkkkkk...',
+    '.....kGk..kGk...',
+    '.....kGk..kGk...',
+    '.....kkk..kkk...',
+    '................',
+  ]);
+  // cattle head: horns out to the sides, floppy ears, a long face and a wide muzzle. x = hide, X = inner ear, p/P = muzzle/nostrils
+  const CATTLE = [
+    '................',
+    '................',
+    '.kk..........kk.',
+    '.kwk........kwk.',
+    '..kwkkkkkkkkwk..',
+    'kxxkxxxxxxxxkxxk',
+    'kxXkxxxxxxxxkXxk',
+    '.kkkxkxxxxkxkkk.',
+    '...kxxxxxxxxk...',
+    '...kxxxxxxxxk...',
+    '..kppppppppppk..',
+    '..kpPppppppPpk..',
+    '..kppppppppppk..',
+    '...kkkkkkkkkk...',
+    '................',
+    '................',
+  ];
+  def('🐄 🐮', over(rec(CATTLE, { x: 'w', X: 'p' }), { 5: '     hh         ', 8: '    hhh     ', 9: '         hh  ' }));
+  def('🐂', over(rec(CATTLE, { x: 'H', X: 'N', p: 't', P: 'N' }), { 13: '      y  y      ', 14: '      kyyk      ' }));
+  def('🐃', rec(CATTLE, { x: 'G', X: 'k', p: 'g', P: 'k', w: 'W' }));
   // horse head in profile (the front-facing critter read as a bear): H = coat, h = mane, t = muzzle, N = nostril
   const HORSE = def('🐴 🐎', [
     '................',
