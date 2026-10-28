@@ -95,6 +95,13 @@ function checkQuestion(q, where, err, ctx = {}) {
     case 'type':
       if (![].concat(q.answer).length || [].concat(q.answer).some(a => !cleanTyped(a))) err(`${where}: type answer is empty after cleaning`);
       break;
+    case 'setclock': {
+      const m = /^(\d{1,2}):(\d{2})$/.exec(q.time || '');
+      if (!m || +m[1] < 1 || +m[1] > 12 || +m[2] > 59) err(`${where}: setclock time "${q.time}" should be like 3:45`);
+      else if (+m[2] % (q.step || 5)) err(`${where}: setclock time ${q.time} can't be reached in steps of ${q.step || 5}`);
+      if (q.start && q.start === q.time) err(`${where}: setclock starts on the answer`);
+      break;
+    }
     case 'predict':
       if (!Array.isArray(q.options) || q.options.length < 2) err(`${where}: predict needs 2+ options`);
       if (q.answer != null && !isInt(q.answer, q.options.length)) err(`${where}: predict answer is not an option index`);
@@ -179,7 +186,7 @@ function check(file) {
   (L.stages || []).forEach((s, si) => {
     const at = `stage ${si + 1} (${s.type}${s.title ? ': ' + s.title : ''})`;
     (s.cards || []).forEach((c, ci) => {
-      if (c.check && !['mcq', 'evidence', 'hotspot', 'slider', 'oddone', 'build', 'type', 'predict'].includes(c.check.type || 'mcq')) err(`${at} page ${ci + 1} check: a reading check can't be "${c.check.type}" (use mcq or a hands-on type)`);
+      if (c.check && !['mcq', 'evidence', 'hotspot', 'slider', 'oddone', 'build', 'type', 'predict', 'setclock'].includes(c.check.type || 'mcq')) err(`${at} page ${ci + 1} check: a reading check can't be "${c.check.type}" (use mcq or a hands-on type)`);
       if (c.check) checkQuestion(c.check, `${at} page ${ci + 1} check`, err, { passage: c.comic ? c.comic.map(x => x.say) : [].concat(c.text || c.paras || []) });
     });
     (s.questions || []).forEach((q, k) => checkQuestion(q, `${at} q${k + 1}`, err));

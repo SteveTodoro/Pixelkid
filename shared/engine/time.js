@@ -4,7 +4,7 @@
  */
 PixelkidEngine.part('time', E => {
   'use strict';
-  const { GAMES, arcadeCanvas, award, canvasFont, confetti, emojiAt, esc, fmt, gameLoop, h, missionRunner, praise,
+  const { GAMES, QTYPES, arcadeCanvas, award, canvasFont, checkBtn, confetti, emojiAt, esc, fmt, gameLoop, h, missionRunner, praise,
     put, pxText, runQuestions, say, sfx, shake, skyAndGround, toGame } = E;
 
   // ---------- clock games (need shared/clock.js) ----------
@@ -14,35 +14,21 @@ PixelkidEngine.part('time', E => {
   //   Drag the red minute hand (the hour hand moves with it, like a real clock) or the short hour hand.
   // Read the clock: { game: 'clock', mode: 'read', times: [...] } – pick the hour, then type the minutes.
   const angGap = (a, b) => { const d = Math.abs(a - b) % 360; return d > 180 ? 360 - d : d; };
-  GAMES.clock = function (r, key, done) {
+  const minsOf = t => { const p = window.Clock.parse(t); return (p.h % 12) * 60 + p.m; };
+  // a clock face whose hands can be dragged: the red minute hand (the hour hand moves with it, like a real clock) or the
+  // short hour hand. Shared by the clock game's set mode and the setclock question type.
+  // o: { step, opts() (the face's Clock.svg options), locked() } → { face, T, set(v), draw(ghost) } (ghost: faint answer hands)
+  function liveClock(o) {
     const CK = window.Clock;
-    if (!CK) return h('p', null, 'This game needs shared/clock.js.');
-    const items = r.times.map(t => (typeof t === 'string' ? { time: t } : t)).map(t => Object.assign({}, t, CK.parse(t.time)));
-    const read = r.mode === 'read';
-    const step = r.step || (read ? 1 : 5);
-    let qi = 0, misses = 0, T = 0, helper = r.helper === 'on', dragging = null, locked = false;
-    let pickH = null, mins = '';
-    const face = h('div', { class: 'clk-face' + (read ? '' : ' live'), 'aria-label': 'Clock' });
-    const prompt = h('div', { class: 'clk-prompt' });
-    const count = h('div', { class: 'q-count' });
-    const fb = h('div', { class: 'feedback', hidden: true });
-    const controls = h('div', { class: 'clk-controls' });
-    const nextBtn = h('button', { class: 'btn', type: 'button', hidden: true, onclick() { sfx.tap(); qi++; if (qi < items.length) show(); else { put(controls); nextBtn.hidden = true; done(); } } }, 'Next clock ▶');
-    const it = () => items[qi];
-    const target = () => (it().h % 12) * 60 + it().m;
-    const faceOpts = () => ({ roman: r.roman || it().roman, halves: helper, ring: helper ? 'pastto' : (r.ring || null) });
-    const sayTime = t => t.say || CK.words(t.h, t.m);
-
-    function draw() {
-      const p = read ? it() : { h: Math.floor(T / 60), m: T % 60 };
-      face.innerHTML = CK.svg(p.h, p.m, faceOpts());
-      if (!read && misses >= 2) { // ghost hands show where to go
-        const g = CK.svg(it().h, it().m, { ticks: false });
-        const ghost = h('div', { class: 'clk-ghost', html: g });
-        face.append(ghost);
-      }
+    let T = 0, dragging = null, ghost = null;
+    const face = h('div', { class: 'clk-face live', 'aria-label': 'Clock' });
+    function draw(g = ghost) {
+      ghost = g;
+      const fo = o.opts();
+      face.innerHTML = CK.svg(Math.floor(T / 60), T % 60, fo);
+      if (ghost) face.append(h('div', { class: 'clk-ghost', html: CK.svg(ghost.h, ghost.m, { ticks: false }) }));
     }
-    function setT(v) { T = ((v % 720) + 720) % 720; sfx.tap(); draw(); }
+    function set(v, quiet) { T = ((v % 720) + 720) % 720; if (!quiet) sfx.tap(); draw(); }
     // pointer → angle (0 = 12 o'clock, clockwise) and distance in SVG units (face is 200 wide)
     function polar(e) {
       const b = face.getBoundingClientRect(), x = (e.clientX - b.left) / b.width * 200 - 100, y = (e.clientY - b.top) / b.height * 200 - 100;
@@ -51,41 +37,71 @@ PixelkidEngine.part('time', E => {
     function dragTo(e) {
       const { ang } = polar(e);
       if (dragging === 'm') {
-        const nm = (Math.round(ang / 6 / step) * step) % 60;
+        const nm = (Math.round(ang / 6 / o.step) * o.step) % 60;
         let d = nm - T % 60;
         if (d > 30) d -= 60; else if (d < -30) d += 60;
-        if (d) setT(T + d);
+        if (d) set(T + d);
       } else {
         const hr = ((Math.round((ang - (T % 60) * 0.5) / 30) % 12) + 12) % 12;
-        if (hr !== Math.floor(T / 60)) setT(hr * 60 + T % 60);
+        if (hr !== Math.floor(T / 60)) set(hr * 60 + T % 60);
       }
     }
-    if (!read) {
-      face.addEventListener('pointerdown', e => {
-        if (locked) return;
-        e.preventDefault();
-        const { ang, dist } = polar(e);
-        const hDeg = (T / 2) % 360, mDeg = (T % 60) * 6, R = helper ? 70 : 88;
-        // near the middle on the short hand → hour hand (even when the hands overlap); anywhere else → minute hand
-        dragging = dist < R * 0.55 && angGap(ang, hDeg) < 30 ? 'h' : 'm';
-        try { face.setPointerCapture(e.pointerId); } catch (_) { /* ignore */ }
-        dragTo(e);
-      });
-      face.addEventListener('pointermove', e => { if (dragging && !locked) dragTo(e); });
-      const end = () => { dragging = null; };
-      face.addEventListener('pointerup', end); face.addEventListener('pointercancel', end);
+    face.addEventListener('pointerdown', e => {
+      if (o.locked()) return;
+      e.preventDefault();
+      const { ang, dist } = polar(e);
+      const hDeg = (T / 2) % 360, R = o.opts().halves ? 70 : 88;
+      // near the middle on the short hand → hour hand (even when the hands overlap); anywhere else → minute hand
+      dragging = dist < R * 0.55 && angGap(ang, hDeg) < 30 ? 'h' : 'm';
+      try { face.setPointerCapture(e.pointerId); } catch (_) { /* ignore */ }
+      dragTo(e);
+    });
+    face.addEventListener('pointermove', e => { if (dragging && !o.locked()) dragTo(e); });
+    const end = () => { dragging = null; };
+    face.addEventListener('pointerup', end); face.addEventListener('pointercancel', end);
+    return { face, draw, set, get T() { return T; } };
+  }
+  // the − / + buttons under a live clock
+  const nudgeRow = (lc, step) => {
+    const btn = (label, d) => h('button', { class: 'btn ghost', type: 'button', onclick() { lc.set(lc.T + d); } }, label);
+    return h('div', { class: 'clk-nudge' }, btn('⟲ hour', -60), btn(`− ${step} min`, -step), btn(`+ ${step} min`, step), btn('hour ⟳', 60));
+  };
+  // what's wrong with the hands at T (minutes after 12) when the answer is t ({ h, m }); words = the time said aloud
+  function setHint(t, T, words) {
+    const cm = T % 60, ch = Math.floor(T / 60) % 12 || 12, th = t.h % 12 || 12, next = th % 12 + 1;
+    const num = m => (m === 0 ? 12 : m / 5);
+    if (cm !== t.m) {
+      if (t.m % 30 && cm === (60 - t.m) % 60) return `Careful – wrong side! ${t.m < 30 ? 'PAST times are on the RIGHT side' : 'TO times are on the LEFT side'}. The minute hand should point at the ${num(t.m)}.`;
+      return t.m % 5 ? `Count the little marks: the red minute hand goes on ${t.m} minutes.` : `The long red minute hand should point at the ${num(t.m)}.`;
     }
+    if (t.m > 30 && ch === next) return `So close! "${words}" is BEFORE ${next} o'clock, so the short hand is just before the ${next} – not past it.`;
+    if (t.m === 0) return `The short hour hand should point straight at the ${th}.`;
+    return t.m <= 30 ? `The short hour hand should be just past the ${th}.` : `The short hour hand should be just before the ${next}.`;
+  }
 
-    function hintSet() {
-      const t = it(), cm = T % 60, ch = Math.floor(T / 60) % 12 || 12, th = t.h % 12 || 12, next = th % 12 + 1;
-      const num = m => (m === 0 ? 12 : m / 5);
-      if (cm !== t.m) {
-        if (t.m % 30 && cm === (60 - t.m) % 60) return `Careful – wrong side! ${t.m < 30 ? 'PAST times are on the RIGHT side' : 'TO times are on the LEFT side'}. The minute hand should point at the ${num(t.m)}.`;
-        return t.m % 5 ? `Count the little marks: the red minute hand goes on ${t.m} minutes.` : `The long red minute hand should point at the ${num(t.m)}.`;
-      }
-      if (t.m > 30 && ch === next) return `So close! "${sayTime(t)}" is BEFORE ${next} o'clock, so the short hand is just before the ${next} – not past it.`;
-      if (t.m === 0) return `The short hour hand should point straight at the ${th}.`;
-      return t.m <= 30 ? `The short hour hand should be just past the ${th}.` : `The short hour hand should be just before the ${next}.`;
+  GAMES.clock = function (r, key, done) {
+    const CK = window.Clock;
+    if (!CK) return h('p', null, 'This game needs shared/clock.js.');
+    const items = r.times.map(t => (typeof t === 'string' ? { time: t } : t)).map(t => Object.assign({}, t, CK.parse(t.time)));
+    const read = r.mode === 'read';
+    const step = r.step || (read ? 1 : 5);
+    let qi = 0, misses = 0, helper = r.helper === 'on', locked = false;
+    let pickH = null, mins = '';
+    const it = () => items[qi];
+    const target = () => (it().h % 12) * 60 + it().m;
+    const faceOpts = () => ({ roman: r.roman || it().roman, halves: helper, ring: helper ? 'pastto' : (r.ring || null) });
+    const lc = !read && liveClock({ step, opts: faceOpts, locked: () => locked });
+    const face = read ? h('div', { class: 'clk-face', 'aria-label': 'Clock' }) : lc.face;
+    const prompt = h('div', { class: 'clk-prompt' });
+    const count = h('div', { class: 'q-count' });
+    const fb = h('div', { class: 'feedback', hidden: true });
+    const controls = h('div', { class: 'clk-controls' });
+    const nextBtn = h('button', { class: 'btn', type: 'button', hidden: true, onclick() { sfx.tap(); qi++; if (qi < items.length) show(); else { put(controls); nextBtn.hidden = true; done(); } } }, 'Next clock ▶');
+    const sayTime = t => t.say || CK.words(t.h, t.m);
+
+    function draw() {
+      if (read) face.innerHTML = CK.svg(it().h, it().m, faceOpts());
+      else lc.draw(misses >= 2 ? it() : null); // ghost hands show where to go
     }
     function hintRead(gh, gm) {
       const t = it(), th = t.h % 12 || 12;
@@ -116,13 +132,9 @@ PixelkidEngine.part('time', E => {
 
     function setControls() {
       const btn = (label, fn, cls = 'btn ghost') => h('button', { class: cls, type: 'button', onclick: fn }, label);
-      const check = btn('✔ Check', e => { if (T === target()) right(face); else wrong(face, hintSet()); }, 'btn big green');
+      const check = btn('✔ Check', e => { if (lc.T === target()) right(face); else wrong(face, setHint(it(), lc.T, sayTime(it()))); }, 'btn big green');
       const helpBtn = r.helper !== 'none' && btn(helper ? '💡 Helper ON' : '💡 Helper', e => { helper = !helper; e.currentTarget.textContent = helper ? '💡 Helper ON' : '💡 Helper'; sfx.tap(); draw(); }, 'btn gold');
-      put(controls,
-        h('div', { class: 'clk-nudge' },
-          btn('⟲ hour', () => setT(T - 60)), btn(`− ${step} min`, () => setT(T - step)),
-          btn(`+ ${step} min`, () => setT(T + step)), btn('hour ⟳', () => setT(T + 60))),
-        h('div', { class: 'btn-row' }, helpBtn, check));
+      put(controls, nudgeRow(lc, step), h('div', { class: 'btn-row' }, helpBtn, check));
     }
     function readControls() {
       const lcd = h('div', { class: 'clk-lcd' });
@@ -151,7 +163,7 @@ PixelkidEngine.part('time', E => {
     function show() {
       misses = 0; locked = false; pickH = null; mins = '';
       const t = it();
-      if (!read) T = t.start ? (CK.parse(t.start).h % 12) * 60 + CK.parse(t.start).m : (r.start ? (CK.parse(r.start).h % 12) * 60 + CK.parse(r.start).m : 0);
+      if (!read) lc.set(t.start ? minsOf(t.start) : r.start ? minsOf(r.start) : 0, true);
       count.textContent = `Clock ${qi + 1} of ${items.length}`;
       const showMode = t.show || r.show || 'words';
       if (read) put(prompt, h('span', null, t.ask || 'What time does this clock show?'));
@@ -166,8 +178,28 @@ PixelkidEngine.part('time', E => {
     }
     const root = h('div', { class: 'game clock' }, count, prompt, h('div', { class: 'clk-wrap' }, face, controls), fb, h('div', { class: 'btn-row' }, nextBtn));
     show();
-    root._test = { set(v) { T = (CK.parse(v).h % 12) * 60 + CK.parse(v).m; draw(); }, get T() { return T; } };
+    root._test = { set(v) { lc.set(minsOf(v), true); }, get T() { return lc.T; } };
     return root;
+  };
+
+  // setclock (a question type, so it works in reading checks, video quests, the questions game and boss battles):
+  // drag the hands to show a time. { q, time: '3:45', step: 5, start: '12:00', helper: true (the PAST / TO ring) }
+  // A miss says what's wrong with the hands; after two, faint hands show where to go.
+  QTYPES.setclock = (q, onRight, onMiss) => {
+    const CK = window.Clock, t = CK.parse(q.time), step = q.step || 5;
+    let misses = 0, done = false;
+    const lc = liveClock({ step, opts: () => ({ halves: !!q.helper, ring: q.helper ? 'pastto' : null }), locked: () => done });
+    const note = h('div', { class: 'sl-note', 'aria-live': 'polite' });
+    const btn = checkBtn('✔ Check', () => {
+      if (done) return;
+      if (lc.T === (t.h % 12) * 60 + t.m) { done = true; btn.disabled = true; note.textContent = ''; lc.draw(null); lc.face.classList.add('right'); onRight(lc.face, !misses); return; }
+      misses++; shake(lc.face); sfx.bad(); onMiss(lc.face);
+      note.textContent = '💡 ' + setHint(t, lc.T, CK.words(t.h, t.m)) + (misses >= 2 ? ' The faint hands show where to go!' : '');
+      if (misses >= 2) lc.draw(t);
+    });
+    lc.set(q.start ? minsOf(q.start) : 0, true);
+    lc.face._test = { set(v) { lc.set(minsOf(v), true); }, get T() { return lc.T; } };
+    return [h('div', { class: 'q-tag' }, '👆 Drag the long red hand, then check!'), h('div', { class: 'clk-q' }, lc.face, nudgeRow(lc, step)), note, h('div', { class: 'btn-row' }, btn)];
   };
 
   // ---------- whole-day time helpers (Day Dial, Time Hops) ----------

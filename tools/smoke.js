@@ -100,6 +100,16 @@ async function answer(page, area, q) {
     const hit = sents.find(s => want.some(a => plain(s.textContent).toLowerCase().includes(a)));
     if (!hit) throw new Error(`evidence sentence not found: ${want[0]}`);
     hit.click();
+  } else if (t === 'setclock') {
+    // the first one on a page: a wrong try first (the hint must appear); then the right time through the face's _test hook
+    const face = area.querySelector('.clk-q .clk-face');
+    if (!page.triedClock) {
+      page.triedClock = true;
+      btn(/check/i).click(); await wait(30);
+      if (!/should|careful|close/i.test((area.querySelector('.sl-note') || {}).textContent || '')) throw new Error('setclock: no hint after a wrong try');
+    }
+    face._test.set(q.time);
+    btn(/check/i).click();
   } else if (t === 'hotspot') {
     const k = [].concat(q.answer)[0];
     area.querySelectorAll('.hs-spot, .hotspot button, [class*="spot"]')[k].click();

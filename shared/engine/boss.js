@@ -122,8 +122,8 @@ PixelkidEngine.part('boss', E => {
       // pink walls slide in from both sides and squeeze – hide in the gap! (flashes first, then closes, then opens)
       crush() {
         const cyc = 2.4 / Math.min(speed, 1.4), k = lt % cyc, n = Math.floor(lt / cyc);
-        if (S.n !== n) { S.n = n; S.gap = 50 + Math.random() * (W - 100); }
-        const half = 30, warn = 0.7, close = warn + 0.5, hold = close + 0.5;
+        if (S.n !== n) { S.n = n; S.gap = 60 + Math.random() * (W - 120); }
+        const half = 46, warn = 0.7, close = warn + 0.5, hold = close + 0.5;
         const f = k < warn ? 0 : k < close ? (k - warn) / 0.5 : k < hold ? 1 : Math.max(0, 1 - (k - hold) / 0.4);
         walls.length = 0;
         if (k < warn) { walls.push({ x: 0, y: 0, w: S.gap - half, h: H, warn: true }, { x: S.gap + half, y: 0, w: W - S.gap - half, h: H, warn: true }); return; }
@@ -162,9 +162,9 @@ PixelkidEngine.part('boss', E => {
         }
       },
       // side-scrolling cave: the walls slide past and the tunnel winds about as it narrows – stay in the gap!
-      // It opens wide (so there is time to line up), narrows to a gap the hitbox fits with room to spare, with wider pockets now and then.
+      // It opens wide (so there is time to line up), narrows to a gap the whole avatar (hat and all) fits with room to spare, with wider pockets now and then.
       tunnel() {
-        if (!S.init) { S.init = true; S.p1 = Math.random() * 6; S.p2 = Math.random() * 6; S.min = Math.max(62, ph * 0.6 + 38) + (round <= 1 ? 14 : 0); }
+        if (!S.init) { S.init = true; S.p1 = Math.random() * 6; S.p2 = Math.random() * 6; S.min = Math.max(84, ph + 44) + (round <= 1 ? 14 : 0); }
         const vs = 95 * Math.min(speed, 1.5), off = lt * vs, open = H + 40, COL = 6;
         S.scroll = vs; walls.length = 0;
         for (let x = 0; x < W; x += COL) {
@@ -179,7 +179,7 @@ PixelkidEngine.part('boss', E => {
       },
       // side-scrolling pillars: slip through the gap in each one as it slides past (each gap is a short hop from the last)
       pillars(dt) {
-        const vs = 105 * Math.min(speed, 1.5), gh = Math.max(76, ph * 0.6 + 52), PW = 22;
+        const vs = 105 * Math.min(speed, 1.5), gh = Math.max(96, ph + 56), PW = 22;
         S.list = S.list || []; S.scroll = vs;
         if ((spawnT -= dt) <= 0) {
           spawnT = 1.5 / Math.min(speed, 1.4);
@@ -195,7 +195,7 @@ PixelkidEngine.part('boss', E => {
       },
       // the box shrinks to a small safe square around the player (flashing first), then the square wanders – stay inside it!
       squeeze(dt) {
-        const bw = pw * 0.56 + 64, bh = ph * 0.6 + 56, warn = 0.8, shrink = 1.6;
+        const bw = pw + 84, bh = ph + 64, warn = 0.8, shrink = 1.6;
         if (!S.init) { S.init = true; S.cx = Math.max(bw / 2, Math.min(W - bw / 2, p.x)); S.cy = Math.max(bh / 2, Math.min(H - bh / 2, p.y)); }
         walls.length = 0;
         const box = (L, T, R, B, wn) => {

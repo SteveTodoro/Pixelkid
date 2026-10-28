@@ -18,7 +18,7 @@ const path = require('path');
 const ROOT = path.join(__dirname, '..');
 
 const STAGES = ['welcome', 'review', 'read', 'video', 'game', 'break', 'quiz', 'investigate', 'case', 'teach'];
-const QUESTIONS = ['mcq', 'tf', 'gap', 'order', 'evidence', 'hotspot', 'slider', 'oddone', 'build', 'type', 'predict'];
+const QUESTIONS = ['mcq', 'tf', 'gap', 'order', 'evidence', 'hotspot', 'slider', 'oddone', 'build', 'type', 'predict', 'setclock'];
 const PUZZLES = ['crossword', 'wordsearch'];
 const ARCADE = ['invaders', 'runner', 'platformer', 'blocks', 'labyrinth'];
 const MCQ_LIMIT = 0.6;

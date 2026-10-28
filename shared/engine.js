@@ -23,7 +23,8 @@
  * Question types (quiz, video, questions game): mcq, tf, gap, order (ends: ['FIRST', 'LAST'] labels, start: true pre-fills item 1),
  *   and the hands-on types (QTYPES; these also work as reading checks): evidence (tap the sentence that proves it),
  *   hotspot (tap the place on a picture), slider (number line), oddone (odd one out + why), build (tiles into a word
- *   or sentence), type (write the answer), predict (guess, see the reveal, then explain). See QTYPES for each one's fields.
+ *   or sentence), type (write the answer), predict (guess, see the reveal, then explain), and setclock (drag the clock hands;
+ *   in shared/engine/time.js). See QTYPES for each one's fields.
  *   Run `node tools/activity-audit.js` after writing a lesson to check the activity mix.
  */
 (function () {
@@ -85,6 +86,7 @@
     if (t === 'build') return plain(a.join(q.join ?? ''));
     if (t === 'order') return plain((q.items || []).join(' → '));
     if (t === 'oddone') return plain(q.items[a]) + (q.reasons ? ' – ' + plain(q.reasons[q.reason]) : '');
+    if (t === 'setclock') return plain(q.time);
     if (t === 'hotspot') return plain([].concat(a).map(k => q.spots[k] && q.spots[k].label).filter(Boolean).join(' / '));
     if (t === 'evidence') return `the sentence with "${plain([].concat(a)[0])}"`;
     return q.options && typeof a === 'number' ? plain(q.options[a]) : '';
@@ -564,7 +566,7 @@
       if (k >= lines.length) return stop();
       const line = lines[k];
       if (!line.text.trim()) return play(k + 1);
-      const u = new SpeechSynthesisUtterance(line.text), v = voiceFor('en-GB');
+      const u = new SpeechSynthesisUtterance(spoken(line.text)), v = voiceFor('en-GB');
       if (v) u.voice = v;
       u.lang = v ? v.lang : 'en-GB'; u.rate = 0.9;
       u.onstart = () => { if (playing) line.el.classList.add('rd-line'); };
@@ -1113,6 +1115,10 @@
   // a 🔊 press (force) while the last line is still being spoken is ignored, so it can't be spammed;
   // speakingUntil is a time-out in case a device never fires onend
   let speakingUntil = 0, lastSpoken = null;
+  // words in capitals for emphasis ("quarter TO") are lowered, or some voices spell them out ("T O"); real abbreviations
+  // and Roman numerals stay. Same length, so the read-aloud word highlighting still lines up.
+  const KEEP_CAPS = new Set(['AI', 'UK', 'USA', 'GB', 'TV', 'OK', 'BBC', 'LCD', 'AM', 'PM', 'UN', 'DNA', 'PBJ', 'NASA']);
+  const spoken = t => String(t).replace(/\b[A-Z]{2,}\b/g, w => (KEEP_CAPS.has(w) || /^[IVXL]+$/.test(w) ? w : w.toLowerCase()));
   function speak(text, { rate = 0.85, force = false, lang = null } = {}) {
     if (!canSpeak || (settings.muted && !force)) return false;
     if (force && Date.now() < speakingUntil) return true;
@@ -1120,7 +1126,7 @@
       const v = voiceFor(lang || 'en-GB');
       if (lang && !v) return false;
       speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(text);
+      const u = new SpeechSynthesisUtterance(lang ? text : spoken(text));
       if (v) u.voice = v;
       u.lang = v ? v.lang : 'en-GB'; u.rate = rate;
       speakingUntil = Date.now() + 1500 + String(text).length * 90 / rate;
@@ -1427,8 +1433,8 @@
   // The games and the boss battle live in their own files, and a lesson only loads the ones it uses: PARTS says which
   // file holds which game (games, breaks, boss and finishers – the boss's finishing moves – are used by every lesson; stages holds the teach, case and investigate stages). Each part is a function that gets E, the helpers
   // it needs from here, and adds its games to GAMES (or returns what the core calls, like renderQuiz).
-  const E = { AV, CUR, GAMES, L, M, RKEY, ROBOT_PAL, SPR, WARDROBE, achieve, arcadeCanvas, award, canSpeak,
-    canvasFont, complete, confetti, draggable, dropGame, emojiAt, esc, fill, fmt, gameLoop, go, h, heroImg, holdButton, keys,
+  const E = { AV, CUR, GAMES, L, M, QTYPES, RKEY, ROBOT_PAL, SPR, WARDROBE, achieve, arcadeCanvas, award, canSpeak,
+    canvasFont, checkBtn, complete, confetti, draggable, dropGame, emojiAt, esc, fill, fmt, gameLoop, go, h, heroImg, holdButton, keys,
     mascot, missionRunner, navRow, nextLabel, oops, pic, pick, player, popText, praise, put, pxDraw, pxText, questionWidget, replay,
     resultsTable, runQuestions, save, saveRecord, say, seq, settings, sfx, shake, shell, showCert, shuffle, skyAndGround,
     speak, spriteCanvas, store, toGame, toast, tone, track };
@@ -1450,7 +1456,11 @@
     const games = new Set();
     (function walk(o) { // every game: rounds, recap games, investigation tests, anywhere in the stages
       if (Array.isArray(o)) o.forEach(walk);
-      else if (o && typeof o === 'object') { if (typeof o.game === 'string') games.add(o.game); Object.values(o).forEach(walk); }
+      else if (o && typeof o === 'object') {
+        if (typeof o.game === 'string') games.add(o.game);
+        if (o.type === 'setclock') games.add('clock'); // the setclock question lives in the time part
+        Object.values(o).forEach(walk);
+      }
     })(lesson.stages);
     const stages = lesson.stages.some(s => ['teach', 'case', 'investigate'].includes(s.type)) ? ['stages'] : [];
     return ['games', 'breaks', 'boss', 'finishers', ...stages, ...Object.keys(PARTS).filter(p => PARTS[p].some(g => games.has(g)))];

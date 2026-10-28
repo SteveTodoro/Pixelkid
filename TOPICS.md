@@ -138,6 +138,7 @@ One country per lesson: find it on the map, then the history and culture childre
 - `oddone` — odd one out, then WHY. `{ q, items, answer, why, reasons, reason }`.
 - `build` — tap tiles into a word or sentence. `{ q, answer: ['un', 'happy'], extra: ['re'] (decoys), join: '' (word) or ' ' (sentence) }`.
 - `type` — write the answer. `{ q, answer: '12' or ['colour', 'color'], before, after, placeholder }`. Capitals, spaces and punctuation are ignored.
+- `setclock` — drag the clock hands to show a time (clock lessons; it loads the time part and needs `shared/clock.js`). `{ q, time: '3:45', step: 5, start: '12:00', helper: true (the PAST / TO ring) }`. A wrong try says what's wrong with the hands (wrong side, quarter to the wrong hour…); after two, faint hands show where to go. **In clock lessons, prefer it to "long hand on the 9, short hand nearly at the 6 – what time is it?" sentence questions**: the parent wants him answering with the clock hands as much as possible.
 - `predict` — guess first (never marked wrong), see the reveal, then explain. `{ q, options, answer (the real outcome, optional), reveal, revealPic, then: { q, options, answer, explain } }`.
 
 **Comic pages:** a read card can use `comic: [{ who: 'mascot' | 'me' | emoji/svg, name, say, pic }]` instead of `text` – each line becomes a comic panel with a speech bubble ('me' is the child's own avatar and name). Checks (including `evidence`) work the same. Good for explaining an idea as a conversation (see the "Meet AI" card in `future/ai.html`).
@@ -171,7 +172,7 @@ One country per lesson: find it on the map, then the history and culture childre
 
 **Smoke test (after changing anything in `shared/`):** `npm install` once, then `node tools/smoke.js` (about 5 minutes; or name lesson files to test just those). It opens every lesson in a simulated browser, renders every stage and game round, and plays the question stages to the end with the right answers. Anything that throws an error or can't be finished is listed. A quick test script for a new game can borrow its simulated browser: `const { open, answer, moveOn, wait } = require('./tools/smoke.js')`.
 
-**Check every new or changed lesson:** `node tools/lesson-check.js <file>` validates the data (answer indexes, evidence answers found on the page, hotspot and slider answers you can actually reach, runner items with both right and wrong words). Reading-page checks can be multiple choice or a hands-on type (`evidence`, `hotspot`, `slider`, `oddone`, `build`, `type`, `predict`), but not `tf`, `gap` or `order`.
+**Check every new or changed lesson:** `node tools/lesson-check.js <file>` validates the data (answer indexes, evidence answers found on the page, hotspot and slider answers you can actually reach, runner items with both right and wrong words). Reading-page checks can be multiple choice or a hands-on type (`evidence`, `hotspot`, `slider`, `oddone`, `build`, `type`, `predict`, `setclock`), but not `tf`, `gap` or `order`.
 
 **Keep lessons varied (check with `node tools/activity-audit.js`):**
 - At most ONE word puzzle (`crossword` or `wordsearch`) per lesson, and none in about half of lessons. Never in two lessons in a row of the same world. Other vocabulary practice: `build`, picture↔word `match`, `type`.
