@@ -3743,8 +3743,26 @@
   def('🐷 🐽', rec(CRITTER, { x: 'p', X: 'P', t: 'P' }));
   def('🐑', rec(CRITTER, { x: 'w', X: 'W', t: 'G' }));
   def('🐂 🐄 🐃', over(rec(CRITTER, { x: 'N', X: 'h', t: 't' }), { 0: 'kk            kk', 1: 'kwk.kkk..kkk.kwk', 2: '.kwkNhNk.kNhNkwk' }));
-  def('🐴 🐎', rec(CRITTER, { x: 'H', X: 'N', t: 't' }));
-  def('🦄', over(rec(CRITTER, { x: 'w', X: 'W', t: 'p' }), { 0: '       yk       ', 1: '  kkk kyYk kkk  ', 2: ' kwWwk kyk kwWwk', 4: '  kvvvvvvv      ', 5: ' kvv            ' }));
+  // horse head in profile (the front-facing critter read as a bear): H = coat, h = mane, t = muzzle, N = nostril
+  const HORSE = def('🐴 🐎', [
+    '................',
+    '......k.k.......',
+    '.....kHkHk......',
+    '.....kHHHhk.....',
+    '....kHHHHHhk....',
+    '...kHHkHHHHhk...',
+    '..kHHHHHHHHhhk..',
+    '.kHHHHHHHHHHhhk.',
+    'kHHHHHHHHHHHhhk.',
+    'kNHHHHHkkHHHhhk.',
+    'ktttttk.kHHHhhk.',
+    '.kkkkk..kHHHHhhk',
+    '........kHHHHhhk',
+    '........kHHHHhhk',
+    '........kHHHHhhk',
+    '........kkkkkkkk',
+  ]);
+  def('🦄', over(rec(HORSE, { H: 'w', h: 'v', t: 'p', N: 'P' }), { 0: ' kk             ', 1: ' kyk            ', 2: '  kyYk          ', 3: '   kYk          ' }));
   const CAT = def('🐱 🐈', over(rec(CRITTER, { x: 'o', X: 'O', t: 'w' }), {
     0: '..k..........k..', 1: '..kk........kk..', 2: '..kok......kok..', 3: '..kopkkkkkkpok..',
     8: 'k              k', 9: '                ', 10: 'k              k',
@@ -6180,6 +6198,97 @@
     '....kVVkkVVk....',
     '.....kkkkkk.....',
     '................',
+    '................',
+  ]);
+  def('📮', [
+    '................',
+    '.....kkkkkk.....',
+    '....krrrrrrk....',
+    '...krrrrrrrRk...',
+    '...kkkkkkkkkk...',
+    '...krrrrrrrRk...',
+    '...krkkkkkrRk...',
+    '...krrrrrrrRk...',
+    '...krrwwwrrRk...',
+    '...krrwwwrrRk...',
+    '...krrrrrrrRk...',
+    '...krrrrrrrRk...',
+    '...krrrrrrrRk...',
+    '..kkkkkkkkkkkk..',
+    '..kGGGGGGGGGGk..',
+    '..kkkkkkkkkkkk..',
+  ]);
+  // a grown-up, a child and a grown-up (pixel folk, like the BUST people)
+  def('👪', [
+    '................',
+    '..kkk......kkk..',
+    '.khhhk....kHHHk.',
+    '.ksksk....ksksk.',
+    '.ksssk.kk.ksssk.',
+    '..kkk.khhk.kkk..',
+    '.kbbbkksskkrrrk.',
+    '.kbbbk.kk.krrrk.',
+    '.kbbbkkeekkrrrk.',
+    '.kbbbkkeekkrrrk.',
+    '.kBBBkkeekkRRRk.',
+    '.kBkBk.kk.kRkRk.',
+    '.kBkBk....kRkRk.',
+    '.kkkkk....kkkkk.',
+    '................',
+    '................',
+  ]);
+  def('🪑', [
+    '................',
+    '...kkkk.........',
+    '...knnk.........',
+    '...knNk.........',
+    '...knNk.........',
+    '...knNk.........',
+    '...knNk.........',
+    '...knNkkkkkkkkk.',
+    '...knnnnnnnnnnk.',
+    '...kNNNNNNNNNNk.',
+    '...kkkkkkkkkkkk.',
+    '...knk.....knk..',
+    '...knk.....knk..',
+    '...knk.....knk..',
+    '...kkk.....kkk..',
+    '................',
+  ]);
+  def('🧺', [
+    '................',
+    '................',
+    '.....kkkkkk.....',
+    '....kk....kk....',
+    '...kk......kk...',
+    '...k........k...',
+    '.kkkkkkkkkkkkkk.',
+    '.kTnTnTnTnTnTnk.',
+    '.kkkkkkkkkkkkkk.',
+    '..knTnTnTnTnTk..',
+    '..kTnTnTnTnTnk..',
+    '..knTnTnTnTnTk..',
+    '...kTnTnTnTnk...',
+    '...kkkkkkkkkk...',
+    '................',
+    '................',
+  ]);
+  def('📁 📂', [
+    '................',
+    '................',
+    '................',
+    '.kkkkkk.........',
+    '.kYYYYYk........',
+    '.kYYYYYYkkkkkkk.',
+    '.kYYYYYYYYYYYYk.',
+    '.kkkkkkkkkkkkkk.',
+    '.kwyyyyyyyyyyyk.',
+    '.kyyyyyyyyyyyyk.',
+    '.kyyyyyyyyyyyyk.',
+    '.kyyyyyyyyyyyyk.',
+    '.kyyyyyyyyyyyyk.',
+    '.kYYYYYYYYYYYYk.',
+    '.kkkkkkkkkkkkkk.',
     '................',
   ]);
 
