@@ -12,6 +12,7 @@ PixelkidEngine.part('boss', E => {
   // A boss battle: the boss panel on top, the questions, then the player's avatar with 3 hearts at the bottom.
   // Right answer = the avatar attacks; wrong answer = the boss attacks and takes a heart (at most one per question).
   // Bosses can set attack (emoji they fire) and lines: { intro, hurt: [], taunt: [], angry, dodge, miss, last, defeat, win }.
+  // lines.prefight is the short exchange before the fight starts: [boss, player, boss] (see encounter).
   // From half HP the boss also fights back with dodge rounds (see dodgeRound).
   const LIVES = 3;
   const BOSS_LINES = {
@@ -442,6 +443,40 @@ PixelkidEngine.part('boss', E => {
       finale: done => finisher(b, lines, done),
     };
   }
+  // The encounter before a boss battle, once per visit to the stage (a retry or rematch goes straight to the fight):
+  // an Undertale-style text box where the boss taunts, the player answers back and the boss has the last word.
+  // The lines type themselves out; tap the box to finish a line, tap again for the next one. Skip jumps to the fight.
+  function encounter(area, b, done) {
+    const said = [].concat((b.lines || {}).prefight || []);
+    if (!said.length) return done();
+    const bossPic = pic(b.sprite || b.emoji || '👾', 'boss-sprite enc-boss'), me = heroImg('hero-sprite enc-hero');
+    const who = h('div', { class: 'enc-who' }), text = h('div', { class: 'enc-text', 'aria-live': 'polite' });
+    const box = h('button', { class: 'enc-box', type: 'button' }, who, text, h('span', { class: 'enc-more', 'aria-hidden': 'true' }, '▼'));
+    let k = -1, typing = 0, full = [], over = false;
+    const finish = () => { if (over) return; over = true; clearInterval(typing); done(); };
+    const scene = h('div', { class: 'encounter' }, h('div', { class: 'enc-stage' }, bossPic, me), box,
+      h('button', { class: 'btn ghost enc-skip', type: 'button', onclick: finish }, 'Skip to the fight ▶▶'));
+    function next() {
+      if (++k >= said.length) return finish();
+      const boss = k % 2 === 0; // the boss speaks first, then the two take turns
+      scene.classList.toggle('hero-turn', !boss);
+      who.textContent = boss ? b.name : settings.name || 'You';
+      box.setAttribute('aria-label', k === said.length - 1 ? 'Start the fight' : 'Next');
+      full = [...fill(said[k])];
+      let n = calm() ? full.length : 0;
+      text.textContent = full.slice(0, n).join('');
+      clearInterval(typing); typing = 0;
+      if (n < full.length) typing = setInterval(() => {
+        text.textContent = full.slice(0, ++n).join('');
+        if (n % 3 === 0 && /\w/.test(full[n - 1])) tone(boss ? 196 : 523, 0, 0.03, 'square', 0.02); // a little voice blip
+        if (n >= full.length) { clearInterval(typing); typing = 0; }
+      }, 30);
+    }
+    box.onclick = () => { if (typing) { clearInterval(typing); typing = 0; text.textContent = full.join(''); } else next(); };
+    put(area, scene);
+    next();
+  }
+
   function renderQuiz(s, i) {
     const qs = s.questions;
     const area = h('div');
@@ -523,7 +558,7 @@ PixelkidEngine.part('boss', E => {
     }
 
     const el = shell(s, [mascot(s.say || 'Quiz time! Show me what you remember!'), area, nav.el]);
-    begin();
+    if (s.boss) { encounter(area, s.boss, begin); nav.hideNext(); } else begin();
     return el;
   }
 

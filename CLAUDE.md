@@ -36,7 +36,7 @@ Privacy: the repo is public. Never put the child's name in files, URLs or commit
 - **Typed questions** show the answer after 2 wrong tries ("Use it and carry on"), because they used to lock him in.
 - **Put-in-order questions** only when there is ONE obvious order.
 - **Teach-the-robot stages:** about 5 lines, using only facts the lesson has already taught (a Plant Detectives teach stage with untaught facts was too tricky and too long). When cutting a stage or video, check that no later stage relies on something only it taught.
-- **Bosses:** every boss gets its own themed lines in its own voice: intro, hurt[], taunt[], angry, dodge, miss, last, defeat, win, stunned, beg[3]. Set `attack` ammo themed to the lesson.
+- **Bosses:** every boss gets its own themed lines in its own voice: prefight[3] (the pre-fight exchange: boss taunts, the player answers back with something the lesson taught, the boss has the last word), intro, hurt[], taunt[], angry, dodge, miss, last, defeat, win, stunned, beg[3]. Set `attack` ammo themed to the lesson.
 - **English (Word Kingdom):** every lesson has a 🪄 Spell Test stage (warm-up, real test, Letter Blaster). Vary the scene. Keep grammar explanations to 1–2 short sentences.
 - **Around the World:** no country stereotypes (especially negative or unproven ones like "England is rainy") and no niche adult trivia. Modern pop culture kids like (anime, Mario, Pokémon…) is welcome. Theme bosses on legends or landmarks.
 - **Future Skills:** curated modern skills beyond the curriculum (AI, being safe online, creative tech). Always grown-up guided, and no child accounts on 13+ tools.

@@ -171,7 +171,7 @@ async function play(page, card, S) {
   const nextReady = () => { const b = [...card.querySelectorAll('.navrow button')].pop(); return b && !b.disabled; };
   if (S.type === 'review' || S.type === 'quiz' || S.type === 'video') {
     // the start button – never an answer option that happens to say "let's go" or "start"
-    const go = [...card.querySelectorAll('button')].find(b => /test my memory|warm|fight|start|let.s go|ready|watched|begin/i.test(b.textContent) && !b.disabled && !b.hidden && !b.closest('.opts'));
+    const go = [...card.querySelectorAll('button')].find(b => /test my memory|warm|fight|start|let.s go|ready|watched|begin/i.test(b.textContent) && !b.disabled && !b.hidden && !b.closest('.opts, .enc-box'));
     if (go) { go.click(); await wait(120); }
     for (const q of S.questions || []) { await answer(page, area, q); await moveOn(area); }
     await wait(200);
