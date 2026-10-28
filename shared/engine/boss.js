@@ -62,6 +62,7 @@ PixelkidEngine.part('boss', E => {
   // Arrow keys / WASD or drag anywhere on the box. A hit costs at most one heart per round; a perfect dodge earns gems.
   // end({ hit, dead }) is called when the round is over.
   // Hits never cost hearts: the player starts with a pot of gems, each hit knocks one out, and surviving banks the rest.
+  let lastPlan = []; // the patterns of the round before, so the next round picks different ones
   function dodgeRound(area, b, round, { end }) {
     const W = 360, H = 240, DUR = 12, speed = 1 + 0.15 * round, POT = 5;
     let pot = POT;
@@ -151,11 +152,79 @@ PixelkidEngine.part('boss', E => {
           }
         }
       },
+      // shots that wiggle across the box like snakes, three from one side then three from the other
+      wave(dt) {
+        if ((spawnT += dt) > 0.42 / speed) {
+          spawnT = 0; S.k = (S.k || 0) + 1;
+          const left = S.k % 6 < 3, y0 = 24 + Math.random() * (H - 48);
+          fire({ x: left ? -12 : W + 12, y: y0, y0, vx: (left ? 1 : -1) * 90 * speed, vy: 0, r: 9, amp: 22 + Math.random() * 18, f: 5, ph: Math.random() * 6 });
+        }
+      },
+      // side-scrolling cave: the walls slide past and the tunnel winds about as it narrows – stay in the gap!
+      // It opens wide (so there is time to line up), narrows to a gap the hitbox fits with room to spare, with wider pockets now and then.
+      tunnel() {
+        if (!S.init) { S.init = true; S.p1 = Math.random() * 6; S.p2 = Math.random() * 6; S.min = Math.max(62, ph * 0.6 + 38) + (round <= 1 ? 14 : 0); }
+        const vs = 95 * Math.min(speed, 1.5), off = lt * vs, open = H + 40, COL = 6;
+        S.scroll = vs; walls.length = 0;
+        for (let x = 0; x < W; x += COL) {
+          const wx = x + off, squeeze = Math.min(open, open - (wx - W * 0.75) * 0.6);
+          const gap = Math.max(S.min, squeeze) + 22 * Math.max(0, Math.sin(wx * 0.007 + S.p1));
+          if (gap >= H) continue;
+          // the wiggle is damped at faster scroll speeds so the gap never moves faster than arrow keys can follow
+          const tight = Math.min(1, (open - gap) / (open - S.min)), room = ((H - gap) / 2 - 6) * Math.min(1, 105 / vs);
+          const c = H / 2 + room * tight * (0.65 * Math.sin(wx * 0.011 + S.p1) + 0.35 * Math.sin(wx * 0.02 + S.p2));
+          walls.push({ x, y: 0, w: COL, h: c - gap / 2, edge: 'b' }, { x, y: c + gap / 2, w: COL, h: H - c - gap / 2, edge: 't' });
+        }
+      },
+      // side-scrolling pillars: slip through the gap in each one as it slides past (each gap is a short hop from the last)
+      pillars(dt) {
+        const vs = 105 * Math.min(speed, 1.5), gh = Math.max(76, ph * 0.6 + 52), PW = 22;
+        S.list = S.list || []; S.scroll = vs;
+        if ((spawnT -= dt) <= 0) {
+          spawnT = 1.5 / Math.min(speed, 1.4);
+          const prev = S.list.length ? S.list[S.list.length - 1].gy : p.y;
+          S.list.push({ x: W + 4, gy: Math.max(gh / 2 + 6, Math.min(H - gh / 2 - 6, prev + (Math.random() * 2 - 1) * 100)) });
+        }
+        walls.length = 0;
+        for (const q of S.list) {
+          q.x -= vs * dt;
+          walls.push({ x: q.x, y: 0, w: PW, h: q.gy - gh / 2, edge: 'b' }, { x: q.x, y: q.gy + gh / 2, w: PW, h: H - q.gy - gh / 2, edge: 't' });
+        }
+        S.list = S.list.filter(q => q.x > -PW);
+      },
+      // the box shrinks to a small safe square around the player (flashing first), then the square wanders – stay inside it!
+      squeeze(dt) {
+        const bw = pw * 0.56 + 64, bh = ph * 0.6 + 56, warn = 0.8, shrink = 1.6;
+        if (!S.init) { S.init = true; S.cx = Math.max(bw / 2, Math.min(W - bw / 2, p.x)); S.cy = Math.max(bh / 2, Math.min(H - bh / 2, p.y)); }
+        walls.length = 0;
+        const box = (L, T, R, B, wn) => {
+          S.box = wn ? null : [L, T, R - L, B - T]; // outlined in the draw step
+          walls.push({ x: 0, y: 0, w: W, h: T, warn: wn, edge: '-' }, { x: 0, y: B, w: W, h: H - B, warn: wn, edge: '-' },
+            { x: 0, y: T, w: L, h: B - T, warn: wn, edge: '-' }, { x: R, y: T, w: W - R, h: B - T, warn: wn, edge: '-' });
+        };
+        if (lt < warn) return box(S.cx - bw / 2, S.cy - bh / 2, S.cx + bw / 2, S.cy + bh / 2, true);
+        if (lt >= shrink) {
+          if (S.tx == null || Math.hypot(S.tx - S.cx, S.ty - S.cy) < 4) { S.tx = bw / 2 + 4 + Math.random() * (W - bw - 8); S.ty = bh / 2 + 4 + Math.random() * (H - bh - 8); }
+          const d = Math.hypot(S.tx - S.cx, S.ty - S.cy), v = Math.min(d, 70 * Math.min(speed, 1.4) * dt);
+          S.cx += (S.tx - S.cx) / d * v; S.cy += (S.ty - S.cy) / d * v;
+        }
+        const f = Math.min(1, (lt - warn) / (shrink - warn)), w = W - (W - bw) * f, hh = H - (H - bh) * f;
+        const cx = W / 2 + (S.cx - W / 2) * f, cy = H / 2 + (S.cy - H / 2) * f;
+        box(cx - w / 2, cy - hh / 2, cx + w / 2, cy + hh / 2, false);
+      },
     };
+    // what the status line says during each pattern (the bullet ones just say Dodge!)
+    const HINT = { tunnel: 'Stay in the tunnel!', pillars: 'Slip through the gaps!', squeeze: 'Stay in the box!' };
     const pool = (b.patterns || Object.keys(PATTERNS)).filter(k => PATTERNS[k]);
-    // mix it up: one of the new wall/laser patterns in most rounds, plus a bullet pattern
-    const special = pool.filter(k => k === 'crush' || k === 'laser'), shooty = pool.filter(k => !special.includes(k));
-    const plan = special.length && shooty.length ? shuffle([pick(special), pick(shooty)]) : shuffle(pool).slice(0, 2);
+    // mix it up: a wall pattern and a bullet pattern in most rounds, none from the round before if there's a choice;
+    // now and then a whole round is one long side-scrolling tunnel
+    const WALLS = ['crush', 'laser', 'tunnel', 'pillars', 'squeeze'];
+    const special = pool.filter(k => WALLS.includes(k)), shooty = pool.filter(k => !special.includes(k));
+    const fresh = list => (list.some(k => !lastPlan.includes(k)) ? list.filter(k => !lastPlan.includes(k)) : list);
+    const plan = special.includes('tunnel') && !lastPlan.includes('tunnel') && Math.random() < 0.3 ? ['tunnel', 'tunnel']
+      : special.length && shooty.length ? shuffle([pick(fresh(special)), pick(fresh(shooty))]) : shuffle(pool).slice(0, 2);
+    if (plan.length < 2) plan.push(plan[0]); // a boss with just one pattern uses it all round
+    lastPlan = plan;
 
     const KEYS = { ArrowLeft: 'l', a: 'l', A: 'l', ArrowRight: 'r', d: 'r', D: 'r', ArrowUp: 'u', w: 'u', W: 'u', ArrowDown: 'd', s: 'd', S: 'd' };
     const kd = e => { const k = KEYS[e.key]; if (k) { keys[k] = true; e.preventDefault(); } };
@@ -187,10 +256,13 @@ PixelkidEngine.part('boss', E => {
       const dt = Math.min(0.05, last ? (now - last) / 1000 : 0); last = now; t += dt;
       if (t < 0) status.textContent = t < -1 ? '3… 2…' : '1…';
       else {
-        status.textContent = hit ? 'Ouch! Keep dodging!' : 'Dodge!';
-        const phase = t < DUR / 2 ? 0 : 1;
-        if (phase !== S.phase) { S = { phase }; spawnT = 0; walls.length = 0; if (phase === 1) bullets.forEach(q => { q.bounce = false; }); }
-        lt = t - phase * DUR / 2;
+        const phase = t < DUR / 2 ? 0 : 1, same = plan[0] === plan[1];
+        status.textContent = hit ? 'Ouch! Keep dodging!' : HINT[plan[phase]] || 'Dodge!';
+        if (phase !== S.phase) {
+          if (same && phase === 1) S.phase = 1; // one pattern for the whole round: it just carries on
+          else { S = { phase }; spawnT = 0; walls.length = 0; if (phase === 1) bullets.forEach(q => { q.bounce = false; }); }
+        }
+        lt = same ? t : t - phase * DUR / 2;
         if (t < DUR - 0.6) PATTERNS[plan[phase]](dt); else walls.length = 0;
         timer.firstChild.style.width = Math.max(0, 100 - t / DUR * 100) + '%';
       }
@@ -198,7 +270,8 @@ PixelkidEngine.part('boss', E => {
       p.x += ((keys.r ? 1 : 0) - (keys.l ? 1 : 0)) * v; p.y += ((keys.d ? 1 : 0) - (keys.u ? 1 : 0)) * v;
       p.x = Math.max(pw / 2, Math.min(W - pw / 2, p.x)); p.y = Math.max(ph / 2, Math.min(H - ph / 2, p.y));
       for (const q of bullets) {
-        q.x += q.vx * dt; q.y += q.vy * dt; q.a += q.va * dt;
+        q.x += q.vx * dt; q.a += q.va * dt;
+        if (q.amp) { q.ph += q.f * dt; q.y = q.y0 + Math.sin(q.ph) * q.amp; } else q.y += q.vy * dt;
         if (q.bounce) { if (q.x < q.r || q.x > W - q.r) q.vx *= -1; if (q.y < q.r || q.y > H - q.r) q.vy *= -1; }
       }
       for (let k = bullets.length - 1; k >= 0; k--) { const q = bullets[k]; if (q.x < -30 || q.x > W + 30 || q.y < -30 || q.y > H + 30) bullets.splice(k, 1); }
@@ -222,6 +295,11 @@ PixelkidEngine.part('boss', E => {
       }
       // draw
       ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+      // side-scrolling patterns: faint specks drift past behind everything, so it feels like flying along
+      if (S.scroll) {
+        ctx.fillStyle = '#2c2c4a';
+        for (let k = 0; k < 28; k++) ctx.fillRect(((k * 97 - lt * S.scroll * (0.3 + (k % 3) * 0.2)) % W + W) % W, (k * 53) % H, 2 + (k % 3), 2);
+      }
       if (!(t - hitAt < 1.2 && Math.floor(t * 12) % 2)) {
         if (me) ctx.drawImage(me, Math.round(p.x - pw / 2), Math.round(p.y - ph / 2));
         else if (!pxDraw(ctx, '❤️', p.x, p.y, 22, { baseline: 'middle' })) { ctx.font = '22px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('❤️', p.x, p.y); }
@@ -230,13 +308,18 @@ PixelkidEngine.part('boss', E => {
         if (w.warn) {
           ctx.globalAlpha = Math.floor(t * 10) % 2 ? 0.35 : 0.15; ctx.fillStyle = PINK; ctx.fillRect(w.x, w.y, w.w, w.h); ctx.globalAlpha = 1;
           if (!w.beam) { ctx.strokeStyle = '#fff'; ctx.setLineDash([4, 4]); ctx.strokeRect(w.x + 1, w.y + 1, w.w - 2, w.h - 2); ctx.setLineDash([]); }
-        } else if (w.w > 0) {
+        } else if (w.w > 0 && w.h > 0) {
           ctx.fillStyle = PINK; ctx.fillRect(w.x, w.y, w.w, w.h);
           ctx.fillStyle = '#ffd1e8';
           if (w.beam) ctx.fillRect(w.x + (w.w > w.h ? 0 : w.w / 2 - 3), w.y + (w.w > w.h ? w.h / 2 - 3 : 0), w.w > w.h ? w.w : 6, w.w > w.h ? 6 : w.h);
+          else if (w.edge === '-') { /* plain */ } else if (w.edge) { // a bright edge on the side that faces the safe space
+            const e = w.edge, side = e === 'l' || e === 'r';
+            ctx.fillRect(e === 'r' ? w.x + w.w - 3 : w.x, e === 'b' ? w.y + w.h - 3 : w.y, side ? 3 : w.w, side ? w.h : 3);
+          }
           else for (let y = 4; y < H; y += 16) ctx.fillRect(w.x < 1 ? w.x + w.w - 6 : w.x + 2, y, 4, 8); // a bright inner edge on each wall
         }
       }
+      if (S.box && walls.length) { ctx.strokeStyle = '#ffd1e8'; ctx.lineWidth = 3; ctx.strokeRect(...S.box); ctx.lineWidth = 1; }
       for (const q of bullets) {
         ctx.save(); ctx.translate(q.x, q.y); if (q.va) ctx.rotate(q.a);
         ctx.drawImage(q.s, -q.r * 1.2, -q.r * 1.2, q.r * 2.4, q.r * 2.4); ctx.restore();
@@ -444,5 +527,5 @@ PixelkidEngine.part('boss', E => {
     return el;
   }
 
-  return { renderQuiz };
+  return { renderQuiz, dodgeRound }; // dodgeRound is exposed as a test hook
 });
