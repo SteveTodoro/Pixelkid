@@ -294,6 +294,7 @@
     miner: { icon: '⛏️', name: 'Maths Miner' },
     gardener: { icon: '🌻', name: 'Green Thumb' },
     traveller: { icon: '🧳', name: 'World Traveller' },
+    focus: { icon: '🥋', name: 'Focus Master' },
   }, L.achievements);
   function achieve(id) {
     const a = ACH[id];
@@ -444,10 +445,11 @@
       placeholder: 'Type your name', value: settings.name || '', 'aria-label': 'Your name',
     });
     name.addEventListener('input', () => { settings.name = name.value.trim(); saveSettings(); });
-    const resume = state.maxStage > 0;
+    const resume = state.maxStage > 0, begin = () => { sfx.win(); complete(i); go(resume ? Math.max(1, state.maxStage) : 1); };
+    const keyBox = L.memoryKey && h('div', { class: 'mk-box', hidden: true }); // L.memoryKey: see shared/engine/brain.js
     const start = h('button', {
       class: 'btn big green ready', type: 'button',
-      onclick() { sfx.win(); complete(i); go(resume ? Math.max(1, state.maxStage) : 1); },
+      onclick() { if (L.memoryKey) { sfx.tap(); E.showMemoryKey(keyBox, start, begin, stop => { cleanup = stop; }); } else begin(); },
     }, resume ? '▶ CONTINUE' : '▶ PLAY');
     const restart = resume
       ? h('button', {
@@ -475,6 +477,7 @@
           h('span', { class: 'map-ico' }, st.icon || ICON[st.type]),
           h('span', null, st.title),
           st.minutes && h('span', { class: 'map-min' }, st.minutes + ' min'))))),
+      keyBox,
       h('div', { class: 'navrow' }, restart, start),
     ]);
   }
@@ -617,7 +620,9 @@
       // a comic page: c.comic = [{ who: 'mascot' | 'me' | emoji / svg, name, say, pic }] – each line is a panel with a speech bubble
       const paras = c.comic ? c.comic.map(line => para(fill(line.say))) : [].concat(c.text).map(para);
 
-      let check = null;
+      // a vanishing page (c.vanish): read it, then it hides while the check is asked. Peeking back costs the gem.
+      const vanish = !!(c.vanish && c.check && !answered && !evidence);
+      let peeked = false, reveal = () => {}, check = null;
       if (c.check && QTYPES[c.check.type]) {
         // the newer question types: only a first-try answer earns the gem (no answer lock-out needed – there is nothing to guess between)
         const fb = h('div', { class: 'feedback', hidden: true });
@@ -625,14 +630,15 @@
         const onRight = (el, first) => {
           if (!tracked) { tracked = true; track('Reading check', c.check, first); }
           sfx.good();
-          if (first) { award(key, el); say(c.check.yes || praise()); } else say('You got there! Next time, read carefully first to win the gem.');
+          if (first && !peeked) { award(key, el); say(c.check.yes || praise()); } else say(vanish ? 'You got there! Remember it in ONE read to win the gem.' : 'You got there! Next time, read carefully first to win the gem.');
           fb.className = 'feedback good'; fb.hidden = false; fb.innerHTML = '✔ ' + fmt(c.check.explain || 'Correct!', false);
-          answered = true; nav.set(label, goNext);
+          answered = true; reveal(); nav.set(label, goNext);
           if (!c.check.explain) nav.auto();
         };
         const onMiss = () => {
           if (!tracked) { tracked = true; track('Reading check', c.check, false); }
           say(c.check.hint || 'Not quite! Read the page again to find the answer.');
+          reveal();
         };
         if (answered) { fb.className = 'feedback good'; fb.hidden = false; fb.innerHTML = '✔ ' + fmt(c.check.explain || 'Done!', false); }
         check = h('div', { class: 'check' },
@@ -655,15 +661,16 @@
                 b.classList.add('right'); opts.forEach(x => { x.disabled = true; });
                 sfx.good();
                 if (firstTry) track('Reading check', c.check, true);
-                if (firstTry) { award(key, b); say(c.check.yes || praise()); } else say('You got there! Next time, read carefully first to win the gem.');
+                if (firstTry && !peeked) { award(key, b); say(c.check.yes || praise()); } else say(vanish ? 'You got there! Remember it in ONE read to win the gem.' : 'You got there! Next time, read carefully first to win the gem.');
                 fb.className = 'feedback good'; fb.hidden = false; fb.innerHTML = '✔ ' + fmt(c.check.explain || 'Correct!', false);
-                answered = true; nav.set(label, goNext);
+                answered = true; reveal(); nav.set(label, goNext);
                 if (!c.check.explain) nav.auto();
               } else {
                 if (firstTry) track('Reading check', c.check, false);
                 firstTry = false;
                 b.classList.add('wrong'); opts.forEach(x => { x.disabled = true; }); shake(b); sfx.bad();
                 say(c.check.hint || 'Not quite! Read the page again to find the answer.');
+                reveal();
                 let left = 5;
                 const msg = h('div', { class: 'reread' }, `📖 Read the page again! The answers come back in ${left}…`);
                 setTimeout(() => { if (optsBox.isConnected) put(optsBox, msg); }, 700);
@@ -702,11 +709,23 @@
         : h('div', { class: 'panel-inner story' },
           pic(c.pic),
           h('div', { class: 'story-text' }, titleEl, paras, h('div', { class: 'read-row' }, reader.btn)));
-      put(area, h('div', { class: 'story-anim' }, page, check));
+      if (vanish) {
+        // read it once, tap "I've got it", and the words vanish while the check is asked; 👀 Peek brings them back (no gem)
+        const gone = h('div', { class: 'panel-inner vanish-gone', hidden: true },
+          h('div', { class: 'vanish-icon' }, '💨'), h('p', null, 'The page has vanished! What can you remember?'),
+          h('button', { class: 'btn ghost', type: 'button', onclick() { sfx.tap(); peeked = true; say('Peeking costs the gem – but you can still answer.'); reveal(); } }, '👀 Peek (no gem)'));
+        const ready = h('div', { class: 'btn-row vanish-row' }, h('button', { class: 'btn big green ready', type: 'button', onclick() {
+          sfx.good(); reader.stop(); page.hidden = true; gone.hidden = false; ready.remove(); check.hidden = false;
+          say('Gone! Answer from memory to win the gem.');
+        } }, '🧠 Got it – vanish!'));
+        reveal = () => { page.hidden = false; gone.hidden = true; ready.remove(); check.hidden = false; };
+        check.hidden = true;
+        put(area, h('div', { class: 'story-anim' }, h('div', { class: 'vanish-tag' }, '💨 VANISHING PAGE: read it carefully – it will disappear!'), page, gone, ready, check));
+      } else put(area, h('div', { class: 'story-anim' }, page, check));
       dots.replaceChildren(...s.cards.map((_, j) => h('span', { class: 'dot' + (j === ci ? ' on' : j < ci ? ' seen' : '') })));
       nav.set(label, goNext, answered);
       if (ci === 0 && !enteringBackwards) say(s.say || `Read each page. Tap the yellow words to learn what they mean – and earn a ${CUR.icon}!`);
-      else if (!answered) say('Answer the check to unlock the next page!');
+      else if (!answered) say(vanish ? 'This page will vanish! Read it carefully, then tap Got it.' : 'Answer the check to unlock the next page!');
     }
     const el = shell(s, [mascot(''), area, dots, nav.el]);
     show();
@@ -1450,6 +1469,7 @@
     time: ['clock', 'daydial', 'timehops', 'knuckles'],
     number: ['placeblocks', 'columnsum', 'shop'],
     earth: ['soillab'],
+    brain: ['palace', 'sequence', 'spotter', 'gonogo', 'clash', 'breathe'],
     world: ['worldmap', 'cook', 'phrases'],
   };
   function partsFor(lesson) {
@@ -1463,6 +1483,7 @@
       }
     })(lesson.stages);
     const stages = lesson.stages.some(s => ['teach', 'case', 'investigate'].includes(s.type)) ? ['stages'] : [];
+    if (lesson.memoryKey) games.add('palace'); // the Memory Key lives in the brain part
     return ['games', 'breaks', 'boss', 'finishers', ...stages, ...Object.keys(PARTS).filter(p => PARTS[p].some(g => games.has(g)))];
   }
   window.PixelkidEngine = { part(name, make) { Object.assign(E, make(E) || {}); } };

@@ -62,6 +62,7 @@ Privacy: the repo is public. Never put the child's name in files, URLs or commit
 - **Future Skills:** AI, Pixel Art, Poster.
 - **Wonders:** Tardigrades, Immortal Jellyfish (next: Octopus).
 - **Around the World:** Japan, England, Thailand, USA (China next).
+- **Brain Dojo (7th world, 29 Oct):** focus, concentration and memory, because the child skims to reach the boss. Two pilots: Memory Palace and Ninja Focus. New mechanics: vanishing pages, the Memory Key, brain records and boss distractions. New games: palace, sequence, spotter, gonogo, clash, breathe (`shared/engine/brain.js`; `node tools/brain-test.js` plays them). Waiting on the parent's playtest before the other 4 lessons (Secret Brain Paths, Spy School, Eagle Eye, Story Keeper). See TOPICS.md.
 - **Waiting on the parent:**
   - playtest feedback on the newest lessons (Speech Marks, Place Value, Rock Stars, Fossils, Add & Subtract, Poetry, Theseus, Super Soil, Money Market; the new Labyrinth, Soil Lab and Shop Till games) and on the quest-map NPCs, tap-to-walk and biomes
   - a decision on the map's terrain/topography and icon redesign

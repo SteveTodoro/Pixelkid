@@ -38,6 +38,7 @@ body.english { --brand: #d9433b; --brand-dark: #85201b; --brand-soft: #ffd0cc; }
 body.future  { --brand: #7c4dff; --brand-dark: #3d1f99; --brand-soft: #e3d9ff; }
 body.wonders { --brand: #1e88e5; --brand-dark: #0d47a1; --brand-soft: #d6e9ff; }
 body.world   { --brand: #f4511e; --brand-dark: #a3300b; --brand-soft: #ffe0d3; }
+body.brain   { --brand: #d63384; --brand-dark: #7a1048; --brand-soft: #ffd6ea; }
 
 * { box-sizing: border-box; }
 html { font-size: 18px; }
@@ -1446,3 +1447,16 @@ a { color: var(--brand-dark); }
 .shop-counter .coin { cursor: pointer; }
 .shop-given .coin { width: 44px; height: 44px; cursor: default; } .shop-given .coin.note { width: 70px; height: 40px; }
 .shop-given .coin b { font-size: .8rem; }
+
+/* ---------- vanishing pages, the Memory Key and boss pop-up distractions (Brain Dojo; any lesson can use them) ---------- */
+.vanish-tag { max-width: 760px; margin: 0 auto 10px; padding: 6px 12px; background: #000; color: #ffd43b; font-family: var(--pixel); font-weight: 700; text-align: center; }
+.vanish-gone { max-width: 760px; margin: 0 auto; text-align: center; font-size: 1.2rem; font-weight: 600; }
+.vanish-icon { font-size: 3rem; line-height: 1; }
+.mk-box { max-width: 760px; margin: 0 auto 14px; padding: 16px; text-align: center; background: #1b1b1b; color: #fff; border: 4px solid #000; box-shadow: var(--bevel); }
+.mk-tag { font-family: var(--pixel); font-weight: 700; color: #ffd43b; font-size: 1.2rem; margin-bottom: 10px; }
+.mk-items { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.mk-item { padding: 10px 14px; background: var(--paper); color: #000; border: 3px solid #000; font-size: 1.3rem; font-weight: 700; }
+.mk-count { margin-top: 10px; font-family: var(--read); font-size: 2.4rem; font-weight: 700; color: #ffd43b; }
+.mk-locked { font-family: var(--pixel); font-size: 1.4rem; color: #7cfc3a; }
+.q-area { position: relative; }
+.boss-ping { position: absolute; z-index: 6; }

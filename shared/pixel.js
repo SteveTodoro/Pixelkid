@@ -165,6 +165,25 @@
       '..kkk...kkk...',
     ], { k: K, p: '#6a3cc9', y: '#ffd43b', s: '#f2c9a0', w: '#f4f4f4' }),
 
+    // Sensei Hoot, the Brain Dojo's owl master, in a red focus headband and a white dojo suit
+    sensei: svg([
+      '.k........k.',
+      '.kbk....kbk.',
+      '.kbbkkkkbbk.',
+      'kbbbbbbbbbbk',
+      'kRRRRRRRRRRR',
+      'kbwwkbbwwkbR',
+      'kwkywbwkywbk',
+      'kbwwbyywwbbk',
+      '.kbbbyybbbk.',
+      '.kwwwwkwwwk.',
+      'kwwwwkwwwwwk',
+      'kwwwwwwwwwwk',
+      'kkkkkkkkkkkk',
+      '.kwwwwwwwwk.',
+      '..kyk..kyk..',
+    ], { k: K, b: '#8a5a32', w: '#f4f4f4', y: '#ffb300', R: '#e53935' }),
+
     // Grumblegob the spelling goblin (Word Kingdom boss)
     goblin: svg([
       'k..........k',

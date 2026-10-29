@@ -66,7 +66,7 @@
 (function () {
   'use strict';
   const get = (k, d) => { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } };
-  const WORLDS = { science: '🔬 Science', maths: '🔢 Maths', english: '📚 English', future: '🚀 Future Skills', wonders: '🌍 Wonders', world: '🗺️ Around the World' };
+  const WORLDS = { science: '🔬 Science', maths: '🔢 Maths', english: '📚 English', future: '🚀 Future Skills', wonders: '🌍 Wonders', world: '🗺️ Around the World', brain: '🧠 Brain Dojo' };
   const name = get('y3:settings', {}).name;
   if (name) document.getElementById('title').textContent = `What does ${name} find tricky?`;
   const out = document.getElementById('out');

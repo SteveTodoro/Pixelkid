@@ -35,6 +35,11 @@
       chords: 'G Em C D G Em C D',
       tune: 'B4:2 D5:2 G5:3 F#5:1 G5:2 B5:2 A5:4 | G5:2 E5:2 B4:4 E5:2 G5:2 B5:4 | C6:3 B5:1 A5:2 G5:2 E5:2 G5:2 C5:4 | D5:2 F#5:2 A5:4 C6:2 A5:2 F#5:4 |' +
         'D6:4 B5:2 G5:2 D6:3 B5:1 G5:4 | E6:4 B5:2 G5:2 E5:4 G5:4 | A5:2 G5:2 E5:2 G5:2 A5:2 C6:2 E6:4 | D6:4 C6:2 A5:2 F#5:4 D5:4' },
+    // Brain Dojo: calm and steady, on the five notes of a pentatonic scale
+    'map-brain': { bpm: 92, lead: 'triangle', bass: 'pad', arp: 'broken', drums: 'tabor',
+      chords: 'Am G F G Am G Em Am',
+      tune: 'E5:4 G5:2 A5:2 C6:4 A5:4 | D5:4 E5:2 G5:2 A5:4 G5:4 | C5:4 D5:2 E5:2 G5:4 E5:4 | D5:8 r:4 G4:4 |' +
+        'A5:4 C6:2 D6:2 E6:4 D6:4 | C6:4 A5:2 G5:2 A5:4 r:4 | E5:2 G5:2 A5:2 G5:2 E5:4 D5:4 | A4:8 r:8' },
     // Around the World: off on a trip, island to island
     'map-world': { bpm: 126, lead: 'pulse25', bass: 'walk', arp: 'stabs', drums: 'travel',
       chords: 'D A Bm G D A G A',

@@ -99,6 +99,18 @@ const LIBRARY = {
       { title: 'The Northern Lights', emoji: '🌌', unit: 'Wild Planet' },
     ],
   },
+  brain: {
+    label: '🧠 Brain Dojo', tab: '🧠 Brain',
+    lessons: [
+      { id: 'brain-memory-palace', title: 'Memory Palace', emoji: '🏰', unit: 'Super Memory', file: 'brain/memory-palace.html' },
+      { title: "Your Brain's Secret Paths", mapTitle: 'Secret Brain Paths', emoji: '🧠', unit: 'Super Memory' },
+      { title: 'Spy School: Code Breakers', emoji: '🕵️', unit: 'Super Memory' },
+      // the road forks after the Memory Palace: memory one way, focus & calm the other
+      { id: 'brain-ninja-focus', title: 'Ninja Focus', emoji: '🥷', unit: 'Focus & Calm', file: 'brain/ninja-focus.html', after: 'Memory Palace' },
+      { title: 'Eagle Eye: Spot It!', emoji: '🦅', unit: 'Focus & Calm' },
+      { title: 'Listen Up! Story Keeper', emoji: '👂', unit: 'Focus & Calm' },
+    ],
+  },
   world: {
     label: '🗺️ Around the World', tab: '🗺️ World',
     lessons: [

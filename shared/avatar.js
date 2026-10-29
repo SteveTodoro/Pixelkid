@@ -88,6 +88,7 @@
     { id: 'knight-dress', cat: 'top', name: 'Princess knight armour', price: 40, y: 9, rows: ['.mmmmmmmmmm.', '...mMmmMm...', '...yyyyyy...', '...dddddd...', '...dddddd...', '..dddddddd..', '..dDdDdDdD..'], pal: { m: '#b8c2cc', M: '#8e9aa8', y: '#ffd43b', d: '#7c4dff', D: '#ffd43b' } },
     // special costumes: pricey tributes, shown with a gold ★ SPECIAL ribbon in the shop
     { id: 'ff-hoodie', cat: 'top', name: 'Foltyn Family hoodie', price: 150, special: true, y: 8, rows: ['..TttttttT..', '.tttttttttt.', '.ttKKKtKKKt.', '.ttKtttKttt.', '.ttKKttKKtt.', '...KtttKt...'], pal: { t: '#fafafa', T: '#c9ced6', K: '#1b1b1b' } },
+    { id: 'karate-gi', cat: 'top', name: 'Dojo suit', price: 35, unlock: 'trader-brain', y: 9, rows: ['.wwwwwkwwww.', '.wwwwkwwwww.', '.wwwwwwwwww.', '.kkkkkkkkkk.', '...wwwwww...'], pal: { w: '#f5f5f5', k: '#1b1b1b' } },
     { id: 'ninja-gi', cat: 'top', name: 'Ninja suit', price: 80, special: true, y: 9, rows: ['.ggggkkgggg.', '.gggggkgggg.', '.gggggggggg.', '.gggggggggg.', '...RRRRRR...'], pal: { g: '#2d3139', k: '#15171b', R: '#e53935' } },
     { id: 'chef-jacket', cat: 'top', name: 'Chef jacket', price: 70, special: true, y: 8, rows: ['...rrrrrr...', '.tttttttttt.', '.tttbttbttt.', '.tttttttttt.', '.tttbttbttt.', '...tttttt...'], pal: { t: '#ffffff', b: '#1b1b1b', r: '#e53935' } },
     { id: 'sans-hoodie', cat: 'top', name: 'Sans hoodie', price: 100, special: true, y: 9, rows: ['.ffffffffff.', '.jjjwwwwjjj.', '.jjjwwwwjjj.', '.jjjwwwwjjj.', '...jjjjjj...'], pal: { f: '#e6ecf2', j: '#3b8fe0', w: '#ffffff' } },
@@ -151,6 +152,8 @@
     { id: 'liberty-crown', cat: 'hat', name: 'Lady Liberty crown', price: 40, special: true, rows: ['.g..g..g..g.', '.gg.gggg.gg.', '..gggggggg..', '..gGgGGgGg..'], pal: { g: '#4fb39a', G: '#2e7d6b' } },
     { id: 'bearskin', cat: 'hat', name: 'Royal Guard bearskin', price: 50, special: true, hideHair: true, rows: ['..kkkkkkkk..', '..kkkKkkkk..', '..kkkkkkkk..', '..kkkkkkkk..', '..y......y..', '..y......y..', '...y....y...', '....yyyy....'], pal: { k: '#15171b', K: '#3a3a3a', y: '#ffd43b' } },
     // hideHair: covers the whole head, so the hair layer is skipped
+    { id: 'focus-headband', cat: 'hat', name: 'Focus headband', price: 0, unlock: 'focus', y: 3, rows: ['..RRRRRRRRRR', '..........RR', '...........R'], pal: { R: '#e53935' } },
+    { id: 'blossom-bow', cat: 'hat', name: 'Blossom bow headband', price: 25, unlock: 'trader-brain', y: 2, rows: ['.........pp.', '..PPPPPPpwpp', '.........pp.'], pal: { P: '#ff7eb6', p: '#ff4f9a', w: '#ffffff' } },
     { id: 'ninja-mask', cat: 'hat', name: 'Ninja mask', price: 80, special: true, hideHair: true, y: 1, rows: ['...kkkkkk...', '..kkkkkkkk..', '..RRRRRRRRRR', '..kkkkkkkk.R', '..k......k..', '..kkkkkkkk..', '..kkkkkkkk..', '...kkkkkk...'], pal: { k: '#22252b', R: '#e53935' } },
     { id: 'chef-hat', cat: 'hat', name: 'Chef hat', price: 60, special: true, rows: ['.cccccccccc.', '.ccCccccCcc.', '..cccccccc..', '..CCCCCCCC..'], pal: { c: '#ffffff', C: '#d6dbe1' } },
     { id: 'sans-skull', cat: 'hat', name: 'Sans skull', price: 120, special: true, hideHair: true, y: 2, rows: ['..wwwwwwww..', '.wwwwwwwwww.', '.wkkkwwkkkw.', '.wkWkwwkWkw.', '.wkkkwwkkkw.', '.wwwwkkwwww.', '..wkkkkkkw..'], pal: { w: '#f4f4f0', k: '#1b1b1b', W: '#ffffff' } },
@@ -228,6 +231,7 @@
     { id: 'pet-frog-prince', cat: 'pet', eyes: [[2, 3], [6, 3]], name: 'Frog prince', price: 0, unlock: 'npc', rows: ['.y.yy.y.', '.yyyyyy.', '.gg..gg.', 'gwkggwkg', 'gggggggg', 'ggkkkkgg', '.gggggg.', 'gg....gg'], pal: { y: '#ffd43b', g: '#4caf50', w: '#ffffff', k: '#1b1b1b' } },
     { id: 'pet-ufo', cat: 'pet', eyes: [], name: 'Mini UFO', price: 50, unlock: 'trader-future', rows: ['........', '...cc...', '..cGGc..', '..cGGc..', '.mmmmmm.', 'mmymmymm', '.mmmmmm.', '..y..y..'], pal: { c: '#bfe8ff', G: '#7cfc3a', m: '#8e9aa8', y: '#ffd43b' } },
     { id: 'pet-chameleon', cat: 'pet', name: 'Colour-change chameleon', price: 0, unlock: 'npc', rows: ['........', '........', '....ggg.', '...gGgkg', 'g.gggggg', 'gggGgGg.', '.g.g..g.', '........'], pal: { g: '#7cfc3a', G: '#ff7eb6', k: '#1b1b1b' } },
+    { id: 'pet-panda', cat: 'pet', name: 'Zen panda', price: 45, unlock: 'trader-brain', rows: ['kk....kk', 'kwwwwwwk', 'wkkwwkkw', 'wkkwwkkw', 'wwwkkwww', '.wwwwww.', 'kkwwwwkk', 'kk....kk'], pal: { w: '#ffffff', k: '#1b1b1b' } },
     { id: 'pet-crab', cat: 'pet', eyes: [[2, 3], [5, 3]], name: 'Crabby', price: 45, unlock: 'trader-wonders', rows: ['........', '........', 'rr....rr', 'r.k..k.r', '.rrrrrr.', 'rrrrrrrr', '.rrrrrr.', 'r.r..r.r'], pal: { r: '#ff6f3c', k: '#1b1b1b' } },
     { id: 'pet-seahorse', cat: 'pet', name: 'Sunny the seahorse', price: 0, unlock: 'npc', rows: ['...yy...', '..yyyy..', '..ykyyyy', '.oyyy...', '..yyyy..', '...yyy..', '....yy..', '..yyy...'], pal: { y: '#ffb800', o: '#ff8c1a', k: '#1b1b1b' } },
     { id: 'pet-turtle', cat: 'pet', eyes: [[7, 3]], name: 'Tilly the turtle', price: 45, unlock: 'trader-world', rows: ['........', '........', '......ss', '..ggggsk', '.gGggGss', 'gGggGgg.', '.gggggg.', '.s.ss.s.'], pal: { g: '#2e9e3e', G: '#1b6e2a', s: '#9be15d', k: '#1b1b1b' } },
@@ -381,6 +385,8 @@
     'trader-future': 'Sold by Nova on the Future Skills quest map',
     'trader-wonders': 'Sold by Captain Coral on the Wonders quest map',
     'trader-world': 'Sold by Globetrotter Gus on the Around the World quest map',
+    'trader-brain': 'Sold by Master Miko on the Brain Dojo quest map',
+    focus: 'Finish any Brain Dojo lesson to unlock',
     boss: 'Beat any boss to unlock',
     artist: 'Finish Pixel Art Studio to unlock',
     designer: 'Finish Design a Poster to unlock',

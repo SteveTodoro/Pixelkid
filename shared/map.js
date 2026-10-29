@@ -20,10 +20,11 @@ const LANDMARK = {
   'Spelling & Vocabulary': '🏛️', Grammar: '⛲', Punctuation: '🏡', 'Myths & Legends': '⛰️', Fiction: '🌳', Poetry: '🌷', 'Non-fiction': '🗺️', 'Reading Skills': '🦉',
   'AI & Computers': '🖥️', 'Creative Tech': '📺', 'Thinking Online': '🔭', Coding: '🤖', 'Life Skills': '🏡',
   'Amazing Animals': '🐳', 'Your Amazing Body': '🧠', 'Incredible Inventions': '💡', 'Ancient Wonders': '🏛️', 'Wild Planet': '🗻',
+  'Super Memory': '🏯', 'Focus & Calm': '🎋',
   Asia: '🐘', 'Asia – home!': '🏠', Europe: '🏰', 'North America': '🗽', Africa: '🦒', 'South America': '🌴', Oceania: '🦘',
 };
 // the goal at the end of each world's road
-const GOAL = { science: ['🏰', 'Castle of Science'], maths: ['👑', 'Crown of the Mine'], english: ['🏰', 'Word Kingdom Castle'], future: ['🚀', 'Rocket Launch Pad'], wonders: ['🏆', 'Hall of Wonders'], world: ['🏝️', 'Treasure Island'] };
+const GOAL = { science: ['🏰', 'Castle of Science'], maths: ['👑', 'Crown of the Mine'], english: ['🏰', 'Word Kingdom Castle'], future: ['🚀', 'Rocket Launch Pad'], wonders: ['🏆', 'Hall of Wonders'], brain: ['🥋', 'The Grand Dojo'], world: ['🏝️', 'Treasure Island'] };
 const mapWrap = document.getElementById('shelf');
 const reducedMotion = () => !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
 let mapWidth = 0, mapHero = null, walking = 0;

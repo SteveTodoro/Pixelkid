@@ -135,6 +135,26 @@ function checkRound(r, where, err) {
       if (!(r.waves || []).length) err(`${where}: no waves`);
       (r.waves || []).forEach((w, k) => (w.spell ? !w.clue && err(`${where} wave ${k + 1}: spelling wave needs a clue`) : checkItems(w.items, `${where} wave ${k + 1}`, err)));
       break;
+    // Brain Dojo games (shared/engine/brain.js)
+    case 'palace':
+      if (!(r.rooms || []).length) err(`${where}: no rooms`);
+      (r.missions || []).forEach((m, k) => {
+        if (!(m.items || []).length) err(`${where} mission ${k + 1}: no items`);
+        if (m.mode !== 'list' && (m.items || []).length > (r.rooms || []).length) err(`${where} mission ${k + 1}: more items than rooms`);
+      });
+      if (!(r.decoys || []).length) err(`${where}: no decoys for the recall grid`);
+      break;
+    case 'spotter':
+      (r.turns || []).forEach((t, k) => {
+        if ((t.items || []).length < 3) err(`${where} turn ${k + 1}: needs at least 3 items`);
+        if (t.change === 'new' && !t.extra) err(`${where} turn ${k + 1}: a 'new' turn needs an extra item`);
+      });
+      if (!(r.turns || []).length) err(`${where}: no turns`);
+      break;
+    case 'gonogo':
+      (r.phases || []).forEach((p, k) => { if (!p.rule || !(p.go || []).length || !p.count) err(`${where} phase ${k + 1}: needs a rule, go items and a count`); });
+      if (!(r.phases || []).length) err(`${where}: no phases`);
+      break;
     case 'windtest': {
       const ids = (r.seeds || []).map(sd => sd.id);
       if (ids.length < 2) err(`${where}: needs at least two seeds`);
@@ -183,11 +203,17 @@ function check(file) {
   let L;
   try { L = loadLesson(file); } catch (e) { return [`could not load: ${e.message}`]; }
   if (!L) return ['no window.LESSON'];
+  if (L.memoryKey) { // the Memory Key flashes up at the start; the boss should ask for it
+    if (!(L.memoryKey.items || []).length) err('memoryKey: no items');
+    const boss = (L.stages || []).find(s => s.type === 'quiz'), names = (L.memoryKey.items || []).map(t => String(t).replace(/^\S+\s+(an?\s+)?/, '').toLowerCase());
+    if (boss && !JSON.stringify(boss.questions || []).toLowerCase().includes(names[0] || '???')) err('memoryKey: the boss never asks about the Memory Key');
+  }
   (L.stages || []).forEach((s, si) => {
     const at = `stage ${si + 1} (${s.type}${s.title ? ': ' + s.title : ''})`;
     (s.cards || []).forEach((c, ci) => {
       if (c.check && !['mcq', 'evidence', 'hotspot', 'slider', 'oddone', 'build', 'type', 'predict', 'setclock'].includes(c.check.type || 'mcq')) err(`${at} page ${ci + 1} check: a reading check can't be "${c.check.type}" (use mcq or a hands-on type)`);
       if (c.check) checkQuestion(c.check, `${at} page ${ci + 1} check`, err, { passage: c.comic ? c.comic.map(x => x.say) : [].concat(c.text || c.paras || []) });
+      if (c.vanish && (!c.check || c.check.type === 'evidence')) err(`${at} page ${ci + 1}: a vanishing page needs a check that isn't evidence (the words are hidden)`);
     });
     (s.questions || []).forEach((q, k) => checkQuestion(q, `${at} q${k + 1}`, err));
     (s.rounds || []).forEach((r, k) => checkRound(r, `${at} round ${k + 1} (${r.game})`, err));

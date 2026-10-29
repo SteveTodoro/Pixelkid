@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ninja Focus</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <link rel="stylesheet" href="../shared/brain.css">
+  <script src="../shared/pixel.js"></script>
+  <script src="../shared/pixel-icons.js"></script>
+  <script src="../shared/avatar.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// the boss: Buzz Distracto, a giant buzzing fly covered in notification pings
+const DISTRACTO = Pixel.svg([
+  '.ww......ww.',
+  'wwww....wwww',
+  'wwwwwkkwwwww',
+  '.wwkkkkkkww.',
+  '..krrkkrrk..',
+  '.krRrkkrRrk.',
+  '.krrrkkrrrk.',
+  '.kkkkkkkkkk.',
+  '..kykykyky..',
+  '..kkkkkkkk..',
+  '...kykyky...',
+  '..k.k..k.k..',
+], { w: '#cfeaff', k: '#1b1b1b', r: '#e53935', R: '#ffffff', y: '#ffd43b' });
+
+// ---------- the lesson ----------
+window.LESSON = {
+  id: 'brain-ninja-focus',
+  subject: 'brain',
+  title: 'Ninja Focus',
+  emoji: '🥷',
+  home: '../index.html',
+  midBreak: false, // the Arcade stage is the fun break
+  layout: 2,
+  finishAch: 'focus',
+  memoryKey: { items: ['🦊 a fox', '🍉 a melon', '🚲 a bike', '🌙 a moon', '🪁 a kite'], seconds: 12,
+    say: 'Buzz Distracto will try to make you forget this Memory Key. FIVE things this time! Focus…' },
+  mascot: {
+    name: 'Sensei Hoot',
+    sprite: Pixel.sprites.sensei,
+    praise: ['Hoo-ray! Correct!', 'Ninja focus!', 'Critical hit!', 'Laser focus!', 'Wise as an owl!', 'Sharp as a ninja star!', 'Nailed it!'],
+    oops: ['Hoo! Not quite.', 'Not quite – have another go!', 'Breathe, and think again!', 'So close! One more try.'],
+  },
+  glossary: {
+    attention: { emoji: '🔦', def: 'What your brain is noticing right now. You can choose where to point it, like a torch.' },
+    distraction: { emoji: '🔔', def: 'Something that pulls your attention away from what you are trying to do.' },
+    focus: { emoji: '🎯', def: 'Keeping your attention on one thing, and not letting it wander off.' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'Ninja Focus', short: 'Start', minutes: 1,
+      pic: '🥷🔦',
+      hello: 'Welcome back to the Brain Dojo! Today you train like a ninja – a ninja of FOCUS.',
+      question: 'Why is it so hard to concentrate – and how can you get better at it?',
+      intro: 'Find your focus spotlight, beat the distraction thieves, learn the ninja breathing trick – then face a boss who LOVES to distract you!',
+      nameLabel: 'Ninja name:',
+    },
+
+    {
+      type: 'review', title: 'Warm-up', short: 'Warm-up', minutes: 3,
+      from: { title: 'Paying attention', emoji: '👀' },
+      say: 'First, a warm-up for your eyes and your brain. Read the notes, then test your memory!',
+      facts: [
+        'When you pay attention, you notice more – like spotting a friend in a crowd.',
+        'Noise and things moving around you can make it hard to think.',
+        'Ninjas in stories move quietly and notice everything around them.',
+      ],
+      questions: [
+        { type: 'mcq', q: 'Where is it easiest to read a book?', options: ['in a quiet room', 'next to a loud TV', 'at a busy party'], answer: 0 },
+        { type: 'tf', q: 'When you pay attention, you notice more things.', answer: true },
+      ],
+      game: {
+        game: 'spotter', title: 'Ninja Eyes',
+        intro: 'Study the shelf like a ninja. When it is covered, spot **what changed**!',
+        say: 'Ninja eyes! Look at everything!',
+        turns: [
+          { items: ['🍎 apple', '🧸 teddy', '⚽ ball', '📕 book', '🕯️ candle'], seconds: 7, change: 'missing' },
+          { items: ['🦆 duck', '🎺 trumpet', '🧦 socks', '🔦 torch', '🪁 kite', '🍩 doughnut'], seconds: 8, change: 'new', extra: '🐸 frog' },
+        ],
+      },
+    },
+
+    {
+      type: 'read', title: 'Your focus spotlight', short: 'Read 1', minutes: 4,
+      say: 'VANISHING PAGES again! Read each one carefully – when you tap Got it, the words disappear.',
+      cards: [
+        {
+          title: 'A spotlight in your head', pic: '🔦🧠', vanish: true,
+          text: [
+            'Your [[attention]] is like a spotlight in a dark room. Whatever it shines on, your brain notices and remembers.',
+            'Everything outside the spotlight fades away. You choose where to point it.',
+          ],
+          check: { q: 'Ava is listening to a story, but her spotlight is on the dog outside. What will happen?', options: ['She will miss parts of the story', 'She will remember the story better', 'The dog will tell her the story'], answer: 0 },
+        },
+        {
+          title: 'The distraction thieves', pic: '🔔🧸', vanish: true,
+          text: [
+            'A [[distraction]] steals your spotlight: a ping from a tablet, a toy beside you, a noisy room, even feeling hungry or itchy.',
+            'Every time your spotlight jumps away, it takes a while to come back – so even tiny distractions slow you down.',
+          ],
+          check: { type: 'oddone', q: 'You are reading a book. Which of these is NOT a distraction?', items: ['🔔 a tablet pinging', '🧸 a toy beside you', '📖 the page you are reading', '📺 the TV on loud'], answer: 2, why: 'Why is the page the odd one out?', reasons: ['It is where your spotlight should be', 'It makes the most noise', 'It is the smallest thing'], reason: 0 },
+        },
+        {
+          title: 'One thing at a time', pic: '1️⃣🎯', vanish: true,
+          text: [
+            'Your brain can only really [[focus]] on one thing at a time.',
+            'Trying to do two things at once – like homework and a cartoon – makes both slower, and you make more mistakes.',
+          ],
+          check: { type: 'type', q: 'How many things can your brain really focus on at a time? (Type a number.)', answer: ['1', 'one'], placeholder: 'a number', hint: 'Fewer than two!', explain: 'Just ONE – so point your spotlight at one thing.' },
+        },
+        {
+          title: 'The focus muscle', pic: '💪🧠', vanish: true,
+          text: [
+            'Focus is like a muscle. The more you train it, the stronger it gets.',
+            'Start with short bursts – just a few minutes – then rest, then try a bit longer. Slow breathing before you start helps you feel calm and ready.',
+          ],
+          check: { q: 'Sam can only focus for 2 minutes at a time. What should he do?', options: ['train in short bursts, then go longer', 'give up – some people just can\'t focus', 'try to focus for 2 hours tomorrow'], answer: 0 },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'Focus on Focusing!', short: 'Video', minutes: 6,
+      video: { id: '40cHYEPyU1M', title: 'Focus on Focusing! Five Easy Tips To Help Kids Improve Focus!', channel: 'BrightenUp! Kids', duration: '5:53' },
+      say: 'Five ninja tips for focus! Watch – and try the spot-the-difference game near the end.',
+      clues: [
+        'What is tip number one?',
+        'What is focus like?',
+        'How does sleep help?',
+        'How do you start a big job?',
+        'Which games train focus?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'What was tip number one?', options: ['get rid of distractions', 'eat lots of sweets', 'never take a break'], answer: 0 },
+        { type: 'tf', q: 'The video says your focus muscle gets stronger the more you train it.', answer: true },
+        { type: 'type', q: 'Keeping a good ___ schedule helps your focus, because it helps your brain rest.', answer: ['sleep', 'bedtime'], placeholder: 'one word', hint: 'You do it in bed every night!' },
+        { type: 'mcq', q: 'You have to tidy your whole room. What did the video say to do first?', options: ['just make your bed', 'tidy it all in one go', 'wait until next week'], answer: 0, hint: 'Divide a big job into small ones.' },
+        { type: 'mcq', q: 'Which games did the video say can train your focus?', options: ['memory and spot the difference', 'games where you just sit and watch', 'games you play with your eyes shut'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Ninja Reflex', short: 'Reflex', icon: '🥷', minutes: 4,
+      rounds: [
+        {
+          game: 'gonogo', distract: true,
+          intro: 'Read the RULE. Tap **only** the things that match it. Watch out – the rule changes, and the distraction thieves will try to make you tap their pop-ups!',
+          say: 'Spotlight on the rule!',
+          phases: [
+            { rule: 'Tap only the ⭐ stars!', go: ['⭐'], nogo: ['💣', '🍄'], count: 10 },
+            { rule: 'Only the 🍎 apples – NOT the stars!', go: ['🍎'], nogo: ['⭐', '💣'], count: 10, speed: 1.1 },
+            { rule: 'Tap the 🐱 cats and the 🐶 dogs – never the 🐭 mice!', go: ['🐱', '🐶'], nogo: ['🐭'], count: 12, speed: 1.25 },
+          ],
+          done: 'NINJA REFLEXES! Your spotlight stayed on the rule.',
+        },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Calm Ninja', short: 'Calm', icon: '🫁', minutes: 4,
+      rounds: [
+        {
+          game: 'breathe', title: 'Box Breathing', breaths: 3,
+          intro: 'Put your finger on the yellow dot and follow it round the square. **Breathe in** up the side, **hold** along the top, **breathe out** down the other side, **hold** along the bottom.',
+          say: 'Slow and steady. Breathe with the dot.',
+          done: 'Calm and ready! Now let\'s see how that calm brain does…',
+        },
+        {
+          game: 'clash', title: 'Colour Clash', turns: 12, flip: 8,
+          intro: 'Your brain wants to READ the word. Don\'t let it! Tap the **colour of the ink**. (Later the rule flips – read it carefully!)',
+          say: 'The colour of the INK, not the word!',
+          done: 'Your calm brain beat the clash!',
+        },
+      ],
+    },
+
+    {
+      type: 'teach', title: 'Teach Professor Bolt to focus', short: 'Teach', minutes: 3,
+      say: 'Professor Bolt keeps getting distracted – and he has some facts wrong. Fix his mistakes!',
+      robot: { name: 'Professor Bolt', emoji: '🤖' },
+      intro: 'Beep! I am Professor Bolt. I have learned all about focus. Let me teach YOU! Ooh, a butterfly… where was I?',
+      lines: [
+        { text: 'Your attention is like a spotlight: what it shines on, you notice.', ok: true, why: 'Right! You choose where to point your spotlight.' },
+        { text: 'Distractions help your spotlight stay on your work.', wrong: 'help', fix: 'stop', options: ['teach', 'make'], hint: 'Do distractions help, or do they steal your spotlight?', why: 'Distractions STOP your spotlight staying on your work – they steal it!' },
+        { text: 'Your brain is great at focusing on five things at once.', wrongAt: 7, fix: 'one', options: ['ten', 'two'], hint: 'How many things can your brain really focus on?', why: 'Just ONE thing at a time – doing two at once makes more mistakes.' },
+        { text: 'Focus is like a muscle: training makes it weaker.', wrong: 'weaker', fix: 'stronger', options: ['smaller', 'slower'], hint: 'What happens to a muscle when you train it?', why: 'Training makes your focus muscle STRONGER.' },
+        { text: 'Slow breathing can help you feel calm before you start.', ok: true, why: 'Yes! Like the box breathing you just did.' },
+      ],
+      outro: 'Thank you! I will point my spotlight at one thing at a time. Ooh, a butt— no! FOCUS, Bolt!',
+    },
+
+    {
+      type: 'game', title: 'Dojo Arcade: pick a game!', short: 'Arcade', icon: '🕹️', minutes: 4,
+      pick: { title: '🕹️ Pick your arcade game!', say: 'Your choice! Which game do you want to play? Win one to carry on – or play them all!' },
+      rounds: [
+        {
+          game: 'runner', title: 'Focus Run', emoji: '🏃', blurb: 'Grab what helps you focus – dodge the distractions.',
+          intro: 'Your ninja runs by itself and the words come two at a time – pick the lane with the right one! Collect the things that **help you focus**.',
+          say: 'Tap the top or bottom lane. Collect what HELPS you focus!',
+          prompt: 'Collect what HELPS focus – dodge the distractions!',
+          items: [
+            { label: '🤫 a quiet room', ok: true }, { label: '😴 good sleep', ok: true },
+            { label: '🫁 slow breathing', ok: true }, { label: '1️⃣ one job at a time', ok: true },
+            { label: '🔔 pings', ok: false, why: 'Pings steal your spotlight.' },
+            { label: '📺 TV on loud', ok: false, why: 'A loud TV pulls your attention away.' },
+            { label: '2️⃣ two jobs at once', ok: false, why: 'Two things at once means more mistakes.' },
+            { label: '🧸 toys on the desk', ok: false, why: 'Toys nearby are too tempting!' },
+          ],
+          done: 'FOCUS RUN COMPLETE!',
+        },
+        {
+          game: 'steadyhand', title: 'Steady Hand', emoji: '✏️', blurb: 'Guide your pencil along the wiggly path – don\'t touch the sides!',
+          intro: 'Press on the green dot and follow the wiggly path all the way to the 🏁 – carefully! Pick Easy, Medium or Hard.',
+          say: 'Breathe… and steady!',
+          done: 'A calm, steady ninja hand!',
+        },
+        {
+          game: 'sequence', title: 'Note Block Echo', emoji: '🎵', blurb: 'Watch the note blocks, then play the tune back.',
+          blocks: 4, start: 3, target: 6,
+          intro: 'Watch and listen, then **play the tune back**. It grows one note longer each time!',
+          say: 'Spotlight on the blocks!',
+          done: 'What a memory for music!',
+        },
+      ],
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: Buzz Distracto', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      say: 'BZZZ! It\'s BUZZ DISTRACTO! He will throw pings and pop-ups at you while you answer. Ignore them, {name} – spotlight on the question!',
+      boss: { name: 'Buzz Distracto', sprite: DISTRACTO, attack: ['🔔', '📱'], distract: true, lines: {
+        prefight: ['BZZZ! Hey! Hey! Look over here! No, over HERE! Ooh, look, a shiny thing!', 'Nice try. My spotlight stays on one thing at a time – and right now, that\'s beating you.', 'BZZZ… we\'ll see how long THAT lasts!'],
+        intro: 'BZZZ! Ping! Ding! Did you see that? Look! LOOK!',
+        hurt: ['BZZT! You didn\'t even look at me!', 'Ow! How are you SO focused?', 'Bzz… my pings aren\'t working!'],
+        taunt: ['Ha! Distracted you! BZZZ!', 'Ding ding! Got your spotlight!', 'Ping! Over here! Hee hee!'],
+        angry: 'BZZZZZ! MAXIMUM PINGS! A HUNDRED NOTIFICATIONS!',
+        dodge: 'Dodge my pings, ninja!',
+        miss: 'Bzz? Where did you go?',
+        last: 'One last ping… you KNOW you want to look…',
+        defeat: 'Bzzz… nobody… is… looking… at… me…',
+        win: 'BZZZ! I win! (Breathe, then try again – spotlight on!)',
+        stunned: 'Bz… bz… too… much… focus…',
+        beg: ['Okay, okay! I\'ll switch to silent mode!', 'Please! I just wanted some attention!', 'I\'ll only buzz at bedtime – no, NEVER! Promise!'],
+      } },
+      questions: [
+        { type: 'mcq', q: 'Your attention is like a…', options: ['spotlight', 'sponge', 'sandwich'], answer: 0 },
+        { type: 'type', q: 'Focus is like a ___ – the more you train it, the stronger it gets.', answer: ['muscle', 'muscles'], placeholder: 'one word', hint: 'Footballers have strong ones in their legs.' },
+        { type: 'tf', q: 'Doing two things at once makes you faster and more careful.', answer: false, explain: 'Two things at once means slower work and more mistakes!' },
+        { type: 'mcq', q: 'In Colour Clash, the word RED is written in BLUE ink. Which button do you tap?', options: ['blue', 'red', 'green'], answer: 0, hint: 'Tap the colour of the INK.' },
+        { type: 'mcq', q: 'In box breathing, what do you do after you breathe IN?', options: ['hold your breath', 'breathe out fast', 'shout out loud'], answer: 0 },
+        { type: 'oddone', q: 'Buzz Distracto hid a helper with his distractions! Which one HELPS you focus?', items: ['🔔 a pinging tablet', '📺 a loud TV', '🤫 a quiet room', '🧸 toys on your desk'], answer: 2, why: 'Why is the quiet room the odd one out?', reasons: ['It doesn\'t steal your spotlight', 'It is the most fun', 'It is the biggest'], reason: 0 },
+        { type: 'type', q: 'The video said games like memory and spot the ___ train your focus.', answer: ['difference', 'differences'], placeholder: 'one word', hint: 'You look for what is different in two pictures…' },
+        { type: 'mcq', q: 'Buzz Distracto keeps pinging your tablet while you read. Best ninja move?', options: ['put the tablet in another room', 'check it quickly, just this once', 'turn the sound up even louder'], answer: 0 },
+        { type: 'type', q: 'Buzz Distracto is buzzing to make you forget! Type ONE thing from your Memory Key.', answer: ['fox', 'a fox', 'melon', 'a melon', 'bike', 'a bike', 'moon', 'a moon', 'kite', 'a kite'], placeholder: 'one thing', hint: 'Back at the start… an animal, a fruit, something with wheels…' },
+        { type: 'oddone', q: 'Four of these were in your Memory Key. Which one was NOT?', items: ['🦊 fox', '🚲 bike', '⭐ star', '🍉 melon', '🪁 kite'], answer: 2, why: 'How do you know?', reasons: ['It wasn\'t in the Memory Key – the moon was', 'It is the brightest one', 'It is the only one that can fly'], reason: 0, hint: 'Picture the Memory Key… was there something in the night sky?' },
+        { type: 'mcq', q: 'Final blow! Which thing from the Memory Key shines in the night sky?', options: ['🌙 the moon', '🦊 the fox', '🪁 the kite'], answer: 0 },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>

@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Memory Palace</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <link rel="stylesheet" href="../shared/brain.css">
+  <script src="../shared/pixel.js"></script>
+  <script src="../shared/pixel-icons.js"></script>
+  <script src="../shared/avatar.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// the boss: The Forgetter, a fog ghost who eats memories
+const FORGETTER = Pixel.svg([
+  '...gggggg...',
+  '..gGGGGGGg..',
+  '.gGGGGGGGGg.',
+  'gGGkkGGkkGGg',
+  'gGGkwGGkwGGg',
+  'gGGGGGGGGGGg',
+  'gGGGkkkkGGGg',
+  'gGGkpppGkGGg',
+  'gGGGGGGGGGGg',
+  '.gGGGGGGGGg.',
+  'gGgGGgGGgGGg',
+  'g.gg.gg.gg.g',
+], { g: '#8f97a8', G: '#d6dbe6', k: '#1b1b1b', w: '#ffffff', p: '#b44dff' });
+
+const PALACE = Pixel.svg([
+  '.....rr.....',
+  '....rrrr....',
+  '...rrrrrr...',
+  '..rrrrrrrr..',
+  '.rrrrrrrrrr.',
+  '..wwwwwwww..',
+  '..wbbwwbbw..',
+  '..wbbwwbbw..',
+  '..wwwddwww..',
+  '..wwwddwww..',
+  'gggggggggggg',
+], { r: '#c62828', w: '#f3e2b8', b: '#7fd0ff', d: '#8a5a32', g: '#4fbf3f' });
+
+// ---------- the lesson ----------
+window.LESSON = {
+  id: 'brain-memory-palace',
+  subject: 'brain',
+  title: 'Memory Palace',
+  emoji: '🏰',
+  home: '../index.html',
+  midBreak: false, // the Arcade stage is the fun break
+  layout: 2,
+  finishAch: 'focus', // every Brain Dojo lesson unlocks the focus headband
+  memoryKey: { items: ['🗝️ a gold key', '🐙 an octopus', '🎺 a trumpet', '🍩 a doughnut'], seconds: 10,
+    say: 'The Forgetter is coming to steal your memories! Guard this Memory Key. Look carefully – the boss will ask for it at the very end!' },
+  mascot: {
+    name: 'Sensei Hoot',
+    sprite: Pixel.sprites.sensei,
+    praise: ['Hoo-ray! Correct!', 'A sharp mind!', 'Critical hit!', 'Your memory is mighty!', 'Wise as an owl!', 'Focus power!', 'Nailed it!'],
+    oops: ['Hoo! Not quite.', 'Not quite – have another go!', 'Breathe, and think again!', 'So close! One more try.'],
+  },
+  glossary: {
+    'memory palace': { emoji: '🏰', def: 'A place you know well that you imagine in your head, with a silly picture of each thing to remember in a different spot.' },
+    route: { emoji: '🚶', def: 'The way you go from one place to the next, always in the same order.' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'Memory Palace', short: 'Start', minutes: 1,
+      pic: PALACE,
+      hello: "Welcome to the BRAIN DOJO! I'm Sensei Hoot. Here we train the most powerful thing you own – your brain!",
+      question: 'How do memory champions remember a whole pack of cards in under a minute?',
+      intro: 'Learn the memory champions\' secret trick, build your own memory palace – then test it on your own brain! But first, guard the Memory Key…',
+      nameLabel: 'Ninja name:',
+    },
+
+    {
+      type: 'review', title: 'Warm-up', short: 'Warm-up', minutes: 3,
+      from: { title: 'Your amazing memory', emoji: '🧠' },
+      say: 'A new dojo! First, a brain warm-up. Read the notes, then test your memory!',
+      facts: [
+        'Your brain lives inside your skull. It is in charge of thinking, moving and remembering.',
+        'The more you practise something, the easier it gets – like riding a bike.',
+        'A good night\'s sleep helps your brain keep what you learned that day.',
+        'It is hard to remember things when you are not paying attention.',
+      ],
+      questions: [
+        { type: 'mcq', q: 'Which part of your body does the remembering?', options: ['your brain', 'your heart', 'your tummy'], answer: 0 },
+        { type: 'tf', q: 'Sleep helps your brain keep the things you learned.', answer: true },
+        { type: 'mcq', q: 'Leo watched TV while his mum told him where his shoes were. Why did he forget?', options: ['He wasn\'t paying attention', 'His shoes were far too big', 'He had already had his tea'], answer: 0, hint: 'Where was his attention?' },
+      ],
+      game: {
+        game: 'sequence', title: 'Note Block Echo', blocks: 4, start: 2, target: 5,
+        intro: 'Watch the note blocks light up, then **tap them in the same order**. Each time you get it right, the tune gets one note longer!',
+        say: 'Watch AND listen. Then copy the tune!',
+      },
+    },
+
+    {
+      type: 'read', title: 'The champions\' secret', short: 'Read 1', minutes: 4,
+      say: 'These are VANISHING PAGES! Read each one carefully – when you tap Got it, the words disappear and I ask you a question.',
+      cards: [
+        {
+          title: 'Memory champions', pic: '🏆🃏', vanish: true,
+          text: [
+            'In memory contests, champions look at a shuffled pack of 52 playing cards, then say every card back in the right order – in less than a minute!',
+            'They are not born with super brains. They use tricks that anyone can learn – even you.',
+          ],
+          check: { q: 'What makes memory champions so good at remembering?', options: ['They use tricks that anyone can learn', 'They were born with much bigger brains', 'They eat special food before contests'], answer: 0 },
+        },
+        {
+          title: 'Your brain loves places', pic: '🏠🗺️', vanish: true,
+          text: [
+            'Your brain is brilliant at remembering places. You could find your way round your home with your eyes shut!',
+            'A [[memory palace]] uses this. You imagine a place you know well, and you put each thing you want to remember in a different spot.',
+          ],
+          check: { q: 'Mia wants to remember three things for school. Where does a memory palace put them?', options: ['in different spots in a place she knows', 'all together on a list in her notebook', 'inside a song that she sings ten times'], answer: 0 },
+        },
+        {
+          title: 'Silly is sticky', pic: '🍌🤸', vanish: true,
+          text: [
+            'Your brain forgets boring things fast, but it remembers things that are funny, strange or huge.',
+            'So make every picture as silly as you can. Not just a banana on the sofa – a giant banana doing a handstand on the sofa!',
+          ],
+          check: { q: 'You need to remember milk. Which picture will stick in your brain best?', options: ['a cow skateboarding down the stairs', 'a small carton of milk on the kitchen table', 'the word milk written neatly in pencil'], answer: 0, hint: 'Which one is the silliest?' },
+        },
+        {
+          title: 'Walk the same way', pic: '🚪🚶', vanish: true,
+          text: [
+            'Always walk through your palace in the same order: the front door first, then the next spot, and so on. This is your [[route]].',
+            'To get your things back, walk the route again in your head. Each silly picture pops back out!',
+          ],
+          check: { type: 'type', q: 'To get your things back, you walk through your palace again in the same…', answer: ['order', 'way', 'route'], placeholder: 'one word', hint: 'You always go the same way, in the same o…', explain: 'The same order, every time – that is your route!' },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'The Memory Palace: Can You Do It?', short: 'Video', minutes: 5,
+      video: { id: 'p9IOqd1LpkA', title: 'The Memory Palace : Can You Do It?', channel: 'Sprouts', duration: '3:35' },
+      say: 'Watch a memory palace in action! At the end, the video asks you to try it – have a go!',
+      clues: [
+        'How fast did the champion remember a pack of cards?',
+        'Which food were the ingredients for?',
+        'What was watching TV?',
+        'What kind of pictures help?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'The memory champion in the video remembered a whole pack of cards in…', options: ['33 seconds', '33 minutes', '3 hours'], answer: 0 },
+        { type: 'type', q: 'The video used a memory palace to remember the ingredients for which food?', answer: ['pancakes', 'pancake'], placeholder: 'a food', hint: 'You eat them flat, with lemon or syrup!' },
+        { type: 'mcq', q: 'In the living room, what was sitting watching TV?', options: ['a massive egg', 'a teaspoon', 'a cup of flour'], answer: 0 },
+        { type: 'tf', q: 'The video says imagining things in a funny or crazy way helps you remember.', answer: true },
+        { type: 'mcq', q: 'What kind of place does the video say to imagine?', options: ['a place you know well, like your house', 'a place you have never been to before', 'a castle you saw once in a cartoon'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Build Your Memory Palace', short: 'Palace', icon: '🏰', minutes: 5,
+      rounds: [
+        {
+          game: 'palace', caption: '🏰 My memory palace results',
+          intro: 'Drag each thing into a room (or tap it, then tap a room). Tap a full room to make the picture **even sillier**. Then walk through your palace – and get everything back!',
+          say: 'The sillier the picture, the better it sticks!',
+          rooms: ['🚪 front door', '👟 shoe rack', '🛋️ sofa', '📺 TV', '🛏️ bed', '🛁 bath', '🍳 cooker', '🌳 garden'],
+          decoys: ['🥕 carrot', '🍕 pizza', '🎈 balloon', '🪥 toothbrush', '🧢 cap', '🎒 bag', '📕 book', '🥄 spoon', '🍪 biscuit', '⚽ ball'],
+          missions: [
+            { text: 'Sensei Hoot\'s shopping list: put these 4 things in your palace, walk through it, then get them all back!', items: ['🍌 banana', '🧀 cheese', '🥚 eggs', '🍞 bread'], yes: 'Four for four? Your palace works!' },
+            { text: 'Packing for a camping trip: 6 things this time. Make every picture silly!', items: ['⛺ tent', '🔦 torch', '🧦 socks', '🍎 apple', '🧭 compass', '🧸 teddy'], yes: 'Six things – remembered like a champion!' },
+          ],
+          finish: '🏆 Memory palace built! You can use it any time – for shopping lists, spellings or facts.',
+        },
+      ],
+    },
+
+    {
+      type: 'investigate', title: 'Test Your Own Brain', short: 'Test', minutes: 5,
+      question: 'Does a memory palace really work – on YOUR brain?',
+      say: 'Let\'s test it like scientists: the same number of things, two different ways.',
+      predict: { q: 'Will you remember more things from just reading a list, or with your memory palace?', options: ['more with my memory palace', 'more from just reading the list', 'the same both ways'] },
+      test: {
+        game: 'palace', caption: '🧪 My memory test: list vs palace',
+        intro: 'Test 1: just **read** a list. Test 2: use your **palace**. Both have 8 things – a fair test!',
+        rooms: ['🚪 front door', '👟 shoe rack', '🛋️ sofa', '📺 TV', '🛏️ bed', '🛁 bath', '🍳 cooker', '🌳 garden'],
+        decoys: ['🥕 carrot', '🍕 pizza', '🎈 balloon', '🪥 toothbrush', '🧢 cap', '📕 book', '🥄 spoon', '🍪 biscuit', '⚽ ball', '🧲 magnet', '🪁 kite', '🧤 gloves'],
+        missions: [
+          { mode: 'list', seconds: 20, text: 'Test 1: read this list of 8 things. It vanishes in 20 seconds!', items: ['🦆 duck', '🎸 guitar', '🍉 melon', '🚲 bike', '👑 crown', '🐝 bee', '🧁 cupcake', '🔑 key'], yes: 'Test 1 done! Now try the same thing with your palace.' },
+          { text: 'Test 2: 8 different things – this time, use your memory palace!', items: ['🦒 giraffe', '🥁 drum', '🍓 strawberry', '🚀 rocket', '🎩 top hat', '🐌 snail', '🍦 ice cream', '⏰ clock'], yes: 'Test 2 done! Look at your results table.' },
+        ],
+      },
+      explain: [
+        { type: 'tf', q: 'It was a fair test, because both tests had 8 things to remember.', answer: true, explain: 'Yes! If one list was longer, the test would not be fair.' },
+        { type: 'mcq', q: 'Why do silly pictures in rooms help your memory?', options: ['Your brain remembers places and strange things', 'Rooms in houses are always very quiet', 'Silly pictures are much smaller to carry'], answer: 0 },
+        { type: 'type', q: 'Memory champions use a memory… to remember packs of cards.', answer: ['palace'], placeholder: 'one word', hint: 'A king lives in one!' },
+      ],
+      result: [
+        'When scientists test this on lots of people, most remember many more things with a memory palace than by just reading a list.',
+        'If your palace won too, now you know it works on YOUR brain. If it didn\'t yet – practise! Memory champions got better by training, just like you.',
+      ],
+    },
+
+    {
+      type: 'game', title: 'Dojo Arcade: pick a game!', short: 'Arcade', icon: '🕹️', minutes: 4,
+      pick: { title: '🕹️ Pick your arcade game!', say: 'Your choice! Which game do you want to play? Win one to carry on – or play them all!' },
+      rounds: [
+        {
+          game: 'invaders', title: 'Memory Blaster', emoji: '🚀', blurb: 'Shoot the things that match the target.',
+          intro: 'Arcade round! Read the target at the top and **shoot only the things that match it**.',
+          say: 'Read the target first!',
+          waves: [
+            { prompt: 'Shoot the things that HELP you remember!', items: [{ label: 'silly pictures', ok: true }, { label: 'a place you know', ok: true }, { label: 'the same route', ok: true }, { label: 'boring pictures', ok: false, why: 'Your brain forgets boring things fast.' }, { label: 'not listening', ok: false, why: 'You can\'t remember what you didn\'t notice.' }] },
+            { prompt: 'Shoot the things that were on the CAMPING list!', items: [{ label: 'tent', ok: true }, { label: 'torch', ok: true }, { label: 'compass', ok: true }, { label: 'pizza', ok: false, why: 'Pizza wasn\'t on the camping list.' }, { label: 'balloon', ok: false, why: 'No balloon – walk your palace again!' }] },
+          ],
+          done: 'MEMORY BLASTER CLEAR!',
+        },
+        {
+          game: 'steadyhand', title: 'Steady Hand', emoji: '✏️', blurb: 'Guide your pencil along the wiggly path – don\'t touch the sides!',
+          intro: 'Press on the green dot and follow the wiggly path all the way to the 🏁 – carefully! Pick Easy, Medium or Hard.',
+          say: 'Focus! Don\'t touch the sides!',
+          done: 'What a steady hand – that is real focus!',
+        },
+        {
+          game: 'spotter', title: 'What Changed?', emoji: '👀', blurb: 'Study the shelf. It gets covered… then spot what changed!',
+          intro: 'Look at the shelf until it gets covered. Then spot **what changed**!',
+          say: 'Look at EVERYTHING on the shelf!',
+          turns: [
+            { items: ['🍎 apple', '🧸 teddy', '⚽ ball', '📕 book', '🎈 balloon', '🕯️ candle'], seconds: 8, change: 'missing' },
+            { items: ['🦆 duck', '🎺 trumpet', '🍩 doughnut', '🧦 socks', '🔦 torch', '🪁 kite'], seconds: 8, change: 'new', extra: '🐸 frog' },
+            { items: ['🐙 octopus', '🚀 rocket', '🍕 pizza', '🎩 top hat', '🐌 snail', '🧀 cheese', '⏰ clock'], seconds: 10, change: 'swap' },
+          ],
+          done: 'Eagle eyes! Nothing gets past you.',
+        },
+      ],
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: The Forgetter', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      say: 'Oh no… THE FORGETTER is here! It eats memories – and it wants your Memory Key. Use your palace, {name}!',
+      boss: { name: 'The Forgetter', sprite: FORGETTER, attack: ['🌫️', '💨'], lines: {
+        prefight: ['Whooo… I am THE FORGETTER. Everything you learned today is fading into fog… fading… gone.', 'Not a chance! I put it all in my memory palace. I just walk the route and it all comes back!', 'Your palace? Hmm. Then I shall fill every room with FOG!'],
+        intro: 'Whooo… what were we talking about? Oh yes – EATING YOUR MEMORIES!',
+        hurt: ['Ow! A memory… it stuck!', 'Whoa! That one was too silly to forget!', 'Argh! You remembered!'],
+        taunt: ['Forgotten! Delicious!', 'Mmm, a tasty memory!', 'Whooo… gone in the fog!'],
+        angry: 'GRRR! Your palace is too strong! FULL FOG MODE!',
+        dodge: 'Dodge my fog clouds… if you can remember how!',
+        miss: 'Whooo… where did you go?',
+        last: 'One last puff of fog… and your Memory Key is MINE!',
+        defeat: 'I… I can\'t remember… how to be a boss… poof.',
+        win: 'Whooo-hoo! Everything forgotten! (Try again – walk your palace!)',
+        stunned: 'Who am I? Where am I? What is a ghost?',
+        beg: ['Wait! I can forget this ever happened!', 'Please… just a tiny memory… a small one?', 'I\'ll go haunt a sock drawer instead! Promise!'],
+      } },
+      questions: [
+        { type: 'type', q: 'The Forgetter is grabbing your Memory Key! Type ONE thing that was in it.', answer: ['key', 'gold key', 'a gold key', 'octopus', 'an octopus', 'trumpet', 'a trumpet', 'doughnut', 'a doughnut', 'donut'], placeholder: 'one thing', hint: 'Think back to the start of the lesson. Something gold… something with 8 arms…' },
+        { type: 'mcq', q: 'What is a memory palace?', options: ['a place you know, used to hold silly pictures', 'a real castle where memory champions live', 'a special notebook for writing lists in'], answer: 0 },
+        { type: 'tf', q: 'You should walk through your palace in a different order every time.', answer: false, explain: 'Always the same route, in the same order!' },
+        { type: 'type', q: 'Your brain remembers pictures that are silly, strange or…', answer: ['funny', 'huge', 'giant', 'crazy', 'big'], placeholder: 'one word', hint: 'A giant banana doing a handstand is… h…' },
+        { type: 'order', q: 'The Forgetter mixed up the memory palace steps! Put them in order.', items: ['🏠 Pick a place you know well', '🎨 Put a silly picture in each spot', '🚶 Walk the same route to get them back'], hint: 'You need the place first!' },
+        { type: 'mcq', q: 'The Forgetter fogged the pancake palace! In the video, what was on top of the TV?', options: ['a cup of milk', 'a bag of sugar', 'a pair of shoes'], answer: 0, hint: 'Something you pour…' },
+        { type: 'mcq', q: 'Why do memory champions win contests?', options: ['They practise tricks like the palace', 'Their brains are as big as footballs', 'They only ever remember easy things'], answer: 0 },
+        { type: 'type', q: 'The champion said back a whole pack of cards. How many cards are in a pack?', answer: ['52', 'fifty-two', 'fifty two'], placeholder: 'a number', hint: 'It was on the first vanishing page. It is 50 and a bit more.' },
+        { type: 'oddone', q: 'Three of these were in your Memory Key. Which one was NOT?', items: ['🐙 octopus', '🎺 trumpet', '🥁 drum', '🍩 doughnut'], answer: 2, why: 'How do you know?', reasons: ['It wasn\'t in the Memory Key at the start', 'It is the loudest thing', 'It is the only one you can eat'], reason: 0, hint: 'Picture the Memory Key from the very start…' },
+        { type: 'mcq', q: 'Final blow! Which thing from the Memory Key could play music?', options: ['🎺 the trumpet', '🗝️ the gold key', '🍩 the doughnut'], answer: 0 },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>

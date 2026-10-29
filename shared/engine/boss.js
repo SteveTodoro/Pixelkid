@@ -488,7 +488,21 @@ PixelkidEngine.part('boss', E => {
       if (boss && window.Music) Music.play('boss');
       const qArea = h('div', { class: 'q-area' });
       put(area, boss && boss.el, qArea, boss && boss.hero);
-      runQuestions(qArea, qs, { key: 'quiz', boss, done: score => { if (window.Music) Music.stop(); return boss ? boss.finale(() => results(score)) : results(score); }, lost: gameOver, lastLabel: s.boss ? '⚔️ Final blow!' : 'See my score 🏆', kind: boss ? 'Boss battle' : 'Quiz' });
+      // s.boss.distract: harmless pop-ups (pings, fake messages) float over the questions now and then – ignore them!
+      let pester = 0;
+      if (boss && s.boss.distract) {
+        const D = [].concat(s.boss.distract === true ? ['🔔 PING!', '📱 New message!', '🎮 Play me instead!', '🍭 Free sweets?'] : s.boss.distract);
+        pester = setInterval(() => {
+          if (!qArea.isConnected) return clearInterval(pester);
+          if (Math.random() < 0.45) return;
+          const el = h('button', { class: 'bd-ping boss-ping', type: 'button' }, pick(D));
+          el.style.left = (5 + Math.random() * 60) + '%'; el.style.top = (Math.random() * 70) + '%';
+          el.onclick = () => { sfx.bad(); say('That\'s a distraction! Ignore it and focus on the question.'); el.remove(); };
+          qArea.append(el); setTimeout(() => el.remove(), 2200);
+        }, 3000);
+      }
+      const stopPester = () => clearInterval(pester);
+      runQuestions(qArea, qs, { key: 'quiz', boss, done: score => { stopPester(); if (window.Music) Music.stop(); return boss ? boss.finale(() => results(score)) : results(score); }, lost: sc => { stopPester(); gameOver(sc); }, lastLabel: s.boss ? '⚔️ Final blow!' : 'See my score 🏆', kind: boss ? 'Boss battle' : 'Quiz' });
       nav.hideNext();
     }
 

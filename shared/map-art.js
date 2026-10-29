@@ -58,6 +58,13 @@
       scenery: { trees: 5, hill: 2, props: 2, flowers: 1 },
       trees: ['🌴'], props: ['🐚', '🪨'], flowers: ['🌺', '🌸'], floaters: ['🐠', '🐬', '🐢'],
     },
+    brain: { // misty mountain-top islands over a sea of cloud: stone steps, bamboo, blossom trees and lanterns
+      ground: ['#e9f7d4', '#a8d98a', '#6fae5a', '#3f7a35'], cliff: ['#c9c3d6', '#8f87a3', '#5a5370'], strata: true,
+      hill: ['#c6ecb0', '#7cc46a', '#4a8f45'], mountain: ['#efe8f5', '#b8aacb', '#7d6e96'], peak: ['#ffffff', '#ffe3ef'],
+      path: 'cobble', sea: '#cfd8f0', ponds: 1,
+      scenery: { trees: 4, hill: 2, props: 2, flowers: 2, rocks: 1 },
+      trees: ['🌸', '🎋'], props: ['🏮', '🪨'], flowers: ['🌸', '🌼'], floaters: ['☁️', '🐟'],
+    },
     world: { // green islands with sandy beaches in a deep blue sea, joined by a dotted flight path
       ground: ['#c8f28e', '#82d052', '#519f34', '#30691f'], cliff: ['#bcc6d2', '#808c9b', '#4e5967'], beach: '#f4d98c',
       hill: ['#b2ec7e', '#58bf3f', '#2e8a26'], mountain: ['#e2e6ea', '#a3abb5', '#6b7480'], peak: ['#ffffff', '#cfe6ff'],

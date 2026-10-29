@@ -164,6 +164,12 @@
           nudge: 'Any luck? Inventor Ivy, by the How Does AI Work? stop, might have some paints.',
           found: 'Paints! Thank you! One quick question before I start…', done: 'Everyone is coming to the Space Fair, thanks to you, {name}!' } },
     ],
+    brain: [
+      { id: 'miko', name: 'Master Miko', role: 'trader', at: null, stock: ['karate-gi', 'blossom-bow', 'pet-panda'],
+        look: { skin: 'skin2', hair: 'hair-buns', hairColor: 'hc-black', top: 'karate-gi', legs: 'trousers-black', shoes: 'trainers', hat: 'blossom-bow' },
+        say: { hello: "Welcome to the dojo! I'm Master Miko. A calm mind needs a calm outfit. Take a look!", back: 'Welcome back, {name}! Breathe in… and shop!',
+          bye: 'Stay focused, young ninja!', sold: 'A wise choice!' } },
+    ],
     wonders: [
       { id: 'coral', name: 'Captain Coral', role: 'trader', at: null, stock: ['sailor-top', 'snorkel-mask', 'pet-crab'],
         look: { skin: 'skin3', hair: 'hair-long', hairColor: 'hc-blonde', top: 'sailor-top', legs: 'shorts', shoes: 'boots', extra: 'snorkel-mask' },

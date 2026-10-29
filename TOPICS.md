@@ -102,6 +102,30 @@ One country per lesson: find it on the map, then the history and culture childre
 **Chef:** `cook` (`recipes: [{ name, emoji, customer, fact, steps: [{ add, label, emoji, makes } | { do: roll | slice | pour | squeeze | stir, label, makes }] }]`, `pantry` decoys with a `why`, `memory: true` + `par` seconds for a timed rush, `yum`). Emoji or `Pixel.svg` pictures both work.
 **Say it!:** `phrases` (`lang: 'ja-JP' | 'th-TH'`, `phrases: [{ text, roman, means, emoji, sound }]`, `quiz` situation questions, `gesture: { kind: 'bow' | 'wai', say }`). 🔊 uses a native voice only when the device has one; otherwise it shows the "say it like" spelling.
 
+## 🧠 Brain Dojo (focus, concentration & memory – curated, beyond the curriculum)
+Why it exists: the child reads as little as possible to race to the boss. Here **paying attention IS the game**: each lesson teaches a real technique he can feel working, tests it on himself, and keeps his personal records.
+
+| Unit | Lesson ideas |
+|------|--------------|
+| Super Memory | The memory palace, silly pictures, walking a route, a self-test of list vs palace ✅ *(Memory Palace)* · how memory works (paths in the brain that practice and sleep make stronger, forgetting) · codes and ciphers (Spy School) |
+| Focus & Calm | Attention as a spotlight, distraction thieves, one thing at a time, the focus muscle, box breathing, Colour Clash ✅ *(Ninja Focus)* · observation and spotting changes (Eagle Eye) · listening to a story with no text (Story Keeper) |
+
+**Brain Dojo style:** lessons go in `brain/`, `subject: 'brain'` (cherry-blossom pink), and load `../shared/brain.css` after lesson.css. Mascot Sensei Hoot (`Pixel.sprites.sensei`), `finishAch: 'focus'` (Focus Master, unlocks the focus headband). Master Miko sells the dojo suit, the blossom bow headband and the Zen panda. Bosses: The Forgetter (Memory Palace), Buzz Distracto (Ninja Focus, with `distract: true`). Every lesson uses the three mechanics below. Keep the reading on vanishing pages, and let the games do the work.
+
+**Brain Dojo mechanics (any lesson can use them):**
+- **Vanishing pages:** `vanish: true` on a read card. He reads it, taps "🧠 Got it – vanish!", and the words hide while the check is asked. 👀 Peek brings them back but loses the gem, and a wrong answer brings them back too. The check can be any type except `evidence`.
+- **Memory Key:** `memoryKey: { items: ['🗝️ a gold key', …], seconds, say }` on the lesson. The items flash up when he presses PLAY, then lock, and the boss asks for them at the end (a typed "type ONE thing" plus an oddone). lesson-check warns if the boss never asks.
+- **Brain records:** the brain games save his personal bests in `y3:brain` (`E.brainRecord(id, value, label)`), shown as "🧠 Your record" with a NEW BRAIN RECORD toast.
+- **Boss distractions:** `boss.distract: true` (or a list of strings) floats harmless pop-ups (🔔 PING!, 📱 New message!) over the questions to ignore.
+
+**Brain Dojo games (`shared/engine/brain.js`, each with a `_test` hook; `node tools/brain-test.js` plays them all):**
+- **Memory Palace (`palace`):** `rooms: ['🚪 front door', …]` in walking order, `decoys: [...]` for the recall grid, `missions: [{ text, items: ['🍌 banana', …], mode: 'palace' (default) | 'list', seconds }]`. Palace: drag (or tap) each thing into a room, where it gets a silly caption (tap the room for a sillier one), walk the rooms in order, then everything vanishes and he picks each room's thing. `list` mode is the experiment's control (read a list, it vanishes, tap what you remember). A results table compares the runs, so it works as an `investigate` test.
+- **Note Block Echo (`sequence`):** Simon-style, `blocks` (3–6), `start`, `target` length. `mode: 'digits'` flashes a number (`chunk: true` shows it in chunks, like a phone number) to type on a keypad, `lengths: [4, 5, 6, 7]`. Works as a `review.game` warm-up.
+- **Kim's Game (`spotter`):** `turns: [{ items, seconds, change: 'missing' | 'new' | 'swap', extra }]`. The shelf shows, gets covered, then he spots the change. A wrong answer shows the first shelf again for 3 seconds.
+- **Ninja Reflex (`gonogo`):** `phases: [{ rule, go: [emoji], nogo: [emoji], count, speed }]`. The rule switches between phases, and `distract: true` adds pop-ups to ignore. Every phase finishes, whatever the score.
+- **Colour Clash (`clash`):** tap the ink colour, not the word. `turns`, `flip` (the turn where the rule flips to "tap the WORD").
+- **Box Breathing (`breathe`):** trace the square with the dot (in, hold, out, hold). `breaths`, `side` (seconds). The heart slows as he follows the dot, and there is no fail state.
+
 ## 👕 Avatar & Wardrobe
 - Every 💎 earned in any lesson also goes into a wallet (`y3:wallet`). The **Wardrobe & Shop** (`avatar.html`) spends it on pixel clothes, hair, hats, extras and pets (catalogue in `shared/avatar.js`).
 - Some items are secret and unlock with achievements (`unlock: 'boss' | 'artist' | 'designer' | 'perfect' | 'video' | 'traveller' …`).
