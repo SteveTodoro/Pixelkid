@@ -15,7 +15,7 @@ Privacy: the repo is public. Never put the child's name in files, URLs or commit
 ## Look and feel (locked – don't redesign unless asked)
 - Blocky pixel / video-game look: Pixelify Sans for headings and buttons, Lexend for reading text, bevelled stone panels, sky and grass strip, hotbar stage bar, XP/levels, 💎 gems, chiptune sfx and music (`shared/music.js`: a map theme per world and a boss theme; 🎵 on the home page turns it off). Never use real Minecraft/Roblox logos or textures.
 - **Numbers in Lexend**, never the pixel font (its 5 looks like an S and its 2 like an 8).
-- **Pixel icons, not emoji**: `shared/pixel-icons.js` swaps emoji for 16×16 pixel sprites automatically. Any emoji you use in a lesson needs an icon, so run `node tools/emoji-audit.js` and draw missing ones with `def()`. No face/people emoji without a pixel sprite. Flags, arrows and ✔/❌ stay as text.
+- **Pixel icons, not emoji**: `shared/pixel-icons.js` swaps emoji for 16×16 pixel sprites automatically. Any emoji you use in a lesson needs an icon, so run `node tools/emoji-audit.js` and draw missing ones with `def()`. No face/people emoji without a pixel sprite. Flags, arrows and ✔/❌ stay as text. Give every animal its own silhouette, never a recoloured shared template (the bear-head template read as a bear for the mouse, dog, cat, pig and more), and give things that share a game different colours.
 - Hero celebrations glow (the aura), they don't spin or jump; the parent found big movements exaggerated.
 
 ## How lessons should feel (the parent's feedback)
@@ -62,7 +62,7 @@ Privacy: the repo is public. Never put the child's name in files, URLs or commit
 - **Future Skills:** AI, Pixel Art, Poster.
 - **Wonders:** Tardigrades, Immortal Jellyfish (next: Octopus).
 - **Around the World:** Japan, England, Thailand, USA (China next).
-- **Brain Dojo (7th world, 29 Oct):** focus, concentration and memory, because the child skims to reach the boss. Two pilots: Memory Palace and Ninja Focus. New mechanics: vanishing pages, the Memory Key, brain records and boss distractions. New games: palace, sequence, spotter, gonogo, clash, breathe (`shared/engine/brain.js`; `node tools/brain-test.js` plays them). Waiting on the parent's playtest before the other 4 lessons (Secret Brain Paths, Spy School, Eagle Eye, Story Keeper). See TOPICS.md.
+- **Brain Dojo (7th world, 29 Oct):** focus, concentration and memory, because the child skims to reach the boss. Two pilots: Memory Palace and Ninja Focus. New mechanics: vanishing pages, the Memory Key, brain records and boss distractions. New games: palace, sequence, spotter, gonogo, clash, breathe (`shared/engine/brain.js`; `node tools/brain-test.js` plays them). Playtest (29 Oct): Ninja Focus was great for the age group (varied games, effortless pacing), so model the other 4 lessons on it (Secret Brain Paths, Spy School, Eagle Eye, Story Keeper). The Memory Palace video was too adult and was swapped for a kids' how-to. See TOPICS.md.
 - **Waiting on the parent:**
   - playtest feedback on the newest lessons (Speech Marks, Place Value, Rock Stars, Fossils, Add & Subtract, Poetry, Theseus, Super Soil, Money Market; the new Labyrinth, Soil Lab and Shop Till games) and on the quest-map NPCs, tap-to-walk and biomes
   - a decision on the map's terrain/topography and icon redesign

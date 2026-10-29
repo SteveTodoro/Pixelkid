@@ -613,22 +613,23 @@
     'kkkkkkkkkkkkkkkk',
     '................',
   ]);
+  // jigsaw piece: a knob on top and on the right, a notch cut into the left side
   def('🧩', [
     '................',
-    '.....kkkk.......',
-    '....kleeek......',
-    '....keeeek......',
-    '..kkkkeekkkk....',
-    '..klleeeeeeek...',
-    '..kleeeeeeeek...',
-    '..keeeeeeeeekk..',
-    '..keeeeeeeeeeeek',
-    '..keeeeeeeeeeEek',
-    '..keeeeeeeeekkk.',
-    '..keeeeeeeeEk...',
-    '..kEEEEEEEEEk...',
-    '..kkkkkkkkkkk...',
     '................',
+    '......kkkk......',
+    '.....kllllk.....',
+    '.....kleeek.....',
+    '.kkkkkeeeekkk...',
+    '.kllleeeeeeek...',
+    '.kkkeeeeeeeekkk.',
+    '...keeeeeeeeeelk',
+    '...keeeeeeeeeeek',
+    '.kkkeeeeeeeekkk.',
+    '.keeeeeeeeeEk...',
+    '.keeeeeeeeeEk...',
+    '.kEEEEEEEEEEk...',
+    '.kkkkkkkkkkkk...',
     '................',
   ]);
   def('🪄', [
@@ -1371,21 +1372,22 @@
     '................',
     '................',
   ]);
+  // flexed arm: the fist up, a big round muscle and the elbow
   def('💪', [
     '................',
-    '....kkk.........',
-    '...kssSk........',
-    '...kssSk.kkk....',
-    '...kssSkksssk...',
-    '...kssSksssssk..',
-    '...kssSssssssSk.',
-    '..kssssssssssSk.',
-    '..kssssssssssSk.',
-    '..kssssssssssSk.',
-    '..kSssssssssSSk.',
-    '...kSSSSSSSSSk..',
-    '....kkkkkkkkk...',
-    '................',
+    '.........kkk....',
+    '........ksssk...',
+    '.......ksssssk..',
+    '.......kssSssk..',
+    '..kkk...kssSk...',
+    '.kssskk..kssk...',
+    '.kssssskkkssk...',
+    'ksssssssssssk...',
+    'kssssssssssSk...',
+    'kSssssssssSSk...',
+    '.kSSssssSSSk....',
+    '..kkSSSSSSk.....',
+    '....kkkkkk......',
     '................',
     '................',
   ]);
@@ -2479,21 +2481,22 @@
     '......kkkkkk....',
     '................',
   ]);
+  // egg: a warm cream colour with a shine, so it doesn't vanish on light panels
   def('🥚', [
     '................',
     '................',
     '.....kkkkkk.....',
-    '....kwwwwwwk....',
-    '...kwwwwwwwWk...',
-    '...kwwwwwwwWk...',
-    '...kwwwwwwwWk...',
-    '...kwwwwwwwwk...',
-    '..kwwwwwwwwWWk..',
-    '...kwwwwwwwWk...',
-    '...kwwwwwwwWk...',
-    '...kwwwwwwwWk...',
-    '...kwwwwwwWWk...',
-    '....kWWWWWWk....',
+    '....kttttttk....',
+    '...kwwttttttk...',
+    '...kwtttttttk...',
+    '..kttttttttttk..',
+    '..kttttttttttk..',
+    '..kttttttttTTk..',
+    '..kttttttttTTk..',
+    '..ktttttttTTTk..',
+    '...kttttttTTk...',
+    '...kTttttTTTk...',
+    '....kTTTTTTk....',
     '.....kkkkkk.....',
     '................',
   ]);
@@ -2587,22 +2590,23 @@
     '................',
     '................',
   ]);
+  // cookie: big dark chocolate chips and a bite out of the corner (the plain one read as a stone)
   def('🍪', [
     '................',
     '.....kkkkkk.....',
-    '....kttttttk....',
-    '...kttttttttk...',
-    '..kttttttNtttk..',
-    '.ktttNtttttttTk.',
-    '.ktttttttttttTk.',
-    '.ktttttttttttTk.',
-    '.kttNttttttNtTk.',
-    '.kttttNttttttTk.',
-    '.kttttttttttTTk.',
-    '..kttttttNtTTk..',
-    '...kttttttTTk...',
-    '....kTTTTTTk....',
-    '.....kkkkkk.....',
+    '....kttttttkk...',
+    '...kttNNttk.....',
+    '..kttNNtttk.....',
+    '.ktttttttttkk...',
+    '.ktttttNNttttk..',
+    '.kNNttttNNtttTk.',
+    '.kNNtttttttNNTk.',
+    '.ktttttttttNNTk.',
+    '.kttNNtttttttTk.',
+    '..ktNNttNNttTk..',
+    '...kttttNNtTTk..',
+    '....kTTTTTTTk...',
+    '.....kkkkkkk....',
     '................',
   ]);
   def('🪐', [
@@ -3462,22 +3466,23 @@
     '................',
     '................',
   ]);
+  // glass of milk: a clear blue glass, filled almost to the top with white milk
   def('🥛', [
     '................',
-    '................',
     '....kkkkkkkk....',
-    '....kiiiiiik....',
-    '....kwwwwwWk....',
-    '....kwwwwwWk....',
-    '....kwwwwwWk....',
-    '....kwwwwwWk....',
-    '....kwwwwwWk....',
-    '....kwwwwwWk....',
-    '....kwwwwwWk....',
-    '....kwwwwwWk....',
-    '....kwwwwwWk....',
-    '....kWWWWWWk....',
-    '....kkkkkkkk....',
+    '....kcccccck....',
+    '....kiiiiiick...',
+    '....kwwwwwWck...',
+    '....kwwwwwWck...',
+    '....kwwwwwWck...',
+    '....kwwwwwWck...',
+    '....kwwwwwWck...',
+    '....kwwwwwWck...',
+    '....kwwwwwWck...',
+    '....kwwwwwWck...',
+    '....kWWWWWWck...',
+    '....kcccccccck..',
+    '....kkkkkkkkkk..',
     '................',
   ]);
   def('🫗', get('🥛'));
@@ -3864,10 +3869,7 @@
     '.....kkkkkk.....',
     '................',
   ];
-  const BEAR = def('🐻 🐨', rec(CRITTER, { x: 'n', X: 'N' }));
-  def('🧸', over(rec(CRITTER, { x: 'o', X: 'O' }), { 13: '   kkOOrkrOkk   ', 14: '     kkrkrk     ' }));
-  def('🐹 🐭', rec(CRITTER, { x: 't', X: 'T', t: 'w' }));
-  def('🐷 🐽', rec(CRITTER, { x: 'p', X: 'P', t: 'P' }));
+  const BEAR = def('🐻', rec(CRITTER, { x: 'n', X: 'N' }));
   // sheep side-on (the front-facing critter read as a bear): a woolly cloud with a grey face and legs
   def('🐑', [
     '................',
@@ -3929,21 +3931,242 @@
     '........kkkkkkkk',
   ]);
   def('🦄', over(rec(HORSE, { H: 'w', h: 'v', t: 'p', N: 'P' }), { 0: ' kk             ', 1: ' kyk            ', 2: '  kyYk          ', 3: '   kYk          ' }));
-  const CAT = def('🐱 🐈', over(rec(CRITTER, { x: 'o', X: 'O', t: 'w' }), {
+  // the old orange cat face: now only the base for the leopard and the dragon
+  const BIGCAT = over(rec(CRITTER, { x: 'o', X: 'O', t: 'w' }), {
     0: '..k..........k..', 1: '..kk........kk..', 2: '..kok......kok..', 3: '..kopkkkkkkpok..',
     8: 'k              k', 9: '                ', 10: 'k              k',
-  }));
-  def('🐆 🐅', over(rec(CAT, { o: 'y', O: 'Y' }), { 4: '    N    N      ', 5: '  N    N    N   ', 12: '    N      N    ' }));
-  def('🐶 🐕 🐩 🦮', over(rec(CRITTER, { x: 't', X: 'T', t: 'w' }), {
-    1: '................', 2: '................', 3: '..kkkkkkkkkkkk..',
-    4: '.kNkttttttttkNk.', 5: 'kNNkttttttttkNNk', 6: 'kNNktkkttkktkNNk', 7: 'kNNktkkttkktkNNk', 8: '.kkkt      tkkk.',
-  }));
-  def('🐰 🐇', over(rec(CRITTER, { x: 'w', X: 'W', t: 'p' }), {
-    0: '...kk......kk...', 1: '..kwpk....kpwk..', 2: '..kwpk....kpwk..', 3: '..kwpkkkkkkpwk..',
-  }));
-  def('🐵 🐒', over(rec(CRITTER, { x: 'N', X: 'h', t: 't' }), { 5: '.kNttttttttttNk.', 6: '.kNtkktttkkttNk.', 7: '.kNtkktttkkttNk.' }));
-  def('🙈', over(get('🐵'), { 5: '  ssss    ssss  ', 6: '  sSss    sSss  ', 7: '  ssss    ssss  ' }));
-  def('🐲 🐉', over(rec(CAT, { o: 'e', O: 'E', w: 'l', p: 'y' }), { 9: '      kE Ek     ', 0: '..k..........k..', 1: '..kw........wk..' }));
+  });
+  def('🐆 🐅', over(rec(BIGCAT, { o: 'y', O: 'Y' }), { 4: '    N    N      ', 5: '  N    N    N   ', 12: '    N      N    ' }));
+  def('🐲 🐉', over(rec(BIGCAT, { o: 'e', O: 'E', w: 'l', p: 'y' }), { 9: '      kE Ek     ', 0: '..k..........k..', 1: '..kw........wk..' }));
+  // mouse side-on (it read as a bear, then as the dog): grey body, big round pink ear, pointy nose, long tail
+  def('🐭 🐁 🐀', [
+    '................',
+    '................',
+    '...kkk..........',
+    '..kpppk.........',
+    '..kpPPk.........',
+    '..kpppkkkkk.....',
+    '...kkgggggggk...',
+    '..kgkgggggggGk..',
+    '.kggggggggggGGk.',
+    'kpgggggggggggGk.',
+    '.kkgggggggggGGk.',
+    '...kGGGGGGGGGk..',
+    '....kpkkkkpkkPk.',
+    '.............kPk',
+    '............kPk.',
+    '.............k..',
+  ]);
+  // hamster: a round orange-and-white ball with puffed-out cheeks and tiny ears
+  def('🐹', [
+    '................',
+    '................',
+    '...kk......kk...',
+    '..kTpk....kpTk..',
+    '..kTTkkkkkkTTk..',
+    '.kTTTTTTTTTTTTk.',
+    'kTTTTTkTTkTTTTTk',
+    'kTTTTTkTTkTTTTTk',
+    'kwwwTTTppTTTwwwk',
+    'kwwwwwkkkkwwwwwk',
+    'kwwwwwwkkwwwwwwk',
+    'kwwwwwwwwwwwwwWk',
+    '.kwwwwwwwwwwwWk.',
+    '..kWpWWWWWWpWk..',
+    '...kkkkkkkkkk...',
+    '................',
+  ]);
+  // dog: a white face with a brown eye patch, long floppy ears hanging down the sides and a pink tongue
+  def('🐶 🐕 🐩 🦮', [
+    '................',
+    '.....kkkkkk.....',
+    '...kkwwwwwwkk...',
+    '.kkkwwwwwwwwkkk.',
+    'knnkwwwwwnnnknnk',
+    'knnkwkkwwkknknnk',
+    'knnkwkkwwkknknnk',
+    'knnkwwwwwnnnknnk',
+    'knnkwwwkkwwwknnk',
+    'knnkwwkkkkwwknnk',
+    '.kkkwwwkkwwwkkk.',
+    '...kwwkwwkwwk...',
+    '...kWwwkkwwWk...',
+    '....kkWppWkk....',
+    '......kprk......',
+    '.......kk.......',
+  ]);
+  // cat: a ginger tabby (not grey, so it never looks like the mouse) with pointed pink ears, green eyes and whiskers
+  const CAT = def('🐱 🐈', [
+    '.k............k.',
+    '.kk..........kk.',
+    '.kpk........kpk.',
+    '.kppkkkkkkkkppk.',
+    '.kooooOooOooook.',
+    '.koooOooooOoook.',
+    '.kooooooooooook.',
+    '.kooekooooekook.',
+    '.kooekooooekook.',
+    '.kooooooooooook.',
+    'kkkooooppooookkk',
+    '..koookookoook..',
+    'kkkooookkooookkk',
+    '...kooooooook...',
+    '....kkkkkkkk....',
+    '................',
+  ]);
+  // rabbit: tall ears so it can't be mistaken for the other faces
+  def('🐰 🐇', [
+    '...kk......kk...',
+    '..kwwk....kwwk..',
+    '..kwpk....kpwk..',
+    '..kwpk....kpwk..',
+    '..kwpk....kpwk..',
+    '..kwpk....kpwk..',
+    '..kwwkkkkkkwwk..',
+    '.kwwwwwwwwwwwwk.',
+    '.kwwkkwwwwkkwwk.',
+    '.kwwkkwwwwkkwwk.',
+    'kwpwwwwwwwwwwpwk',
+    'kwwwwwwppwwwwwWk',
+    '.kwwwwkwwkwwwWk.',
+    '..kwwwwkkwwwWk..',
+    '...kkWWWWWWkk...',
+    '.....kkkkkk.....',
+  ]);
+  // pig: floppy triangle ears and a big snout with two nostrils
+  def('🐷 🐽', [
+    '................',
+    '.kk..........kk.',
+    '.kPk........kPk.',
+    '.kPPkkkkkkkkPPk.',
+    '.kppppppppppppk.',
+    'kppppppppppppppk',
+    'kppkkppppppkkppk',
+    'kppkkppppppkkppk',
+    'kpppppppppppppPk',
+    'kppkkkkkkkkkkpPk',
+    'kppkPPPPPPPPkpPk',
+    'kppkPkkPPkkPkpPk',
+    'kppkPPPPPPPPkpPk',
+    '.kpkkkkkkkkkkPk.',
+    '..kkkkkkkkkkkk..',
+    '................',
+  ]);
+  // monkey: round ears out at the sides and a pale face mask
+  def('🐵 🐒', [
+    '................',
+    '.....kkkkkk.....',
+    '....kNNNNNNk....',
+    '...kNNNNNNNNk...',
+    '.kkkNttNNttNkkk.',
+    'kNtkNttttttNktNk',
+    'kNtkNtkttktNktNk',
+    'kNtkNtkttktNktNk',
+    '.kkkNttttttNkkk.',
+    '...kNttttttNk...',
+    '...kNttkkttNk...',
+    '...kNttttttNk...',
+    '...kNtkkkktNk...',
+    '....kNttttNk....',
+    '.....kkkkkk.....',
+    '................',
+  ]);
+  def('🙈', over(get('🐵'), { 5: '    kssssssk    ', 6: '    ksssSssk    ', 7: '    kssSsssk    ' }));
+  // teddy: a whole sitting bear with a red bow, so it isn't just another face
+  def('🧸', [
+    '..kkk......kkk..',
+    '.kntnkkkkkkntnk.',
+    '.knnnnnnnnnnnnk.',
+    '..knnknnnnknnk..',
+    '..knnnttttnnnk..',
+    '..knnttkkttnnk..',
+    '...knnttttnnk...',
+    '....krrkkrrk....',
+    '...knnkrrknnk...',
+    '.kknnnnnnnnnnkk.',
+    'knnknnttttnnknnk',
+    'knnknttttttnknnk',
+    '.kkknttttttnkkk.',
+    '.kttknnnnnnkttk.',
+    '.kttkkkkkkkkttk.',
+    '..kk........kk..',
+  ]);
+  // koala: grey with big fluffy ears and a big black nose
+  def('🐨', [
+    '.kkk........kkk.',
+    'kgwgk......kgwgk',
+    'kgwwgkkkkkkgwwgk',
+    'kgwwggggggggwwgk',
+    '.kggggggggggggk.',
+    '.kggkkggggkkggk.',
+    '.kgggggkkgggggk.',
+    '.kggggkkkkggggk.',
+    '.kggggkkkkggggk.',
+    '.kgggggkkgggggk.',
+    '..kggggggggggk..',
+    '..kWggggggggWk..',
+    '...kkWWWWWWkk...',
+    '.....kkkkkk.....',
+    '................',
+    '................',
+  ]);
+  // lion: a yellow face inside a big shaggy orange mane
+  def('🦁', [
+    '....kkkkkkkk....',
+    '..kkOoOoOoOokk..',
+    '.kOoOkkkkkkOoOk.',
+    'kOoOkyyyyyykOoOk',
+    'kOokyyyyyyyykoOk',
+    'kOokykkyykkykoOk',
+    'kookykkyykkykook',
+    'kOokyyyyyyyykoOk',
+    'kOokyttkkttykoOk',
+    'kookyttttttykook',
+    '.kOkyytkktyykOk.',
+    '.kOOkyyyyyykOOk.',
+    '..kOOkkkkkkOOk..',
+    '...kkOoOoOOkk...',
+    '.....kkkkkk.....',
+    '................',
+  ]);
+  // dolphin side-on: a curved grey-blue body, a beak, a fin on top and a tail flicked up
+  def('🐬', [
+    '................',
+    '................',
+    '.......kk.......',
+    '......kbk.......',
+    '....kkbbkkk.....',
+    '...kccbbbbbkk...',
+    '..kcckcbbbbbbk..',
+    'kkcccccccbbbbbk.',
+    'kiiiiccccccbbbk.',
+    '.kkiiiiiicccbbk.',
+    '...kkiiiiiccbk.k',
+    '.....kkkkiccbkbk',
+    '.........kkcbbk.',
+    '...........kbbk.',
+    '..........kbk...',
+    '..........kk....',
+  ]);
+  // duck: a mallard with a green head, an orange bill and a brown chest (the yellow bird is the chick)
+  def('🦆', [
+    '................',
+    '................',
+    '....kkkk........',
+    '...keeeek.......',
+    '..keekeeek......',
+    'kkkeeeeeek......',
+    'koooeeeeek......',
+    'kkkkkweeek......',
+    '....kwwwk..kk...',
+    '...knnnnkkkWWk..',
+    '..knnnnWWWWWWWk.',
+    '..knnWWWWGGGGWk.',
+    '..kWWWWGGGGGGWk.',
+    '...kWWWWWWWWWk..',
+    '....kkkkkkkkk...',
+    '................',
+  ]);
   def('🐘', [
     '................',
     '....kkkkkkkk....',
@@ -3981,7 +4204,6 @@
     '................',
   ]);
   def('🐠 🐡', over(rec(FISH, { c: 'y', b: 'o' }), { 5: '        k       ', 6: '        k       ', 7: '        k       ', 8: '        k       ', 9: '        k       ', 10: '        k       ' }));
-  def('🐬', rec(FISH, { c: 'c', b: 'b' }));
   def('🐋 🐳', rec(FISH, { c: 'b', b: 'B' }));
   def('🦈', rec(FISH, { c: 'W', b: 'g' }));
   def('🪼', [
@@ -4237,7 +4459,7 @@
     '................',
     '................',
   ], { x: 'b', X: 'B' }));
-  def('🦆 🐥 🐤', rec(BIRD, { b: 'y', B: 'Y' }));
+  def('🐥 🐤', rec(BIRD, { b: 'y', B: 'Y' }));
   def('🐦‍⬛', rec(BIRD, { b: 'G', B: 'k', o: 'g' }));
   def('🦅', over(rec(BIRD, { b: 'N', B: 'h', o: 'y' }), { 4: '         ww     ', 5: '         w ww   ', 6: '        wwwww   ' }));
   def('🦘', [
@@ -4293,24 +4515,6 @@
     '................',
     '................',
     '................',
-  ]);
-  def('🦁', [
-    '.kkkkk....kkkkk.',
-    'kokkkOkkkkokkkOk',
-    'kkyYykoOookyYykk',
-    'kkyYykkkkkkyYykk',
-    'kokyyyyyyyyyykOk',
-    'kkyyyyyyyyyyyykk',
-    'kkyykkyyyykkyykk',
-    'kkyykkyyyykkyykk',
-    'kyyyyyttttyyyyYk',
-    'kyyyyttkkttyyyYk',
-    'kyyyyttttttyyyYk',
-    'kkyyyytkktyyyYkk',
-    'kokyyyyttyyyYkok',
-    '.kOkkYYYYYYkkok.',
-    '..koOkkkkkkook..',
-    '...kkkkkkkkkk...',
   ]);
   def('🕸️', [
     '.......G........',
@@ -4408,22 +4612,23 @@
   def('🥾 👢', rec(SHOE, { r: 'n', w: 'N' }));
   def('🩴 👡', rec(SHOE, { r: 'y', w: 'Y' }));
   def('⛸️', over(rec(SHOE, { r: 'w', w: 'W' }), { 13: '   k      k     ', 14: ' kWWWWWWWWWWWWk ', 15: '  kkkkkkkkkkkk  ' }));
+  // sock: a bright stripy sock with a red heel and toe
   def('🧦', [
     '................',
-    '....kkkkk.......',
-    '....kwwwk.......',
-    '....krrrk.......',
-    '....kwwwk.......',
-    '....kwwwk.......',
-    '....kwwwk.......',
+    '....kkkkkk......',
+    '....kWWWWk......',
+    '....kbbbbk......',
     '....kwwwwk......',
-    '....kwwwwwkk....',
-    '....kwwwwwwwk...',
-    '....krwwwwwwwrk.',
-    '.....kkkkkkkk...',
-    '................',
-    '................',
-    '................',
+    '....kbbbbk......',
+    '....kwwwwk......',
+    '....kbbbbk......',
+    '....kwwwwk......',
+    '...krbbbbbk.....',
+    '..krrwwwwwwkk...',
+    '..krrbbbbbbbbk..',
+    '..krwwwwwwwwrrk.',
+    '...krrrrrrrrrrk.',
+    '....kkkkkkkkkk..',
     '................',
   ]);
   def('👒', [
@@ -5480,7 +5685,25 @@
     '................',
     '................',
   ]);
-  def('🎭', over(rec(FACE, { y: 'w', Y: 'W' }), Object.assign({}, HAPPY, SMILE)));
+  // drama masks: a gold happy mask in front of a purple sad one
+  def('🎭', [
+    '.......kkkkkkk..',
+    '......kvvvvvvvk.',
+    '......kvkvvvkvk.',
+    'kkkkkkkvvvvvvvk.',
+    'kyyyyyykvvkkvvk.',
+    'kykyyykyvkvvkvk.',
+    'kyyyyyyykvvvvk..',
+    'kyyyyyyyk.kkk...',
+    'kykyyykyk.......',
+    'kyykkkyyk.......',
+    '.kyyyyyk........',
+    '..kkkkk.........',
+    '................',
+    '................',
+    '................',
+    '................',
+  ]);
   def('🔫', [
     '................',
     '................',
