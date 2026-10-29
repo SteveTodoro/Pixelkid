@@ -13,10 +13,10 @@ const stub = (stage, extra = {}) => ({
 const ROOMS = ['🚪 front door', '👟 shoe rack', '🛋️ sofa', '📺 TV', '🛏️ bed'];
 const DECOYS = ['🥕 carrot', '🍕 pizza', '🎈 balloon', '🧢 cap', '📕 book'];
 
-async function game(name, round, drive) {
+async function game(name, round, drive, file = 'brain/memory-palace.html') {
   let page;
   try {
-    page = await open('brain/memory-palace.html', stub({ type: 'game', title: name, rounds: [round] }, { id: 'brain-test', layout: 2 }));
+    page = await open(file, stub({ type: 'game', title: name, rounds: [round] }, { id: 'brain-test', layout: 2 }));
     const card = page.d.querySelector('.stage-card');
     const g = card.querySelector('.game');
     ok(g && g._test, `${name}: no game or no _test hook`);
@@ -55,6 +55,28 @@ async function game(name, round, drive) {
     ok(T.finished, 'sequence: did not finish');
     await wait(700);
   });
+
+  await game('themed echo', { game: 'sequence', tunes: [
+    { text: 'Count in 4s!', notes: ['4', '8', '12', '16', '20'], show: 3, decoys: ['10', '14'] },
+    { text: 'Spell it', notes: ['l', 'e', 't', 't', 'e', 'r'] },
+  ] }, async (T, card) => {
+    await wait(800);
+    T.unbusy(); T.press('10'); await wait(1300); T.unbusy(); T.press('14');
+    ok(card.querySelector('.bd-note.hint'), 'themed echo: no hint glow after two misses');
+    T.unbusy(); T.notes.forEach(n => T.press(n));
+    ok(!card.querySelector('.bd-note.hint'), 'themed echo: the hint glow stayed on');
+    await wait(1500);
+    ok(T.ti === 1 && T.labels.length === 4, 'themed echo: the second tune did not start with 4 unique letters');
+    T.unbusy(); T.notes.forEach(n => T.press(n));
+    await wait(2300);
+    ok(T.finished, 'themed echo: did not finish');
+  });
+
+  await game('echo outside the Dojo', { game: 'sequence', blocks: 4, start: 2, target: 2 }, async (T, card, page) => {
+    ok([...page.d.querySelectorAll('link[rel=stylesheet]')].some(l => /brain\.css$/.test(l.href)), 'echo outside the Dojo: brain.css was not loaded');
+    await wait(700); T.unbusy(); T.tune.forEach(n => T.press(n)); await wait(700);
+    ok(T.finished, 'echo outside the Dojo: did not finish');
+  }, 'maths/money.html');
 
   await game('digits', { game: 'sequence', mode: 'digits', chunk: true, lengths: [4, 5] }, async T => {
     for (let k = 0; k < 2; k++) { T.hide(); T.type(T.num); await wait(1000); }

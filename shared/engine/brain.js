@@ -23,6 +23,12 @@ PixelkidEngine.part('brain', E => {
   }
   const brainBest = id => (store.get('y3:brain', {})[id] || {}).best || 0;
 
+  // Other worlds use brain games too (Note Block Echo is an Arcade choice in every lesson), so bring brain.css along.
+  if (![...document.querySelectorAll('link[rel=stylesheet]')].some(l => /brain\.css$/.test(l.href))) {
+    const here = [...document.scripts].map(s => s.src).find(s => /engine\/brain\.js/.test(s));
+    if (here) document.head.append(h('link', { rel: 'stylesheet', href: new URL('../brain.css', here).href }));
+  }
+
 
   // '🍌 banana' → { icon: '🍌', name: 'banana' }
   const split = t => { const m = String(t).match(/^(\S+)\s+(.+)$/); return m && /\p{Extended_Pictographic}/u.test(m[1]) ? { icon: m[1], name: m[2] } : { icon: '', name: String(t) }; };
@@ -238,6 +244,7 @@ PixelkidEngine.part('brain', E => {
     { c: '#fdd835', f: 784, n: 'yellow' }, { c: '#8e24aa', f: 880, n: 'purple' }, { c: '#fb8c00', f: 988, n: 'orange' }];
   GAMES.sequence = function (r, key, done) {
     if (r.mode === 'digits') return digits(r, key, done);
+    if (r.tunes) return themed(r, key, done);
     const n = Math.max(3, Math.min(6, r.blocks || 4)), target = r.target || 6;
     let len = r.start || 2, tune = [], at = 0, busy = true, misses = 0, finished = false, timers = [];
     const blocks = NOTES.slice(0, n).map((N, k) => {
@@ -290,6 +297,81 @@ PixelkidEngine.part('brain', E => {
     root._test = { get tune() { return tune.slice(); }, get busy() { return busy; }, get len() { return len; }, press, unbusy() { busy = false; }, get finished() { return finished; } };
     return root;
   };
+
+  // Themed echo (r.tunes): the blocks carry the lesson's letters, numbers or words, so the tune means something.
+  // r.tunes: [{ text, notes: ['4', '8', '12', '16', '20'] (in the right order), show: how many notes it plays first
+  //   (default all; he works out the rest, e.g. carries on the counting pattern), decoys: ['10'] (extra blocks), hint, yes }]
+  // The blocks are shuffled. A wrong note in the part he watched replays the tune; after two misses the right block glows.
+  const SCALE = [523, 587, 659, 698, 784, 880, 988, 1047], COLOURS = [...NOTES.map(N => N.c), '#00897b', '#d81b60'];
+  function themed(r, key, done) {
+    let ti = -1, T, show, labels = [], blocks = [], at = 0, busy = true, misses = 0, finished = false;
+    const timers = [], wait = (fn, ms) => timers.push(setTimeout(fn, ms));
+    const meter = h('div', { class: 'bd-len' }), task = h('div', { class: 'bd-tag' });
+    const grid = h('div'), status = h('div', { class: 'bd-status' });
+    const flash = k => { const b = blocks[k]; b.classList.add('lit'); tone(SCALE[k % 8], 0, 0.3, 'square', 0.05); setTimeout(() => b.classList.remove('lit'), 320); };
+    const unhint = () => blocks.forEach(b => b.classList.remove('hint'));
+    function next() {
+      ti++;
+      if (ti >= r.tunes.length) { finished = true; status.textContent = '🏆 Every tune played back!'; return void wait(done, 600); }
+      T = r.tunes[ti]; show = Math.min(T.show == null ? T.notes.length : T.show, T.notes.length); misses = 0; at = 0;
+      labels = shuffle([...new Set([...T.notes, ...(T.decoys || [])])]);
+      blocks = labels.map((t, k) => {
+        const b = h('button', { class: 'bd-note', type: 'button', style: `--note:${COLOURS[k % 8]}` }, h('span', { class: 'bd-note-label', html: fmt(t, false) }));
+        b.addEventListener('pointerdown', e => { e.preventDefault(); press(k); });
+        return b;
+      });
+      grid.className = `bd-notes labelled n${Math.min(labels.length, 8)}`;
+      put(grid, blocks);
+      meter.textContent = `TUNE ${ti + 1} / ${r.tunes.length}`;
+      task.innerHTML = fmt(T.text || 'Watch and listen, then play it back!', false);
+      say(T.say || (show < T.notes.length ? 'Watch the first notes – then you work out the rest!' : 'Watch and listen!'));
+      wait(play, 700);
+    }
+    function play() {
+      busy = true; at = 0; unhint();
+      status.textContent = '👀 Watch and listen…';
+      const gap = 700, now = ti;
+      T.notes.slice(0, show).forEach((t, j) => wait(() => now === ti && flash(labels.indexOf(t)), 400 + j * gap));
+      wait(() => {
+        if (now !== ti) return;
+        busy = false;
+        const rest = T.notes.length - show;
+        status.textContent = !show ? `👉 Play all ${rest} notes in order!` : rest ? `👉 Play it back – then carry on with ${rest} more!` : '👉 Your turn! Play it back.';
+      }, 400 + show * gap);
+    }
+    function press(k) {
+      if (busy || finished) return;
+      flash(k);
+      if (labels[k] !== T.notes[at]) {
+        misses++; sfx.bad(); shake(blocks[k]);
+        if (misses >= 2) {
+          blocks[labels.indexOf(T.notes[at])].classList.add('hint');
+          status.textContent = '💡 The glowing block comes next.';
+          say(T.hint || 'Here\'s a clue – the glowing block is next.');
+        } else if (at < show) {
+          busy = true; status.textContent = '❌ Oops! Watch it again…';
+          say('No problem – watch it again!');
+          wait(play, 1200);
+        } else {
+          status.textContent = '❌ Not that one. What comes next?';
+          say(T.hint || 'Think about the pattern. What comes next?');
+        }
+        return;
+      }
+      unhint(); at++;
+      if (at < T.notes.length) return;
+      busy = true; sfx.good(); award(`${key}:t${ti}`, blocks[k]);
+      status.textContent = '✔ ' + (T.yes ? T.yes.replace(/<[^>]+>/g, '') : 'Yes! You got the whole tune!');
+      say(T.yes || 'Brilliant!');
+      wait(next, 1400);
+    }
+    const root = h('div', { class: 'game bd echo' }, meter, task, grid, status);
+    next();
+    root._stop = () => timers.forEach(clearTimeout);
+    root._test = { get notes() { return T.notes.slice(); }, get labels() { return labels.slice(); }, get busy() { return busy; },
+      get ti() { return ti; }, get finished() { return finished; }, press: t => press(labels.indexOf(t)), unbusy() { busy = false; } };
+    return root;
+  }
 
   function digits(r, key, done) {
     const lengths = r.lengths || [4, 5, 6, 7];

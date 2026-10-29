@@ -40,6 +40,11 @@
 .bd-notes.n3, .bd-notes.n5, .bd-notes.n6 { grid-template-columns: repeat(3, 1fr); max-width: 520px; }
 .bd-note { aspect-ratio: 1; background: var(--note); border: 4px solid #000; box-shadow: inset -6px -6px 0 rgba(0,0,0,.35), inset 6px 6px 0 rgba(255,255,255,.35); opacity: .55; cursor: pointer; touch-action: none; }
 .bd-note.lit { opacity: 1; filter: brightness(1.35); box-shadow: 0 0 0 4px #fff, 0 0 24px var(--note); }
+.bd-notes.n7, .bd-notes.n8 { grid-template-columns: repeat(4, minmax(0, 1fr)); max-width: 620px; }
+.bd-notes.labelled .bd-note { opacity: .8; display: grid; place-items: center; padding: 4px; }
+.bd-notes.labelled .bd-note.lit { opacity: 1; }
+.bd-note-label { font-family: var(--read); font-weight: 700; font-size: clamp(1rem, 4.5vw, 1.7rem); color: #fff; text-shadow: 2px 2px 0 #000; overflow-wrap: anywhere; pointer-events: none; }
+.bd-note.hint { opacity: 1; animation: nudge 1.2s steps(3) infinite; box-shadow: 0 0 0 4px #ffd43b, 0 0 18px #ffd43b; }
 .bd-digits { margin: 12px auto; width: fit-content; padding: 12px 24px; background: #000; color: #7cfc3a; font-family: var(--read); font-weight: 700; font-size: 2.6rem; letter-spacing: 4px; border: 4px solid #333; }
 .bd-typed { margin: 8px auto; min-height: 3.2rem; width: min(360px, 100%); padding: 6px; background: #fff; border: 4px solid #000; text-align: center; font-family: var(--read); font-weight: 700; font-size: 2rem; letter-spacing: 4px; }
 .bd-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: min(320px, 100%); margin: 0 auto; }

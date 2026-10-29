@@ -1078,6 +1078,7 @@ a { color: var(--brand-dark); }
 .px-back { justify-content: flex-start; margin-bottom: 6px; }
 /* game stage with pick: true – the same cards, with a big icon and a one-line blurb */
 .pick-games { grid-template-columns: repeat(auto-fit, minmax(150px, 220px)); justify-content: center; }
+.pick-games:has(> :nth-child(4):last-child) { grid-template-columns: repeat(2, minmax(0, 220px)); } /* 4 games: a tidy 2 × 2 */
 .pick-game-emoji { font-size: 2.6rem; line-height: 1; }
 .pick-game-emoji .pxi { width: 56px; height: 56px; }
 .pick-game-blurb { font-size: .95rem; text-align: center; line-height: 1.3; }
