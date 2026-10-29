@@ -198,6 +198,8 @@ function check(file) {
       (s.clues || []).forEach((c, k) => { if (!c.clue) err(`${at} clue ${k + 1}: no clue text`); if (!c.q) err(`${at} clue ${k + 1}: no question`); else checkQuestion(c.q, `${at} clue ${k + 1}`, err); });
       if (!(s.clues || []).length) err(`${at}: no clues`);
       if (!s.solve) err(`${at}: no solve question`); else checkQuestion(s.solve, `${at} solve`, err);
+      if (s.solve && s.solve.proof != null) [].concat(s.solve.proof).forEach(k => { if (!(s.clues || [])[k]) err(`${at} solve: proof ${k} is not a clue (clues count from 0)`); });
+      else if (s.solve) err(`${at} solve: no proof (the clue index the child taps to prove the answer)`);
     }
     if (s.type === 'investigate') {
       const P = s.predict || {};

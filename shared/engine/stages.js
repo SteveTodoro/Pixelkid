@@ -56,11 +56,20 @@ PixelkidEngine.part('stages', E => {
   // ---------- stage: detective case ----------
   // { type: 'case', title, say, mystery: 'the case file' (text or a list of paragraphs), pic,
   //   clues: [{ icon, clue: 'what the clue card says', q: one question (any type), say }],
-  //   solve: the final question (who / what / why), closed: 'what really happened' }
-  // Each right answer uncovers a clue card on the evidence board; then the clues solve the case.
+  //   solve: the final question (who / what / why) + proof: [clue indexes that prove it], proofQ, proofHint,
+  //   closed: 'what really happened' }
+  // Each right answer uncovers a clue card on the evidence board; then the clues solve the case. Solve options are
+  // just the suspects (no reasons), so the case file has to be read. With proof, the child then taps the clue card
+  // that proves it, and the case closes with a detective rank: first-try accusation + first-try proof = Super Sleuth.
+  const RANKS = [
+    { icon: '🥉', name: 'JUNIOR DETECTIVE', say: 'Case closed! Next time, read the case file and your clues before you choose – real detectives check the evidence.' },
+    { icon: '🥈', name: 'SHARP DETECTIVE', say: 'Case closed! Sharp detective work!' },
+    { icon: '🥇', name: 'SUPER SLEUTH', say: 'Case closed! Right first time, with the proof – you\'re a Super Sleuth!' },
+  ];
   function renderCase(s, i) {
     const area = h('div');
     const nav = navRow(() => go(i - 1, true));
+    const proof = s.solve.proof != null ? [].concat(s.solve.proof) : null;
     const cards = s.clues.map((c, k) => h('div', { class: 'cs-clue' },
       h('div', { class: 'cs-back' }, '🔍', h('small', null, `CLUE ${k + 1}`)),
       h('div', { class: 'cs-front' }, h('span', { class: 'cs-icon' }, c.icon || '🧩'), h('span', { html: fmt(c.clue, false) }))));
@@ -68,6 +77,7 @@ PixelkidEngine.part('stages', E => {
     const file = h('div', { class: 'cs-file' }, h('div', { class: 'cs-tag' }, '📁 CASE FILE'), s.pic && pic(s.pic, 'cs-pic'),
       [].concat(s.mystery).map(t => h('p', { html: fmt(t) })));
     const open = k => cards[k].classList.add('open');
+    let rank = 0; // this run: +1 for a first-try accusation, +1 for first-try proof
     function clue(k) {
       if (k >= s.clues.length) return solve();
       const c = s.clues[k];
@@ -83,19 +93,64 @@ PixelkidEngine.part('stages', E => {
       });
     }
     function solve() {
-      say(s.solveSay || 'Look at all your clues. Time to solve the case!');
-      runQuestions(area, [s.solve], { key: `s${i}solve`, kind: 'Detective case', countLabel: '🕵️ SOLVE THE CASE', lastLabel: '🔒 Close the case', done: () => closed() });
+      rank = 0;
+      say(s.solveSay || (proof ? 'Read the case file and your clues again. Then choose – a real detective will have to prove it!' : 'Look at all your clues. Time to solve the case!'));
+      file.scrollIntoView && file.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // with a proof step the explanation waits for the case-closed screen, so it can't give the proof away
+      const q = proof ? Object.assign({}, s.solve, { explain: null }) : s.solve;
+      runQuestions(area, [q], {
+        key: `s${i}solve`, kind: 'Detective case', countLabel: '🕵️ SOLVE THE CASE', lastLabel: proof ? '🔍 Prove it ▶' : '🔒 Close the case',
+        done: score => { rank += score; proof ? prove() : closed(); },
+      });
+    }
+    function prove() {
+      let misses = 0;
+      board.classList.add('picking');
+      say(s.solve.proofSay || 'Now prove it! Tap the clue on the evidence board that proves it.');
+      put(area, h('div', { class: 'cs-prove' }, h('div', { class: 'cs-prove-tag' }, '🔍 PROVE IT!'),
+        h('p', { html: fmt(s.solve.proofQ || 'Which clue on your evidence board proves it? Tap it!', false) })));
+      board.scrollIntoView && board.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      cards.forEach((card, k) => {
+        card.setAttribute('role', 'button'); card.tabIndex = 0;
+        card.onclick = () => {
+          if (!board.classList.contains('picking')) return;
+          if (proof.includes(k)) {
+            track('Detective case', { q: 'proof: ' + (s.solve.proofQ || s.solve.q) }, misses === 0);
+            if (misses === 0) { rank++; award(`s${i}proof`, card); }
+            sfx.good(); card.classList.add('proof');
+            board.classList.remove('picking');
+            cards.forEach(c => { c.onclick = null; c.removeAttribute('role'); c.removeAttribute('tabindex'); c.classList.remove('hint'); });
+            setTimeout(() => closed(), 900);
+          } else {
+            misses++; sfx.bad();
+            card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
+            const tip = s.solve.proofHint || 'That clue is true – but does it prove it? Read the clues again!';
+            say('💡 ' + tip);
+            if (misses >= 2) proof.forEach(p => cards[p].classList.add('hint')); // never stuck: the proof card glows
+          }
+        };
+        card.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.onclick && card.onclick(); } };
+      });
     }
     function closed(quiet) {
       complete(i);
-      if (!quiet) { sfx.win(); confetti(90); }
       cards.forEach((_, k) => open(k));
-      put(area, h('div', { class: 'cs-closed' }, h('div', { class: 'cs-stamp' }, 'CASE CLOSED'), [].concat(s.closed || []).map(t => h('p', { html: fmt(t) }))));
-      say('Case closed! Brilliant detective work!');
+      const parts = [h('div', { class: 'cs-stamp' }, 'CASE CLOSED')];
+      if (proof) {
+        if (!quiet) for (let b = 0; b < rank; b++) award(`s${i}sleuth${b}`); // bonus gems, earned once each
+        const R = RANKS[quiet ? (E.state.awarded[`s${i}sleuth1`] ? 2 : E.state.awarded[`s${i}sleuth0`] ? 1 : 0) : rank];
+        parts.push(h('div', { class: 'cs-rank r' + RANKS.indexOf(R) }, h('span', { class: 'cs-rank-icon' }, R.icon), h('span', null, h('small', null, 'DETECTIVE RANK'), R.name)));
+        if (!quiet && rank < 2) parts.push(h('p', { class: 'cs-rank-tip' }, rank ? 'Right first time on the accusation AND the proof makes you a Super Sleuth – and wins bonus gems!' : 'Choosing first time AND tapping the right proof wins bonus gems. Read the evidence!'));
+        if (s.solve.explain) parts.push(h('p', { class: 'cs-why', html: fmt('✔ ' + s.solve.explain) }));
+        if (!quiet) say(R.say);
+      } else if (!quiet) say('Case closed! Brilliant detective work!');
+      if (!quiet) { sfx.win(); confetti(proof && rank === 2 ? 140 : 90); }
+      parts.push([].concat(s.closed || []).map(t => h('p', { html: fmt(t) })));
+      put(area, h('div', { class: 'cs-closed' }, parts));
       nav.set(nextLabel(i), () => go(i + 1));
     }
     const el = shell(s, [mascot(''), file, board, area, nav.el]);
-    if (E.state.complete[i]) { closed(true); area.append(h('div', { class: 'btn-row' }, h('button', { class: 'btn', type: 'button', onclick() { sfx.tap(); cards.forEach(c => c.classList.remove('open')); clue(0); } }, '🔁 Solve it again'))); }
+    if (E.state.complete[i]) { closed(true); area.append(h('div', { class: 'btn-row' }, h('button', { class: 'btn', type: 'button', onclick() { sfx.tap(); cards.forEach(c => c.classList.remove('open', 'proof')); clue(0); } }, '🔁 Solve it again'))); }
     else { nav.set(nextLabel(i), null, false); clue(0); }
     return el;
   }

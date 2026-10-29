@@ -1251,13 +1251,14 @@ a { color: var(--brand-dark); }
 .cs-tag { position: absolute; top: -14px; left: 14px; padding: 2px 10px; background: #000; color: #ffd43b; font-family: var(--pixel); font-weight: 700; font-size: .85rem; }
 .cs-pic { display: block; max-width: 180px; margin: 0 auto 8px; }
 .cs-board { position: relative; max-width: 760px; margin: 0 auto 16px; padding: 24px 12px 12px; background: #b5835a; border: 4px solid #000; box-shadow: inset 0 0 0 4px #8a5a32; }
-.cs-clues { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.cs-clues { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
 .cs-clue { position: relative; min-height: 92px; border: 3px solid #000; background: #fff8e1; box-shadow: 3px 3px 0 rgba(0,0,0,.35); }
 .cs-clue:nth-child(odd) { transform: rotate(-1.5deg); }
 .cs-clue:nth-child(even) { transform: rotate(1.2deg); }
 .cs-back { position: absolute; inset: 0; display: grid; place-items: center; align-content: center; gap: 2px; font-size: 1.8rem; background: #5a6b7a; color: #fff; }
 .cs-back small { font-family: var(--pixel); font-size: .8rem; }
 .cs-front { display: flex; gap: 8px; align-items: flex-start; padding: 10px; font-size: .95rem; visibility: hidden; }
+.cs-front > span:last-child { min-width: 0; overflow-wrap: break-word; }
 .cs-clue.open .cs-back { display: none; }
 .cs-clue.open .cs-front { visibility: visible; animation: cs-pop .4s steps(4); }
 @keyframes cs-pop { from { transform: scale(.6); } to { transform: none; } }
@@ -1266,6 +1267,23 @@ a { color: var(--brand-dark); }
 .cs-closed { max-width: 640px; margin: 0 auto; text-align: center; font-size: 1.1rem; }
 .cs-stamp { display: inline-block; margin: 6px 0 12px; padding: 6px 18px; color: #c62828; border: 5px solid #c62828; font-family: var(--pixel); font-weight: 700; font-size: 2rem; letter-spacing: 2px; transform: rotate(-6deg); animation: cs-stamp .35s steps(3); }
 @keyframes cs-stamp { from { transform: rotate(-6deg) scale(2.2); opacity: 0; } to { transform: rotate(-6deg); opacity: 1; } }
+
+/* prove it: tap the clue card that proves the answer; then the detective rank */
+.cs-board.picking { box-shadow: inset 0 0 0 4px #8a5a32, 0 0 0 4px #ffd43b; }
+.cs-board.picking .cs-clue { cursor: pointer; }
+.cs-board.picking .cs-clue:hover, .cs-board.picking .cs-clue:focus-visible { outline: 4px dashed #ffd43b; outline-offset: 2px; }
+.cs-clue.hint { animation: nudge 1s steps(3) infinite; box-shadow: 0 0 0 4px #ffd43b, 3px 3px 0 rgba(0,0,0,.35); }
+.cs-clue.proof { background: #e8f5e9; box-shadow: 0 0 0 4px #2e7d32, 3px 3px 0 rgba(0,0,0,.35); }
+.cs-clue.proof::after { content: 'PROOF!'; position: absolute; right: -6px; top: -12px; padding: 1px 8px; background: #c62828; color: #fff; border: 3px solid #000; font-family: var(--pixel); font-weight: 700; font-size: .8rem; transform: rotate(8deg); }
+.cs-prove { max-width: 620px; margin: 6px auto 12px; padding: 12px 16px; text-align: center; background: #fff3a8; border: 4px solid #000; font-size: 1.15rem; font-weight: 600; }
+.cs-prove p { margin: 6px 0 0; }
+.cs-prove-tag { font-family: var(--pixel); font-weight: 700; font-size: 1.3rem; color: #c62828; }
+.cs-rank { display: inline-flex; gap: 10px; align-items: center; margin: 0 0 10px; padding: 8px 16px; background: #1b1b1b; color: #fff; border: 4px solid #000; box-shadow: var(--bevel); font-family: var(--pixel); font-weight: 700; font-size: 1.4rem; text-align: left; }
+.cs-rank small { display: block; font-size: .75rem; color: #bbb; }
+.cs-rank.r2 { color: #ffd43b; animation: glow 1.2s steps(3) infinite; }
+.cs-rank-icon { font-size: 2rem; line-height: 1; }
+.cs-rank-tip { font-size: 1rem; font-style: italic; }
+.cs-why { padding: 8px 12px; background: var(--good-soft); border: 3px solid #000; text-align: left; }
 
 /* ---------- investigation: predict → test → explain ---------- */
 .iv-head { max-width: 760px; margin: 0 auto 14px; }

@@ -215,6 +215,12 @@ async function play(page, card, S) {
   } else if (S.type === 'case') {
     for (const c of S.clues) { await answer(page, area, c.q); await moveOn(area); await wait(80); btn(/Next clue|Solve the case/).click(); await wait(80); }
     await answer(page, area, S.solve); await moveOn(area); await wait(200);
+    if (S.solve.proof != null) {
+      const cards = card.querySelectorAll('.cs-board .cs-clue'), k = [].concat(S.solve.proof)[0];
+      if (!card.querySelector('.cs-board.picking')) throw new Error('the prove-it step did not start');
+      cards[k].click(); await wait(1100);
+      if (!card.querySelector('.cs-rank')) throw new Error('no detective rank after the proof');
+    }
   } else if (S.type === 'investigate') {
     card.querySelectorAll('.opts .opt')[0].click(); await wait(800);
     const T = card.querySelector('.game')._test;
