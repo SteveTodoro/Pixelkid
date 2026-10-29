@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Eagle Eye: Spot It!</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <link rel="stylesheet" href="../shared/brain.css">
+  <script src="../shared/pixel.js"></script>
+  <script src="../shared/pixel-icons.js"></script>
+  <script src="../shared/avatar.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// the boss: Camo the Chameleon, who changes things when nobody is looking (a big turret eye and a curly tail)
+const CAMO = Pixel.svg([
+  '..............',
+  '...eeeee......',
+  '..eyyyyee.....',
+  '.eywkyyeeeeee.',
+  '.eykkyeeEeEeee',
+  'eeyyyeeeeeeeEe',
+  'rrreeeeEeEeeEe',
+  '..eeeeeeeeeee.',
+  '...ee..ee..eke',
+  '...EE..EE..eke',
+  '..........ekk.',
+  '...........k..',
+], { e: '#4caf2a', E: '#2a7a1c', y: '#ffd43b', w: '#ffffff', k: '#1b1b1b', r: '#e53935' });
+
+// ---------- the lesson ----------
+window.LESSON = {
+  id: 'brain-eagle-eye',
+  subject: 'brain',
+  title: 'Eagle Eye: Spot It!',
+  emoji: '🦅',
+  home: '../index.html',
+  midBreak: false, // the Arcade stage is the fun break
+  layout: 2,
+  finishAch: 'focus',
+  memoryKey: { items: ['🔭 a telescope', '🐢 a turtle', '🍒 some cherries', '👑 a crown', '🧦 a sock'], seconds: 12,
+    say: 'Camo the Chameleon will try to change your Memory Key when you are not looking. Look at every detail…' },
+  mascot: {
+    name: 'Sensei Hoot',
+    sprite: Pixel.sprites.sensei,
+    praise: ['Hoo-ray! Correct!', 'Eagle eyes!', 'Sharp as a hawk!', 'Spotted it!', 'Wise as an owl!', 'Nothing gets past you!', 'Nailed it!'],
+    oops: ['Hoo! Not quite.', 'Look again – carefully!', 'Scan it once more!', 'So close! One more try.'],
+  },
+  glossary: {
+    attention: { emoji: '🔦', def: 'What your brain is noticing right now. You can choose where to point it, like a torch.' },
+    scan: { emoji: '🔍', def: 'To look over something bit by bit, in order, so you don\'t miss anything.' },
+    detail: { emoji: '🎨', def: 'A small part of something, like its colour, its shape or where it is.' },
+    'change blindness': { emoji: '👀', def: 'When a change happens right in front of you, but your brain misses it.' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'Eagle Eye: Spot It!', short: 'Start', minutes: 1,
+      pic: '🦅👀',
+      hello: 'Welcome back to the Brain Dojo! Today you train the sharpest eyes in the sky – eagle eyes.',
+      question: 'How can you train your eyes to notice EVERYTHING?',
+      intro: 'Learn the eagle\'s scanning trick, hunt for hidden things, test a sneaky brain trick on yourself – then catch a chameleon who changes things when you\'re not looking!',
+      nameLabel: 'Eagle name:',
+    },
+
+    {
+      type: 'review', title: 'Last time…', short: 'Recap', minutes: 3,
+      from: { title: 'Ninja Focus', emoji: '🥷', url: 'ninja-focus.html' },
+      say: 'Remember your ninja training? Read the notes, then warm up those ninja reflexes!',
+      facts: [
+        'Your attention is like a spotlight: whatever it shines on, you notice.',
+        'Distractions steal your spotlight, so do one thing at a time.',
+        'Focus is like a muscle: the more you train it, the stronger it gets.',
+      ],
+      questions: [
+        { type: 'type', q: 'Your attention is like a ___ in a dark room.', answer: ['spotlight', 'torch', 'light'], placeholder: 'one word', hint: 'It shines a bright beam on one thing…' },
+        { type: 'tf', q: 'Doing two jobs at once means you make fewer mistakes.', answer: false, explain: 'Two at once means MORE mistakes – one thing at a time!' },
+      ],
+      game: {
+        game: 'gonogo', title: 'Bird Reflex',
+        intro: 'Read the RULE. Tap **only** the birds that match it – some of them look alike!',
+        say: 'Eyes on the rule!',
+        phases: [
+          { rule: 'Tap only the 🦅 eagles!', go: ['🦅'], nogo: ['🐦', '🦆'], count: 8 },
+          { rule: 'Only the 🦉 owls now – NOT the eagles!', go: ['🦉'], nogo: ['🦅', '🐦'], count: 8, speed: 1.15 },
+        ],
+        done: 'Sharp reflexes! Your spotlight stayed on the rule.',
+      },
+    },
+
+    {
+      type: 'read', title: 'How eagle eyes work', short: 'Read', minutes: 4,
+      say: 'VANISHING PAGES! Read each one carefully – when you tap Got it, the words disappear.',
+      cards: [
+        {
+          title: 'Looking is not noticing', pic: '👀🧠', vanish: true,
+          text: [
+            'Your eyes see thousands of things every second. But your brain only notices the few things your [[attention]] is on.',
+            'That is why you can look all round a room and still miss your shoes in the middle of the floor!',
+          ],
+          check: { q: 'Zara walked past a new poster at school every day for a week, but never saw it. Why?', options: ['Her attention was on other things', 'The poster was too high to see', 'Her eyes were closed all week'], answer: 0 },
+        },
+        {
+          title: 'Scan like an eagle', pic: '🦅🔍', vanish: true,
+          text: [
+            'An eagle looking for food sweeps its eyes over the ground one strip at a time, so nothing gets missed.',
+            'When you search a picture, [[scan]] it the same way: row by row, from left to right, like reading a page.',
+          ],
+          check: { q: 'Leo has to find a tiny frog in a busy picture. What is the best way to look?', options: ['one row at a time, left to right', 'jump about to wherever looks fun', 'stare hard at the middle only'], answer: 0 },
+        },
+        {
+          title: 'Check the details', pic: '🎨📏', vanish: true,
+          text: [
+            'Sharp-eyed people check every [[detail]]: the colour, the shape, the size, and where each thing is.',
+            'Saying it in your head helps too – "red cup, top left" – because naming a thing makes you really notice it.',
+          ],
+          check: { type: 'oddone', q: 'Which of these is NOT a detail you could check in a picture?', items: ['🎨 its colour', '📏 its size', '🔊 its sound', '📍 where it is'], answer: 2, why: 'Why is the sound the odd one out?', reasons: ['You can\'t see a sound in a picture', 'It is the biggest detail', 'It is a kind of colour'], reason: 0 },
+        },
+        {
+          title: 'Blink and you miss it', pic: '👀⚡', vanish: true,
+          text: [
+            'Your brain spots a change by seeing it move or flicker.',
+            'If something changes while you blink, or while you look away, there is no flicker to catch – so even a big change can sneak past! Scientists call this [[change blindness]].',
+          ],
+          check: { q: 'Mum swapped the fruit bowl while Kai was looking out of the window. Why might Kai not notice?', options: ['He missed the moment it changed', 'Fruit bowls are too hard to see', 'He only notices the colour red'], answer: 0 },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'Just How Good is Eagle Vision?', short: 'Video', minutes: 7,
+      video: { id: 'A6H2ZdrKmzc', title: 'Just How Good is Eagle Vision? | Natural World: Super Powered Eagles', channel: 'BBC Earth', duration: '6:20' },
+      say: 'A real eagle plays hide and seek across a whole valley! Watch how fast she finds her friend.',
+      clues: [
+        'What is the eagle called?',
+        'What game do they play?',
+        'How far away is Lloyd?',
+        'What are the eagle\'s big eyebrows for?',
+      ],
+      questions: [
+        { type: 'type', q: 'What was the name of the golden eagle?', answer: ['tilly', 'tills'], placeholder: 'a name', hint: 'It rhymes with silly!' },
+        { type: 'mcq', q: 'What game did the eagle play to test her eyes?', options: ['hide and seek', 'follow my leader', 'catch the ball'], answer: 0 },
+        { type: 'mcq', q: 'How far away was Lloyd hiding?', options: ['about 2.5 km', 'about 25 m', 'about 2.5 m'], answer: 0, hint: 'He was on the other side of the valley!' },
+        { type: 'tf', q: 'Lloyd could easily see the eagle from far away without binoculars.', answer: false, explain: 'Even with binoculars it was hard for him – but the eagle found him fast!' },
+        { type: 'mcq', q: 'What are the eagle\'s big eyebrows for?', options: ['to keep the sun out', 'to scare other birds', 'to keep their heads warm'], answer: 0, hint: 'They work like a baseball cap.' },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Spot the Difference', short: 'Spot it', icon: '🖼️', minutes: 4,
+      rounds: [
+        {
+          game: 'spotdiff',
+          intro: 'Picture B is ALMOST the same as Picture A. Something might be gone, swapped, a different colour or smaller. **Scan row by row** and tap every difference!',
+          say: 'Row by row, like an eagle!',
+          scenes: [
+            { cols: 4, diffs: 4, items: ['🌳', '☀️', '', '🎈', '🐕', '🚲', '🌸', '', '🦆', '', '🍦', '🌼', '⚽', '🐌', '🪁', '🌳'] },
+            { cols: 4, diffs: 5, items: ['🛏️', '🧸', '📚', '⏰', '🎸', '', '🧦', '🎒', '👟', '🚀', '', '🎨', '🪁', '🐱', '💡', '🎩'] },
+            { cols: 5, diffs: 6, items: ['🐟', '', '🐙', '🐚', '🦀', '🌊', '🐠', '', '🐬', '⭐', '🦈', '🪸', '🐢', '', '🐡', '🐳', '', '🦑', '🐚', '⚓'] },
+          ],
+          done: 'EAGLE EYES! Not one difference got past you.',
+        },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Eagle Search', short: 'Search', icon: '🔍', minutes: 4,
+      rounds: [
+        {
+          game: 'seek',
+          intro: 'Everything on the list is hiding in the field! **Sweep your eyes across in strips**, top to bottom – and watch out for look-alikes.',
+          say: 'Sweep in strips, like an eagle over a field!',
+          hunts: [
+            { text: 'Find the key, the frog and the doughnut!', find: ['🔑 key', '🐸 frog', '🍩 doughnut'], crowd: ['🍎', '🎈', '⚽', '🌸', '🍄', '🧦', '🐟', '⭐', '🍌', '🧸'], n: 34 },
+            { text: 'Look-alikes! Find the eagle, the cherries and the snail.', find: ['🦅 eagle', '🍒 cherries', '🐌 snail'], crowd: ['🐦', '🦆', '🦉', '🍎', '🍓', '🐢', '🐛', '🍅', '🌰', '🐞'], n: 48 },
+            { text: 'The biggest crowd yet! Find the cheese, the trumpet, the fox and the gem.', find: ['🧀 cheese', '🎺 trumpet', '🦊 fox', '💎 gem'], crowd: ['🍕', '🔔', '🐱', '💧', '🍋', '🥕', '🎸', '🐶', '🌻', '🍪'], n: 58 },
+          ],
+          done: 'Nothing can hide from your eagle eyes!',
+        },
+      ],
+    },
+
+    {
+      type: 'investigate', title: 'The Blink Test', short: 'Test', minutes: 5,
+      question: 'Does a blink make a change harder to spot?',
+      say: 'Let\'s test change blindness on YOUR brain, like real scientists do.',
+      predict: { q: 'One thing in a picture keeps vanishing. Will a quick blink between the pictures make it easier or harder to spot?', options: ['harder to spot', 'easier to spot', 'no difference'], answer: 0 },
+      test: {
+        game: 'flicker', caption: '🧪 My blink test results',
+        intro: 'Test 1: the pictures swap with **no blink**. Test 2: a grey **blink** comes in between. Both have 12 things, and one keeps vanishing – a fair test!',
+        missions: [
+          { mode: 'plain', text: 'Test 1: NO blink. One thing keeps vanishing – tap it as fast as you can!', items: ['🍎', '🚗', '🐱', '⚽', '🎈', '🌳', '🎩', '🐟', '⭐', '🍌', '🔑', '🧸'], yes: 'Test 1 done! Now the same test – with a blink.' },
+          { mode: 'blink', text: 'Test 2: a BLINK comes between the pictures. Same number of things – find the one that vanishes!', items: ['🍓', '🚲', '🐶', '🏀', '🪁', '🌸', '👑', '🐢', '🌙', '🍩', '🔔', '🦆'], yes: 'Test 2 done! Compare your two times in the table.' },
+        ],
+      },
+      explain: [
+        { type: 'tf', q: 'It was a fair test, because both pictures had 12 things with one thing vanishing.', answer: true, explain: 'Yes! Only the blink was different.' },
+        { type: 'mcq', q: 'Why was the change harder to spot with the blink?', options: ['the blink hid the flicker of the change', 'the blink made every picture smaller', 'the blink changed all twelve things'], answer: 0 },
+        { type: 'type', q: 'Missing a change right in front of you is called change ___.', answer: ['blindness'], placeholder: 'one word', hint: 'When you can\'t see anything, you are b…' },
+      ],
+      result: [
+        'When scientists try this blink test, most people spot the change in a second or two with no blink. With a blink, it can take ten seconds or more – even for grown-ups!',
+        'Your brain catches changes by seeing them flicker. Hide the flicker, and a change can sneak right past. Eagle tip: when something might change, check each thing one by one.',
+      ],
+    },
+
+    {
+      type: 'game', title: 'Dojo Arcade: pick a game!', short: 'Arcade', icon: '🕹️', minutes: 4,
+      pick: { title: '🕹️ Pick your arcade game!', say: 'Your choice! Which game do you want to play? Win one to carry on – or play them all!' },
+      rounds: [
+        {
+          game: 'invaders', title: 'Eagle Blaster', emoji: '🚀', blurb: 'Shoot the things that match the target.',
+          intro: 'Arcade round! Read the target at the top and **shoot only the things that match it**.',
+          say: 'Read the target first!',
+          waves: [
+            { prompt: 'Shoot the things that help you SPOT details!', items: [{ label: 'scan row by row', ok: true }, { label: 'check the colour', ok: true }, { label: 'name what you see', ok: true }, { label: 'a quick glance', ok: false, why: 'A quick glance misses the details.' }, { label: 'look away', ok: false, why: 'You can\'t spot what you don\'t look at!' }] },
+            { prompt: 'Shoot the TRUE facts about eagle eyes!', items: [{ label: 'very sharp', ok: true }, { label: 'big eyebrows', ok: true }, { label: 'see very far', ok: true }, { label: 'need glasses', ok: false, why: 'Eagles have some of the sharpest eyes of all!' }, { label: 'blind in sun', ok: false, why: 'Their big eyebrows keep the sun out, so they can still see.' }] },
+          ],
+          done: 'EAGLE BLASTER CLEAR!',
+        },
+        {
+          game: 'steadyhand', title: 'Steady Hand', emoji: '✏️', blurb: 'Guide your pencil along the wiggly path – don\'t touch the sides!',
+          intro: 'Press on the green dot and follow the wiggly path all the way to the 🏁 – carefully! Pick Easy, Medium or Hard.',
+          say: 'Eagle eyes on the path!',
+          done: 'A calm, steady hand – and sharp eyes!',
+        },
+        {
+          game: 'spotter', title: 'What Changed?', emoji: '👀', blurb: 'Study the shelf. It gets covered… then spot what changed!',
+          intro: 'Look at the shelf until it gets covered. Then spot **what changed**!',
+          say: 'Check every detail on the shelf!',
+          turns: [
+            { items: ['🍓 strawberry', '🎸 guitar', '🐢 turtle', '📕 book', '🎈 balloon', '⏰ clock'], seconds: 8, change: 'missing' },
+            { items: ['🦉 owl', '🍩 doughnut', '🔦 torch', '🧦 socks', '🚲 bike', '🌙 moon'], seconds: 8, change: 'new', extra: '🐸 frog' },
+            { items: ['🐙 octopus', '🚀 rocket', '🍕 pizza', '🎩 top hat', '🐌 snail', '🧀 cheese', '🔑 key'], seconds: 10, change: 'swap' },
+          ],
+          done: 'Eagle eyes! Nothing gets past you.',
+        },
+      ],
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: Camo the Chameleon', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      say: 'Look closely… CAMO THE CHAMELEON is hiding somewhere! He changes things when you\'re not looking. Eagle eyes, {name}!',
+      boss: { name: 'Camo the Chameleon', sprite: CAMO, attack: ['🎨', '🌈'], lines: {
+        prefight: ['Hee hee… I am CAMO THE CHAMELEON. I change things when nobody is looking – and you will NEVER notice!', 'Oh, I\'ll notice. I scan row by row and check every detail. Nothing gets past these eagle eyes!', 'Hmm. Then I\'ll just have to change… while you BLINK!'],
+        intro: 'Now you see me… now you don\'t! Hee hee!',
+        hurt: ['Eek! You spotted me!', 'Ow! How did you see that?', 'Gah! That was my best disguise!'],
+        taunt: ['Hee hee! Didn\'t see THAT coming!', 'Blink! Missed it!', 'I changed colour – and you didn\'t notice!'],
+        angry: 'GRRR! I\'m turning RED with anger! Maximum camouflage!',
+        dodge: 'Dodge my colour splats, eagle eyes!',
+        miss: 'Where did you go? Are you… camouflaged too?',
+        last: 'One last trick… keep your eyes open… if you can!',
+        defeat: 'Nooo… I\'ve gone… completely… see-through…',
+        win: 'Hee hee! You blinked! (Scan row by row and try again!)',
+        stunned: 'Too many… colours… which one am I?',
+        beg: ['Wait! I\'ll stay one colour forever!', 'Please! I\'ll only change colour at parties!', 'I\'ll hide in the jungle and never trick anyone again! Promise!'],
+      } },
+      questions: [
+        { type: 'type', q: 'Camo is sneaking up on your Memory Key! Type ONE thing that was in it.', answer: ['telescope', 'a telescope', 'turtle', 'a turtle', 'cherries', 'cherry', 'some cherries', 'crown', 'a crown', 'sock', 'socks', 'a sock'], placeholder: 'one thing', hint: 'Back at the start… something to look through, an animal with a shell, a fruit…' },
+        { type: 'mcq', q: 'What is the best way to search a busy picture?', options: ['row by row, like reading', 'wherever looks the most fun', 'only the middle bit'], answer: 0 },
+        { type: 'tf', q: 'If something changes while you blink, you will always notice it.', answer: false, explain: 'The blink hides the flicker – that\'s change blindness!' },
+        { type: 'type', q: 'Eagles have big ___ that work like a baseball cap to keep the sun out of their eyes.', answer: ['eyebrows', 'eyebrow', 'brows'], placeholder: 'one word', hint: 'They are just above your eyes too…' },
+        { type: 'mcq', q: 'Camo changed the picture while you looked away – and you missed it! What is that called?', options: ['change blindness', 'a colour clash', 'a memory palace'], answer: 0 },
+        { type: 'mcq', q: 'Your eyes see lots of things, but your brain only notices…', options: ['what your attention is on', 'the very biggest things', 'things that are blue'], answer: 0 },
+        { type: 'oddone', q: 'Camo mixed a helper in with his tricks! Which one HELPS you spot details?', items: ['🙈 looking away', '🔍 checking each thing', '💨 rushing past', '📺 a loud TV'], answer: 1, why: 'Why is checking each thing the odd one out?', reasons: ['It is the only one that helps you notice', 'It is the fastest one', 'It is the noisiest one'], reason: 0 },
+        { type: 'mcq', q: 'Saying "red cup, top left" in your head helps because…', options: ['naming it makes you notice it', 'it makes the red cup much bigger', 'it scares the chameleon away'], answer: 0 },
+        { type: 'oddone', q: 'Four of these were in your Memory Key. Which one was NOT?', items: ['🔭 telescope', '🐢 turtle', '🎈 balloon', '👑 crown', '🧦 sock'], answer: 2, why: 'How do you know?', reasons: ['It wasn\'t in the Memory Key – the cherries were', 'It is the only one that floats', 'It is the most colourful'], reason: 0, hint: 'Picture the Memory Key… was there a fruit?' },
+        { type: 'mcq', q: 'Final blow! Which thing from the Memory Key could you look through?', options: ['🔭 the telescope', '🐢 the turtle', '👑 the crown'], answer: 0 },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>

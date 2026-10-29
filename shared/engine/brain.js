@@ -1,5 +1,6 @@
 /* Pixelkid lesson engine – Brain Dojo games for memory and focus: the Memory Palace, Note Block Echo (and its digit
  * chunking mode), Kim's Game (spotter), Ninja Reflex (go / no-go), Colour Clash and Box Breathing.
+ * Eagle Eye adds Spot the Difference (spotdiff), Eagle Search (seek) and the Blink Test (flicker, a change-blindness experiment).
  * One part of shared/engine.js, which loads it only when a lesson uses it. E is the engine's shared helpers
  * (E.state is live). See the top of shared/engine.js for how the parts fit together.
  * Every game keeps a personal best in y3:brain (E.brainRecord), so he can watch his brain get stronger.
@@ -10,14 +11,15 @@ PixelkidEngine.part('brain', E => {
 
   // Brain records (Brain Dojo games): his personal bests, kept across lessons in y3:brain = { [id]: { best, label, at } }.
   // brainRecord(id, value, label) saves a new best and cheers it; returns { best, old, isNew }.
-  function brainRecord(id, value, label) {
+  // low: true for times, where a smaller number is the better record.
+  function brainRecord(id, value, label, low) {
     const all = store.get('y3:brain', {}), old = (all[id] && all[id].best) || 0;
-    const isNew = value > old;
+    const isNew = low ? value > 0 && (!old || value < old) : value > old;
     if (isNew) {
       all[id] = { best: value, label, at: Date.now() }; store.set('y3:brain', all);
       if (old) setTimeout(() => { sfx.achieve(); confetti(70); toast('NEW BRAIN RECORD!', `${label}: ${old} → ${value}`, '🧠', 'level'); }, 300);
     }
-    return { best: Math.max(old, value), old, isNew };
+    return { best: isNew ? value : old, old, isNew };
   }
   const brainBest = id => (store.get('y3:brain', {})[id] || {}).best || 0;
 
@@ -597,5 +599,250 @@ PixelkidEngine.part('brain', E => {
     root._test = { frames(n) { started = true; for (let k = 0; k < n; k++) step(1 / 30); }, hold() { touching = true; started = true; }, get finished() { return finished; } };
     return root;
   };
+  // ---------- Eagle Eye: helpers ----------
+  const iconOf = t => split(t).icon || String(t);
+  // does this icon have enough colour for a hue shift to show? (a grey or white icon wouldn't change)
+  const colourful = e => {
+    const rows = window.Pixel && Pixel._tools && Pixel._tools.get(e);
+    return !rows || rows.join('').replace(/[kwWgG.]/g, '').length >= 30;
+  };
+  const secsSince = t0 => Math.max(1, Math.round((Date.now() - t0) / 1000));
+
+  // ===== Spot the Difference: two pictures side by side – tap everything that's different =====
+  // r.scenes: [{ items: ['🌳', '🏠', '', …] (row by row, '' = an empty spot), cols: 4, diffs: 4, extras: ['🐸', …] }]
+  // The differences are picked fresh every time: something gone, something swapped, a new colour or a smaller size.
+  // Tap either picture. 💡 Hint lights up the row of one difference (scan row by row!). Record: 'spotdiff', fastest scene (seconds).
+  const SWAPS = ['🐸', '🍄', '🎈', '⭐', '🍎', '🐟', '🌸', '🔑', '🧦', '🎩', '🐌', '🍩'];
+  GAMES.spotdiff = function (r, key, done) {
+    const scenes = r.scenes;
+    let si = -1, diffs = null, found = 0, misses = 0, t0 = 0, cellsA = [], cellsB = [], finished = false;
+    const timers = [];
+    const rec = h('div'), status = h('div', { class: 'bd-status' }), tag = h('div', { class: 'bd-tag' });
+    const pics = h('div', { class: 'bd-pics' });
+    const hint = h('button', { class: 'btn', type: 'button', onclick() { sfx.tap(); showHint(); } }, '💡 Eagle hint');
+    const tick = setInterval(() => { if (diffs && !finished) showStatus(); }, 1000); timers.push(tick);
+    function showStatus() { status.textContent = `Found ${found} / ${diffs.size} · ⏱ ${secsSince(t0)} s`; }
+    function scene() {
+      si++;
+      if (si >= scenes.length) {
+        finished = true; status.textContent = '🏆 Eagle eyes! Every difference spotted.';
+        return void timers.push(setTimeout(done, 600));
+      }
+      const S = scenes[si], cols = S.cols || 4, items = S.items.map(iconOf);
+      const spots = shuffle(items.map((t, k) => k).filter(k => items[k]));
+      const want = Math.min(S.diffs || 4, spots.length);
+      const extras = shuffle((S.extras || r.extras || SWAPS).filter(e => !items.includes(e)));
+      diffs = new Map();
+      const kinds = shuffle(['gone', 'swap', 'colour', 'size']);
+      for (const k of spots) {
+        if (diffs.size >= want) break;
+        const kind = kinds[diffs.size % kinds.length];
+        if (kind === 'colour' && !colourful(items[k])) diffs.set(k, { kind: 'swap', to: extras.pop() || '🐸' });
+        else diffs.set(k, { kind, to: kind === 'swap' ? extras.pop() || '🐸' : null });
+      }
+      found = 0; misses = 0; t0 = Date.now();
+      const panel = (which) => {
+        const cells = items.map((t, k) => {
+          const d = which === 'B' && diffs.get(k);
+          const icon = d ? (d.kind === 'gone' ? '' : d.kind === 'swap' ? d.to : t) : t;
+          const c = h('button', { class: 'bd-dcell', type: 'button', 'data-k': k, html: icon ? fmt(icon, false) : '' });
+          if (d && d.kind === 'colour') c.classList.add('recol'); // the icon only, so the cell itself gives nothing away
+          if (d && d.kind === 'size') c.classList.add('small');
+          c.addEventListener('pointerdown', e => { e.preventDefault(); tap(k, c); });
+          return c;
+        });
+        const grid = h('div', { class: 'bd-dgrid' }, cells);
+        grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+        return { el: h('div', { class: 'bd-pic' }, h('div', { class: 'bd-pic-name' }, which === 'A' ? '🖼️ Picture A' : '🖼️ Picture B'), grid), cells };
+      };
+      const A = panel('A'), B = panel('B');
+      cellsA = A.cells; cellsB = B.cells;
+      put(pics, A.el, B.el);
+      tag.textContent = `🦅 PICTURE ${si + 1} / ${scenes.length} · FIND ${diffs.size} DIFFERENCES`;
+      showStatus();
+      say(si ? 'New pictures! Scan them row by row, like reading.' : 'Look at both pictures. Scan row by row – and tap everything that is different!');
+    }
+    function tap(k, cell) {
+      if (finished || !diffs) return;
+      const d = diffs.get(k);
+      if (d && !d.found) {
+        d.found = true; found++;
+        cellsA[k].classList.add('found'); cellsB[k].classList.add('found');
+        sfx.good(); popText(cell.parentNode, '✔', 'combo');
+        showStatus();
+        if (found === diffs.size) {
+          const secs = secsSince(t0), best = brainRecord('spotdiff', secs, 'Fastest spot the difference (seconds)', true);
+          put(rec, recordLine('spotdiff', 'fastest picture, in seconds'));
+          award(`${key}:s${si}`, cell);
+          say(best.isNew && best.old ? `NEW RECORD! All found in ${secs} seconds!` : `All ${found} found in ${secs} seconds${misses ? '' : ' – and not one wrong tap'}!`);
+          diffs = null;
+          timers.push(setTimeout(scene, 1500));
+        }
+      } else if (!d) {
+        misses++; sfx.bad(); shake(cell);
+        say(misses >= 3 ? 'Try the 💡 hint – or scan one row at a time, left to right.' : 'That one is the same in both. Keep scanning!');
+      }
+    }
+    function showHint() {
+      if (!diffs) return;
+      const left = [...diffs].filter(([, d]) => !d.found);
+      if (!left.length) return;
+      const cols = scenes[si].cols || 4, row = Math.floor(left[0][0] / cols);
+      [cellsA, cellsB].forEach(cs => cs.forEach((c, k) => { if (Math.floor(k / cols) === row) { c.classList.remove('hint'); void c.offsetWidth; c.classList.add('hint'); } }));
+      say(`Look along row ${row + 1}… check each thing in Picture A, then the same spot in Picture B.`);
+    }
+    const root = h('div', { class: 'game bd spotdiff' }, rec, tag, pics, status, h('div', { class: 'btn-row' }, hint));
+    put(rec, recordLine('spotdiff', 'fastest picture, in seconds'));
+    scene();
+    root._stop = () => timers.forEach(t => { clearTimeout(t); clearInterval(t); });
+    root._test = {
+      get scene() { return si; }, get finished() { return finished; }, get diffs() { return diffs && [...diffs]; },
+      solve() { if (diffs) [...diffs].filter(([, d]) => !d.found).forEach(([k]) => tap(k, cellsB[k])); },
+      miss() { const k = cellsA.findIndex((c, i) => diffs && !diffs.has(i)); if (k >= 0) tap(k, cellsA[k]); },
+      hint: showHint,
+    };
+    return root;
+  };
+
+  // ===== Eagle Search: a crowded picture – find the hidden things =====
+  // r.hunts: [{ text, find: ['🔑 key', '🐸 frog', …] (one of each is hidden), crowd: ['🍎', '🎈', …] (the clutter), n: 40 }]
+  // Look-alikes in the crowd make it harder. 💡 Hint lights up the strip one of them is hiding in.
+  // Record: 'seek', the fastest search (seconds).
+  GAMES.seek = function (r, key, done) {
+    const hunts = r.hunts;
+    let hi = -1, targets = [], t0 = 0, finished = false, busy = false;
+    const timers = [];
+    const rec = h('div'), tag = h('div', { class: 'bd-tag' }), status = h('div', { class: 'bd-status' });
+    const list = h('div', { class: 'bd-finds' }), field = h('div', { class: 'bd-field' });
+    const hint = h('button', { class: 'btn', type: 'button', onclick() { sfx.tap(); showHint(); } }, '💡 Eagle hint');
+    function hunt() {
+      hi++;
+      if (hi >= hunts.length) { finished = true; status.textContent = '🏆 Nothing can hide from your eagle eyes!'; return void timers.push(setTimeout(done, 600)); }
+      const H = hunts[hi], finds = H.find.map(split), icons = finds.map(f => f.icon);
+      const crowd = (H.crowd || r.crowd).map(iconOf).filter(e => !icons.includes(e));
+      const n = H.n || 36, all = [];
+      for (let k = 0; k < n; k++) all.push({ icon: crowd[k % crowd.length] });
+      finds.forEach((f, k) => all.push({ icon: f.icon, target: k }));
+      // a jittered grid, so things spread out and never pile on top of each other
+      const cols = Math.ceil(Math.sqrt(all.length * 1.4)), rows = Math.ceil(all.length / cols);
+      const cells = shuffle([...Array(cols * rows).keys()]);
+      targets = finds.map(f => ({ name: f.name, icon: f.icon, found: false, el: null, chip: null, y: 0 }));
+      put(field);
+      shuffle(all).forEach((o, k) => {
+        const c = cells[k], x = (c % cols + 0.5 + (Math.random() - 0.5) * 0.5) / cols * 100, y = (Math.floor(c / cols) + 0.5 + (Math.random() - 0.5) * 0.4) / rows * 100;
+        const el = h('button', { class: 'bd-hide', type: 'button', html: fmt(o.icon, false) });
+        el.style.left = x + '%'; el.style.top = y + '%';
+        el.style.transform = `translate(-50%, -50%) rotate(${Math.round((Math.random() - 0.5) * 60)}deg) scale(${(0.8 + Math.random() * 0.45).toFixed(2)})`;
+        el.addEventListener('pointerdown', e => { e.preventDefault(); tap(o, el); });
+        if (o.target != null) { targets[o.target].el = el; targets[o.target].y = y; }
+        field.append(el);
+      });
+      put(list, targets.map(t => (t.chip = h('span', { class: 'bd-find', html: fmt(`${t.icon} ${t.name}`, false) }))));
+      tag.textContent = `🦅 SEARCH ${hi + 1} / ${hunts.length}`;
+      status.innerHTML = fmt(H.text || 'Find every thing on the list!', false);
+      t0 = Date.now(); busy = false;
+      say(hi ? 'Another one! Sweep your eyes in strips, top to bottom.' : 'Find everything on the list! Sweep your eyes across in strips, like an eagle over a field.');
+    }
+    function tap(o, el) {
+      if (finished || busy) return;
+      const t = o.target != null && targets[o.target];
+      if (t && !t.found) {
+        t.found = true; el.classList.add('found'); t.chip.classList.add('got'); sfx.good(); popText(field, '✔', 'combo');
+        if (targets.every(x => x.found)) {
+          busy = true;
+          const secs = secsSince(t0), best = brainRecord('seek', secs, 'Fastest eagle search (seconds)', true);
+          put(rec, recordLine('seek', 'fastest search, in seconds'));
+          award(`${key}:h${hi}`, el);
+          say(best.isNew && best.old ? `NEW RECORD! Found in ${secs} seconds!` : `All found in ${secs} seconds!`);
+          timers.push(setTimeout(hunt, 1500));
+        } else say(`Got the ${t.name}! Keep sweeping…`);
+      } else if (!t) { sfx.bad(); shake(el); say('Not on the list – look closely, some things are look-alikes!'); }
+    }
+    function showHint() {
+      const t = targets.find(x => !x.found);
+      if (!t || finished) return;
+      const band = h('div', { class: 'bd-band' });
+      band.style.top = Math.max(0, t.y - 13) + '%';
+      field.append(band); timers.push(setTimeout(() => band.remove(), 2600));
+      say(`The ${t.name} is somewhere in the glowing strip. Sweep along it slowly!`);
+    }
+    const root = h('div', { class: 'game bd seek' }, rec, tag, status, list, field, h('div', { class: 'btn-row' }, hint));
+    put(rec, recordLine('seek', 'fastest search, in seconds'));
+    hunt();
+    root._stop = () => timers.forEach(t => clearTimeout(t));
+    root._test = {
+      get hunt() { return hi; }, get finished() { return finished; },
+      findAll() { targets.filter(t => !t.found).forEach(t => t.el.dispatchEvent(new window.Event('pointerdown'))); }, hint: showHint,
+    };
+    return root;
+  };
+
+  // ===== The Blink Test: a change-blindness experiment =====
+  // Two pictures take turns, and one thing appears and disappears. mode 'plain': they swap straight over, so the change
+  // flickers and pops out. mode 'blink': a grey flash goes between them, like a blink – and the change gets much harder to see.
+  // r.missions: [{ mode: 'plain' | 'blink', text, items: [12 emoji], yes, ask }] · r.cols (default 4) · r.caption
+  // The time to spot each change goes in a results table, so it works as an `investigate` test.
+  GAMES.flicker = function (r, key, done) {
+    const table = resultsTable(r.caption || '🧪 Blink test results', ['Test', 'Between the pictures', 'Time to spot it']);
+    const stage = h('div', { class: 'bd-stage' });
+    let m = null, runN = 0, phase = 'ready', loop = 0, t0 = 0, k = -1, cells = [], shown = [], hinted = false, hintT = 0;
+    const missions = missionRunner(r, key, done, mm => { m = mm; ready(); });
+    const stopLoop = () => { clearInterval(loop); clearTimeout(hintT); loop = 0; };
+    function ready() {
+      phase = 'ready'; stopLoop();
+      const go = h('button', { class: 'btn big ready', type: 'button', onclick() { sfx.tap(); start(); } }, '▶ Start the clock');
+      put(stage, h('div', { class: 'bd-card bd-center' },
+        h('p', null, m.mode === 'blink' ? '⚫ This time a quick grey BLINK comes between the pictures.' : '⚡ The pictures swap straight over – no blink.'),
+        h('p', null, 'One thing keeps vanishing and coming back. Tap it as soon as you spot it!'), go));
+      say('Press start when you are ready. Then find the thing that keeps vanishing!');
+    }
+    function start() {
+      const items = shown = shuffle(m.items.map(iconOf)), cols = r.cols || 4;
+      k = Math.floor(Math.random() * items.length); hinted = false;
+      cells = items.map((t, j) => {
+        const c = h('button', { class: 'bd-dcell', type: 'button', html: fmt(t, false) });
+        c.addEventListener('pointerdown', e => { e.preventDefault(); tap(j, c); });
+        return c;
+      });
+      const grid = h('div', { class: 'bd-dgrid bd-flick' }, cells);
+      grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+      put(stage, h('div', { class: 'bd-tag' }, m.mode === 'blink' ? '⚫ BLINK MODE' : '⚡ NO BLINK'), grid);
+      phase = 'spot'; t0 = Date.now();
+      // A 700 ms, (blink 250 ms), B 700 ms, (blink 250 ms), …
+      const blink = m.mode === 'blink', seq = blink ? ['A', '-', 'B', '-'] : ['A', 'B'];
+      let n = 0;
+      const show = () => {
+        const f = seq[n++ % seq.length];
+        grid.classList.toggle('blank', f === '-');
+        cells[k].style.visibility = f === 'B' ? 'hidden' : '';
+      };
+      show();
+      let acc = 0;
+      loop = setInterval(() => { acc += 50; const need = seq[(n - 1) % seq.length] === '-' ? 250 : 700; if (acc >= need) { acc = 0; show(); } }, 50);
+      hintT = setTimeout(() => { if (phase !== 'spot') return; hinted = true; const row = Math.floor(k / cols); cells.forEach((c, j) => { if (Math.floor(j / cols) === row) c.classList.add('hint'); }); say('Hint: it is somewhere in the glowing row!'); }, 25000);
+      say(blink ? 'Watch closely… blink… blink…' : 'Watch closely! What keeps vanishing?');
+    }
+    function tap(j, c) {
+      if (phase !== 'spot') return;
+      if (j !== k) { sfx.bad(); shake(c); say('That one stays put. Keep watching!'); return; }
+      phase = 'done'; stopLoop();
+      runN++;
+      const secs = Math.max(1, Math.round((Date.now() - t0) / 1000));
+      table.add([runN, m.mode === 'blink' ? '⚫ a blink' : '⚡ no blink', `${secs} s${hinted ? ' (with a hint)' : ''}`]);
+      put(stage, h('div', { class: 'bd-card bd-center' }, h('div', { class: 'bd-count big' }, `${secs} s`),
+        h('p', { html: fmt(`You spotted the vanishing ${shown[k]} in ${secs} seconds.`, false) })));
+      say(`Found it in ${secs} seconds!`);
+      missions.win(stage);
+    }
+    const root = h('div', { class: 'game bd flicker' }, missions.box, stage, missions.ask, table.el);
+    root._stop = stopLoop;
+    root._test = {
+      get phase() { return phase; }, get mission() { return missions.i; },
+      start() { start(); }, solve() { tap(k, cells[k]); }, miss() { const j = (k + 1) % cells.length; tap(j, cells[j]); },
+    };
+    missions.next();
+    return root;
+  };
+
   return { showMemoryKey };
 });

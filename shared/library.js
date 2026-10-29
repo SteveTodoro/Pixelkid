@@ -107,7 +107,7 @@ const LIBRARY = {
       { title: 'Spy School: Code Breakers', emoji: '🕵️', unit: 'Super Memory' },
       // the road forks after the Memory Palace: memory one way, focus & calm the other
       { id: 'brain-ninja-focus', title: 'Ninja Focus', emoji: '🥷', unit: 'Focus & Calm', file: 'brain/ninja-focus.html', after: 'Memory Palace' },
-      { title: 'Eagle Eye: Spot It!', emoji: '🦅', unit: 'Focus & Calm' },
+      { id: 'brain-eagle-eye', title: 'Eagle Eye: Spot It!', emoji: '🦅', unit: 'Focus & Calm', file: 'brain/eagle-eye.html' },
       { title: 'Listen Up! Story Keeper', emoji: '👂', unit: 'Focus & Calm' },
     ],
   },

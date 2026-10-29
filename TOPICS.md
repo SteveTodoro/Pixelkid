@@ -108,14 +108,14 @@ Why it exists: the child reads as little as possible to race to the boss. Here *
 | Unit | Lesson ideas |
 |------|--------------|
 | Super Memory | The memory palace, silly pictures, walking a route, a self-test of list vs palace ✅ *(Memory Palace)* · how memory works (paths in the brain that practice and sleep make stronger, forgetting) · codes and ciphers (Spy School) |
-| Focus & Calm | Attention as a spotlight, distraction thieves, one thing at a time, the focus muscle, box breathing, Colour Clash ✅ *(Ninja Focus)* · observation and spotting changes (Eagle Eye) · listening to a story with no text (Story Keeper) |
+| Focus & Calm | Attention as a spotlight, distraction thieves, one thing at a time, the focus muscle, box breathing, Colour Clash ✅ *(Ninja Focus)* · observation, scanning row by row and change blindness ✅ *(Eagle Eye)* · listening to a story with no text (Story Keeper) |
 
-**Brain Dojo style:** lessons go in `brain/`, `subject: 'brain'` (cherry-blossom pink), and load `../shared/brain.css` after lesson.css. Mascot Sensei Hoot (`Pixel.sprites.sensei`), `finishAch: 'focus'` (Focus Master, unlocks the focus headband). Master Miko sells the dojo suit, the blossom bow headband and the Zen panda. Bosses: The Forgetter (Memory Palace), Buzz Distracto (Ninja Focus, with `distract: true`). Every lesson uses the three mechanics below. Keep the reading on vanishing pages, and let the games do the work.
+**Brain Dojo style:** lessons go in `brain/`, `subject: 'brain'` (cherry-blossom pink), and load `../shared/brain.css` after lesson.css. Mascot Sensei Hoot (`Pixel.sprites.sensei`), `finishAch: 'focus'` (Focus Master, unlocks the focus headband). Master Miko sells the dojo suit, the blossom bow headband and the Zen panda. Bosses: The Forgetter (Memory Palace), Buzz Distracto (Ninja Focus, with `distract: true`), Camo the Chameleon (Eagle Eye). Every lesson uses the three mechanics below. Keep the reading on vanishing pages, and let the games do the work.
 
 **Brain Dojo mechanics (any lesson can use them):**
 - **Vanishing pages:** `vanish: true` on a read card. He reads it, taps "🧠 Got it – vanish!", and the words hide while the check is asked. 👀 Peek brings them back but loses the gem, and a wrong answer brings them back too. The check can be any type except `evidence`.
 - **Memory Key:** `memoryKey: { items: ['🗝️ a gold key', …], seconds, say }` on the lesson. The items flash up when he presses PLAY, then lock, and the boss asks for them at the end (a typed "type ONE thing" plus an oddone). lesson-check warns if the boss never asks.
-- **Brain records:** the brain games save his personal bests in `y3:brain` (`E.brainRecord(id, value, label)`), shown as "🧠 Your record" with a NEW BRAIN RECORD toast.
+- **Brain records:** the brain games save his personal bests in `y3:brain` (`E.brainRecord(id, value, label, low)`; `low: true` for times, where smaller is better), shown as "🧠 Your record" with a NEW BRAIN RECORD toast.
 - **Boss distractions:** `boss.distract: true` (or a list of strings) floats harmless pop-ups (🔔 PING!, 📱 New message!) over the questions to ignore.
 
 **Brain Dojo games (`shared/engine/brain.js`, each with a `_test` hook; `node tools/brain-test.js` plays them all):**
@@ -124,6 +124,9 @@ Why it exists: the child reads as little as possible to race to the boss. Here *
 - **Kim's Game (`spotter`):** `turns: [{ items, seconds, change: 'missing' | 'new' | 'swap', extra }]`. The shelf shows, gets covered, then he spots the change. A wrong answer shows the first shelf again for 3 seconds.
 - **Ninja Reflex (`gonogo`):** `phases: [{ rule, go: [emoji], nogo: [emoji], count, speed }]`. The rule switches between phases, and `distract: true` adds pop-ups to ignore. Every phase finishes, whatever the score.
 - **Colour Clash (`clash`):** tap the ink colour, not the word. `turns`, `flip` (the turn where the rule flips to "tap the WORD").
+- **Spot the Difference (`spotdiff`):** `scenes: [{ items: ['🌳', '', …] (row by row, '' = empty), cols, diffs, extras }]`. Two pictures side by side. The differences are picked fresh each time (gone, swapped, recoloured, smaller; recolouring is skipped for grey icons). Tap either picture. 💡 Hint lights up the row of one difference. Record: `spotdiff` (fastest picture, in seconds).
+- **Eagle Search (`seek`):** `hunts: [{ text, find: ['🔑 key', …], crowd: [emoji], n }]`. A crowded field with one of each target hidden among `n` clutter things (put look-alikes in the crowd). 💡 Hint lights up the strip one is in. Record: `seek` (fastest search).
+- **Blink Test (`flicker`):** a change-blindness experiment for `investigate`. `missions: [{ mode: 'plain' | 'blink', text, items: [12 emoji] }]`, `cols`. One thing vanishes and comes back. `plain` swaps straight over, so it pops out; `blink` puts a grey flash in between. He taps it, and the time goes in a results table. A row hint comes after 25 seconds.
 - **Box Breathing (`breathe`):** trace the square with the dot (in, hold, out, hold). `breaths`, `side` (seconds). The heart slows as he follows the dot, and there is no fail state.
 
 ## 👕 Avatar & Wardrobe

@@ -4498,6 +4498,25 @@
     '................',
     '................',
   ]);
+  // ladybird from above: a black head, a red shell split down the middle, black spots and little legs
+  def('🐞', [
+    '................',
+    '......kkkk......',
+    '.....kkwwkk.....',
+    '..k.kkkkkkkk.k..',
+    '...kkrrrkrrrkk..',
+    '..krrkkrkrkkrrk.',
+    '.kkrrkkrkrkkrrkk',
+    '..krrrrrkrrrrrk.',
+    '..krkkrrkrrkkrk.',
+    '.kkrkkrrkrrkkrkk',
+    '..krrrrrkrrrrrk.',
+    '...krrkrkrkrrk..',
+    '..k.krrrkrrrk.k.',
+    '.....kkkkkkk....',
+    '................',
+    '................',
+  ]);
   def('🐝', [
     '................',
     '................',

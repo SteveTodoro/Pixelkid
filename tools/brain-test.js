@@ -94,6 +94,43 @@ async function game(name, round, drive) {
     await wait(700);
   });
 
+  await game('spotdiff', { game: 'spotdiff', scenes: [
+    { cols: 4, diffs: 3, items: ['🌳', '☀️', '', '🎈', '🐕', '🚲', '🌸', '', '🦆'] },
+    { cols: 3, diffs: 4, items: ['🛏️', '🧸', '📚', '⏰', '🎸', '🧦', '🎒', '👟', '🚀'] },
+  ] }, async T => {
+    T.miss(); T.hint();
+    ok(T.diffs.length === 3, 'spotdiff: scene 1 did not get 3 differences');
+    T.solve(); await wait(1700);
+    ok(T.scene === 1 && T.diffs.length === 4, 'spotdiff: did not move on to scene 2');
+    T.solve(); await wait(2300);
+    ok(T.finished, 'spotdiff: did not finish');
+  });
+
+  await game('seek', { game: 'seek', hunts: [
+    { text: 'Find them!', find: ['🔑 key', '🐸 frog'], crowd: ['🍎', '🎈', '⚽', '🔑'], n: 12 },
+    { find: ['🦅 eagle'], crowd: ['🐦', '🦆'], n: 20 },
+  ] }, async (T, card) => {
+    ok(card.querySelectorAll('.bd-hide').length === 14, 'seek: the field should hold 12 crowd + 2 hidden things');
+    T.hint(); T.findAll(); await wait(1700);
+    ok(T.hunt === 1, 'seek: did not move on to hunt 2');
+    T.findAll(); await wait(2300);
+    ok(T.finished, 'seek: did not finish');
+  });
+
+  await game('flicker', { game: 'flicker', missions: [
+    { mode: 'plain', text: 'no blink', items: ['🍎', '🚗', '🐱', '⚽', '🎈', '🌳', '🎩', '🐟'] },
+    { mode: 'blink', text: 'blink', items: ['🍓', '🚲', '🐶', '🏀', '🪁', '🌸', '👑', '🐢'] },
+  ] }, async (T, card) => {
+    T.start(); await wait(1200); T.miss(); T.solve(); await wait(50);
+    ok(T.phase === 'done', 'flicker: test 1 did not end');
+    [...card.querySelectorAll('.lab-ask button')].find(b => /Next mission/.test(b.textContent)).click(); await wait(50);
+    T.start(); await wait(1200);
+    ok(card.querySelector('.bd-flick'), 'flicker: test 2 shows no pictures');
+    T.solve(); await wait(50);
+    ok(card.querySelectorAll('.data-box tbody tr').length === 2, 'flicker: the results table should have 2 rows');
+    [...card.querySelectorAll('.lab-ask button')].find(b => /Finish/.test(b.textContent)).click(); await wait(50);
+  });
+
   // a vanishing page: the check stays hidden until "Got it", then 👀 Peek brings the words back
   {
     const page = await open('brain/memory-palace.html', stub({ type: 'read', title: 'v', cards: [{ title: 'T', text: ['A cat sat on a mat.'], vanish: true, check: { q: 'Where?', options: ['mat', 'hat', 'bat'], answer: 0 } }] }, { id: 'brain-test', layout: 2 }));

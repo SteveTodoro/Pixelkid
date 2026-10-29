@@ -1469,7 +1469,7 @@
     time: ['clock', 'daydial', 'timehops', 'knuckles'],
     number: ['placeblocks', 'columnsum', 'shop'],
     earth: ['soillab'],
-    brain: ['palace', 'sequence', 'spotter', 'gonogo', 'clash', 'breathe'],
+    brain: ['palace', 'sequence', 'spotter', 'gonogo', 'clash', 'breathe', 'spotdiff', 'seek', 'flicker'],
     world: ['worldmap', 'cook', 'phrases'],
   };
   function partsFor(lesson) {
