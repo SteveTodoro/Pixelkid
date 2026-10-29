@@ -163,9 +163,11 @@ PixelkidEngine.part('boss', E => {
       },
       // side-scrolling cave: the walls slide past and the tunnel winds about as it narrows – stay in the gap!
       // It opens wide (so there is time to line up), narrows to a gap the whole avatar (hat and all) fits with room to spare, with wider pockets now and then.
-      tunnel() {
-        if (!S.init) { S.init = true; S.p1 = Math.random() * 6; S.p2 = Math.random() * 6; S.min = Math.max(84, ph + 44) + (round <= 1 ? 14 : 0); }
-        const vs = 95 * Math.min(speed, 1.5), off = lt * vs, open = H + 40, COL = 6;
+      // It's fast (the parent found the first version too slow to be exciting) and speeds up a little more the longer it runs.
+      tunnel(dt) {
+        if (!S.init) { S.init = true; S.off = 0; S.p1 = Math.random() * 6; S.p2 = Math.random() * 6; S.min = Math.max(84, ph + 44) + (round <= 1 ? 14 : 0); }
+        const vs = 138 * Math.min(speed, 1.5) * (1 + 0.035 * Math.min(lt, 12)), open = H + 40, COL = 6;
+        const off = (S.off += vs * dt);
         S.scroll = vs; walls.length = 0;
         for (let x = 0; x < W; x += COL) {
           const wx = x + off, squeeze = Math.min(open, open - (wx - W * 0.75) * 0.6);
