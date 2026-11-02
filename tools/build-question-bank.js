@@ -42,6 +42,7 @@ for (const { id, file } of lessons) {
       const type = q.type || 'mcq';
       if (!['mcq', 'tf', 'gap', 'type'].includes(type) || needsLesson(q)) continue;
       const b = { type, q: text(q.q || ''), answer: q.answer };
+      if (type === 'type' && (q.exact || L.subject === 'english')) b.exact = true; // spelling counts: no typo forgiveness
       if (q.options) b.options = q.options.map(text);
       if (q.hint) b.hint = text(q.hint);
       if (q.explain) b.explain = text(q.explain);

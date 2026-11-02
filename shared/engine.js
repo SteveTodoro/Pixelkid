@@ -900,11 +900,29 @@
   };
 
   // type: write the answer. { q, answer: 'word' or ['word', 'other spelling'], before, after, placeholder }
-  // Capitals, spaces and punctuation don't matter (so 'Half past 3' = 'half past 3.').
+  // Capitals, spaces and punctuation don't matter (so 'Half past 3' = 'half past 3.'), and a slip of the finger is
+  // forgiven (see nearlyRight), except in English lessons, where the spelling is the point, or with exact: true.
   // After two wrong tries the answer is shown, with a button to use it and carry on, so nobody gets stuck.
+  // nearlyRight: one word may be one letter off (wrong, missing, extra or two swapped: 'secomds' = 'seconds'),
+  // but only words of 5+ letters, and never a number ('22' ≠ '23', '7:30 am' ≠ '7:30 pm'). Both texts cleaned.
+  // shared/npcs.js has a copy for the map's challengers.
+  const oneOff = (s, t) => {
+    if (Math.abs(s.length - t.length) > 1) return false;
+    let i = 0; while (i < s.length && s[i] === t[i]) i++;
+    if (s.length > t.length) return s.slice(i + 1) === t.slice(i);
+    if (s.length < t.length) return s.slice(i) === t.slice(i + 1);
+    return s.slice(i + 1) === t.slice(i + 1) || (s[i] === t[i + 1] && s[i + 1] === t[i] && s.slice(i + 2) === t.slice(i + 2));
+  };
+  const nearlyRight = (v, a) => {
+    const vw = v.split(' '), aw = a.split(' ');
+    if (vw.length !== aw.length) return false;
+    const diff = aw.map((w, i) => [vw[i], w]).filter(([x, w]) => x !== w);
+    return diff.length === 1 && Math.min(diff[0][0].length, diff[0][1].length) >= 5 && !/[0-9£:]/.test(diff[0].join('')) && oneOff(...diff[0]);
+  };
   QTYPES.type = (q, onRight, onMiss) => {
     const clean = t => String(t).toLowerCase().replace(/[^a-z0-9£:]+/g, ' ').trim();
     const ok = [].concat(q.answer).map(clean);
+    const forgive = !q.exact && L.subject !== 'english';
     let misses = 0, done = false;
     const box = h('input', { class: 'q-type', type: 'text', autocomplete: 'off', autocapitalize: 'off', spellcheck: 'false', 'aria-label': 'Your answer', placeholder: q.placeholder || 'Type your answer' });
     const reveal = h('div', { class: 'q-reveal', hidden: true });
@@ -914,6 +932,8 @@
       const v = clean(box.value);
       if (!v) { box.focus(); return; }
       if (ok.includes(v)) return right();
+      const near = forgive && [].concat(q.answer).find(a => nearlyRight(v, clean(a)));
+      if (near) { box.value = near; return right(); } // show the proper spelling
       misses++; replay(box, 'wrong'); shake(box); sfx.bad(); onMiss(box); box.select();
       if (misses === 2) {
         put(reveal, h('span', null, '💡 The answer is: ', h('b', null, [].concat(q.answer)[0])),

@@ -23,6 +23,20 @@
   const update = fn => { const st = load(); fn(st); save(st); };
   const today = () => { const d = new Date(); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; };
   const playerName = () => { try { return JSON.parse(localStorage.getItem('y3:settings') || '{}').name || 'explorer'; } catch (e) { return 'explorer'; } };
+  // typed answers forgive a slip of the finger: a copy of nearlyRight in engine.js (English questions are marked exact in the bank)
+  const oneOff = (s, t) => {
+    if (Math.abs(s.length - t.length) > 1) return false;
+    let i = 0; while (i < s.length && s[i] === t[i]) i++;
+    if (s.length > t.length) return s.slice(i + 1) === t.slice(i);
+    if (s.length < t.length) return s.slice(i) === t.slice(i + 1);
+    return s.slice(i + 1) === t.slice(i + 1) || (s[i] === t[i + 1] && s[i + 1] === t[i] && s.slice(i + 2) === t.slice(i + 2));
+  };
+  const nearlyRight = (v, a) => {
+    const vw = v.split(' '), aw = a.split(' ');
+    if (vw.length !== aw.length) return false;
+    const diff = aw.map((w, i) => [vw[i], w]).filter(([x, w]) => x !== w);
+    return diff.length === 1 && Math.min(diff[0][0].length, diff[0][1].length) >= 5 && !/[0-9£:]/.test(diff[0].join('')) && oneOff(...diff[0]);
+  };
   const shuffle = a => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
 
 
@@ -327,7 +341,7 @@
           for (;;) {
             const v = await wait(done => { ok.onclick = () => done(inp.value); inp.onkeydown = e => { if (e.key === 'Enter') done(inp.value); }; });
             if (!clean(v)) { inp.focus(); continue; }
-            const right = [].concat(q.answer).map(clean).includes(clean(v));
+            const right = [].concat(q.answer).map(clean).includes(clean(v)) || (!q.exact && [].concat(q.answer).some(a => nearlyRight(clean(v), clean(a))));
             if (right || !retry) return verdict(right);
             hint(); inp.select();
           }
