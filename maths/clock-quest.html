@@ -98,7 +98,7 @@ window.LESSON = {
             'There are 60 little marks round the edge. One mark = 1 minute.',
             'Each minute is made of 60 tiny [[second|second]]s.',
           ],
-          check: { type: 'type', q: 'The long hand moves from one little mark to the next. How long is that?', answer: ['1 minute', '1', 'one minute', 'a minute', 'one', '1 min'], placeholder: 'like: 5 minutes', hint: 'There are 60 marks – one for every…', explain: 'One little mark = 1 minute.' },
+          check: { type: 'type', q: 'The long hand moves from one little mark to the next. How long is that?', answer: ['1 minute', '1', 'one minute', 'a minute', 'one', '1 min', '60 seconds', 'sixty seconds', '60 secs', '60 sec', '60s'], explain: 'One little mark = 1 minute (the same as 60 seconds).', placeholder: 'like: 5 minutes', hint: 'There are 60 marks – one for every…' },
         },
         {
           title: 'Short hand first!', pic: C('4:56'),
@@ -114,7 +114,7 @@ window.LESSON = {
             'Count the long hand in 5s up to the last number it passed. Then count the little marks in 1s.',
             '5, 10, 15, 20, 25, 30, 35… then 36, 37, 38. It is 2:38.',
           ],
-          check: { type: 'type', q: 'The long hand is 2 little marks after the 4. How many minutes past is that?', answer: ['22', 'twenty two'], after: 'minutes past', placeholder: 'a number', hint: 'Count in 5s to the 4 first: 5, 10, 15, 20. Then 2 more.', explain: '20, then 21, 22!' },
+          check: { type: 'type', q: 'The long hand is 2 little marks after the 4. How many minutes past is that?', answer: ['22', 'twenty two', '22 minutes', '22 mins', '22 min', '22 minutes past', 'twenty two minutes'], after: 'minutes past', placeholder: 'a number', hint: 'Count in 5s to the 4 first: 5, 10, 15, 20. Then 2 more.', explain: '20, then 21, 22!' },
         },
         {
           title: 'Minutes to, to the minute', pic: H('7:52'),
@@ -122,7 +122,7 @@ window.LESSON = {
             'A digital clock shows this as 7:52.',
             'Count on from 52 to 60: 8 more minutes. So it is also 8 minutes to 8!',
           ],
-          check: { type: 'type', q: 'A clock says 3:56. How many minutes to 4 o\'clock?', answer: ['4', 'four'], after: 'minutes to 4', placeholder: 'a number', hint: 'Count on from 56 to 60: 57, 58…', explain: '57, 58, 59, 60 – 4 minutes to 4!' },
+          check: { type: 'type', q: 'A clock says 3:56. How many minutes to 4 o\'clock?', answer: ['4', 'four', '4 minutes', '4 mins', '4 min', '4 minutes to', 'four minutes'], after: 'minutes to 4', placeholder: 'a number', hint: 'Count on from 56 to 60: 57, 58…', explain: '57, 58, 59, 60 – 4 minutes to 4!' },
         },
       ],
     },
@@ -139,7 +139,7 @@ window.LESSON = {
       ],
       questions: [
         { type: 'mcq', q: 'Why are there 60 little lines on the clock face?', options: ['there are 60 minutes in an hour', 'there are 60 hours in one whole day', 'there are 60 seconds in a day'], answer: 0 },
-        { type: 'type', q: 'How many little lines are there BETWEEN each number?', answer: ['4', 'four'], after: 'little lines', placeholder: 'a number', explain: '4 little lines in between, plus the line at the number, makes jumps of 5.' },
+        { type: 'type', q: 'How many little lines are there BETWEEN each number?', answer: ['4', 'four', '4 lines', '4 little lines'], after: 'little lines', placeholder: 'a number', explain: '4 little lines in between, plus the line at the number, makes jumps of 5.' },
         { type: 'mcq', q: 'The video says you should always look at which hand first?', options: ['the hour hand', 'the minute hand', 'the second hand'], answer: 0 },
         { type: 'setclock', q: 'A digital clock says 10:35. Set the hands to match.', time: '10:35', explain: '35 minutes: count in 5s to the 7. The short hand is past the 10.' },
         { type: 'mcq', q: 'How did the video find 6:52?', options: ['count in 5s up to 50, then 51, 52', 'count in 1s all the way from the 12', 'look at the hour hand only'], answer: 0 },
