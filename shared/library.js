@@ -18,8 +18,8 @@ const LIBRARY = {
       { id: 'science-fossils', title: 'Fossil Hunters', emoji: '🦖', unit: 'Rocks', file: 'science/fossils.html' },
       { id: 'science-soil', title: 'Super Soil', emoji: '🪱', unit: 'Rocks', file: 'science/soil.html' },
       // the road forks after Friction: Plants → Rocks one way, Animals → Light the other
-      { title: 'Fuel Your Body', emoji: '🥦', unit: 'Animals incl. Humans', after: 'Pushes, Pulls & Friction' },
-      { title: 'Bones & Muscles', emoji: '🦴', unit: 'Animals incl. Humans' },
+      { id: 'science-fuel', title: 'Fuel Your Body', emoji: '🥦', unit: 'Animals incl. Humans', file: 'science/fuel-your-body.html', after: 'Pushes, Pulls & Friction' },
+      { id: 'science-bones', title: 'Bones & Muscles', emoji: '🦴', unit: 'Animals incl. Humans', file: 'science/bones-muscles.html' },
       { title: 'Light & Mirrors', emoji: '💡', unit: 'Light' },
       { title: 'Shadow Shapes', emoji: '👤', unit: 'Light' },
     ],

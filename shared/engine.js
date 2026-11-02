@@ -14,6 +14,7 @@
  *   Simulated experiments (with missions): forces, ramp, garden, pollinate, windtest (how far the wind carries seeds),
  *   rocklab (test rocks: look closely, scratch, water drop, sink or float), fossildig (brush rock layers to uncover fossils),
  *   soillab (shake a soil in a jar of water to see its layers; pour water through it to see how much drains).
+ *   gut (Food Journey: chew, swallow, churn, absorb, squeeze and flush a bite of food), muscles (Muscle Lab: an x-ray arm whose muscles pull in pairs).
  *   clock (needs shared/clock.js): set the clock by dragging the hands, or read a clock and type the time.
  *   daydial (24-hour Day Dial), timehops (durations on a time line), knuckles (days in each month).
  *   placeblocks (Place Value Blocks: build, read and swap hundreds, tens and ones), columnsum (column method with exchanging),
@@ -1489,6 +1490,7 @@
     time: ['clock', 'daydial', 'timehops', 'knuckles'],
     number: ['placeblocks', 'columnsum', 'shop'],
     earth: ['soillab'],
+    body: ['gut', 'muscles'],
     brain: ['palace', 'sequence', 'spotter', 'gonogo', 'clash', 'breathe', 'spotdiff', 'seek', 'flicker'],
     world: ['worldmap', 'cook', 'phrases'],
   };

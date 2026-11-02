@@ -6700,4 +6700,42 @@
     '................',
   ]);
 
+  // the human body lessons (Fuel Your Body)
+  def('💩', [
+    '................',
+    '.......kk.......',
+    '......knnk......',
+    '.....knnNk......',
+    '....kkkkkkkk....',
+    '...knnnnnnnNk...',
+    '...knwknnwknNk..',
+    '...knwknnwknNk..',
+    '..kkkkkkkkkkkkk.',
+    '.knnnnnnnnnnnNk.',
+    '.knnkwwwwwknnNk.',
+    '.knnnkkkkknnnNk.',
+    '.kNnnnnnnnnnNNk.',
+    '..kNNNNNNNNNNk..',
+    '...kkkkkkkkkk...',
+    '................',
+  ]);
+  def('🦷', [
+    '................',
+    '................',
+    '...kkkk..kkkk...',
+    '..kwwwwkkwwwwk..',
+    '..kwiwwwwwwwwk..',
+    '..kwwwwwwwwwWk..',
+    '..kwwwwwwwwwWk..',
+    '..kwwwwwwwwwWk..',
+    '...kwwwwwwwWk...',
+    '...kwwwwwwwWk...',
+    '...kwwwkkwwWk...',
+    '...kwwk..kwWk...',
+    '...kwwk..kwWk...',
+    '....kk....kk....',
+    '................',
+    '................',
+  ]);
+
 })();

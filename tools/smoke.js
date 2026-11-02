@@ -232,6 +232,7 @@ async function play(page, card, S) {
         await wait(100);
         for (const o of card.querySelectorAll('.lab-ask .opts .opt')) { if (o.disabled) continue; o.click(); await wait(40); if (o.classList.contains('right')) break; }
         await wait(100); const dn = btn(/^Done/); if (dn) dn.click(); await wait(100);
+      } else if (T.play) { T.play(m.need || []); await wait(300); // a sim that can play a mission's needs itself
       } else if (T.pick) { for (const id of m.need || []) { T.pick(id); T.blow(); T.frames(60 * 6); await wait(750); } }
       else break; // other simulations: rendering is checked, not the missions
       for (const q of m.ask || []) { await answer(page, card.querySelector('.lab-ask'), q); await moveOn(card.querySelector('.lab-ask')); }

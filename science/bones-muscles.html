@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bones & Muscles</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <script src="../shared/pixel.js"></script>
+  <script src="../shared/pixel-icons.js"></script>
+  <script src="../shared/avatar.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// ---------- blocky pictures for this lesson ----------
+const svg = (vb, inner) => `<svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" role="img">${inner}</svg>`;
+const R = (x, y, w, hh, fill) => `<rect x="${x}" y="${y}" width="${w}" height="${hh}" fill="${fill}"/>`;
+const LINE = (x1, y1, x2, y2) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#000" stroke-width="2" stroke-dasharray="4 3"/>`;
+
+// a whole skeleton: skull, spine, ribs, arms, pelvis and legs (joints a little darker)
+const SKELETON_BODY = (() => {
+  const out = [], fill = [], bone = '#f4f1e6', joint = '#c9c3b0', k = '#1b1b1b';
+  const B = (x, y, w, hh, c = bone) => { out.push(R(x - 2, y - 2, w + 4, hh + 4, k)); fill.push(R(x, y, w, hh, c)); };
+  B(128, 8, 44, 36); B(134, 44, 32, 10); // skull + jaw
+  B(147, 54, 6, 118); // spine
+  B(108, 62, 84, 6); // collarbones
+  [[74, 64], [86, 64], [98, 58], [110, 50], [122, 40]].forEach(([y, w]) => B(150 - w / 2, y, w, 6)); // ribs
+  B(100, 66, 9, 54); B(191, 66, 9, 54); B(98, 120, 13, 6, joint); B(189, 120, 13, 6, joint); // upper arms + elbows
+  B(100, 126, 9, 48); B(191, 126, 9, 48); B(96, 174, 16, 12); B(188, 174, 16, 12); // forearms + hands
+  B(122, 170, 56, 22); // pelvis
+  B(128, 194, 11, 58); B(161, 194, 11, 58); B(126, 252, 15, 7, joint); B(159, 252, 15, 7, joint); // thigh bones + knees
+  B(129, 259, 9, 29); B(162, 259, 9, 29); B(120, 288, 18, 8); B(162, 288, 18, 8); // shins + feet
+  const holes = R(136, 20, 10, 9, k) + R(154, 20, 10, 9, k) + R(147, 32, 6, 5, k) + R(137, 47, 26, 2, k) + R(132, 176, 12, 10, k) + R(156, 176, 12, 10, k);
+  return out.join('') + fill.join('') + R(147, 54, 6, 116, bone) + holes;
+})();
+const SKELETON = svg('0 0 300 300', SKELETON_BODY);
+const SKELETON_LABEL = svg('0 0 300 300', SKELETON_BODY + LINE(128, 26, 70, 26) + LINE(180, 98, 232, 98) + LINE(153, 150, 232, 150) + LINE(128, 222, 70, 222) + LINE(174, 256, 232, 256));
+// the bones of SKELETON as tap zones (% of the picture)
+const BONE_SPOTS = [
+  { x: 50, y: 9.3, r: 8, label: 'the skull' },
+  { x: 50, y: 33, r: 8, label: 'the ribs' },
+  { x: 50, y: 50, r: 4, label: 'the spine (backbone)' },
+  { x: 44.5, y: 74, r: 5, label: 'a thigh bone (femur)' },
+  { x: 44.5, y: 85.2, r: 4, label: 'a knee joint' },
+  { x: 34.8, y: 41, r: 4, label: 'an elbow joint' },
+];
+
+// the boss: Count Rattlebones, a skeleton king who wants everyone's bones for himself
+const RATTLE = Pixel.svg([
+  '.....y.y.y.......',
+  '.....yyyyy.......',
+  '....kkkkkkk......',
+  '...kwwwwwwwk.....',
+  '...kwkkwkkwk.....',
+  '...kwkkwkkwk.....',
+  '...kwwwkwwwk.....',
+  '....kwkwkwk......',
+  '.....kkkkk.......',
+  '..kkkkkwkkkkk....',
+  '.kwk.kwwwk.kwk...',
+  '.kwk.kwkwk.kwk...',
+  '.kwk.kwwwk.kwk...',
+  '.kk..kwkwk..kk...',
+  '.....kwwwk.......',
+  '.....kwkwk.......',
+  '....kwk.kwk......',
+  '....kwk.kwk......',
+  '...kwwk.kwwk.....',
+], { k: '#1b1b1b', w: '#f4f1e6', y: '#ffd43b' });
+
+// ---------- the lesson ----------
+window.LESSON = {
+  id: 'science-bones',
+  subject: 'science',
+  title: 'Bones & Muscles',
+  emoji: '🦴',
+  home: '../index.html',
+  midBreak: false, // the Arcade stage is the fun break
+  mascot: {
+    name: 'Professor Bolt',
+    sprite: Pixel.sprites.robot,
+    praise: ['Bone-afide genius!', 'Muscle power!', 'Skele-tastic!', 'Critical hit!', 'You nailed it!', 'Strong answer!', 'Joint-ly brilliant!'],
+    oops: ['Oops! Think about what that bone protects.', 'Not quite – which muscle is pulling?', 'Hmm, think again!', 'So close! One more try.'],
+  },
+  glossary: {
+    skeleton: { emoji: '🦴', def: 'All the bones in your body, joined together. A grown-up has 206 bones.' },
+    skull: { emoji: '💀', def: 'The hard bones of your head. They protect your brain like a helmet.' },
+    ribs: { emoji: '🛡️', def: 'Curved bones that make a cage round your heart and lungs.' },
+    joint: { emoji: '🔩', def: 'A place where two bones meet, so you can bend, like your elbow or knee.' },
+    spine: { emoji: '🐍', def: 'Your backbone: a stack of small bones down your back, so you can bend and twist.' },
+    muscles: { emoji: '💪', def: 'They pull on your bones to move them. They can only pull, never push.' },
+    tendons: { emoji: '🪢', def: 'Strong cords that join your muscles to your bones.' },
+    contracts: { emoji: '🤏', def: 'When a muscle contracts, it squeezes and gets shorter and fatter.' },
+    exoskeleton: { emoji: '🐞', def: 'A hard skeleton on the OUTSIDE of an animal\'s body, like a ladybird or a crab has.' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'Bones & Muscles', short: 'Start', minutes: 1,
+      pic: SKELETON,
+      hello: 'Welcome back, scientist! Inside you there\'s a whole skeleton, and hundreds of muscles pulling on it. But listen… RATTLE RATTLE… Count Rattlebones is coming, and he wants YOUR bones for his collection!',
+      question: 'If you had no bones at all, what would you look like?',
+      intro: 'Recap, read, watch, build a skeleton, investigate how your muscles move you in the **Muscle Lab**, pick your own arcade game, then defeat Count Rattlebones!',
+      nameLabel: 'Player name:',
+    },
+
+    {
+      type: 'review', title: 'Last time…', short: 'Recap', minutes: 4,
+      from: { title: 'Fuel Your Body', emoji: '🥦', url: 'fuel-your-body.html' },
+      facts: [
+        'Animals can\'t make their own food, so we eat to get nutrients.',
+        'Energy foods keep you going, growing foods build your body, and fruit and vegetables keep you healthy.',
+        'Teeth and saliva start digestion. The stomach churns food into soup, and its acid kills germs.',
+        'Nutrients soak into your blood in the small intestine. The large intestine takes the water out, and the rest is poo.',
+      ],
+      questions: [
+        { type: 'mcq', q: 'Sam ate an egg for breakfast. Where did its goodness get into Sam\'s blood?', options: ['in the small intestine', 'in the stomach', 'in the food pipe'], answer: 0 },
+        { type: 'type', q: 'Which part of you churns food into soup?', answer: ['stomach', 'the stomach', 'tummy'], placeholder: 'one word', hint: 'It is a stretchy bag made of muscle.' },
+        { type: 'oddone', q: 'Which food is the odd one out?', items: ['🍞 bread', '🍚 rice', '🍝 pasta', '🐟 fish'], answer: 3, why: 'Why is the fish the odd one out?', reasons: ['It is a growing food – the others are energy foods', 'It lives in the sea', 'It is the only one you can cook'], reason: 0 },
+        { type: 'tf', q: 'Milk and cheese help to make strong bones and teeth.', answer: true },
+      ],
+      game: {
+        game: 'gut', title: 'Quick food journey',
+        intro: 'One quick journey to warm up! Chew, swallow, churn, grab the goodness, squeeze… and flush!',
+        foods: ['fish'],
+        missions: [
+          { text: 'Send the 🐟 fish all the way through. It\'s a growing food, so watch for the 💪!', need: ['fish'], yes: 'Lots of growing goodness for your muscles!' },
+        ],
+      },
+    },
+
+    {
+      type: 'read', title: 'Your super skeleton', short: 'Read', minutes: 6,
+      say: 'Read each page carefully – the checks test if you really understood. Tap the yellow words for a 💎.',
+      cards: [
+        {
+          title: 'A frame for your body', pic: SKELETON,
+          text: [
+            'Your [[skeleton]] is all the bones in your body, joined together. A grown-up has 206 bones!',
+            'Your skeleton holds you up, like the poles inside a tent. Without it, you would flop down like a jelly.',
+          ],
+          check: { q: 'A big blow-up bouncy castle goes floppy when its air runs out. Which part of YOU stops your body going floppy?', options: ['your skeleton', 'your skin', 'your stomach'], answer: 0, hint: 'What holds you up, like tent poles?' },
+        },
+        {
+          title: 'Bones that protect', pic: '💀🛡️',
+          text: [
+            'Some bones are like armour. Your [[skull]] is a hard helmet around your brain.',
+            'Your [[ribs]] make a cage that guards your heart and lungs.',
+          ],
+          check: { type: 'hotspot', q: 'A football bounces hard off your chest. Tap the bones that keep your heart safe.', img: SKELETON, spots: BONE_SPOTS, answer: 1, hint: 'Which bones make a cage in your chest?' },
+        },
+        {
+          title: 'Bend it!', pic: '🦵',
+          text: [
+            'A place where two bones meet is called a [[joint]]. Joints let you bend: your elbows, knees, shoulders and hips are all joints.',
+            'Your [[spine]] is a stack of small bones down your back, so you can bend and twist.',
+          ],
+          check: { type: 'type', q: 'You bend your leg to kick a ball. Which joint in the middle of your leg bends?', answer: ['knee', 'knees', 'the knee', 'my knee', 'your knee', 'knee joint'], placeholder: 'one word', hint: 'It is halfway down your leg.' },
+        },
+        {
+          title: 'Muscles', pic: '💪',
+          text: [
+            '[[muscles]] are joined to your bones by strong cords called [[tendons]]. When a muscle [[contracts]], it squeezes, gets shorter and pulls on the bone.',
+            'That is how you move. But muscles can only pull. They can never push!',
+          ],
+          check: { type: 'evidence', q: 'Your friend says, "My muscles push my bones to move them." Tap the sentence that proves your friend wrong.', answer: 'can only pull' },
+        },
+        {
+          title: 'Other animals', pic: '🐟🐞🪱',
+          text: [
+            'Fish, birds, dogs and snakes have a skeleton inside them, with a backbone, just like you.',
+            'Insects and crabs wear a hard skeleton on the outside, called an [[exoskeleton]]. Worms and jellyfish have no bones at all!',
+          ],
+          check: { type: 'oddone', q: 'Which animal is the odd one out?', items: ['🐍 snake', '🐟 fish', '🐕 dog', '🪱 worm'], answer: 3, why: 'Why is the worm the odd one out?', reasons: ['It has no bones at all', 'It lives underground', 'It is the only long, thin animal'], reason: 0 },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'Your Super Skeleton!', short: 'Video', minutes: 6,
+      video: { id: 'vRuh9aBwUdM', title: 'Your Super Skeleton!', channel: 'SciShow Kids', duration: '4:11' },
+      say: 'Let\'s find out what makes your skeleton so super. Watch, then answer my questions.',
+      clues: [
+        'What would your skeleton be without muscles?',
+        'Which is your biggest, strongest bone?',
+        'Where is your smallest bone?',
+        'Who has more bones: a baby or a grown-up?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'Without muscles, the video says your skeleton would be…', options: ['just a pile of bones', 'as strong as a robot', 'soft and stretchy'], answer: 0 },
+        { type: 'mcq', q: 'Which bones keep your heart and lungs safe, even in a big bear hug?', options: ['your ribs', 'your skull', 'your thigh bones'], answer: 0 },
+        { type: 'type', q: 'What is the name of your biggest, strongest bone, from your hip to your knee?', answer: ['femur', 'the femur', 'femurs', 'thigh bone', 'thighbone', 'the thigh bone'], placeholder: 'one word', hint: 'It starts with f.' },
+        { type: 'mcq', q: 'Where is your very smallest bone?', options: ['in your ear', 'in your little toe', 'in your nose'], answer: 0 },
+        { type: 'gap', q: 'A newborn baby has about ___ bones, but a grown-up has 206.', options: ['300', '100', '20'], answer: 0 },
+        { type: 'tf', q: 'Your bones are alive: they grow, mend themselves and even make your blood.', answer: true },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Bone Builder', short: 'Bones', minutes: 5,
+      rounds: [
+        {
+          game: 'label', title: 'Label the skeleton',
+          intro: 'Count Rattlebones has pinched the labels off the museum skeleton! Drag each label to the right bone. Watch out – two labels are fakes!',
+          say: 'Follow the dotted lines to see which bone each box points at.',
+          pic: SKELETON_LABEL,
+          hint: 'Follow the dotted line. Which bone does it point to?',
+          spots: [
+            { x: 13, y: 9, answer: 'skull' },
+            { x: 87, y: 33, answer: 'ribs' },
+            { x: 87, y: 50, answer: 'spine' },
+            { x: 13, y: 74, answer: 'thigh bone' },
+            { x: 87, y: 85.5, answer: 'knee joint' },
+          ],
+          extra: ['stomach', 'tendon'],
+        },
+        {
+          game: 'sort', title: 'Inside, outside or none?',
+          intro: 'Where is each animal\'s skeleton? Sort them into the right box.',
+          say: 'Bones inside, a hard case outside, or no skeleton at all?',
+          buckets: [
+            { id: 'in', label: 'INSIDE (backbone)', emoji: '🦴' },
+            { id: 'out', label: 'OUTSIDE (exoskeleton)', emoji: '🐞' },
+            { id: 'none', label: 'NO SKELETON', emoji: '🪱' },
+          ],
+          items: [
+            { label: '🐟 fish', bucket: 'in' }, { label: '🐦 bird', bucket: 'in' }, { label: '🐸 frog', bucket: 'in' }, { label: '🐕 dog', bucket: 'in' },
+            { label: '🐞 ladybird', bucket: 'out' }, { label: '🦀 crab', bucket: 'out' }, { label: '🐜 ant', bucket: 'out' },
+            { label: '🪱 worm', bucket: 'none' }, { label: '🪼 jellyfish', bucket: 'none' },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'investigate', title: 'How do muscles move you?', short: 'Investigate', minutes: 8,
+      say: 'Muscles can only pull. So how do you bend your arm AND straighten it again? Let\'s investigate with an x-ray arm!',
+      question: 'How do your muscles move your bones?',
+      predict: { q: 'Bend your arm and feel the muscle at the front of your upper arm. When you bend your arm, what do you think that muscle does?', options: ['it gets shorter and fatter', 'it gets longer and thinner', 'it doesn\'t change at all'], answer: 0 },
+      test: {
+        game: 'muscles', title: 'Muscle Lab',
+        intro: 'An x-ray arm! **Drag the hand** to bend and straighten the arm at the elbow. Watch which muscle squeezes, and what it holds.',
+        say: 'Drag the hand up and down – and watch both muscles!',
+        caption: '💪 Our muscle test results',
+        missions: [
+          { text: 'Hold the 🍎 apple. Bend the arm all the way up, then straighten it again. Watch BOTH muscles!', need: ['apple:bend', 'apple:straighten'], yes: 'Did you see the muscles take turns?', ask: [
+            { q: 'When you BENT the arm, which muscle squeezed and pulled?', options: ['the biceps, at the front', 'the triceps, at the back'], answer: 0 },
+            { type: 'type', q: 'When you STRAIGHTENED the arm, which muscle pulled? Type its name.', answer: ['triceps', 'tricep', 'the triceps', 'the tricep'], placeholder: 'one word', hint: 'It is at the BACK of the upper arm.' },
+          ] },
+          { text: 'Now pick the 🎒 heavy bag, and bend the arm to lift it.', need: ['bag:bend'], yes: 'Phew, that was heavy!', ask: [
+            { q: 'What changed when you lifted the heavy bag?', options: ['the biceps had to work much harder', 'the triceps did all of the lifting', 'nothing – it felt just the same'], answer: 0 },
+          ] },
+          { text: 'Lock the elbow joint 🔒, then try to bend the arm.', need: ['locked'], yes: 'Stuck! Unlock it to bend again.', ask: [
+            { q: 'Why couldn\'t the arm bend?', options: ['Bones only bend where a joint can move', 'The muscles were much too tired to pull', 'The apple was stuck to the hand'], answer: 0 },
+          ] },
+        ],
+      },
+      explain: [
+        { q: 'Muscles can only PULL. So why do they work in pairs?', options: ['One pulls the bone one way, the other pulls it back', 'So that one muscle can rest while the other sleeps', 'Because two muscles look much bigger than one'], answer: 0, hint: 'Think of the biceps and triceps taking turns.' },
+        { q: 'A muscle at the front of your thigh straightens your knee to kick a ball. What does the muscle at the BACK do to bend it again?', options: ['It contracts and pulls the leg back', 'It pushes the leg from behind', 'It stays relaxed the whole time'], answer: 0, hint: 'Muscles can only pull…' },
+        { type: 'oddone', q: 'Which one is NOT a joint?', items: ['elbow', 'knee', 'shoulder', 'skull'], answer: 3, why: 'Why is the skull the odd one out?', reasons: ['It protects your brain – it doesn\'t bend', 'It is the biggest bone of all', 'It is in your head'], reason: 0 },
+        { q: 'How can you keep your bones and muscles strong?', options: ['exercise, and have milk or cheese', 'sit still and eat lots of sweets', 'sleep all day and never play'], answer: 0, hint: 'Remember the food that makes strong bones from last time.' },
+      ],
+      result: [
+        'Muscles can only pull, so they work in pairs. When your biceps (at the front) contracts, it gets shorter and fatter and pulls your arm up. The triceps (at the back) relaxes.',
+        'To straighten your arm, they swap: the triceps contracts and pulls, and the biceps relaxes. Your brain sends the message to the right muscle every time.',
+        'Tendons join the muscles to the bones, and bones can only bend at a joint. Heavy things make your muscles work harder, and that is how exercise makes them stronger!',
+      ],
+    },
+
+    {
+      type: 'game', title: 'Bone Arcade: pick a game!', short: 'Arcade', icon: '🕹️', minutes: 4,
+      pick: { title: '🕹️ Pick your arcade game!', say: 'Your choice! Which game do you want to play? Win one to carry on – or play them all!' },
+      rounds: [
+        {
+          game: 'invaders', title: 'Bone Invaders', emoji: '🚀', blurb: 'Shoot the right answers about bones and muscles.',
+          intro: 'Arcade time! Read the mission at the top, then **shoot only the right answers**. Watch out for the falling bombs!',
+          say: 'Read the mission, then aim carefully!',
+          waves: [
+            { prompt: 'Shoot the JOINTS!', items: [
+              { label: 'elbow', ok: true }, { label: 'knee', ok: true }, { label: 'shoulder', ok: true }, { label: 'hip', ok: true },
+              { label: 'skull', ok: false, why: 'The skull protects your brain. It doesn\'t bend!' }, { label: 'stomach', ok: false, why: 'The stomach churns food. It isn\'t a joint.' },
+            ] },
+            { prompt: 'Shoot the bones that PROTECT something!', items: [
+              { label: 'skull', ok: true }, { label: 'ribs', ok: true },
+              { label: 'tendon', ok: false, why: 'A tendon is a cord that joins a muscle to a bone.' }, { label: 'biceps', ok: false, why: 'The biceps is a muscle, not a bone.' },
+            ] },
+            { prompt: 'Shoot the animals with a BACKBONE!', items: [
+              { label: 'fish', ok: true }, { label: 'snake', ok: true }, { label: 'bird', ok: true }, { label: 'frog', ok: true },
+              { label: 'worm', ok: false, why: 'Worms have no bones at all!' }, { label: 'ladybird', ok: false, why: 'A ladybird has its skeleton on the outside.' },
+            ] },
+          ],
+          done: 'ALL WAVES CLEAR! Count Rattlebones is shaking in his boots!',
+        },
+        {
+          game: 'steadyhand', title: 'Steady Hand', emoji: '✏️', blurb: 'Guide your pencil along the wiggly path – don\'t touch the sides!',
+          intro: 'Press on the green dot and follow the wiggly path all the way to the 🏁 – carefully! Pick Easy, Medium or Hard.',
+          say: 'Steady hands! Don\'t touch the sides!',
+          done: 'What a steady hand! Your muscles are well trained.',
+        },
+        {
+          game: 'sequence', title: 'Note Block Echo', emoji: '🎵', blurb: 'Watch the note blocks light up, then play the tune back.',
+          blocks: 4, start: 2, target: 6,
+          intro: 'Watch and listen, then **play the tune back**. It grows one note longer each time!',
+          say: 'Eyes and ears on the note blocks!',
+          done: 'What a memory for music!',
+        },
+        {
+          game: 'match', title: 'Bone Jobs Match', emoji: '🦴', blurb: 'Match each body part to its job.',
+          intro: 'Count Rattlebones has muddled up the body parts! Match each one to its job.',
+          say: 'Tap a part, then tap its job!',
+          hint: 'Think back to the reading pages and the Muscle Lab.',
+          pairs: [
+            { a: '💀 skull', b: 'a helmet for your brain' },
+            { a: '🛡️ ribs', b: 'a cage round your heart and lungs' },
+            { a: '🐍 spine', b: 'lets you bend and twist your back' },
+            { a: '🔩 joint', b: 'where two bones meet and bend' },
+            { a: '🪢 tendon', b: 'joins a muscle to a bone' },
+            { a: '💪 biceps', b: 'pulls your arm up when it bends' },
+          ],
+          done: 'All matched! Count Rattlebones can\'t muddle you!',
+        },
+      ],
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: Count Rattlebones', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      say: 'COUNT RATTLEBONES wants to steal everyone\'s bones to make himself the biggest skeleton ever! Every right answer knocks a bone loose. Go, {name}!',
+      boss: {
+        name: 'Count Rattlebones', sprite: RATTLE, attack: ['🦴'], spin: true,
+        lines: {
+          prefight: ['RATTLE RATTLE! Nyeh-heh! Do you even know how your own bones work, or do you just wobble about?', 'Muscles pull my bones in pairs, and my joints let me bend!', 'Hmph! Clever words. But soon your bones will be in MY collection!'],
+          intro: 'RATTLE RATTLE! I am COUNT RATTLEBONES! I only have half my bones… so I\'ll take YOURS!',
+          hurt: ['Ow! My funny bone!', 'Clatter! There goes a rib!', 'Hey! That knocked my skull sideways!', 'Rattle-ouch! My knee joint!'],
+          taunt: ['Wrong! Another bone for my collection!', 'Nyeh-heh! Rattle rattle!', 'I\'m all bones and no brains – and even I knew that!', 'Clickety-clack, that answer was whack!'],
+          angry: 'NOW I\'M BONE-CHILLINGLY ANGRY! FULL RATTLE!',
+          dodge: 'Here come my spare bones! Dodge them, if you can!',
+          miss: 'You dodged every bone?! You must have super joints!',
+          last: 'My bones… are falling… apart…',
+          defeat: 'Clatter… clatter… CRASH. Fine! Keep your bones. I\'ll drink more milk and grow my own…',
+          win: 'RATTLE RATTLE! Your bones are MINE! What a lovely collection!',
+          stunned: 'I\'m seeing stars… and they\'re all made of bones…',
+          beg: ['Wait! I\'ll give back every bone I borrowed!', 'Mercy! I\'ve got no muscles to fight with anyway!', 'Please! I\'ll just be a friendly museum skeleton!'],
+        },
+      },
+      bonus: {
+        title: '⭐ Bonus quest (for a grown-up to help with)',
+        text: 'Sit on a chair and rest your hand on the front of your thigh. Straighten your leg: can you feel that muscle go hard? Now put your hand behind your thigh and bend your leg back. Can you feel the pair of muscles taking turns?',
+      },
+      questions: [
+        { type: 'type', q: 'A place where two bones meet, so you can bend, is called a…', answer: ['joint', 'a joint', 'joints'], placeholder: 'one word', hint: 'Your elbow and knee are both one of these.' },
+        { type: 'hotspot', q: 'Tap the bones that protect your brain.', img: SKELETON, spots: BONE_SPOTS, answer: 0 },
+        { type: 'mcq', q: 'When your biceps contracts, it…', options: ['gets shorter and pulls your arm up', 'gets longer and pushes your arm down', 'turns into a bone for a second'], answer: 0 },
+        { type: 'oddone', q: 'Which animal has NO backbone?', items: ['🐟 fish', '🐦 bird', '🐸 frog', '🐞 ladybird'], answer: 3, why: 'Why is the ladybird the odd one out?', reasons: ['Its skeleton is on the outside', 'It is the only red animal', 'It is the smallest one'], reason: 0 },
+        { type: 'tf', q: 'Muscles can push bones as well as pull them.', answer: false },
+        { type: 'gap', q: 'Muscles are joined to bones by strong cords called ___.', options: ['tendons', 'ribs', 'joints'], answer: 0 },
+        { type: 'mcq', q: 'Which is your biggest, strongest bone?', options: ['the femur (thigh bone)', 'the skull (head)', 'the tiny bone in your ear'], answer: 0 },
+        { type: 'type', q: 'Which bones make a cage round your heart and lungs?', answer: ['ribs', 'rib', 'the ribs', 'ribcage', 'rib cage', 'my ribs', 'your ribs'], placeholder: 'one word', hint: 'You can feel them on your chest.' },
+        { type: 'mcq', q: 'Grandpa wants strong bones. Which drink helps the most?', options: ['a glass of milk', 'a fizzy drink', 'a cup of cola'], answer: 0 },
+        { type: 'mcq', q: 'Why does a baby have more bones than a grown-up?', options: ['Some bones join together as you grow', 'Grown-ups lose bones when they fall', 'Babies grow extra bones, then drop them'], answer: 0 },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>

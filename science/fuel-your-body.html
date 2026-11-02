@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fuel Your Body</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <script src="../shared/pixel.js"></script>
+  <script src="../shared/pixel-icons.js"></script>
+  <script src="../shared/avatar.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// ---------- blocky pictures for this lesson ----------
+const svg = (vb, inner) => `<svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" role="img">${inner}</svg>`;
+const R = (x, y, w, hh, fill) => `<rect x="${x}" y="${y}" width="${w}" height="${hh}" fill="${fill}"/>`;
+const LINE = (x1, y1, x2, y2) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#000" stroke-width="2" stroke-dasharray="4 3"/>`;
+
+// a body with its digestive system showing: mouth, food pipe, stomach, the coiled small intestine and the large intestine
+// round it. ox shifts it right (the label picture is wider, with room for the labels).
+const DIGEST_BODY = (ox = 0) => {
+  const out = [], fill = [];
+  const B = (x, y, w, hh, c) => { out.push(R(x + ox - 2, y - 2, w + 4, hh + 4, '#1b1b1b')); fill.push(R(x + ox, y, w, hh, c)); };
+  const skin = '#f2c39b', pipe = '#e57373', big = '#c98a5a', small = '#ffb38a';
+  B(70, 4, 60, 52, skin); B(88, 54, 24, 18, skin); B(36, 70, 128, 186, skin);
+  const lines = [], tubes = []; // every tube's outline first, then the fills, so the joins are clean
+  const P = (x, y, w, hh, c) => { lines.push(R(x + ox - 2, y - 2, w + 4, hh + 4, '#1b1b1b')); tubes.push(R(x + ox, y, w, hh, c)); };
+  P(96, 44, 8, 60, pipe);
+  P(56, 138, 92, 12, big); P(136, 138, 12, 84, big); P(56, 138, 12, 92, big); P(56, 218, 52, 12, big); P(96, 218, 12, 36, big);
+  [154, 168, 182, 196].forEach(y => P(72, y, 58, 8, small));
+  P(122, 154, 8, 22, small); P(72, 168, 8, 22, small); P(122, 182, 8, 22, small); P(122, 196, 14, 8, small);
+  P(104, 95, 30, 8, '#ff8fb1'); P(96, 100, 46, 30, '#ff8fb1');
+  return out.join('') + fill.join('')
+    + R(ox + 84, 20, 8, 8, '#1b1b1b') + R(ox + 108, 20, 8, 8, '#1b1b1b') + R(ox + 88, 38, 24, 8, '#9e1c1a')
+    + lines.join('') + tubes.join('');
+};
+const DIGEST = svg('0 0 200 260', DIGEST_BODY());
+const DIGEST_LABEL = svg('0 0 320 260', DIGEST_BODY(60) + LINE(172, 42, 240, 42) + LINE(156, 82, 80, 82) + LINE(202, 115, 240, 115) + LINE(132, 186, 80, 186) + LINE(208, 192, 240, 192));
+// the parts of DIGEST as tap zones (% of the picture)
+const GUT_SPOTS = [
+  { x: 50, y: 16.5, r: 8, label: 'the mouth' },
+  { x: 50, y: 31, r: 6, label: 'the food pipe' },
+  { x: 59.5, y: 44, r: 10, label: 'the stomach' },
+  { x: 50, y: 69, r: 10, label: 'the small intestine' },
+  { x: 31, y: 72, r: 6, label: 'the large intestine' },
+  { x: 71, y: 68, r: 6, label: 'the large intestine' },
+];
+
+// the boss: Gobble, a greedy stomach monster who swallows everything whole
+const GOBBLE = Pixel.svg([
+  '.....kkkkkkk......',
+  '...kkpppppppkk....',
+  '..kpppppppppppk...',
+  '.kppwwkpppwwkppk..',
+  '.kppwkkpppwkkppk..',
+  '.kpppppppppppppk..',
+  '.kpkkkkkkkkkkkpk..',
+  '.kpkwkwkwkwkwkpk..',
+  '.kpkrrrrrrrrrkpk..',
+  '.kpkwkwkwkwkwkpk..',
+  '.kppkkkkkkkkkppk..',
+  '..kpppppppppppk...',
+  '...kkpppppppkk....',
+  '....kPk...kPk.....',
+  '....kkk...kkk.....',
+], { k: '#1b1b1b', p: '#ff8fb1', P: '#d6457a', w: '#ffffff', r: '#9e1c1a' });
+
+// ---------- the lesson ----------
+window.LESSON = {
+  id: 'science-fuel',
+  subject: 'science',
+  title: 'Fuel Your Body',
+  emoji: '🥦',
+  home: '../index.html',
+  midBreak: false, // the Arcade stage is the fun break
+  mascot: {
+    name: 'Professor Bolt',
+    sprite: Pixel.sprites.robot,
+    praise: ['Gut-tastic!', 'Delicious answer!', 'Tummy-rific!', 'Critical hit!', 'You nailed it!', 'Brilliant!', 'Super-digestive!'],
+    oops: ['Oops! Think about where the food is on its journey.', 'Not quite – what is that part\'s job?', 'Hmm, think again!', 'So close! One more try.'],
+  },
+  glossary: {
+    nutrients: { emoji: '✨', def: 'The useful bits in food that your body needs: for energy, for growing and for staying healthy.' },
+    digestion: { emoji: '🍽️', def: 'Breaking food down into tiny bits so your body can use it.' },
+    saliva: { emoji: '💧', def: 'Spit! It makes food soft and slippery so it is easy to swallow.' },
+    'food pipe': { emoji: '⬇️', def: 'The tube from your mouth to your stomach. Its science name is the oesophagus (say "ee-SOF-a-gus").' },
+    stomach: { emoji: '🌀', def: 'A stretchy bag made of muscle. It churns food into soup, and its acid kills germs.' },
+    'small intestine': { emoji: '🧵', def: 'A very long, coiled tube where the nutrients soak into your blood.' },
+    'large intestine': { emoji: '💩', def: 'A wider tube that takes the water back out of what is left. The rest becomes poo.' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'Fuel Your Body', short: 'Start', minutes: 1,
+      pic: DIGEST,
+      hello: 'Welcome back, scientist! Your body is a machine, and food is its fuel. But where does your dinner GO after you swallow it? Uh-oh… something is BURPING in the distance. That\'s Gobble, the greedy stomach monster!',
+      question: 'You ate breakfast this morning. Where is it right now?',
+      intro: 'Warm up, read, watch a real camera pill travel through a body, fix the robot\'s mistakes, send food on a **Food Journey**, pick your own arcade game, then stop Gobble!',
+      nameLabel: 'Player name:',
+    },
+
+    {
+      type: 'review', title: 'Warm-up', short: 'Warm-up', minutes: 3,
+      from: { title: 'Food you already know', emoji: '🍽️' },
+      facts: [
+        'You feel hungry when your body needs more food.',
+        'A car needs fuel to go. Your body needs food to run, think and play.',
+        'Fruit and vegetables come from plants. Eggs, milk and meat come from animals.',
+        'You bite and chew food with your teeth before you swallow it.',
+      ],
+      questions: [
+        { type: 'oddone', q: 'Which one is the odd one out?', items: ['🍎 apple', '🥕 carrot', '🍌 banana', '🥚 egg'], answer: 3, why: 'Why is the egg the odd one out?', reasons: ['It comes from an animal – the others come from plants', 'It is the only round one', 'It is the only food you can eat'], reason: 0 },
+        { type: 'mcq', q: 'You have just run three laps of the playground. Why do you feel hungry?', options: ['Your body used up lots of fuel', 'Running makes your teeth grow', 'Your legs want to eat some food'], answer: 0 },
+        { type: 'type', q: 'What do you use to bite into a crunchy apple?', answer: ['teeth', 'my teeth', 'your teeth', 'tooth', 'front teeth'], placeholder: 'one word', hint: 'They are white, and you brush them twice a day.' },
+        { type: 'tf', q: 'A car with no fuel stops – and a body with no food runs out of energy too.', answer: true },
+      ],
+    },
+
+    {
+      type: 'read', title: 'Where does food go?', short: 'Read', minutes: 6,
+      say: 'Read each page carefully – the checks test if you really understood. Tap the yellow words for a 💎.',
+      cards: [
+        {
+          title: 'Fuel for your body', pic: '🍽️⚡',
+          text: [
+            'Plants can make their own food from sunlight. Animals can\'t, and that includes you! We have to eat.',
+            'Food gives your body energy, helps you grow and keeps you healthy. The useful bits in food are called [[nutrients]].',
+          ],
+          check: { q: 'A cow munches grass all day long. Why?', options: ['It can\'t make its own food, so it eats', 'It is trying to keep the field tidy', 'Grass is the only thing it can reach'], answer: 0, hint: 'Can an animal make food from sunlight, like a plant?' },
+        },
+        {
+          title: 'Three jobs for food', pic: '🍞🥚🥦',
+          text: [
+            'Energy foods like bread, rice and pasta keep you going. Growing foods like eggs, fish and beans build and repair your body.',
+            'Fruit and vegetables are full of vitamins that keep you healthy. Milk and cheese help make strong bones and teeth.',
+          ],
+          check: { q: 'Mia is about to run a long race. Which snack gives her the most energy?', options: ['a big bowl of pasta', 'a glass of cold water', 'a stick of celery'], answer: 0, hint: 'Which one is an energy food?' },
+        },
+        {
+          title: 'Chomp and swallow', pic: '🦷💧',
+          text: [
+            'Breaking food down so your body can use it is called [[digestion]]. It starts in your mouth. Front teeth cut and bite, and back teeth grind food into mush.',
+            '[[saliva]] makes the food soft and slippery. When you swallow, muscles in your [[food pipe]] squeeze it down to your stomach.',
+          ],
+          check: { type: 'evidence', q: 'A dry cracker is hard to swallow at first, but easy after you chew it for a while. Tap the sentence that explains why.', answer: 'soft and slippery' },
+        },
+        {
+          title: 'The stomach', pic: '🌀🦠',
+          text: [
+            'Your [[stomach]] is a stretchy bag made of muscle. For a few hours, it squeezes and churns your food, like a washing machine, until it is a thick soup.',
+            'The stomach also makes a strong acid. It kills germs in your food, so they can\'t make you poorly.',
+          ],
+          check: { q: 'A yoghurt had a few germs in it, but you didn\'t get ill. What saved you?', options: ['Acid in your stomach killed them', 'Your teeth chewed all the germs up', 'The germs got stuck in your mouth'], answer: 0, hint: 'Which part kills germs?' },
+        },
+        {
+          title: 'The intestines', pic: '🧵💩',
+          text: [
+            'Next, the food soup goes into the [[small intestine]], a very long, coiled tube. The nutrients soak through its walls into your blood, which carries them all round your body.',
+            'Then the [[large intestine]] takes the water back out. What is left is poo, and out it goes!',
+          ],
+          check: { type: 'type', q: 'Your blood is carrying goodness from your dinner to your leg muscles. Which part of you did it soak through to get into your blood?', answer: ['small intestine', 'the small intestine', 'small intestines'], placeholder: 'two words', hint: 'It is a very long, coiled tube.' },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'Operation Ouch: Digestion', short: 'Video', minutes: 6,
+      video: { id: 'AX34MoaLmzE', title: 'Operation Ouch - Digestion', channel: 'Operation Ouch', duration: '4:36' },
+      say: 'Dr Chris swallows a tiny camera, so we can see inside his body! Watch, then answer my questions.',
+      clues: [
+        'What does Chris swallow?',
+        'How long does it take to reach his stomach?',
+        'What is the stomach a bit like?',
+        'What does the large intestine do?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'What did Chris swallow, so we could see inside his body?', options: ['a tiny camera pill', 'a long tube with a light', 'a special glowing drink'], answer: 0 },
+        { type: 'slider', q: 'How many seconds did the camera take to get from his mouth to his stomach?', min: 0, max: 30, step: 1, answer: 7, tolerance: 1, unit: ' seconds', ticks: 6 },
+        { type: 'mcq', q: 'The stomach swishes food around. What does the video say it is a bit like?', options: ['a washing machine', 'a cement mixer', 'a swimming pool'], answer: 0 },
+        { type: 'mcq', q: 'Why does your stomach have acid?', options: ['to kill germs that could make you ill', 'to melt the food into a hot drink', 'to give your stomach its pink colour'], answer: 0 },
+        { type: 'type', q: 'The large intestine takes the liquid out, to make a solid…', answer: ['poo', 'poop', 'poos'], placeholder: 'one word', hint: 'It comes out at the very end, in the toilet!' },
+        { type: 'mcq', q: 'About how long is the whole journey, from your mouth to your bottom?', options: ['9 metres', '9 centimetres', '90 metres'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Fuel Station', short: 'Fuel', minutes: 5,
+      rounds: [
+        {
+          game: 'sort', title: 'What does it do for you?',
+          intro: 'Every food has a job. Sort each one into the right box.',
+          say: 'Energy, growing, or keeping you healthy?',
+          buckets: [
+            { id: 'energy', label: 'ENERGY', emoji: '⚡' },
+            { id: 'grow', label: 'GROWING', emoji: '💪' },
+            { id: 'vit', label: 'HEALTHY (vitamins)', emoji: '🛡️' },
+          ],
+          items: [
+            { label: '🍞 bread', bucket: 'energy' }, { label: '🍚 rice', bucket: 'energy' }, { label: '🍝 pasta', bucket: 'energy' },
+            { label: '🥚 eggs', bucket: 'grow' }, { label: '🐟 fish', bucket: 'grow' }, { label: '🫘 beans', bucket: 'grow' },
+            { label: '🍎 apple', bucket: 'vit' }, { label: '🥕 carrot', bucket: 'vit' }, { label: '🥦 broccoli', bucket: 'vit' },
+          ],
+        },
+        {
+          game: 'label', title: 'Label the food tube',
+          intro: 'Drag each label onto the right part. Watch out – two labels are fakes!',
+          say: 'Follow the dotted lines to see which part each box points at.',
+          pic: DIGEST_LABEL,
+          hint: 'Follow the dotted line. Which part does it point to?',
+          spots: [
+            { x: 87, y: 16, answer: 'mouth' },
+            { x: 13, y: 31.5, answer: 'food pipe' },
+            { x: 87, y: 44, answer: 'stomach' },
+            { x: 13, y: 71.5, answer: 'small intestine' },
+            { x: 87, y: 74, answer: 'large intestine' },
+          ],
+          extra: ['lungs', 'heart'],
+        },
+      ],
+    },
+
+    {
+      type: 'teach', title: 'Teach Professor Bolt: the food journey', short: 'Teach', minutes: 4,
+      say: 'Professor Bolt is a robot. He has never eaten anything, so he has muddled up the food journey. Fix his mistakes!',
+      robot: { name: 'Professor Bolt', emoji: '🤖' },
+      intro: 'Greetings! Robots don\'t eat, but I have read ALL about it. Let me teach you how food travels through a body!',
+      lines: [
+        { text: 'Front teeth cut and bite, and back teeth grind the food into mush.', ok: true, why: 'Right – that\'s the first step of digestion.' },
+        { text: 'Saliva makes your food dry, so it is easy to swallow.', wrong: 'dry', fix: 'slippery', options: ['crunchy'], why: 'Saliva makes food soft and slippery.' },
+        { text: 'Muscles in the food pipe squeeze the food down to your lungs.', wrong: 'lungs', fix: 'stomach', options: ['heart'], why: 'The food pipe goes to the stomach. Air goes to the lungs.' },
+        { text: 'The stomach churns food into soup, and its acid feeds germs.', wrong: 'feeds', fix: 'kills', options: ['grows'], why: 'The acid KILLS germs, so they can\'t make you ill.' },
+        { text: 'The nutrients soak into your blood in the large intestine.', wrong: 'large', fix: 'small', options: ['short'], why: 'It happens in the long, coiled small intestine. The large intestine takes the water out.' },
+      ],
+      outro: 'Thank you! Now I understand. I still won\'t eat anything, though. I run on batteries!',
+    },
+
+    {
+      type: 'game', title: 'The Food Journey', short: 'Journey', minutes: 7,
+      rounds: [
+        {
+          game: 'gut', title: 'Food Journey',
+          intro: 'Take a bite of food all the way through a body! Each part has a job, and **you** have to do it: chew, swallow, churn, grab the goodness, squeeze… and flush!',
+          say: 'Pick a food and send it on its journey!',
+          foods: ['bread', 'egg', 'apple', 'sweets', 'broccoli', 'fish'],
+          missions: [
+            { text: 'Send the 🍞 bread on its whole journey, from the mouth all the way to the toilet!', need: ['bread'], yes: 'Journey complete! That bread went a LONG way.', ask: [
+              { type: 'type', q: 'In which part did you churn the food into soup?', answer: ['stomach', 'the stomach', 'tummy'], placeholder: 'one word', hint: 'It is a stretchy bag made of muscle.' },
+              { q: 'In which part did the goodness go into the blood?', options: ['the small intestine', 'the large intestine', 'the food pipe'], answer: 0 },
+            ] },
+            { text: 'Which food helps you GROW the most? Digest the 🥚 egg AND the 🍎 apple, then compare them in your table.', need: ['egg', 'apple'], yes: 'Two journeys done! Look at your results table.', ask: [
+              { q: 'Which food gave your blood the most 💪 growing goodness?', options: ['🥚 the egg', '🍎 the apple'], answer: 0 },
+              { q: 'The apple gave lots of 🛡️ vitamins. What do vitamins do for you?', options: ['keep you healthy', 'make you sleepy', 'turn food into poo'], answer: 0 },
+            ] },
+            { text: 'Now digest the 🍬 sweets. Watch closely: what goodness do they give?', need: ['sweets'], yes: 'Sweet! But was there much goodness?', ask: [
+              { q: 'What did the sweets give your body?', options: ['only a little energy', 'lots of growing goodness', 'lots of every kind'], answer: 0 },
+              { q: 'So why are sweets just for now and then?', options: ['They give energy but none of the other goodness', 'They are too small to get through the food pipe', 'They make the stomach acid stop working'], answer: 0 },
+            ] },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Tummy Arcade: pick a game!', short: 'Arcade', icon: '🕹️', minutes: 4,
+      pick: { title: '🕹️ Pick your arcade game!', say: 'Your choice! Which game do you want to play? Win one to carry on – or play them all!' },
+      rounds: [
+        {
+          game: 'runner', title: 'Food Tube Dash', emoji: '🏃', blurb: 'Race along and grab the parts that food travels through.',
+          intro: 'Gobble is chasing you! Run and grab only the parts of your body that **food travels through**.',
+          say: 'Pick the lane with a part of the food tube!',
+          prompt: 'Grab the parts FOOD goes through!',
+          items: [
+            { label: 'mouth', ok: true },
+            { label: 'food pipe', ok: true },
+            { label: 'stomach', ok: true },
+            { label: 'small intestine', ok: true },
+            { label: 'large intestine', ok: true },
+            { label: 'lungs', ok: false, why: 'Air goes to your lungs – food never does!' },
+            { label: 'heart', ok: false, why: 'Your heart pumps blood. Food doesn\'t go through it.' },
+            { label: 'brain', ok: false, why: 'Your brain does the thinking – no food goes in there!' },
+            { label: 'ears', ok: false, why: 'Ears are for hearing, not eating!' },
+            { label: 'nose', ok: false, why: 'Your nose is for breathing and smelling, not for eating.' },
+          ],
+        },
+        {
+          game: 'steadyhand', title: 'Steady Hand', emoji: '✏️', blurb: 'Guide your pencil along the wiggly path – don\'t touch the sides!',
+          intro: 'Press on the green dot and follow the wiggly path all the way to the 🏁 – carefully! Pick Easy, Medium or Hard.',
+          say: 'Steady hands! Don\'t touch the sides!',
+          done: 'What a steady hand! As smooth as food sliding down the food pipe.',
+        },
+        {
+          game: 'sequence', title: 'Note Block Echo', emoji: '🎵', blurb: 'Watch the note blocks light up, then play the tune back.',
+          blocks: 4, start: 2, target: 6,
+          intro: 'Watch and listen, then **play the tune back**. It grows one note longer each time!',
+          say: 'Eyes and ears on the note blocks!',
+          done: 'What a memory for music!',
+        },
+        {
+          game: 'mystery', title: 'Mystery Body Words', emoji: '🔍', blurb: 'Crack the clues to find the hidden word.',
+          intro: 'Gobble has hidden some **body words**! Read the clue and work out the word. Solve it on the first clue for 3 gems!',
+          say: 'The fewer clues you need, the more gems you win!',
+          words: [
+            { word: 'stomach', clues: ['It is a stretchy bag inside you.', 'It is made of muscle and churns food.', 'Its acid kills germs.'] },
+            { word: 'saliva', clues: ['It is a liquid in your body.', 'It makes food soft and slippery.', 'It is a science word for spit.'] },
+            { word: 'teeth', clues: ['Digestion starts with these.', 'Some cut and bite, some grind.', 'You brush them twice a day.'] },
+            { word: 'nutrients', clues: ['Your blood carries them all round your body.', 'They soak in through the small intestine.', 'They are the useful bits in food.'] },
+          ],
+          done: 'MYSTERY SOLVED! Gobble can\'t hide anything from you!',
+        },
+      ],
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: Gobble the Greedy Gut', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      say: 'GOBBLE swallows everything whole, and now he wants to gobble up ALL the food in the land! Every right answer makes him burp some back up. Go, {name}!',
+      boss: {
+        name: 'Gobble', sprite: GOBBLE, attack: ['🍔', '🍕', '🍩'], spin: true,
+        lines: {
+          prefight: ['BUUURP! A tiny hero! Do you even know where your dinner GOES, or do you just shovel it in like me?', 'Teeth chew it, the stomach churns it, and the small intestine sends the goodness into my blood!', 'Hmph! Chewing is for wimps. I swallow everything WHOLE! Prepare to be GOBBLED!'],
+          intro: 'BUUURP! I am GOBBLE! I never chew, I never share, and I\'m going to swallow every crumb in the land!',
+          hurt: ['Urp! That one gave me hiccups!', 'Ooof! My tummy is rumbling!', 'Hic! Stop knowing things about digestion!', 'Blurgh! I feel a bit sick!'],
+          taunt: ['Wrong! Gulp, gulp, GULP!', 'Ha! I\'ll swallow that answer whole!', 'Yum, a wrong answer – my favourite snack!', 'Burp! Another one for my belly!'],
+          angry: 'NOW I\'M HANGRY! FEEDING FRENZY!',
+          dodge: 'Here comes my lunch! Dodge it, if you can!',
+          miss: 'You dodged every bite?! You\'re as slippery as saliva!',
+          last: 'Urrrgh… my stomach is… churning… the wrong way…',
+          defeat: 'BLUUURRRP! Okay, okay… maybe I should chew my food… and share a bit…',
+          win: 'GULP! All the food is MINE! Not even a crumb left for you!',
+          stunned: 'Everything is going round and round… like a washing machine…',
+          beg: ['Wait! I\'ll chew every bite thirty times!', 'Mercy! I\'ll eat my vegetables, I promise!', 'Please! I\'ll share my packed lunch!'],
+        },
+      },
+      bonus: {
+        title: '⭐ Bonus quest (for a grown-up to help with)',
+        text: 'Chew a plain cracker slowly for a whole minute before you swallow. Does it start to taste a little bit sweet? That\'s your saliva already starting to break the food down!',
+      },
+      questions: [
+        { type: 'type', q: 'What is the science word for spit?', answer: ['saliva'], placeholder: 'one word', hint: 'It starts with s.' },
+        { type: 'hotspot', q: 'Tap the part that churns food into soup.', img: DIGEST, spots: GUT_SPOTS, answer: 2 },
+        { type: 'order', q: 'Put the food\'s journey in order.', items: ['mouth', 'food pipe', 'stomach', 'small intestine', 'large intestine'], ends: ['FIRST', 'LAST'] },
+        { type: 'mcq', q: 'Why does your stomach make acid?', options: ['to kill germs in your food', 'to help you taste your food', 'to make your food crunchy'], answer: 0 },
+        { type: 'oddone', q: 'Which one is NOT a growing food?', items: ['🥚 egg', '🐟 fish', '🫘 beans', '🍭 lolly'], answer: 3, why: 'Why is the lolly the odd one out?', reasons: ['It is sugary: just a little quick energy', 'It is the only one that is sweet and sticky', 'It is the only one on a stick'], reason: 0 },
+        { type: 'gap', q: 'The nutrients soak into your blood in the ___ intestine.', options: ['small', 'large'], answer: 0 },
+        { type: 'tf', q: 'Animals can make their own food from sunlight, just like plants.', answer: false },
+        { type: 'mcq', q: 'The large intestine has taken the water out. What is left?', options: ['poo, which leaves your body', 'blood, which goes to your heart', 'saliva, which goes to your mouth'], answer: 0 },
+        { type: 'type', q: 'Bread, rice and pasta are good at giving you lots of…', answer: ['energy'], placeholder: 'one word', hint: 'It keeps you going, like fuel in a car.' },
+        { type: 'mcq', q: 'Leo eats only sweets all week. What is his body missing?', options: ['growing foods and vitamins', 'a little bit of quick energy', 'nothing – sweets have it all'], answer: 0 },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>
