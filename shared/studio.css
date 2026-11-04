@@ -1,0 +1,74 @@
+/* Game Builder (shared/engine/studio.js): the pretend Studio (studiosim) and Studio missions on the computer (studiotask).
+ * Loaded by studio.js itself. Our own look: dark panels like a building app, blocky pixel buttons like the rest of Pixelkid. */
+
+/* ---------- studiosim ---------- */
+.studiosim .st-toolbar { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; align-items: center; max-width: 980px; margin: 0 auto 8px; padding: 8px; background: #2b323c; border: 4px solid #000; }
+.st-tool { font: inherit; font-weight: 700; font-size: .95rem; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 6px 10px; background: #46505e; color: #fff; border: 3px solid #000; box-shadow: inset -3px -3px 0 #2a313a, inset 3px 3px 0 #6b7787; cursor: pointer; touch-action: manipulation; }
+.st-tool.on { background: #2f80ff; box-shadow: inset -3px -3px 0 #1a4fa6, inset 3px 3px 0 #8ab8ff; }
+.st-tool:active { transform: translateY(1px); }
+.st-tool .st-ic { font-size: 1.2rem; line-height: 1; }
+.st-tool kbd, .stk-keys kbd { font-family: var(--read); font-size: .8rem; background: #000; color: #ffd43b; padding: 1px 6px; border-radius: 3px; }
+.st-play { background: #2e9d48; box-shadow: inset -3px -3px 0 #1b6a2f, inset 3px 3px 0 #7fe39a; }
+.st-sep { width: 3px; align-self: stretch; background: #000; margin: 0 4px; }
+.st-work { display: grid; gap: 10px; max-width: 980px; margin: 0 auto; align-items: start; }
+.st-work.with-side { grid-template-columns: minmax(0, 1fr) 250px; }
+.st-screen { max-width: none; margin: 0; touch-action: none; }
+.st-screen canvas { display: block; width: 100%; height: auto; touch-action: none; }
+.st-side { display: grid; gap: 10px; align-content: start; }
+.st-panel, .st-code { background: #232930; color: #e8edf2; border: 4px solid #000; font-size: .92rem; }
+.st-panel-title { font-family: var(--pixel); font-weight: 700; background: #39424e; color: #fff; padding: 4px 8px; border-bottom: 3px solid #000; }
+.st-tree { padding: 4px 0; }
+.st-row { display: block; width: 100%; text-align: left; font: inherit; color: inherit; background: none; border: 0; padding: 5px 8px; min-height: 34px; }
+button.st-row { cursor: pointer; touch-action: manipulation; }
+button.st-row:hover { background: #2f3843; }
+.st-row.on { background: #2f80ff; color: #fff; }
+.st-kid { padding-left: 22px; } .st-kid2 { padding-left: 40px; color: #9fb3c8; } .st-dim { color: #8592a0; }
+.st-root { font-weight: 700; }
+.st-empty { padding: 8px; margin: 0; color: #9fb3c8; }
+.st-group { background: #2c333c; color: #9fb3c8; font-weight: 700; font-size: .8rem; padding: 2px 8px; }
+.st-prop { display: grid; grid-template-columns: 112px 1fr; gap: 6px; align-items: center; padding: 4px 8px; border-bottom: 1px solid #333c47; }
+.st-pk { color: #b8c4d0; font-size: .85rem; }
+.st-pv { font-weight: 700; word-break: break-word; }
+.st-dot { display: inline-block; width: 14px; height: 14px; background: var(--sw); border: 2px solid #000; vertical-align: -2px; }
+.st-swatches { display: flex; flex-wrap: wrap; gap: 4px; }
+.st-sw { width: 26px; height: 26px; background: var(--sw); border: 2px solid #000; cursor: pointer; touch-action: manipulation; }
+.st-sw.on { outline: 3px solid #ffd43b; }
+.st-select { font: inherit; font-weight: 700; width: 100%; min-height: 34px; }
+.st-slide { display: flex; align-items: center; gap: 6px; } .st-slide input { flex: 1; min-width: 0; }
+.st-prop input[type=checkbox] { width: 24px; height: 24px; }
+.st-keys { max-width: 720px; margin: 10px auto 0; text-align: center; }
+.st-keyrow { display: flex; justify-content: center; gap: 8px; margin-bottom: 8px; }
+.st-key { width: 60px; height: 56px; font-family: var(--read); font-size: 1.4rem; font-weight: 700; background: #f2f2f2; color: #000; border: 3px solid #000; box-shadow: inset -3px -4px 0 #a8a8a8, inset 3px 3px 0 #fff; }
+.st-key.down { background: #ffd43b; }
+.st-key-f { margin-left: 18px; background: #bfe3ff; }
+.st-keyhelp { font-size: .9rem; margin: 2px 0 0; }
+.st-code { max-width: 980px; margin: 10px auto 0; }
+.st-lines { margin: 0; padding: 8px 0; font-family: Menlo, Monaco, "Courier New", monospace; font-size: 1rem; line-height: 1.7; overflow-x: auto; white-space: pre; }
+.st-line { padding-right: 10px; }
+.st-ln { display: inline-block; width: 2.4em; text-align: right; color: #6b7787; margin-right: 12px; user-select: none; }
+.st-k { color: #f86d7c; font-weight: 700; } .st-s { color: #adf195; } .st-n { color: #ffc600; } .st-c { color: #8a9bab; font-style: italic; }
+.st-slot { font: inherit; font-weight: 700; min-height: 36px; min-width: 44px; padding: 0 10px; background: #ffd43b; color: #000; border: 3px solid #000; cursor: pointer; touch-action: manipulation; }
+.st-slot:disabled { opacity: .7; }
+.st-code-tip { margin: 0; padding: 4px 10px 8px; color: #b8c4d0; font-size: .9rem; }
+@media (max-width: 760px) { .st-work.with-side { grid-template-columns: 1fr; } .st-key { width: 50px; height: 50px; } }
+
+/* ---------- studiotask ---------- */
+.studiotask { max-width: 760px; margin: 0 auto; }
+.stk-head { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; margin-bottom: 10px; }
+.stk-dots { display: flex; gap: 6px; }
+.stk-dot { width: 30px; height: 30px; display: grid; place-items: center; font-weight: 700; background: #ddd; border: 3px solid #000; }
+.stk-dot.on { background: #ffd43b; } .stk-dot.ok { background: var(--good-soft); }
+.stk-card { background: var(--paper); border: 4px solid #000; box-shadow: 6px 6px 0 rgba(0, 0, 0, .25); padding: 14px 16px; }
+.stk-banner { display: flex; gap: 10px; align-items: center; background: #232930; color: #fff; padding: 8px 12px; margin: -14px -16px 12px; border-bottom: 4px solid #000; font-size: 1.1rem; }
+.stk-pc { font-size: 1.6rem; }
+.stk-do { font-size: 1.15rem; line-height: 1.6; padding-left: 1.4em; margin: 0 0 10px; }
+.stk-do li { margin-bottom: 6px; }
+.stk-keys { font-size: 1.1rem; margin-bottom: 10px; } .stk-keys kbd { font-size: 1.1rem; margin-right: 4px; padding: 2px 10px; }
+.stk-grownup { background: #e8f1ff; border: 3px dashed #2f80ff; padding: 6px 10px; font-size: .95rem; }
+.stk-show { margin: 10px 0; }
+.stk-map { max-width: 520px; margin: 0 auto 8px; border: 4px solid #000; }
+.stk-map svg { display: block; width: 100%; height: auto; }
+.stk-pic { text-align: center; margin-bottom: 8px; }
+.stk-check { margin-top: 12px; padding: 10px 12px; background: #fff3a8; border: 4px solid #000; }
+.stk-check-tag { font-family: var(--pixel); font-weight: 700; margin-bottom: 4px; }
+.stk-code { text-align: left; margin: 0 auto 10px; padding: 10px 14px; max-width: 640px; overflow-x: auto; background: #232930; color: #e8edf2; border: 4px solid #000; font-family: Menlo, Monaco, "Courier New", monospace; font-size: 1rem; line-height: 1.6; white-space: pre; }

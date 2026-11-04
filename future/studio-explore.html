@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Studio Explorer</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <script src="../shared/pixel.js"></script>
+  <script src="../shared/pixel-icons.js"></script>
+  <script src="../shared/avatar.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// Game Builder 1/5: find your way round a game studio. The child does the missions on the real Studio (on the computer)
+// while this lesson runs on the iPad. The pretend studio (studiosim) and the Studio missions (studiotask) are in
+// shared/engine/studio.js.
+
+// the boss: The Glitch, a jumble of broken pixels that scrambles cameras
+const GLITCH = Pixel.svg([
+  '..mmmm..cc..',
+  '.mkkkkmmcc..',
+  'mkwwkkkkkm..',
+  'mkwbkkwwkm.c',
+  'mkkkkkwbkkm.',
+  '.mkkkkkkkkm.',
+  'cmkrrrrrkmm.',
+  '.mkkkkkkkm..',
+  'm.mkm.mkm.cc',
+  '..m.....m...',
+], { k: '#1b1b1b', m: '#ff3bd4', c: '#00e5ff', w: '#ffffff', b: '#00e5ff', r: '#ff3b30' });
+
+// the pretend studio for the camera training: a tower with a secret word on its back
+const TRAINING = {
+  parts: [
+    { id: 'tower', name: 'Tower', x: 10, y: 5, z: -8, sx: 4, sy: 10, sz: 4, color: 'Bright blue', material: 'Brick', anchored: true, sign: { text: 'JUMP', face: '-z' } },
+    { id: 'tree', name: 'Tree', x: -10, y: 3, z: 6, sx: 2, sy: 6, sz: 2, color: 'Reddish brown', material: 'Wood', anchored: true },
+    { id: 'leaves', name: 'Leaves', x: -10, y: 7, z: 6, sx: 6, sy: 3, sz: 6, color: 'Dark green', material: 'Grass', anchored: true },
+  ],
+};
+
+window.LESSON = {
+  id: 'future-studio-explore',
+  subject: 'future',
+  title: 'Studio Explorer',
+  emoji: '🧱',
+  home: '../index.html',
+  midBreak: false, // the Arcade stage is the fun break
+  mascot: {
+    name: 'Professor Bolt',
+    sprite: Pixel.sprites.robot,
+    praise: ['Master builder!', 'Brilliant, builder!', 'Critical hit!', 'Studio superstar!', 'Epic building!', 'Bolt-tastic!', 'Nailed it!'],
+    oops: ['Oops! Try again.', 'Not quite – have another go!', 'Hmm, look again!', 'So close! One more try.'],
+  },
+  glossary: {
+    studio: { emoji: '💻', def: 'Roblox Studio: the free app on a computer that game makers use to build Roblox games.' },
+    part: { emoji: '🧱', def: 'A building block in Studio. Every game is built out of parts. A new part is a small grey block called "Part".' },
+    stud: { emoji: '📏', def: 'The way Studio measures size and distance, like a centimetre for games. A player is about 5 studs tall.' },
+    explorer: { emoji: '📂', def: 'The Explorer window lists everything in your game, like a contents page.' },
+    properties: { emoji: '📋', def: 'The Properties window shows the details of the thing you picked: its size, colour, position and more.' },
+    spawnlocation: { emoji: '⭐', def: 'The SpawnLocation is the pad where players appear when the game starts.' },
+    'edit mode': { emoji: '🔧', def: 'Building time: you fly the camera around and change your world.' },
+    'play mode': { emoji: '▶️', def: 'Testing time: your player appears and you play your own game. Press Stop to go back to building.' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'Studio Explorer', short: 'Start', minutes: 1,
+      pic: GLITCH,
+      hello: 'Beep boop! You already make games by asking the AI. Today you learn to drive Roblox Studio YOURSELF, like a real game maker! But watch out… THE GLITCH scrambles cameras and hides parts!',
+      question: 'Real game makers build every block of their world. How do they find their way round such a big app?',
+      intro: 'Warm up, learn the Studio basics, watch a short how-to, train in the **pretend studio** here, then do your first **Studio mission** on the computer. Pick an arcade game, then beat The Glitch!',
+      nameLabel: 'Builder name:',
+    },
+
+    {
+      type: 'review', title: 'Warm-up: games and 3D', short: 'Warm-up', minutes: 3,
+      say: 'New topic: GAME BUILDING! Let\'s warm up with things you already know from playing games.',
+      from: { title: 'Things you know from playing games', emoji: '🎮' },
+      facts: [
+        'In most computer games, W walks forward, S walks back, A goes left and D goes right. Space jumps.',
+        'A 3D world has width, height and depth, so you can walk round things and see their backs.',
+        'Every game was built by people called game makers (or game developers).',
+        'In Roblox, everything you see was built by players, just like you.',
+      ],
+      questions: [
+        { type: 'mcq', q: 'In a game, which key usually makes you walk forward?', options: ['W', 'P', 'M'], answer: 0 },
+        { type: 'type', q: 'Which key on the keyboard usually makes your player jump? The long one at the bottom: the…', answer: ['space', 'space bar', 'spacebar', 'the space bar'], placeholder: 'one word', hint: 'It is the longest key of all.' },
+        { type: 'tf', q: 'In a 3D game you can walk round a house and see its back.', answer: true },
+        { type: 'mcq', q: 'Who builds the games on Roblox?', options: ['Players and game makers', 'Robots that live in the clouds', 'Nobody, they just grow'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'read', title: 'Welcome to the Studio', short: 'Read', minutes: 4,
+      say: 'Here is what you need to know before you touch the real thing!',
+      cards: [
+        {
+          title: 'Play or make?', pic: '🎮➡️💻',
+          text: [
+            'The Roblox app is for playing games. [[Roblox Studio|studio]] is a different app, on a computer, for making them.',
+            'Studio is free, and real game makers use exactly the same one as you.',
+          ],
+          check: { q: 'Mia wants to build her own obby. Which app does she open?', options: ['Roblox Studio', 'the Roblox app', 'a drawing app'], answer: 0 },
+        },
+        {
+          title: 'Everything is made of parts', pic: '🧱🧱🧱',
+          text: [
+            'Every wall, floor, step and tower in a game is made from building blocks called [[parts|part]].',
+            'When you add a new part, it appears as a small grey block. Studio calls it "Part" until you rename it.',
+          ],
+          check: { type: 'type', q: 'Ben adds a brand new block to his game. What name does Studio give it?', answer: ['part', 'a part'], placeholder: 'one word', hint: 'It is the name of the building blocks themselves.', explain: 'Every new block is called Part until you rename it.' },
+        },
+        {
+          title: 'Two windows to know', pic: '📂📋',
+          text: [
+            'The [[Explorer|explorer]] window is a list of everything in your game, a bit like the contents page of a book.',
+            'Click something, and the [[Properties|properties]] window shows its details: size, colour, where it is, and more.',
+          ],
+          check: { q: 'You want to find out how big a block is. Which window do you look in?', options: ['Properties', 'Explorer', 'the Toolbox'], answer: 0 },
+        },
+        {
+          title: 'Build, then test', pic: '🔧▶️',
+          text: [
+            'In [[edit mode]] you build: you fly the camera around and change things. Press Play to switch to [[play mode]].',
+            'In play mode your player appears on the [[SpawnLocation|spawnlocation]] and you test your own game. Stop takes you back to building.',
+          ],
+          check: { q: 'Leo built some stairs. How does he check that he can jump up them?', options: ['Press Play and try it', 'Stare at them for a while', 'Close Studio, then wait'], answer: 0 },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'Camera Essentials', short: 'Video', minutes: 3,
+      video: { id: 'Q53WB3LFq-c', title: 'Lesson 05: Camera Essentials (Roblox Studio for Beginners)', channel: 'Hoda Computer', duration: '1:29' },
+      say: 'A short how-to about moving the camera in Studio. Watch, then answer my questions.',
+      clues: [
+        'Which keys fly the camera UP and DOWN?',
+        'How do you look around with the mouse?',
+        'What does the mouse wheel do?',
+      ],
+      questions: [
+        { type: 'type', q: 'In the video, which key flies the camera UP?', answer: ['e', 'the e key', 'e key'], placeholder: 'one letter', hint: 'It is next to W.', explain: 'E goes up and Q goes down.' },
+        { type: 'mcq', q: 'How do you look around in edit mode?', options: ['Hold the right mouse button and move', 'Press the space bar three times fast', 'Shake the mouse up and down a lot'], answer: 0 },
+        { type: 'tf', q: 'In the video, pressing W moves the camera closer.', answer: true },
+        { type: 'mcq', q: 'What does scrolling the mouse wheel do?', options: ['zooms in and out', 'paints parts red', 'saves your game'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Camera Training', short: 'Train', icon: '🎥', minutes: 6,
+      rounds: [
+        {
+          game: 'studiosim', title: 'Camera Training',
+          intro: 'This is a **pretend studio** to practise in. Hold the camera keys to fly, and **drag the sky or the grass** to turn round (in the real Studio you hold the right mouse button).',
+          say: 'Fly like a real game maker! Hold a key down to keep moving.',
+          tools: ['select', 'part'], panels: ['explorer', 'properties'], keys: true,
+          scene: TRAINING,
+          caption: '🎥 Camera log',
+          missions: [
+            { text: 'Hold **W** to fly closer, then **S** to fly back.', need: ['key:w', 'key:s'], yes: 'Smooth flying!' },
+            { text: 'Hold **E** to fly up, then **Q** to fly down.', need: ['key:e', 'key:q'], yes: 'Up and down: easy!' },
+            {
+              text: 'The blue tower has a secret word on its BACK. Drag the sky or the grass to turn the camera all the way round, and read it.', need: ['see:tower', 'turn'],
+              yes: 'You found it! Turning the camera lets you see the backs of things.',
+              ask: [{ type: 'type', q: 'What is the secret word on the back of the tower?', answer: ['jump'], placeholder: 'one word', hint: 'Turn round until you can read the writing on the tower.' }],
+            },
+            { text: 'Tap the tree to select it, then press **F** to zoom the camera straight to it.', need: ['key:f'], yes: 'F for Focus! It flies the camera to whatever you selected.' },
+            {
+              text: 'Press **🧱 Part** to add a new part, then find it in the **Explorer** list.', need: ['insert'],
+              yes: 'Your first part!',
+              ask: [
+                { type: 'type', q: 'Look at the Properties window. What is the first number of its Size?', answer: ['4'], placeholder: 'a number', hint: 'Size has three numbers. Read the first one.', explain: 'A new part is 4 studs long, 1 stud tall and 2 studs wide.' },
+                { q: 'In the Explorer, what is the pad that players appear on called?', options: ['SpawnLocation', 'Workspace', 'StarterPlayer'], answer: 0 },
+              ],
+            },
+          ],
+          finish: '🏆 Camera training complete! Now try it in the REAL Studio.',
+          done: 'Camera training complete! You are ready for the real Studio.',
+        },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Studio Mission 1: My first part', short: 'Mission', icon: '💻', minutes: 8,
+      rounds: [
+        {
+          game: 'studiotask', title: 'My first part',
+          intro: 'Over to the computer! Do each step in **Roblox Studio**, then check it here on the iPad.',
+          say: 'This is the real thing! Do each step on the computer, then answer the check.',
+          steps: [
+            {
+              title: 'Open a Baseplate',
+              do: ['Open **Roblox Studio** on the computer.', 'On the start screen, pick the template called **Baseplate**.'],
+              grownup: 'Studio needs a Roblox account to sign in. A mouse makes Studio much easier than the trackpad (the right mouse button turns the camera). Studio\'s AI Assistant isn\'t needed today.',
+              where: 'viewport',
+              tip: 'A flat grey floor appears with a pad in the middle. That is your new, empty game!',
+              clip: { id: 'fbHQBVOL6KE', title: 'Start Fresh (3:52)' },
+              check: { type: 'type', q: 'Look in the Explorer window. What is the pad in the middle called?', answer: ['spawnlocation', 'spawn location', 'spawn'], placeholder: 'one word', hint: 'It starts with Spawn… (if you can\'t see Explorer, a grown-up can open it from the Window menu).' },
+            },
+            {
+              title: 'Save your game',
+              do: ['Click **File**, then **Save to Roblox**.', 'Give your game a name, like "My Obby", and click **Save**.'],
+              grownup: 'This is the game we will build on in every Game Builder lesson, so save it to your Roblox account (File → Save to Roblox), not to a file.',
+              where: 'file',
+              tip: 'Save at the end of every mission, so you never lose your work.',
+              clip: { id: 'xWv4RjydxII', title: 'Save the Project (1:53)' },
+            },
+            {
+              title: 'Fly the camera',
+              do: ['Hold **W**, **A**, **S** and **D** to fly around.', 'Hold **E** to fly up and **Q** to fly down.', 'Hold the **right mouse button** and move the mouse to look around.'],
+              keys: ['W', 'A', 'S', 'D', 'Q', 'E'],
+              where: 'viewport',
+              tip: 'Hold Shift while you fly to go more slowly and carefully.',
+              clip: { id: 'Q53WB3LFq-c', title: 'Camera Essentials (1:29)' },
+              check: { type: 'type', q: 'Fly high up into the sky. Which key did you hold to fly up?', answer: ['e', 'the e key', 'e key'], placeholder: 'one letter', hint: 'Not Q, that one goes down!' },
+            },
+            {
+              title: 'Add a part',
+              do: ['Find the **Part** button on the toolbar at the top and click it.', 'A grey block appears in the middle of your view.'],
+              where: 'part',
+              tip: 'If you can\'t see the Part button, click the Home tab at the top first.',
+              clip: { id: 'DW_a9XFMq1o', title: 'Make Your First Block (1:57)' },
+              check: { type: 'type', q: 'Look in the Explorer. What is your new block called?', answer: ['part', 'a part'], placeholder: 'one word', hint: 'Look at the bottom of the list under Workspace.' },
+            },
+            {
+              title: 'Read its properties',
+              do: ['Click your part so it is selected (a blue box goes round it).', 'Look at the **Properties** window and find **Size**.'],
+              where: 'properties',
+              tip: 'Properties is usually under the Explorer on the right. Size is in the Transform section.',
+              check: { type: 'type', q: 'What is the middle number of its Size? (That is how tall it is.)', answer: ['1', 'one'], placeholder: 'a number', hint: 'Size has three numbers, like 4, 1, 2. Read the middle one.', explain: 'A new part is 1 stud tall.' },
+            },
+            {
+              title: 'Focus on it',
+              do: ['Fly the camera far away from your part.', 'Click your part in the **Explorer**, then press **F**.'],
+              keys: ['F'],
+              where: 'explorer',
+              tip: 'F flies the camera straight to whatever you selected. Handy when you get lost!',
+              check: { q: 'What happened when you pressed F?', options: ['The camera zoomed to my part', 'My part turned bright pink', 'Studio closed itself'], answer: 0 },
+            },
+            {
+              title: 'Test it!',
+              do: ['Click **▶ Play** at the top left.', 'Walk your player to your part with W A S D and jump on it with the space bar.', 'Click the red **Stop** button to go back to building.'],
+              where: 'play',
+              grownup: 'On a MacBook, the F5 shortcut needs fn + F5, so the Play button is easier.',
+              clip: { id: 'z2rtNzBzzj0', title: 'First Play (1:37)' },
+              check: { q: 'Where did your player appear when the game started?', options: ['on the SpawnLocation', 'on top of my part', 'up in the clouds'], answer: 0 },
+            },
+          ],
+          finish: 'Your game has its very first part! Click **File → Save to Roblox** before you stop.',
+          done: 'MISSION COMPLETE! You found your way round the real Studio!',
+        },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Builder Arcade: pick a game!', short: 'Arcade', icon: '🕹️', minutes: 4,
+      pick: { title: '🕹️ Pick your arcade game!', say: 'Your choice! Which game do you want to play? Win one to carry on, or play them all!' },
+      rounds: [
+        {
+          game: 'platformer', title: 'Studio Jump', emoji: '🏃', blurb: 'Run and jump through an obby, and grab the true Studio facts.',
+          prompt: 'Grab the TRUE Studio facts!',
+          intro: 'Run, jump and collect the **true** facts about Studio. Leave the wrong ones!',
+          say: 'Jump like you are testing your own obby!',
+          items: [
+            { label: 'E flies up', ok: true }, { label: 'Q flies down', ok: true }, { label: 'F = focus', ok: true }, { label: 'new part = "Part"', ok: true },
+            { label: 'E flies down', ok: false, why: 'E flies UP. Q flies down.' },
+            { label: 'Play = build mode', ok: false, why: 'Play is for TESTING. You build in edit mode.' },
+            { label: 'new part is pink', ok: false, why: 'A new part is a small GREY block.' },
+          ],
+        },
+        {
+          game: 'steadyhand', title: 'Steady Hand', emoji: '✏️', blurb: 'Guide your pencil along the wiggly path – don\'t touch the sides!',
+          intro: 'Press on the green dot and follow the wiggly path all the way to the 🏁, carefully! Pick Easy, Medium or Hard.',
+          say: 'Steady hands make neat builds! Don\'t touch the sides!',
+          done: 'What a steady hand! Perfect for placing parts.',
+        },
+        {
+          game: 'sequence', title: 'Note Block Echo', emoji: '🎵', blurb: 'Watch the note blocks light up, then play the tune back.',
+          blocks: 4, start: 2, target: 6,
+          intro: 'Watch and listen, then **play the tune back**. It grows one note longer each time!',
+          say: 'Eyes and ears on the note blocks!',
+          done: 'What a memory for music!',
+        },
+        {
+          game: 'mystery', title: 'Mystery Studio Words', emoji: '🔍', blurb: 'Crack the clues to find the Studio word.',
+          intro: 'The Glitch has scrambled some **Studio words**! Read the clues and work out the word. Solve it on the first clue for 3 gems!',
+          say: 'The fewer clues you need, the more gems you win!',
+          words: [
+            { word: 'part', clues: ['Every game is built from lots of these.', 'A new one is a small grey block.', 'It is the building block of Studio.'] },
+            { word: 'explorer', clues: ['It is one of the windows on the right.', 'It is like a contents page.', 'It lists everything in your game.'] },
+            { word: 'stud', clues: ['Game sizes are measured in these.', 'A player is about 5 of these tall.', 'It is like a centimetre for games.'], options: ['stud', 'part', 'play', 'save'] },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: The Glitch', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      say: 'THE GLITCH is scrambling everyone\'s cameras so nobody can build! Every right answer fixes a pixel. Go, {name}!',
+      boss: {
+        name: 'The Glitch', sprite: GLITCH, attack: ['👾'],
+        lines: {
+          prefight: ['Bzzt! Kzzk! I scrambled your camera! You\'ll be lost in Studio FOREVER, flying round and round…', 'I just click my part and press F, and the camera flies straight back!', 'F-F-Focus?! Bzzt! Then I\'ll glitch every key on your keyboard!'],
+          intro: 'BZZT! I am THE GLITCH! I break cameras and hide parts!',
+          hurt: ['Bzzt! My pixels!', 'Kzzk! You fixed a bug!', 'Error! Error! That one hurt!', 'Stop debugging me!'],
+          taunt: ['Glitched you!', 'Bzzt! Wrong key!', 'Ha! Your camera is upside down!', '404: right answer not found!'],
+          angry: 'SYSTEM OVERLOAD! MAXIMUM GLITCH!',
+          dodge: 'Here come my broken pixels! Dodge them!',
+          miss: 'You dodged my glitches?! Who updated you?!',
+          last: 'Rebooting… re… boo… ting…',
+          defeat: 'Bzzt… fine… your camera works perfectly. I\'ll go and glitch a calculator instead…',
+          win: 'BZZT! Lost in Studio forever! Your camera is MINE!',
+          stunned: 'My pixels are… all over the place…',
+          beg: ['Wait! I\'ll unscramble your camera!', 'Please! I\'m just a tiny bug!', 'Don\'t delete me! Press Undo!'],
+        },
+      },
+      bonus: {
+        title: '⭐ Bonus quest (for a grown-up to help with)',
+        text: 'In your saved game, add three more parts and fly the camera round all of them. Can you find all three in the Explorer? Remember: File → Save to Roblox.',
+      },
+      questions: [
+        { type: 'type', q: 'Which key flies the camera DOWN in Studio?', answer: ['q', 'the q key', 'q key'], placeholder: 'one letter', hint: 'E goes up. Its neighbour on the left goes down.' },
+        { q: 'You are lost and can\'t see your part. You click it in the Explorer. Which key brings the camera back to it?', options: ['F', 'P', 'Z'], answer: 0 },
+        { type: 'mcq', q: 'Which window shows how big a part is?', options: ['Properties', 'Explorer', 'Toolbox'], answer: 0 },
+        { type: 'type', q: 'Studio measures sizes in…', answer: ['studs', 'stud'], placeholder: 'one word', hint: 'A player is about 5 of these tall.' },
+        { type: 'tf', q: 'You build your game in play mode.', answer: false, explain: 'You build in edit mode. Play mode is for testing.' },
+        { type: 'mcq', q: 'You press Play. Where does your player appear?', options: ['on the SpawnLocation', 'inside the Explorer', 'on the File menu'], answer: 0 },
+        { type: 'gap', q: 'The ___ window lists everything in your game, like a contents page.', options: ['Explorer', 'Properties', 'Play'], answer: 0 },
+        { type: 'type', q: 'A new part is a small block. What colour is it?', answer: ['grey', 'gray', 'silver'], placeholder: 'one word', hint: 'Think of a rainy cloud.' },
+        { type: 'order', q: 'Put the steps in order to test a new part.', items: ['🧱 Click Part to add a block.', '▶️ Press Play.', '🦘 Jump on your new block.', '⏹️ Press Stop to go back to building.'], ends: ['START', 'END'], hint: 'You have to add it before you can test it!' },
+        { type: 'mcq', q: 'Ava\'s player can\'t walk round the back of her house. What kind of world lets you do that?', options: ['a 3D world', 'a flat drawing', 'a paper map'], answer: 0 },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>

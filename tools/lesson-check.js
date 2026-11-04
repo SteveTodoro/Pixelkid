@@ -169,6 +169,30 @@ function checkRound(r, where, err) {
         if ((w.clues || []).some(c => strip(c).includes(String(w.word).toLowerCase()))) err(`${where}: a clue gives away "${w.word}"`);
       }
       break;
+    // Game Builder (shared/engine/studio.js)
+    case 'studiotask':
+      if (!(r.steps || []).length) err(`${where}: no steps`);
+      (r.steps || []).forEach((st, k) => {
+        if (!st.title || !(st.do || []).length) err(`${where} step ${k + 1}: needs a title and what to do`);
+        if (st.check) checkQuestion(st.check, `${where} step ${k + 1} check`, err);
+      });
+      if (!(r.steps || []).some(st => st.check)) err(`${where}: no step checks what he did in Studio`);
+      break;
+    case 'studiosim': {
+      let ids = new Set(((r.scene || {}).parts || []).map(p => p.id));
+      (r.missions || []).forEach((m, k) => {
+        if (m.scene) ids = new Set((m.scene.parts || []).map(p => p.id));
+        if (!(m.need || []).length && !m.match) err(`${where} mission ${k + 1}: needs need: [tokens] or a match`);
+        if (m.match && m.match.part !== 'any' && !ids.has(m.match.part)) err(`${where} mission ${k + 1}: no part "${m.match.part}" in the scene`);
+        for (const t of m.need || []) { const id = (/^(?:fell|stayed|see|focus|select|explore|move|scale|rotate|prop):([^:]+)/.exec(t) || [])[1]; if (id && !ids.has(id) && id !== 'spawn') err(`${where} mission ${k + 1}: "${t}" names a part that isn't in the scene`); }
+      });
+      if (r.code) {
+        const text = r.code.lines.join('\n');
+        for (const k of Object.keys(r.code.slots || {})) if (!text.includes(`{${k}}`)) err(`${where}: code slot "${k}" isn't in any line`);
+        for (const m of text.matchAll(/\{(\w+)\}/g)) if (!(r.code.slots || {})[m[1]]) err(`${where}: code line uses {${m[1]}} but there is no such slot`);
+      }
+      break;
+    }
     case 'crossword':
       for (const e of r.entries || []) if (!/^[A-Z]+$/.test(e.answer)) err(`${where}: crossword answer "${e.answer}" must be A–Z capitals`);
       break;

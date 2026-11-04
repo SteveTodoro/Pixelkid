@@ -900,7 +900,7 @@
     return [row, pool, h('div', { class: 'btn-row' }, btn)];
   };
 
-  // type: write the answer. { q, answer: 'word' or ['word', 'other spelling'], before, after, placeholder }
+  // type: write the answer. { q, answer: 'word' or ['word', 'other spelling'], before, after, placeholder, range: [min, max] }
   // Capitals, spaces and punctuation don't matter (so 'Half past 3' = 'half past 3.'), and a slip of the finger is
   // forgiven (see nearlyRight), except in English lessons, where the spelling is the point, or with exact: true.
   // After two wrong tries the answer is shown, with a button to use it and carry on, so nobody gets stuck.
@@ -933,6 +933,9 @@
       const v = clean(box.value);
       if (!v) { box.focus(); return; }
       if (ok.includes(v)) return right();
+      // range: [min, max] also accepts any number in between (a value he reads off a real screen, like a Size in Studio)
+      const n = String(box.value).trim().replace(/\s*studs?$/i, '');
+      if (q.range && /^-?\d+(\.\d+)?$/.test(n) && +n >= q.range[0] && +n <= q.range[1]) return right();
       const near = forgive && [].concat(q.answer).find(a => nearlyRight(v, clean(a)));
       if (near) { box.value = near; return right(); } // show the proper spelling
       misses++; replay(box, 'wrong'); shake(box); sfx.bad(); onMiss(box); box.select();
@@ -1484,6 +1487,7 @@
   });
   const PARTS = {
     future: ['trainai', 'pixelcopy', 'pixelstudio', 'poster'],
+    studio: ['studiosim', 'studiotask'],
     spelling: ['spelltest', 'speechmarks', 'syllables'],
     arcade: ['invaders', 'platformer', 'runner', 'blocks', 'labyrinth'],
     science: ['forces', 'ramp', 'garden', 'windtest', 'pollinate', 'rocklab', 'fossildig'],

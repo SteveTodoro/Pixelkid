@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My First Script</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <script src="../shared/pixel.js"></script>
+  <script src="../shared/pixel-icons.js"></script>
+  <script src="../shared/avatar.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// Game Builder 5/5: a first script (a lava kill brick), and reading and changing a script the AI wrote. The child types
+// the lava script himself in his own game on the computer. The Script Lab (studiosim with code) and the Studio missions
+// (studiotask) are in shared/engine/studio.js.
+
+// the boss: The Bug, a beetle that crawls into scripts and breaks them
+const BUG = Pixel.svg([
+  'k..........k',
+  '.k........k.',
+  '..kkkkkkkk..',
+  '.krrrkkrrrk.',
+  'krrwrrkrwrrk',
+  'krrrrrkrrrrk',
+  'kkrrrrkrrrkk',
+  '.krkrrkrrkr.',
+  'k.kkkkkkkk.k',
+  '.k..k..k..k.',
+], { k: '#1b1b1b', r: '#2e9d48', w: '#ffffff' });
+
+// the lava script he types into Studio (the same one the Script Lab uses)
+const LAVA_CODE = `<pre class="stk-code">local lava = script.Parent
+
+lava.Touched:Connect(function(hit)
+    local humanoid = hit.Parent:FindFirstChild("Humanoid")
+    if humanoid then
+        humanoid.Health = 0
+    end
+end)</pre>`;
+
+const GHOST_WALL = {
+  parts: [
+    { id: 'wall', name: 'Wall', x: 0, y: 4, z: -9, sx: 12, sy: 8, sz: 2, color: 'Bright violet', material: 'Brick', anchored: true, script: true },
+  ],
+};
+const LAVA_PATH = {
+  parts: [
+    { id: 'spawn', name: 'SpawnLocation', spawn: true, x: -14, y: 0.5, z: 0, sx: 6, sy: 1, sz: 6, anchored: true },
+    { id: 'lava', name: 'Lava', x: 0, y: 0.5, z: 0, sx: 6, sy: 1, sz: 10, color: 'Bright red', material: 'CrackedLava', anchored: true, script: true },
+    { id: 'goal', name: 'Finish', goal: true, x: 14, y: 0.5, z: 0, sx: 6, sy: 1, sz: 6, color: 'New Yeller', anchored: true },
+  ],
+};
+const SPINNER = {
+  parts: [
+    { id: 'spinner', name: 'Spinner', x: 0, y: 3, z: 0, sx: 14, sy: 1, sz: 2, color: 'Hot pink', material: 'Neon', anchored: true, script: true },
+    { id: 'pole', name: 'Pole', x: 0, y: 1.25, z: 0, sx: 1, sy: 2.5, sz: 1, color: 'Really black', anchored: true },
+  ],
+};
+
+window.LESSON = {
+  id: 'future-studio-script',
+  subject: 'future',
+  title: 'My First Script',
+  emoji: '📜',
+  home: '../index.html',
+  midBreak: false, // the Arcade stage is the fun break
+  mascot: {
+    name: 'Professor Bolt',
+    sprite: Pixel.sprites.robot,
+    praise: ['Master coder!', 'Brilliant, builder!', 'Critical hit!', 'Script superstar!', 'Epic coding!', 'Bolt-tastic!', 'Nailed it!'],
+    oops: ['Oops! Try again.', 'Not quite – have another go!', 'Hmm, look again!', 'So close! One more try.'],
+  },
+  glossary: {
+    script: { emoji: '📜', def: 'Instructions that tell the game what to do. Studio runs them when you press Play.' },
+    luau: { emoji: '⌨️', def: 'The coding language Roblox scripts are written in. It is based on a language called Lua.' },
+    parent: { emoji: '📦', def: 'The thing another thing sits inside. A script inside the lava has the lava as its parent.' },
+    event: { emoji: '⚡', def: 'Something that happens in the game, like a part being touched. A script can wait for it, then do something.' },
+    loop: { emoji: '🔁', def: 'Code that runs again and again. "while true do" repeats forever.' },
+    bug: { emoji: '🐛', def: 'A mistake in a script that makes the game do the wrong thing. Fixing it is called debugging.' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'My First Script', short: 'Start', minutes: 1,
+      pic: BUG,
+      hello: 'Welcome back, builder! Your obby has jumps, colours and floating platforms. But the lava doesn\'t DO anything yet! Today you write your first real script, and learn to read the scripts the AI writes for you. But watch out for THE BUG!',
+      question: 'When you ask the AI for a spinning part, it writes a script. Could you read that script and change it yourself?',
+      intro: 'Recap, learn what scripts are, watch a short how-to, experiment in the **Script Lab**, then type a **lava script** into your own game and change a script the AI writes. Pick an arcade game, then squash The Bug!',
+      nameLabel: 'Coder name:',
+    },
+
+    {
+      type: 'review', title: 'Last time…', short: 'Recap', minutes: 3,
+      from: { title: 'Build an Obby', emoji: '🏁', url: 'studio-obby.html' },
+      facts: [
+        'Press ⌘D to duplicate a part. The copy appears in the same place, so move it to see both.',
+        'Press ⌘Z to undo a mistake. The Delete key gets rid of a part.',
+        'A player can jump about 7 studs high and about 8 studs across.',
+        'Select lots of parts and press ⌘G to group them into a model.',
+      ],
+      questions: [
+        { type: 'type', q: 'Which letter do you press with ⌘ to duplicate a part?', answer: ['d', 'the d key', 'd key'], placeholder: 'one letter', hint: 'D for Duplicate.' },
+        { type: 'mcq', q: 'Tom\'s gap is 15 studs wide. What happens to the player?', options: ['They fall in', 'They jump it easily', 'They fly over it'], answer: 0 },
+        { type: 'tf', q: 'Grouped parts make a model that moves like one object.', answer: true },
+        { type: 'mcq', q: 'Which shortcut undoes a mistake?', options: ['⌘Z', '⌘D', '⌘G'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'read', title: 'What is a script?', short: 'Read', minutes: 4,
+      say: 'Scripts are what make a game DO things. Let\'s find out how they work!',
+      cards: [
+        {
+          title: 'Instructions for the game', pic: '📜⌨️',
+          text: [
+            'A [[script]] is a list of instructions for the game. Roblox scripts are written in a coding language called [[Luau|luau]].',
+            'Studio follows the instructions when you press Play, one line at a time, from the top.',
+          ],
+          check: { q: 'When does Studio follow the instructions in a script?', options: ['When you press Play', 'When you save the game', 'When you close Studio'], answer: 0 },
+        },
+        {
+          title: 'The part I live in', pic: '🧱📜',
+          text: [
+            'A script can live inside a part. In the script, script.Parent means "the part I am inside".',
+            'So a script inside the lava can change the lava. It is the lava\'s script!',
+          ],
+          check: { type: 'type', q: 'Ali puts a script inside a part called Door. In that script, script.Parent means the…', answer: ['door', 'the door'], placeholder: 'one word', hint: 'Which part is the script inside?' },
+        },
+        {
+          title: 'When it happens, do this', pic: '👟⚡',
+          text: [
+            'Touched is an [[event]]. It happens when something touches the part, like a player\'s foot.',
+            'Connect tells the game: "when that happens, do this". Inside, the lava script sets the player\'s Health to 0.',
+          ],
+          check: { q: 'A player walks onto the lava. Which event happens?', options: ['Touched', 'Saved', 'Deleted'], answer: 0 },
+        },
+        {
+          title: 'Reading the AI\'s code', pic: '🤖📜',
+          text: [
+            'When you ask the AI for something, it writes a script just like this. You can read it!',
+            'Look for the numbers and names. Change one, press Play and see what happens. The AI can make mistakes, so always test.',
+          ],
+          check: { q: 'The AI wrote a script for a spinning part, but it spins too slowly. What is a good first try?', options: ['Make the number in it bigger', 'Delete every line of the code', 'Paint the spinner bright green'], answer: 0 },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'Understand the Code', short: 'Video', minutes: 2,
+      video: { id: 'M6yadTwwmGQ', title: 'Lesson 26: Understand the Code (Roblox Studio for Beginners)', channel: 'Hoda Computer', duration: '1:29' },
+      say: 'A short video explaining a lava script, line by line. Watch, then answer my questions.',
+      clues: [
+        'What does Health = 0 do to the player?',
+        'What is the script\'s parent?',
+        'Do you need to understand every word?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'In the video, what does humanoid.Health = 0 do?', options: ['The player\'s health goes to zero', 'The lava gets bigger and hotter', 'The game saves itself'], answer: 0 },
+        { type: 'type', q: 'The script\'s parent is the part it lives in. Which part was that in the video?', answer: ['lava', 'the lava', 'lava block', 'the lava block'], placeholder: 'one word', hint: 'What were they making?' },
+        { type: 'tf', q: 'He said you must understand every single word of the code.', answer: false, explain: 'He said the most important thing is to understand the main parts.' },
+        { type: 'mcq', q: 'The script says: when the lava is ___, do something.', options: ['touched', 'painted', 'saved'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Script Lab', short: 'Lab', icon: '📜', minutes: 7,
+      rounds: [
+        {
+          game: 'studiosim', title: 'See-through script',
+          intro: 'This script lives inside the purple wall. **Tap the yellow number** to change it, then press **▶ Play** to run the script.',
+          say: 'Change the number, then run it!',
+          tools: ['select', 'play'], panels: ['explorer'],
+          scene: GHOST_WALL,
+          code: { part: 'wall', lines: ['-- this script lives inside the Wall', 'local wall = script.Parent', 'wall.Transparency = {t}'], slots: { t: { options: ['0', '0.5', '1'], prop: 'transparency' } } },
+          missions: [
+            { text: 'Make the wall **half see-through**: change the number to 0.5, then press ▶ Play.', need: ['code:t:0.5'], yes: 'The script changed the wall when you pressed Play!' },
+            {
+              text: 'Press ■ Stop. Now make the wall **completely invisible**, then press ▶ Play.', need: ['code:t:1'], yes: 'A secret invisible wall!',
+              ask: [{ type: 'type', q: 'In the script, what is the name of the property that you changed?', answer: ['transparency'], placeholder: 'one word', hint: 'Look at line 3, before the = sign.' }],
+            },
+          ],
+          finish: '🏆 Your first script worked!',
+          done: 'You changed a part with code!',
+        },
+        {
+          game: 'studiosim', title: 'Lava script',
+          intro: 'This script lives inside the lava. **Tap the yellow number** to change the Health, then press **▶ Play** and watch the player walk across.',
+          say: 'Will the lava get the player?',
+          tools: ['select', 'play'], panels: ['explorer'], avatar: true,
+          scene: LAVA_PATH,
+          caption: '▶ Our test runs',
+          code: {
+            part: 'lava',
+            lines: ['local lava = script.Parent', '', 'lava.Touched:Connect(function(hit)', '    local humanoid = hit.Parent:FindFirstChild("Humanoid")', '    if humanoid then', '        humanoid.Health = {hp}', '    end', 'end)'],
+            slots: { hp: { options: ['100', '0'], kill: true } },
+          },
+          missions: [
+            { text: 'Press **▶ Play** and watch the player walk over the lava.', need: ['goal'], yes: 'They walked right over it! Health 100 means healthy.' },
+            {
+              text: 'Press ■ Stop. Change the Health to **0**, then press ▶ Play.', need: ['code:hp:0', 'died'], yes: 'OUCH! Now the lava really works!',
+              ask: [{ q: 'Why does the lava get the player now?', options: ['Touching it sets Health to 0', 'Red parts are always dangerous', 'The lava is far too heavy'], answer: 0 }],
+            },
+          ],
+          finish: '🏆 You made a working kill brick!',
+          done: 'Lava that really works!',
+        },
+        {
+          game: 'studiosim', title: 'The AI\'s spinner',
+          intro: 'The AI wrote this script for a spinning part. Read it! **Tap the yellow number** to change it, then press **▶ Play**.',
+          say: 'Can you find the number that controls the speed?',
+          tools: ['select', 'play'], panels: ['explorer'],
+          scene: SPINNER,
+          code: {
+            part: 'spinner',
+            lines: ['-- Made by the AI: spin the part round and round', 'local spinner = script.Parent', '', 'while true do', '    spinner.Orientation += Vector3.new(0, {speed}, 0)', '    task.wait()', 'end'],
+            slots: { speed: { options: ['1', '5', '20'], spin: true } },
+          },
+          missions: [
+            { text: 'Press **▶ Play** and watch the spinner.', need: ['play'], yes: 'It spins! The loop keeps turning it a tiny bit, again and again.' },
+            {
+              text: 'Press ■ Stop. Make it spin **super fast**, then press ▶ Play.', need: ['code:speed:20'], yes: 'WHOOSH! You changed the AI\'s code!',
+              ask: [
+                { q: 'Which part of the script controls how fast it spins?', options: ['the number in Vector3.new', 'the words while true do', 'the word spinner'], answer: 0 },
+                { type: 'type', q: 'The words "while true do" repeat forever. Code that repeats is called a…', answer: ['loop', 'a loop'], placeholder: 'one word', hint: 'It goes round and round, like a hoop.' },
+              ],
+            },
+          ],
+          finish: '🏆 You read and changed the AI\'s code!',
+          done: 'You read the AI\'s code like a pro!',
+        },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Studio Mission 5: Lava that works', short: 'Mission', icon: '💻', minutes: 10,
+      rounds: [
+        {
+          game: 'studiotask', title: 'Lava that works',
+          intro: 'Over to the computer! Make **real lava** in your own game with your very first script.',
+          say: 'Time to code for real! Do each step on the computer, then check it here.',
+          steps: [
+            {
+              title: 'Open your game',
+              do: ['Open **Roblox Studio** and open your obby from last time.'],
+              where: 'file',
+            },
+            {
+              title: 'Make a lava part',
+              do: ['Add a **Part** and scale it into a flat strip between two of your jumps.', 'Make it red and pick the **Cracked Lava** material.', 'Click **Anchor**!'],
+              where: ['part', 'color', 'material', 'anchor'],
+              clip: { id: 'a3Jb5CO1iNs', title: 'Add the Lava Block (0:57)' },
+              check: { type: 'type', q: 'What does Material say in Properties now?', answer: ['cracked lava', 'crackedlava'], placeholder: 'the material', hint: 'You picked it from the Material list.' },
+            },
+            {
+              title: 'Name it Lava',
+              do: ['In the **Explorer**, right-click your new part and choose **Rename**.', 'Type **Lava** and press Return.'],
+              where: 'explorer',
+              tip: 'Good names help you find things later. Real builders name their parts!',
+              clip: { id: '9KI5onlLxhI', title: 'Add More Lava! (5:35)' },
+              check: { type: 'type', q: 'What is your lava part called in the Explorer now?', answer: ['lava'], placeholder: 'one word', hint: 'Read its name in the Explorer list.' },
+            },
+            {
+              title: 'Add a script',
+              do: ['In the Explorer, right-click **Lava**, choose **Insert Object**, type **Script** and pick it.', 'A script opens with one line already in it.'],
+              where: 'explorer',
+              clip: { id: 'Dj9f5Ivi-S8', title: 'Add a Script to the Block (1:12)' },
+              check: { type: 'type', q: 'Look at the line in the new script. What words are inside the brackets and quotes?', answer: ['hello world', 'hello world!'], placeholder: 'two words', hint: 'The line starts with print.' },
+            },
+            {
+              title: 'Type the lava script',
+              pic: LAVA_CODE,
+              do: ['Delete the print line.', 'Type this script, carefully. Studio suggests words as you type: press **Tab** to use one.', 'Press **▶ Play** and touch your lava!'],
+              keys: ['Tab'],
+              grownup: 'Help with the symbols: the colon, the brackets and the quote marks. Each line goes in exactly as shown (the spaces at the start don\'t matter). If it doesn\'t work, check the Output window for a red message.',
+              where: ['viewport', 'play'],
+              check: { q: 'What happened when your player touched the lava?', options: ['They broke apart and came back', 'They floated up into the sky', 'Nothing at all happened'], answer: 0 },
+            },
+            {
+              title: 'Read the AI\'s code',
+              do: ['Add a long, thin **Part** and **Anchor** it.', 'With a grown-up, open the **Assistant** (top right) and ask: "Make this part spin slowly."', 'Open the script it made. Find the number that controls the speed, make it **bigger**, and press **▶ Play**.'],
+              where: ['assistant', 'explorer'],
+              grownup: 'The Assistant can write the code in different ways, so help him find the number. If its script doesn\'t work, that\'s a bug: read the Output window together, or ask the Assistant to fix it.',
+              check: { q: 'What happened when you made the number bigger?', options: ['It spun faster', 'It turned purple', 'It vanished'], answer: 0 },
+            },
+            {
+              title: 'Save your game',
+              do: ['Click **File**, then **Save to Roblox**.'],
+              where: 'file',
+            },
+          ],
+          finish: 'Your obby has REAL lava, and you changed the AI\'s code yourself. You are a real game maker now!',
+          done: 'MISSION COMPLETE! You wrote your first script!',
+        },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Coder Arcade: pick a game!', short: 'Arcade', icon: '🕹️', minutes: 4,
+      pick: { title: '🕹️ Pick your arcade game!', say: 'Your choice! Which game do you want to play? Win one to carry on, or play them all!' },
+      rounds: [
+        {
+          game: 'invaders', title: 'Bug Invaders', emoji: '🚀', blurb: 'Shoot the true facts about scripts.',
+          intro: 'Read each mission at the top of the screen, then shoot only the right aliens!',
+          say: 'Tap above an alien to fly there and fire!',
+          waves: [
+            {
+              prompt: 'Shoot the TRUE script facts!',
+              items: [
+                { label: 'Health = 0 is out', ok: true }, { label: 'scripts run on Play', ok: true }, { label: 'Touched is an event', ok: true }, { label: 'a loop repeats', ok: true },
+                { label: 'scripts run on Save', ok: false, why: 'Scripts run when you press Play.' },
+                { label: 'Health = 0 is full', ok: false, why: 'Health 0 means the player is out. 100 is full health.' },
+                { label: 'loops run once', ok: false, why: 'A loop repeats, again and again.' },
+              ],
+            },
+            {
+              prompt: 'Shoot the words you find in Luau code!',
+              items: [
+                { label: 'local', ok: true }, { label: 'function', ok: true }, { label: 'end', ok: true }, { label: 'if', ok: true },
+                { label: 'banana', ok: false, why: 'Banana is not a Luau word!' },
+                { label: 'giggle', ok: false, why: 'Giggle is not a Luau word!' },
+                { label: 'pancake', ok: false, why: 'Pancake is not a Luau word!' },
+              ],
+            },
+          ],
+        },
+        {
+          game: 'steadyhand', title: 'Steady Hand', emoji: '✏️', blurb: 'Guide your pencil along the wiggly path – don\'t touch the sides!',
+          intro: 'Press on the green dot and follow the wiggly path all the way to the 🏁, carefully! Pick Easy, Medium or Hard.',
+          say: 'Steady hands make neat code! Don\'t touch the sides!',
+          done: 'What a steady hand! Perfect for typing code.',
+        },
+        {
+          game: 'sequence', title: 'Note Block Echo', emoji: '🎵', blurb: 'Watch the note blocks light up, then play the tune back.',
+          blocks: 4, start: 2, target: 6,
+          intro: 'Watch and listen, then **play the tune back**. It grows one note longer each time!',
+          say: 'Eyes and ears on the note blocks!',
+          done: 'What a memory for music!',
+        },
+        {
+          game: 'order', title: 'Script Builder', emoji: '📜', blurb: 'Put the lines of the lava script in order.',
+          intro: 'The Bug muddled up the lines of the lava script! Put them back in order, from the first line to the last.',
+          say: 'What does the script need to know first?',
+          ends: ['FIRST', 'LAST'],
+          items: ['local lava = script.Parent', 'lava.Touched:Connect(function(hit)', 'local humanoid = hit.Parent:FindFirstChild("Humanoid")', 'if humanoid then', 'humanoid.Health = 0'],
+          hint: 'First the script finds its lava. Then it waits for a touch. It must find the humanoid before it can change its Health.',
+        },
+      ],
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: The Bug', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      say: 'THE BUG has crawled into everyone\'s scripts and broken them! Every right answer squashes a bug. Go, {name}!',
+      boss: {
+        name: 'The Bug', sprite: BUG, attack: ['🐛'],
+        lines: {
+          prefight: ['Skitter skitter! I crawled into your scripts! Your lava is just a red floor now, and you can\'t read code, can you?', 'I can! script.Parent is the lava, Touched is when you step on it, and Health = 0 gets you!', 'Bzzz! You can READ it?! Then I\'ll chew up every line you write!'],
+          intro: 'Skitter skitter! I am THE BUG! I break every script I find!',
+          hurt: ['Squish! You debugged me!', 'Ow! My legs!', 'You fixed a line!', 'Stop reading the code!'],
+          taunt: ['Skitter! Wrong!', 'Error on line 1!', 'Crunch! Broken script!', 'Buggy buggy!'],
+          angry: 'NOW I\'M A SUPER BUG! ERROR! ERROR!',
+          dodge: 'Here come my baby bugs! Dodge them!',
+          miss: 'You dodged every bug?! Who debugged you?!',
+          last: 'Script… is… working… nooo…',
+          defeat: 'Squish… fine. Your scripts all work. I\'ll go and live in a flowerpot instead.',
+          win: 'Skitter skitter! Every script is broken forever!',
+          stunned: 'Error… error… does not compute…',
+          beg: ['Wait! I\'ll fix every line I chewed!', 'Please! I\'m just a little bug!', 'Don\'t debug me! I\'ll be a ladybird!'],
+        },
+      },
+      bonus: {
+        title: '⭐ Bonus quest (for a grown-up to help with)',
+        text: 'Copy your Lava part with ⌘D (the script comes too!) and make a whole lava maze. Then ask the Assistant for a part that changes colour every second, and find the number that sets how long it waits. Remember: File → Save to Roblox.',
+      },
+      questions: [
+        { type: 'type', q: 'Roblox scripts are written in a coding language called…', answer: ['luau', 'lua'], placeholder: 'one word', hint: 'It sounds like "loo-ow".' },
+        { type: 'mcq', q: 'A script is inside a part called Bridge. What does script.Parent mean?', options: ['the Bridge', 'the player', 'the SpawnLocation'], answer: 0 },
+        { type: 'type', q: 'Which event happens when a player steps on a part?', answer: ['touched', 'touch'], placeholder: 'one word', hint: 'It happens when something touches it.' },
+        { type: 'tf', q: 'Setting a player\'s Health to 0 makes them fall to bits and start again.', answer: true },
+        { type: 'mcq', q: 'When does Studio run your scripts?', options: ['when you press Play', 'when you press ⌘D', 'when you rename a part'], answer: 0 },
+        { type: 'gap', q: 'Code that repeats again and again is called a ___.', options: ['loop', 'part', 'model'], answer: 0 },
+        { type: 'mcq', q: 'The AI made a spinner, but it spins too fast. What do you change?', options: ['the speed number', 'the name local', 'the word end'], answer: 0 },
+        { type: 'type', q: 'A mistake in a script is called a…', answer: ['bug', 'a bug'], placeholder: 'one word', hint: 'It is also a tiny creepy-crawly!' },
+        { type: 'oddone', q: 'Which one is NOT a word in the lava script?', items: ['local', 'Touched', 'Health', 'Anchor'], answer: 3, why: 'Why is Anchor the odd one out?', reasons: ['It is a button in Studio, not in the lava script', 'It is the longest word', 'It starts with a capital letter'], reason: 0 },
+        { type: 'mcq', q: 'The AI wrote you a script. What should you always do next?', options: ['Press Play and test it', 'Delete the whole script', 'Never look at it again'], answer: 0 },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>

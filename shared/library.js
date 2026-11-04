@@ -67,6 +67,12 @@ const LIBRARY = {
       { id: 'future-ai', title: 'How Does AI Work?', emoji: '🤖', unit: 'AI & Computers', file: 'future/ai.html' },
       { id: 'future-pixel-art', title: 'Pixel Art Studio', emoji: '🎨', unit: 'Creative Tech', file: 'future/pixel-art.html' },
       { id: 'future-poster', title: 'Design a Poster', emoji: '🖼️', unit: 'Creative Tech', file: 'future/poster.html' },
+      // Game Builder: a Roblox Studio tutorial series, done with Studio open on the computer (one game that grows each lesson)
+      { id: 'future-studio-explore', title: 'Studio Explorer', emoji: '🧱', unit: 'Game Builder', file: 'future/studio-explore.html' },
+      { id: 'future-studio-tools', title: 'Move, Scale, Rotate', emoji: '📐', unit: 'Game Builder', file: 'future/studio-tools.html' },
+      { id: 'future-studio-paint', title: 'Colour, Material & Anchor', emoji: '⚓', unit: 'Game Builder', file: 'future/studio-paint.html' },
+      { id: 'future-studio-obby', title: 'Build an Obby', emoji: '🏁', unit: 'Game Builder', file: 'future/studio-obby.html' },
+      { id: 'future-studio-script', title: 'My First Script', emoji: '📜', unit: 'Game Builder', file: 'future/studio-script.html' },
       { title: 'Video Editing: Tell a Story', emoji: '🎬', unit: 'Creative Tech' },
       { title: 'Think Like a Coder', emoji: '🧩', unit: 'Coding' },
       { title: 'Money Smarts', emoji: '🪙', unit: 'Life Skills' },

@@ -18,7 +18,7 @@ const LANDMARK = {
   // the Word Kingdom's landmarks are places: the Great Library, the town fountain, a scribe's cottage, Dragon Mountain,
   // the Enchanted Wood, the poets' garden, the map room and the wise owl
   'Spelling & Vocabulary': '🏛️', Grammar: '⛲', Punctuation: '🏡', 'Myths & Legends': '⛰️', Fiction: '🌳', Poetry: '🌷', 'Non-fiction': '🗺️', 'Reading Skills': '🦉',
-  'AI & Computers': '🖥️', 'Creative Tech': '📺', 'Thinking Online': '🔭', Coding: '🤖', 'Life Skills': '🏡',
+  'AI & Computers': '🖥️', 'Creative Tech': '📺', 'Game Builder': '🧱', 'Thinking Online': '🔭', Coding: '🤖', 'Life Skills': '🏡',
   'Amazing Animals': '🐳', 'Your Amazing Body': '🧠', 'Incredible Inventions': '💡', 'Ancient Wonders': '🏛️', 'Wild Planet': '🗻',
   'Super Memory': '🏯', 'Focus & Calm': '🎋',
   Asia: '🐘', 'Asia – home!': '🏠', Europe: '🏰', 'North America': '🗽', Africa: '🦒', 'South America': '🌴', Oceania: '🦘',

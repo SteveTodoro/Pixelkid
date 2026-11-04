@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Move, Scale, Rotate</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <script src="../shared/pixel.js"></script>
+  <script src="../shared/pixel-icons.js"></script>
+  <script src="../shared/avatar.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// Game Builder 2/5: the Move, Scale and Rotate tools. The child builds a start platform, stairs and a ramp in his own
+// game on the computer. The pretend studio (studiosim) and the Studio missions (studiotask) are in shared/engine/studio.js.
+
+// the boss: Sir Wonkalot, a crooked block knight who knocks every build wonky
+const WONKALOT = Pixel.svg([
+  '....yy......',
+  '...kkkk.....',
+  '..kssssk....',
+  '.kswkswk....',
+  '.kssssskk...',
+  '..kkkkkssk..',
+  '.krrrrrkssk.',
+  'krrrrrrrkkg.',
+  'krrkrrkrk.g.',
+  '.kk.kk.kk...',
+], { k: '#1b1b1b', s: '#c6c6c6', w: '#ffffff', r: '#c4281c', y: '#ffd43b', g: '#7a7a7a' });
+
+// any Orientation a turned ramp can show (multiples of 15 degrees, not 0)
+const TURNED = [];
+for (let a = -345; a <= 360; a += 15) if (a) TURNED.push(String(a));
+
+const BUILD_LAB = {
+  parts: [
+    { id: 'box', name: 'Crate', x: 0, y: 0.5, z: 6, sx: 4, sy: 1, sz: 2, color: 'Bright orange', material: 'Wood', anchored: true },
+    { id: 'plat', name: 'Platform', x: -10, y: 0.5, z: -6, sx: 4, sy: 1, sz: 4, color: 'Lime green', anchored: true },
+    { id: 'wall', name: 'Wall', x: 10, y: 0.5, z: -8, sx: 6, sy: 1, sz: 1, color: 'Bright red', material: 'Brick', anchored: true },
+    { id: 'ramp', name: 'Ramp', shape: 'wedge', x: 12, y: 1, z: 6, sx: 4, sy: 2, sz: 4, color: 'Bright blue', anchored: true },
+  ],
+};
+
+window.LESSON = {
+  id: 'future-studio-tools',
+  subject: 'future',
+  title: 'Move, Scale, Rotate',
+  emoji: '📐',
+  home: '../index.html',
+  midBreak: false, // the Arcade stage is the fun break
+  mascot: {
+    name: 'Professor Bolt',
+    sprite: Pixel.sprites.robot,
+    praise: ['Master builder!', 'Brilliant, builder!', 'Critical hit!', 'Studio superstar!', 'Epic building!', 'Bolt-tastic!', 'Nailed it!'],
+    oops: ['Oops! Try again.', 'Not quite – have another go!', 'Hmm, look again!', 'So close! One more try.'],
+  },
+  glossary: {
+    move: { emoji: '✥', def: 'The Move tool slides a part with arrows: red goes along X, green goes up and down (Y), blue goes along Z.' },
+    scale: { emoji: '⤢', def: 'The Scale tool makes a part bigger or smaller. Drag a ball to stretch that side.' },
+    rotate: { emoji: '🔄', def: 'The Rotate tool turns a part. Drag a ring to spin it round.' },
+    degrees: { emoji: '📐', def: 'How far something turns. A quarter turn is 90 degrees, a half turn is 180, a whole turn is 360.' },
+    axis: { emoji: '📏', def: 'One of the three directions in a 3D world: X (side to side), Y (up and down) and Z (forwards and back).' },
+    wedge: { emoji: '📐', def: 'A part shaped like a ramp or a slice of cheese.' },
+    stud: { emoji: '📏', def: 'The way Studio measures size and distance. A player is about 5 studs tall.' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'Move, Scale, Rotate', short: 'Start', minutes: 1,
+      pic: WONKALOT,
+      hello: 'Welcome back, builder! Your game has its first part. Today you learn the three tools every builder uses all the time. But oh no… SIR WONKALOT is knocking everyone\'s builds wonky!',
+      question: 'How do builders put a part in exactly the right place, at exactly the right size?',
+      intro: 'Recap, learn the three building tools, watch a short how-to, train in the **pretend studio**, then build a **start platform, stairs and a ramp** in your own game on the computer. Pick an arcade game, then knock Sir Wonkalot over!',
+      nameLabel: 'Builder name:',
+    },
+
+    {
+      type: 'review', title: 'Last time…', short: 'Recap', minutes: 3,
+      from: { title: 'Studio Explorer', emoji: '🧱', url: 'studio-explore.html' },
+      facts: [
+        'Roblox Studio is the app for making games. Every game is built from parts.',
+        'W, A, S and D fly the camera. E flies up and Q flies down. Hold the right mouse button to look around.',
+        'Select a part and press F to fly the camera straight to it.',
+        'The Explorer lists everything in your game. Properties shows the details of what you selected.',
+      ],
+      questions: [
+        { type: 'type', q: 'You click a part in the Explorer. Which key flies the camera to it?', answer: ['f', 'the f key', 'f key'], placeholder: 'one letter', hint: 'It stands for Focus.' },
+        { type: 'mcq', q: 'Zara wants to know what colour her part is. Where does she look?', options: ['in Properties', 'in the File menu', 'in the Toolbox'], answer: 0 },
+        { type: 'tf', q: 'Pressing Play lets you test your own game.', answer: true },
+        { type: 'mcq', q: 'Which key flies the camera up?', options: ['E', 'Q', 'P'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'read', title: 'The three building tools', short: 'Read', minutes: 4,
+      say: 'These three tools are the most important buttons in the whole of Studio!',
+      cards: [
+        {
+          title: 'Move: arrows', pic: '⬆️➡️',
+          text: [
+            'Pick the [[Move|move]] tool and arrows appear on your part. Drag an arrow to slide the part that way.',
+            'The red arrows go side to side (X), the green arrows go up and down (Y) and the blue arrows go forwards and back (Z).',
+          ],
+          check: { type: 'type', q: 'Kai wants to lift his platform up into the sky. What colour arrow does he drag?', answer: ['green', 'the green one', 'green arrow', 'the green arrow'], placeholder: 'a colour', hint: 'Which colour goes up and down?' },
+        },
+        {
+          title: 'Scale: balls', pic: '⬜➡️⬛',
+          text: [
+            'The [[Scale|scale]] tool puts a ball on each side of your part. Drag a ball to stretch that side out, or push it in to shrink it.',
+            'Sizes are measured in [[studs|stud]]. Watch the Size in Properties change as you drag.',
+          ],
+          check: { q: 'Ella\'s wall is too short for anyone to climb over. What should she do?', options: ['Scale it with a green ball', 'Move it with a red arrow', 'Rotate it with a ring'], answer: 0 },
+        },
+        {
+          title: 'Rotate: rings', pic: '🔄',
+          text: [
+            'The [[Rotate|rotate]] tool puts rings round your part. Drag a ring to turn the part round.',
+            'Turning is measured in [[degrees]]. A quarter turn is 90 degrees and a half turn is 180 degrees.',
+          ],
+          check: { type: 'type', q: 'Max\'s ramp faces the wrong way, so he turns it right round. How many degrees is a half turn?', answer: ['180', '180 degrees'], placeholder: 'a number', hint: 'A quarter turn is 90. A half turn is two quarters.' },
+        },
+        {
+          title: 'Number shortcuts', pic: '1️⃣2️⃣3️⃣4️⃣',
+          text: [
+            'In Studio you can click the tool buttons at the top, or press a number key: 1 for Select, 2 for Move, 3 for Scale and 4 for Rotate.',
+            'Hold Shift while you drag to make tiny, careful changes.',
+          ],
+          check: { q: 'Which number key picks the Rotate tool?', options: ['4', '1', '9'], answer: 0 },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'Select, Move, Scale & Rotate', short: 'Video', minutes: 7,
+      video: { id: 'AJ6eexy1-Qo', title: 'Roblox Studio Beginner Tutorial | Select, Move, Scale, Rotate & Transform Tools Explained', channel: 'BloxCreators', duration: '6:26' },
+      say: 'A how-to showing all the tools. Watch out for the colours!',
+      clues: [
+        'Which colour arrow moves the block up and down?',
+        'What appears when you pick Scale?',
+        'What are the numbers that show up when you rotate?',
+        'What are the shortcut keys?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'In the video, which colour arrow moved the block up and down?', options: ['green', 'red', 'blue'], answer: 0 },
+        { type: 'type', q: 'When he picked Scale, three coloured… appeared. (Round things!)', answer: ['spheres', 'sphere', 'balls', 'ball', 'circles'], placeholder: 'one word', hint: 'They are round, like little balls.' },
+        { type: 'mcq', q: 'When he rotated the block, numbers like 45, 60 and 90 popped up. What were they?', options: ['degrees', 'gems', 'studs'], answer: 0 },
+        { type: 'tf', q: 'You can press number keys on the keyboard instead of clicking the tool buttons.', answer: true },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Build Lab', short: 'Train', icon: '📐', minutes: 6,
+      rounds: [
+        {
+          game: 'studiosim', title: 'Build Lab',
+          intro: 'Tap a part to select it, pick a tool, then **drag the arrows, balls or ring**. The yellow ghost shows where it should go.',
+          say: 'Pick the right tool for each job!',
+          tools: ['select', 'move', 'scale', 'rotate'], panels: ['properties'], rotSnap: 45,
+          scene: BUILD_LAB,
+          missions: [
+            { text: 'The crate needs to go UP onto the ghost. Use **Move** and drag the arrow that goes up.', match: { part: 'box', to: { y: 4.5 } }, select: 'box', tool: 'move', yes: 'Up it goes! Green is up and down.' },
+            { text: 'Now slide the crate sideways onto the ghost with the **red** arrow.', match: { part: 'box', to: { x: 8 } }, select: 'box', tool: 'move', yes: 'Red slides it side to side!' },
+            {
+              text: 'Make the green platform LONGER. Use **Scale** and drag a red ball until Size says 12 at the start.', match: { part: 'plat', to: { sx: 12 } }, showGhost: false, select: 'plat', tool: 'scale', yes: 'A long platform, ready to run along!',
+              ask: [{ type: 'type', q: 'Look at Properties. What does the Size of the platform say now?', answer: ['12 1 4', '12, 1, 4'], placeholder: 'like 4, 1, 2', hint: 'Read all three numbers.' }],
+            },
+            { text: 'The red wall is too low. Make it **6 studs tall** with Scale (watch the middle number of Size).', match: { part: 'wall', to: { sy: 6 } }, showGhost: false, select: 'wall', tool: 'scale', yes: 'Now THAT is a wall!' },
+            {
+              text: 'The blue ramp faces the wrong way. Use **Rotate**, drag the ring, and turn it right round to match the ghost.', match: { part: 'ramp', to: { rot: 180 } }, select: 'ramp', tool: 'rotate', yes: 'Spun right round!',
+              ask: [{ type: 'mcq', q: 'How far did you turn the ramp?', options: ['180 degrees (a half turn)', '90 degrees (a quarter turn)', '360 degrees (a whole turn)'], answer: 0 }],
+            },
+          ],
+          finish: '🏆 Build Lab complete! You can Move, Scale and Rotate like a pro.',
+          done: 'Build Lab complete!',
+        },
+      ],
+    },
+
+    {
+      type: 'teach', title: 'Teach Mini Bolt: building tools', short: 'Teach', minutes: 3,
+      say: 'Mini Bolt wants to build an obby, but he has muddled up his tools! Fix his mistakes.',
+      robot: { name: 'Mini Bolt', emoji: '🤖' },
+      intro: 'Beep boop! I am Mini Bolt, and I am going to build the best obby EVER. Here are my building notes!',
+      lines: [
+        { text: 'To make a part taller, I drag a green ball with the Rotate tool.', wrong: 'Rotate', fix: 'Scale', options: ['Select', 'Play'], hint: 'Which tool has the balls?', why: 'The Scale tool has the balls. The green ones make a part taller or shorter.' },
+        { text: 'The blue arrow moves a part up and down.', wrong: 'blue', fix: 'green', options: ['pink', 'gold'], hint: 'Which colour goes up?', why: 'Green moves a part up and down. Red goes side to side and blue goes forwards and back.' },
+        { text: 'To turn my ramp the other way round, I give it a half turn of 180 degrees.', ok: true, why: 'Right! A half turn is 180 degrees.' },
+        { text: 'A quarter turn is 45 degrees.', wrongAt: 4, wrong: '45', fix: '90', options: ['10', '360'], hint: 'Four quarter turns make a whole turn of 360.', why: 'A quarter turn is 90 degrees. Four of them make 360, a whole turn.' },
+        { text: 'Studio measures how big things are in metres.', wrong: 'metres', fix: 'studs', options: ['inches', 'kilograms'], hint: 'A player is about 5 of these tall.', why: 'Studio measures in studs. A player is about 5 studs tall.' },
+      ],
+      outro: 'Beep! My notes are fixed: green balls make things taller, green arrows go up, a half turn is 180 and a quarter turn is 90, and Studio measures in studs!',
+    },
+
+    {
+      type: 'game', title: 'Studio Mission 2: Stairs and a ramp', short: 'Mission', icon: '💻', minutes: 9,
+      rounds: [
+        {
+          game: 'studiotask', title: 'Stairs and a ramp',
+          intro: 'Over to the computer! Open **your own game** and build the start of your obby.',
+          say: 'Time to build for real! Do each step on the computer, then check it here.',
+          steps: [
+            {
+              title: 'Open your game',
+              do: ['Open **Roblox Studio**.', 'Find the game you saved last time on the start screen, and open it.'],
+              grownup: 'Studio lists recent games on its start screen. File → Open from Roblox also finds it.',
+              where: 'file',
+            },
+            {
+              title: 'Make a start platform',
+              do: ['Click your part from last time.', 'Press **3** (or click **Scale**). Drag the red and blue balls to make it big and flat.', 'Or click **Size** in Properties and type **12, 1, 12**.'],
+              keys: ['3'],
+              where: ['tools', 'properties'],
+              tip: 'Hold Shift while you drag for tiny, careful changes.',
+              clip: { id: 'oS67GpoXwMg', title: 'Make it Bigger (1:51)' },
+              check: { type: 'type', q: 'What does the Size of your platform say now?', answer: ['12 1 12', '12, 1, 12'], placeholder: 'like 4, 1, 2', hint: 'Look in Properties, in the Transform section.' },
+            },
+            {
+              title: 'Put it in place',
+              do: ['Press **2** (or click **Move**).', 'Drag the red and blue arrows to put your platform next to the SpawnLocation.'],
+              keys: ['2'],
+              where: ['tools', 'viewport'],
+              clip: { id: 'lKo_1w7vFfc', title: 'Move the Block (2:21)' },
+              check: { type: 'type', q: 'Look at Position in Properties. What is the middle number? (It says how high the platform is.)', answer: ['0.5'], range: [0, 60], placeholder: 'a number', hint: 'Position has three numbers. Read the middle one.' },
+            },
+            {
+              title: 'Build three steps',
+              do: ['Click **Part** to add a new block. Scale it with the green ball until it is **2 studs** tall.', 'Add two more steps: one **3 studs** tall and one **4 studs** tall.', 'Move them into a row, from short to tall, like stairs. Keep them standing on the floor.'],
+              where: ['part', 'tools'],
+              grownup: 'Blocks standing on the floor stay put. Floating blocks would fall when you press Play; the next lesson fixes that with Anchor.',
+              clip: { id: 'ZrL51gKoK54', title: 'Make a Stair (2:43)' },
+              check: { type: 'type', q: 'Click your tallest step. What is the middle number of its Size?', answer: ['4'], range: [3, 40], placeholder: 'a number', hint: 'The middle number of Size is how tall it is.' },
+            },
+            {
+              title: 'Add a ramp',
+              do: ['Click the little arrow on the **Part** button and pick **Wedge**.', 'Press **4** (or click **Rotate**) and drag a ring to turn the ramp so it leads up onto your platform.'],
+              keys: ['4'],
+              where: ['part', 'tools'],
+              tip: 'If it tips over sideways, press ⌘Z to undo, and try a different ring.',
+              clip: { id: 'P4xh27r0odY', title: 'Rotation (4:03)' },
+              check: { type: 'type', q: 'Click your ramp. What is the middle number of its Orientation in Properties?', answer: ['90'].concat(TURNED), placeholder: 'a number', hint: 'Orientation is under Transform. Read the middle number.', explain: 'That number says how far you turned it round, in degrees.' },
+            },
+            {
+              title: 'Test it!',
+              do: ['Click **▶ Play**.', 'Run up your stairs and your ramp onto the platform.', 'Click **Stop**, and fix anything that is too tall to jump.'],
+              where: 'play',
+              check: { type: 'type', q: 'How many steps did you build?', answer: ['3', 'three'], placeholder: 'a number', hint: 'Count them!' },
+            },
+            {
+              title: 'Save your game',
+              do: ['Click **File**, then **Save to Roblox**.'],
+              where: 'file',
+            },
+          ],
+          finish: 'Your obby has a start platform, stairs and a ramp! Next time: colours, materials and floating platforms.',
+          done: 'MISSION COMPLETE! You built stairs and a ramp in the real Studio!',
+        },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Builder Arcade: pick a game!', short: 'Arcade', icon: '🕹️', minutes: 4,
+      pick: { title: '🕹️ Pick your arcade game!', say: 'Your choice! Which game do you want to play? Win one to carry on, or play them all!' },
+      rounds: [
+        {
+          game: 'invaders', title: 'Tool Invaders', emoji: '🚀', blurb: 'Shoot the jobs for each building tool.',
+          intro: 'Read each mission at the top of the screen, then shoot only the right aliens!',
+          say: 'Tap above an alien to fly there and fire!',
+          waves: [
+            {
+              prompt: 'Shoot the jobs for the SCALE tool!',
+              items: [
+                { label: 'make it taller', ok: true }, { label: 'make it wider', ok: true }, { label: 'make it longer', ok: true }, { label: 'shrink it', ok: true },
+                { label: 'turn it round', ok: false, why: 'Turning is a job for the Rotate tool.' },
+                { label: 'lift it up', ok: false, why: 'Lifting is a job for the Move tool.' },
+                { label: 'slide it left', ok: false, why: 'Sliding is a job for the Move tool.' },
+              ],
+            },
+            {
+              prompt: 'Shoot the RIGHT facts about the tool colours!',
+              items: [
+                { label: 'green = up', ok: true }, { label: 'red = X', ok: true }, { label: 'blue = Z', ok: true }, { label: 'quarter = 90°', ok: true },
+                { label: 'blue = up', ok: false, why: 'Green is up and down. Blue goes forwards and back.' },
+                { label: 'half turn = 90°', ok: false, why: 'A half turn is 180 degrees.' },
+                { label: 'red = up', ok: false, why: 'Red goes side to side, along X.' },
+              ],
+            },
+          ],
+        },
+        {
+          game: 'steadyhand', title: 'Steady Hand', emoji: '✏️', blurb: 'Guide your pencil along the wiggly path – don\'t touch the sides!',
+          intro: 'Press on the green dot and follow the wiggly path all the way to the 🏁, carefully! Pick Easy, Medium or Hard.',
+          say: 'Steady hands make neat builds! Don\'t touch the sides!',
+          done: 'What a steady hand! Perfect for dragging arrows.',
+        },
+        {
+          game: 'sequence', title: 'Note Block Echo', emoji: '🎵', blurb: 'Watch the note blocks light up, then play the tune back.',
+          blocks: 4, start: 2, target: 6,
+          intro: 'Watch and listen, then **play the tune back**. It grows one note longer each time!',
+          say: 'Eyes and ears on the note blocks!',
+          done: 'What a memory for music!',
+        },
+        {
+          game: 'sort', title: 'Which Tool?', emoji: '🧰', blurb: 'Sort the building jobs into the right tool.',
+          intro: 'Which tool does each job: **Move**, **Scale** or **Rotate**?',
+          say: 'Arrows, balls or rings?',
+          buckets: [
+            { id: 'move', label: 'Move', emoji: '⬆️' },
+            { id: 'scale', label: 'Scale', emoji: '📏' },
+            { id: 'rotate', label: 'Rotate', emoji: '🔄' },
+          ],
+          items: [
+            { label: 'lift a coin into the air', emoji: '🪙', bucket: 'move', hint: 'Lifting means sliding it up: arrows!' },
+            { label: 'put a tree by the path', emoji: '🌳', bucket: 'move', hint: 'It changes where it is, not its size.' },
+            { label: 'make a giant wall', emoji: '🧱', bucket: 'scale', hint: 'Bigger means stretching it: balls!' },
+            { label: 'make a tiny step', emoji: '📦', bucket: 'scale', hint: 'Smaller means shrinking it: balls!' },
+            { label: 'turn a ramp round', emoji: '📐', bucket: 'rotate', hint: 'Turning means rings!' },
+            { label: 'spin a sign to face you', emoji: '🪧', bucket: 'rotate', hint: 'Facing a new way means turning it.' },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: Sir Wonkalot', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      say: 'SIR WONKALOT is knocking every build wonky: walls sideways, ramps backwards! Every right answer straightens one out. Go, {name}!',
+      boss: {
+        name: 'Sir Wonkalot', sprite: WONKALOT, attack: ['📐'],
+        lines: {
+          prefight: ['Huzzah! I am Sir Wonkalot, and I have knocked your ramp the wrong way round! Ha! You\'ll never fix it!', 'I\'ll just grab the Rotate tool and give it a half turn: 180 degrees!', 'Har! Then I shall make everything else wonky instead. EN GARDE!'],
+          intro: 'Huzzah! I am SIR WONKALOT! Nothing shall ever be straight again!',
+          hurt: ['Ouch! My armour is bent!', 'You straightened my wall!', 'Fie! A perfect quarter turn!', 'Argh! My ramp faces the right way!'],
+          taunt: ['Wonky! Ha!', 'Har har! Upside down!', 'That answer was crooked!', 'Tilted you!'],
+          angry: 'NOW I\'M WONKY WITH RAGE! CHARGE!',
+          dodge: 'Behold my flying wedges! Dodge them, if you can!',
+          miss: 'You dodged every wedge?! Most unwonky!',
+          last: 'I am… tipping… over…',
+          defeat: 'Clang! Fine… everything is straight and tidy. I shall go and wonk a jelly instead.',
+          win: 'Huzzah! Every ramp is backwards forever!',
+          stunned: 'Which way is up? Which way is DOWN?',
+          beg: ['Mercy! I\'ll turn everything back 180 degrees!', 'Spare me! I\'m only a little bit wonky!', 'Not the Scale tool! Don\'t shrink me!'],
+        },
+      },
+      bonus: {
+        title: '⭐ Bonus quest (for a grown-up to help with)',
+        text: 'In your game, build a tall tower with the Scale tool and a ramp that spirals up next to it. Can you use quarter turns (90 degrees) to make a staircase that goes round a corner? Remember: File → Save to Roblox.',
+      },
+      questions: [
+        { type: 'type', q: 'Which tool has arrows that slide a part around?', answer: ['move', 'the move tool', 'move tool'], placeholder: 'one word', hint: 'It is number 2.' },
+        { type: 'mcq', q: 'You drag the green arrow. Which way does the part go?', options: ['up or down', 'round and round', 'side to side'], answer: 0 },
+        { type: 'type', q: 'How many degrees is a quarter turn?', answer: ['90', '90 degrees', 'ninety'], placeholder: 'a number', hint: 'Four of them make a whole turn of 360.' },
+        { type: 'tf', q: 'The Scale tool changes how big a part is.', answer: true },
+        { type: 'mcq', q: 'Which number key picks the Scale tool?', options: ['3', '7', '0'], answer: 0 },
+        { type: 'gap', q: 'The Rotate tool puts ___ round your part.', options: ['rings', 'arrows', 'stickers'], answer: 0 },
+        { type: 'type', q: 'Holding which key while you drag makes tiny, careful changes?', answer: ['shift', 'the shift key', 'shift key'], placeholder: 'one word', hint: 'It is the key you hold for capital letters.' },
+        { type: 'mcq', q: 'Your platform is 4 studs long and you need it to be 12. What do you do?', options: ['Scale it, or type 12 in Size', 'Rotate it by a quarter turn', 'Press Play three times fast'], answer: 0 },
+        { type: 'oddone', q: 'Which one is NOT a building tool?', items: ['✥ Move', '📏 Scale', '🔄 Rotate', '▶️ Play'], answer: 3, why: 'Why is Play the odd one out?', reasons: ['Play tests your game, it does not change parts', 'Play is the only red button', 'Play makes parts bigger'], reason: 0 },
+        { type: 'mcq', q: 'Which arrows slide a part forwards and back, along Z?', options: ['the blue ones', 'the red ones', 'the green ones'], answer: 0 },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>

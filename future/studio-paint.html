@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Colour, Material &amp; Anchor</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <script src="../shared/pixel.js"></script>
+  <script src="../shared/pixel-icons.js"></script>
+  <script src="../shared/avatar.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// Game Builder 3/5: colour, material, transparency and Anchored (gravity!). The child paints his obby and anchors a
+// floating platform in his own game on the computer. studiosim and studiotask are in shared/engine/studio.js.
+
+// the boss: The Wobbler, a jelly that un-anchors everything so it all falls down
+const WOBBLER = Pixel.svg([
+  '...gggggg...',
+  '..gGGggggg..',
+  '.gGgggggggg.',
+  '.ggkwgggkwg.',
+  '.ggkkgggkkg.',
+  'ggggggggggggg',
+  'gggkggggkggg',
+  'ggggkkkkgggg',
+  'gggggggggggg',
+  '.dddddddddd.',
+], { g: '#7cfc3a', G: '#d6ffb8', k: '#1b1b1b', w: '#ffffff', d: '#3f9e1e' });
+
+// every material name Studio lists (a typed answer can be any of them)
+const MATERIALS = ['plastic', 'smooth plastic', 'smoothplastic', 'wood', 'wood planks', 'woodplanks', 'brick', 'grass', 'leafy grass', 'glass', 'neon', 'ice', 'glacier', 'slate', 'sand', 'sandstone', 'metal', 'diamond plate', 'diamondplate', 'corroded metal', 'foil', 'concrete', 'granite', 'marble', 'pebble', 'cobblestone', 'rock', 'basalt', 'asphalt', 'pavement', 'limestone', 'mud', 'ground', 'snow', 'salt', 'cracked lava', 'crackedlava', 'fabric', 'force field', 'forcefield', 'cardboard', 'carpet', 'rubber', 'leather', 'plaster', 'ceramic tiles', 'clay roof tiles', 'roof shingles'];
+
+const PAINT_LAB = {
+  parts: [
+    { id: 'plat', name: 'StartPlatform', x: -8, y: 0.5, z: 2, sx: 10, sy: 1, sz: 10, anchored: true },
+    { id: 'spawn', name: 'SpawnLocation', spawn: true, x: -8, y: 1.5, z: 4, sx: 4, sy: 1, sz: 4, anchored: true },
+    { id: 'bridge', name: 'Bridge', x: 5, y: 2.5, z: 2, sx: 8, sy: 1, sz: 3, color: 'Reddish brown', anchored: true },
+    { id: 'window', name: 'Window', x: -8, y: 4, z: -3, sx: 6, sy: 6, sz: 1, color: 'Toothpaste', anchored: true },
+    { id: 'float', name: 'FloatingPlatform', x: 14, y: 6.5, z: -6, sx: 5, sy: 1, sz: 5, color: 'Hot pink', anchored: false },
+    { id: 'pillar', name: 'Pillar', x: 5, y: 1, z: 2, sx: 2, sy: 2, sz: 2, anchored: true },
+  ],
+};
+
+window.LESSON = {
+  id: 'future-studio-paint',
+  subject: 'future',
+  title: 'Colour, Material & Anchor',
+  emoji: '⚓',
+  home: '../index.html',
+  midBreak: false, // the Arcade stage is the fun break
+  mascot: {
+    name: 'Professor Bolt',
+    sprite: Pixel.sprites.robot,
+    praise: ['Master builder!', 'Brilliant, builder!', 'Critical hit!', 'Studio superstar!', 'Epic building!', 'Bolt-tastic!', 'Nailed it!'],
+    oops: ['Oops! Try again.', 'Not quite – have another go!', 'Hmm, look again!', 'So close! One more try.'],
+  },
+  glossary: {
+    material: { emoji: '🪵', def: 'What a part looks like it is made of: wood, brick, grass, glass, neon and lots more.' },
+    transparency: { emoji: '🪟', def: 'How see-through a part is. 0 is solid, 1 is invisible, and 0.5 is half see-through.' },
+    gravity: { emoji: '⬇️', def: 'The pull that makes things fall down. Roblox worlds have gravity, just like the real world.' },
+    anchored: { emoji: '⚓', def: 'An anchored part stays exactly where you put it, even floating in the air. Gravity can\'t move it.' },
+    neon: { emoji: '💡', def: 'A material that glows brightly, like a light.' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'Colour, Material & Anchor', short: 'Start', minutes: 1,
+      pic: WOBBLER,
+      hello: 'Welcome back, builder! Your obby has stairs and a ramp. Today it gets colours, wood, glass and glowing neon. But wibble wobble… THE WOBBLER is making floating platforms fall out of the sky!',
+      question: 'Why does a floating platform fall out of the sky when you press Play, and how do builders stop it?',
+      intro: 'Recap, learn about colours, materials and gravity, watch a short how-to, experiment in the **pretend studio**, then paint your obby and add a **floating platform** in your own game. Pick an arcade game, then beat The Wobbler!',
+      nameLabel: 'Builder name:',
+    },
+
+    {
+      type: 'review', title: 'Last time…', short: 'Recap', minutes: 3,
+      from: { title: 'Move, Scale, Rotate', emoji: '📐', url: 'studio-tools.html' },
+      facts: [
+        'Move slides a part with arrows: red goes side to side, green goes up and down and blue goes forwards and back.',
+        'Scale stretches or shrinks a part with balls. Rotate turns it with rings.',
+        'A quarter turn is 90 degrees and a half turn is 180 degrees.',
+        'The number keys pick the tools: 1 Select, 2 Move, 3 Scale, 4 Rotate.',
+      ],
+      questions: [
+        { type: 'type', q: 'Which tool has rings that turn a part round?', answer: ['rotate', 'the rotate tool', 'rotate tool'], placeholder: 'one word', hint: 'It is number 4.' },
+        { type: 'mcq', q: 'Leo wants his wall to be taller. Which ball does he drag?', options: ['a green one', 'a red one', 'a blue one'], answer: 0 },
+        { type: 'tf', q: 'A half turn is 90 degrees.', answer: false, explain: 'A half turn is 180 degrees. A quarter turn is 90.' },
+        { type: 'mcq', q: 'Which number key picks the Move tool?', options: ['2', '4', '8'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'read', title: 'Make it look amazing', short: 'Read', minutes: 4,
+      say: 'Grey blocks are a bit boring. Let\'s learn how builders make them look amazing!',
+      cards: [
+        {
+          title: 'Colour', pic: '🟥🟨🟦',
+          text: [
+            'Select a part, then click the little arrow next to Color at the top of Studio. A palette of colours pops up.',
+            'Click a colour and your part changes straight away.',
+          ],
+          check: { q: 'Ruby wants her lava floor to be red. What does she click first?', options: ['the lava floor', 'the Play button', 'the File menu'], answer: 0, explain: 'Select the part first, then pick its colour.' },
+        },
+        {
+          title: 'Material', pic: '🪵🧱🌿',
+          text: [
+            'The [[Material|material]] button makes a part look like it is made of something real: wood, brick, grass, ice, glass and lots more.',
+            'Neon is a special material that glows, like a light.',
+          ],
+          check: { type: 'type', q: 'Omar wants a sign that glows in the dark. Which material should he pick?', answer: ['neon'], placeholder: 'one word', hint: 'It glows like a bright light.' },
+        },
+        {
+          title: 'See-through parts', pic: '🪟',
+          text: [
+            '[[Transparency]] is a number in Properties that says how see-through a part is.',
+            '0 is solid, 1 is completely invisible, and 0.5 is half see-through, which is great for windows.',
+          ],
+          check: { type: 'type', q: 'Isla wants to make a secret wall that nobody can see at all. What number does she type for Transparency?', answer: ['1', 'one'], placeholder: 'a number', hint: 'Which number means completely invisible?' },
+        },
+        {
+          title: 'Gravity and Anchor', pic: '⬇️⚓',
+          text: [
+            'Roblox worlds have [[gravity]], just like the real world. When you press Play, a part floating in the air falls down.',
+            'An [[anchored]] part stays exactly where you put it, even in the sky. Select it and click the Anchor button to anchor it.',
+          ],
+          check: { q: 'Jack built a bridge high in the sky. When he pressed Play, it fell. Why?', options: ['He forgot to anchor it', 'It was the wrong colour', 'The bridge was made of wood'], answer: 0 },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'Keep It in Place with Anchor', short: 'Video', minutes: 3,
+      video: { id: 'GKpkF6LoxNU', title: 'Lesson 10: Keep It in Place with Anchor (Roblox Studio for Beginners)', channel: 'Hoda Computer', duration: '2:33' },
+      say: 'A short how-to about a block that keeps falling. Watch how he fixes it!',
+      clues: [
+        'What happened to the green block when he pressed Play?',
+        'Which button fixed it?',
+        'How can you tell if a part is anchored?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'At the start, what happened to the floating green block when he pressed Play?', options: ['It fell down', 'It flew away', 'It turned blue'], answer: 0 },
+        { type: 'type', q: 'Which button did he press so the block stayed in the air?', answer: ['anchor', 'the anchor button', 'anchor button', 'anchored'], placeholder: 'one word', hint: 'Ships drop one of these to stay in one place.' },
+        { type: 'mcq', q: 'How could he tell the block was anchored?', options: ['The Anchor button lit up', 'The block started to glow', 'The block made a noise'], answer: 0 },
+        { type: 'tf', q: 'In the video, a part is either anchored, or it falls down when you play.', answer: true },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Paint & Anchor Lab', short: 'Lab', icon: '🎨', minutes: 6,
+      rounds: [
+        {
+          game: 'studiosim', title: 'Paint & Anchor Lab',
+          intro: 'Tap a part to select it, then change it in **Properties**: tap a colour, pick a material, slide the Transparency, or tick **Anchored**. Press **▶ Play** to test!',
+          say: 'Select first, then change its properties!',
+          tools: ['select', 'anchor', 'play'], panels: ['explorer', 'properties'], edit: ['color', 'material', 'transparency', 'anchored'],
+          scene: PAINT_LAB,
+          caption: '▶ Our Play tests',
+          missions: [
+            { text: 'Select the big start platform and paint it **Bright red** (tap the red colour in Properties).', match: { part: 'plat', to: { color: 'Bright red' } }, yes: 'Red and ready!' },
+            { text: 'Make the brown bridge look like it is made of **Wood**.', match: { part: 'bridge', to: { material: 'Wood' } }, yes: 'A proper wooden bridge!' },
+            {
+              text: 'Make the window **half see-through**: slide its Transparency to 0.5.', match: { part: 'window', to: { transparency: 0.5 }, tol: 0.05 }, yes: 'Now you can see through it!',
+              ask: [{ type: 'type', q: 'What Transparency number would make the window completely INVISIBLE?', answer: ['1', 'one'], placeholder: 'a number', hint: '0 is solid. The biggest number is invisible.' }],
+            },
+            {
+              text: 'The pink platform is floating in the sky, but it is NOT anchored. Press **▶ Play** and watch it!', need: ['fell:float'], yes: 'CRASH! Gravity pulled it down!',
+              ask: [{ q: 'Why did the pink platform fall?', options: ['Gravity pulled it down', 'It was the wrong colour', 'Play mode deleted it'], answer: 0 }],
+            },
+            { text: 'Press **■ Stop**. Select the pink platform, tick **Anchored**, then press **▶ Play** again.', need: ['prop:float:anchored:true', 'stayed:float'], yes: 'It stays in the sky! Anchored parts ignore gravity.' },
+            { text: 'Last one: press Stop, then make the pillar glow with the **Neon** material.', match: { part: 'pillar', to: { material: 'Neon' } }, yes: 'Glowing like a lamp!' },
+          ],
+          finish: '🏆 Lab complete! Colours, materials, see-through parts and anchors: you know them all.',
+          done: 'Paint & Anchor Lab complete!',
+        },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Studio Mission 3: Paint and anchor', short: 'Mission', icon: '💻', minutes: 9,
+      rounds: [
+        {
+          game: 'studiotask', title: 'Paint and anchor',
+          intro: 'Over to the computer! Open **your own game** and make it look amazing.',
+          say: 'Time to build for real! Do each step on the computer, then check it here.',
+          steps: [
+            {
+              title: 'Open your game',
+              do: ['Open **Roblox Studio** and open your obby from last time.'],
+              where: 'file',
+            },
+            {
+              title: 'Paint your obby',
+              do: ['Click your start platform. Click the little arrow next to **Color** and pick a colour.', 'Click **Material** and pick one you like: Grass? Wood? Brick?', 'Give each step its own colour too.'],
+              where: ['color', 'material'],
+              clip: { id: 'mgAwAZaudaA', title: 'Change Materials and Colors (3:08)' },
+              check: { type: 'type', q: 'Click your start platform. What does Material say in Properties?', answer: MATERIALS, placeholder: 'a material', hint: 'Material is in the Appearance section of Properties.' },
+            },
+            {
+              title: 'Add a window',
+              do: ['Add a **Part** and scale it into a tall, thin window.', 'In Properties, click **Transparency** and type **0.5**.', 'Pick the **Glass** material if you like.'],
+              where: ['part', 'properties'],
+              check: { type: 'type', q: 'What number does Transparency say now?', answer: ['0.5', '.5'], placeholder: 'a number', hint: 'Transparency is in the Appearance section.' },
+            },
+            {
+              title: 'A floating platform',
+              do: ['Add a **Part** and scale it into a platform.', 'Use **Move** and the **green** arrow to lift it up next to the top of your stairs.', 'Press **▶ Play** and watch it!'],
+              where: ['part', 'play'],
+              clip: { id: 'lKo_1w7vFfc', title: 'Move the Block (2:21)' },
+              check: { q: 'What happened to your floating platform when you pressed Play?', options: ['It fell down', 'It floated higher', 'It turned invisible'], answer: 0 },
+            },
+            {
+              title: 'Anchor it',
+              do: ['Press **Stop**. Click your floating platform.', 'Click the **Anchor** button at the top. It lights up.', 'Press **▶ Play** again. Can you jump from your stairs onto it?'],
+              where: ['anchor', 'play'],
+              clip: { id: 'GKpkF6LoxNU', title: 'Keep It in Place with Anchor (2:33)' },
+              check: { type: 'type', q: 'Look in Properties under Behavior. Which box is ticked now? (It starts with A.)', answer: ['anchored', 'anchor'], placeholder: 'one word', hint: 'It is the name of the button you just clicked, with -ed on the end.' },
+            },
+            {
+              title: 'Anchor everything',
+              do: ['Click each part of your obby and make sure Anchor is lit up.', 'Press **▶ Play** and run over everything. Nothing should move!'],
+              where: ['anchor', 'explorer'],
+              tip: 'Parts you copy later will be anchored too, if the part you copy is anchored.',
+              check: { q: 'You press Play and one of your steps falls over. What do you do?', options: ['Stop, select it and click Anchor', 'Paint it a much brighter colour', 'Make it a see-through window'], answer: 0 },
+            },
+            {
+              title: 'Save your game',
+              do: ['Click **File**, then **Save to Roblox**.'],
+              where: 'file',
+            },
+          ],
+          finish: 'Your obby is colourful, has a window and a floating platform that stays put! Next time: lots more jumps.',
+          done: 'MISSION COMPLETE! Your obby looks amazing!',
+        },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Builder Arcade: pick a game!', short: 'Arcade', icon: '🕹️', minutes: 4,
+      pick: { title: '🕹️ Pick your arcade game!', say: 'Your choice! Which game do you want to play? Win one to carry on, or play them all!' },
+      rounds: [
+        {
+          game: 'runner', title: 'Anchor Run', emoji: '🏃', blurb: 'Race along and pick the lane with the right builder fact.',
+          prompt: 'Pick the TRUE builder facts!',
+          intro: 'Your hero runs by itself and the words come two at a time. Pick the lane with the **true** fact!',
+          say: 'Top lane or bottom lane? Read fast!',
+          items: [
+            { label: 'anchored = stays put', ok: true }, { label: 'neon glows', ok: true }, { label: 'transparency 1 = invisible', ok: true }, { label: 'gravity pulls down', ok: true },
+            { label: 'anchored = falls down', ok: false, why: 'Anchored parts stay exactly where you put them.' },
+            { label: 'neon is wood', ok: false, why: 'Neon is a material that glows like a light.' },
+            { label: 'transparency 0 = invisible', ok: false, why: '0 is solid. 1 is invisible.' },
+            { label: 'gravity pulls up', ok: false, why: 'Gravity pulls things down.' },
+          ],
+        },
+        {
+          game: 'steadyhand', title: 'Steady Hand', emoji: '✏️', blurb: 'Guide your pencil along the wiggly path – don\'t touch the sides!',
+          intro: 'Press on the green dot and follow the wiggly path all the way to the 🏁, carefully! Pick Easy, Medium or Hard.',
+          say: 'Steady hands make neat builds! Don\'t touch the sides!',
+          done: 'What a steady hand! Perfect for painting.',
+        },
+        {
+          game: 'sequence', title: 'Note Block Echo', emoji: '🎵', blurb: 'Watch the note blocks light up, then play the tune back.',
+          blocks: 4, start: 2, target: 6,
+          intro: 'Watch and listen, then **play the tune back**. It grows one note longer each time!',
+          say: 'Eyes and ears on the note blocks!',
+          done: 'What a memory for music!',
+        },
+        {
+          game: 'crossword', title: 'Builder Crossword', emoji: '🧩', blurb: 'Every answer is a word from today.',
+          intro: 'Every answer is a builder word from today! Read the clue and fill it in.',
+          say: 'Crossword time! Stuck? Press 💡 Hint for a free letter.',
+          entries: [
+            { answer: 'ANCHOR', clue: 'Click this button so a part stays in the air.' },
+            { answer: 'GRAVITY', clue: 'The pull that makes things fall down.' },
+            { answer: 'NEON', clue: 'A material that glows like a light.' },
+            { answer: 'GLASS', clue: 'A see-through material, good for windows.' },
+            { answer: 'WOOD', clue: 'A material for a bridge or a treehouse.' },
+            { answer: 'BRICK', clue: 'A material for a wall or a house.' },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: The Wobbler', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      say: 'THE WOBBLER is un-anchoring every platform so they all fall out of the sky! Every right answer anchors one back. Go, {name}!',
+      boss: {
+        name: 'The Wobbler', sprite: WOBBLER, attack: ['🟢'],
+        lines: {
+          prefight: ['Wibble wobble! I un-anchored all your platforms! When you press Play… they\'ll all fall down! Wobble wobble!', 'Then I\'ll select each one and click Anchor. Gravity can\'t move an anchored part!', 'Wibble?! Then I\'ll wobble YOU instead! Wobble wobble wobble!'],
+          intro: 'Wibble wobble! I am THE WOBBLER! Everything falls when I\'m around!',
+          hurt: ['Wobble-ouch!', 'You anchored me!', 'Stop setting me!', 'My jelly is going solid!'],
+          taunt: ['Wobble wobble! Wrong!', 'Splat! It fell!', 'Wibbly-wobbly!', 'Gravity wins!'],
+          angry: 'NOW I\'M A WOBBLY VOLCANO OF RAGE!',
+          dodge: 'Here come my jelly blobs! Wobble out of the way!',
+          miss: 'You dodged my blobs?! How un-wobbly!',
+          last: 'I\'m… setting… solid…',
+          defeat: 'Splat… fine. Every platform stays put. I\'ll go and be a pudding instead.',
+          win: 'Wibble wobble! Everything fell down! Wobble wobble!',
+          stunned: 'Everything is… wibbling… round and round…',
+          beg: ['Wait! I\'ll anchor them all back!', 'Please! I\'m only made of jelly!', 'Don\'t make me transparent!'],
+        },
+      },
+      bonus: {
+        title: '⭐ Bonus quest (for a grown-up to help with)',
+        text: 'Add an invisible wall to your obby: a part with Transparency 1 that blocks the way. Can a friend find it? Then build a glowing Neon finish line. Remember: File → Save to Roblox.',
+      },
+      questions: [
+        { type: 'type', q: 'A part floats in the air and you don\'t want it to fall. Which button do you click?', answer: ['anchor', 'the anchor button', 'anchor button'], placeholder: 'one word', hint: 'Ships drop one to stay still.' },
+        { type: 'mcq', q: 'What pulls an unanchored part down when you press Play?', options: ['gravity', 'the Explorer', 'the camera'], answer: 0 },
+        { type: 'type', q: 'Which material glows like a light?', answer: ['neon'], placeholder: 'one word', hint: 'Signs in big cities use it.' },
+        { type: 'mcq', q: 'Which Transparency number makes a part half see-through?', options: ['0.5', '0', '9'], answer: 0 },
+        { type: 'tf', q: 'An anchored part falls down when you press Play.', answer: false, explain: 'Anchored parts stay exactly where you put them.' },
+        { type: 'gap', q: 'The ___ button makes a part look like wood, brick or grass.', options: ['Material', 'Anchor', 'Play'], answer: 0 },
+        { type: 'mcq', q: 'Before you can change a part\'s colour, what must you do?', options: ['Select it', 'Anchor it', 'Delete it'], answer: 0 },
+        { type: 'oddone', q: 'Which one is NOT a material?', items: ['🪵 Wood', '🧱 Brick', '🌿 Grass', '⚓ Anchor'], answer: 3, why: 'Why is Anchor the odd one out?', reasons: ['It stops a part falling, it is not what it looks like', 'It is the only one that is grey', 'It is the only one you can walk on'], reason: 0 },
+        { type: 'mcq', q: 'Sam\'s lava pit should look hot and glowing. Which material fits best?', options: ['Cracked Lava', 'Smooth Plastic', 'Ice'], answer: 0 },
+        { type: 'type', q: 'Which Transparency number makes a part completely solid?', answer: ['0', 'zero'], placeholder: 'a number', hint: 'The smallest number.' },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>

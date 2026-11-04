@@ -99,6 +99,8 @@
     { id: 'anpan-suit', cat: 'top', name: 'Anpanman suit', price: 50, special: true, y: 9, rows: ['.tttttttttt.', '.ttttyytttt.', '.ttttyytttt.', '.tttttttttt.', '...yyyyyy...'], pal: { t: '#e53935', y: '#ffd43b' } },
     { id: 'liberty-robe', cat: 'top', name: 'Lady Liberty robe', price: 40, special: true, y: 9, rows: ['.gggggGgggg.', '.ggggGggggg.', '.gggGgggggg.', '.ggGggggggg.', '...gggGgg...'], pal: { g: '#4fb39a', G: '#2e7d6b' } },
     { id: 'guard-tunic', cat: 'top', name: 'Royal Guard tunic', price: 50, special: true, y: 9, rows: ['.tttttttttt.', '.ttttyttttt.', '.ttttyttttt.', '.ttttyttttt.', '...wwwwww...'], pal: { t: '#d32f2f', y: '#ffd43b', w: '#ffffff' } },
+    { id: 'builder-vest', cat: 'top', name: 'Builder hi-vis vest', price: 25, y: 9, rows: ['.oooooooooo.', '.WWWWooWWWW.', '.oooooooooo.', '.WWWWooWWWW.', '...oooooo...'], pal: { o: '#ff8c1a', W: '#e6f7ff' } },
+    { id: 'coder-hoodie', cat: 'top', name: 'Coder hoodie', price: 25, y: 9, rows: ['.vvvVvvVvvv.', '.vvvvvvvvvv.', '.vvgvvvvgvv.', '.vvvVVVVvvv.', '...vvvvvv...'], pal: { v: '#b28cf5', V: '#6a3cc9', g: '#7cfc3a' } },
     // ----- bottoms -----
     { id: 'jeans', cat: 'legs', name: 'Jeans', price: 0, y: 14, rows: ['...llllll...', '...ll..ll...', '...ll..ll...', '...ll..ll...'], pal: { l: '#2f5d9e' } },
     { id: 'shorts', cat: 'legs', name: 'Shorts', price: 10, y: 14, rows: ['...llllll...', '...ll..ll...'], pal: { l: '#8a5a32' } },
@@ -133,6 +135,9 @@
     { id: 'crown', cat: 'hat', name: 'Crown', price: 60, rows: ['..y..yy..y..', '..yryyyyry..'], pal: { y: '#ffd43b', r: '#e53935' } },
     { id: 'hair-bow', cat: 'hat', name: 'Hair bow', price: 20, rows: ['......pp.pp.', '......ppPpp.', '......pp.pp.'], pal: { p: '#ff5fa2', P: '#d6457a' } },
     { id: 'tiara', cat: 'hat', name: 'Tiara', price: 40, rows: ['.....yby....', '...yyyyyy...'], pal: { y: '#ffd43b', b: '#2ee6d6' } },
+    // Game Builder lessons (builders' gear)
+    { id: 'hard-hat', cat: 'hat', name: 'Builder hard hat', price: 20, rows: ['...yyyyyy...', '..yyyYyyyy..', '..yyyYyyyy..', 'YYYYYYYYYYYY'], pal: { y: '#ffd43b', Y: '#d99a00' } },
+    { id: 'hard-hat-pink', cat: 'hat', name: 'Pink hard hat', price: 20, rows: ['...pppppp...', '..pppwpppp..', '..pppwpppp..', 'PPPPPPPPPPPP'], pal: { p: '#ff8fb1', P: '#d6457a', w: '#ffffff' } },
     { id: 'knight', cat: 'hat', name: 'Knight helmet', price: 0, unlock: 'boss', rows: ['.....rr.....', '..mmmmmmmm..', '.mmmmmmmmmm.', '.mmmmmmmmmm.', '.mmmmmmmmmm.', '.mkkkkkkkkm.', '.mmmmmmmmmm.', '.mmm.mm.mmm.', '..mmmmmmmm..'], pal: { m: '#b8c2cc', k: '#1b1b1b', r: '#e53935' } },
     { id: 'beret', cat: 'hat', name: 'Artist beret', price: 0, unlock: 'artist', rows: ['......c.....', '...cccccc...', '.cccccccccc.'], pal: { c: '#e53935' } },
     { id: 'miner-helmet', cat: 'hat', name: 'Miner helmet', price: 0, unlock: 'miner', rows: ['.....yy.....', '....yLLy....', '..cccccccc..', '.cccccccccc.', 'CCCCCCCCCCCC'], pal: { c: '#ffb800', C: '#c98a00', y: '#1b1b1b', L: '#fff59d' } },

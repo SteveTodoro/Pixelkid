@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Build an Obby</title>
+  <link rel="stylesheet" href="../shared/lesson.css">
+  <script src="../shared/pixel.js"></script>
+  <script src="../shared/pixel-icons.js"></script>
+  <script src="../shared/avatar.js"></script>
+</head>
+<body>
+<noscript>This lesson needs JavaScript turned on.</noscript>
+<script>
+// Game Builder 4/5: duplicate, undo, jump gaps and grouping. The child builds five jumps in his own obby on the computer.
+// The jump test (studiosim with obby: true) and the Studio missions (studiotask) are in shared/engine/studio.js.
+
+// the boss: The Lag Monster, who freezes games and makes every jump stutter
+const LAGGY = Pixel.svg([
+  '..kkkkkkkk..',
+  '.kppppppppk.',
+  'kppwwppwwppk',
+  'kppkwppkwppk',
+  'kppppppppppk',
+  'kpkkkkkkkkpk',
+  'kpkyykyykkpk',
+  'kppppppppppk',
+  '.kpk.kk.kpk.',
+  '..k..kk..k..',
+], { k: '#1b1b1b', p: '#8e5bd6', w: '#ffffff', y: '#ffd43b' });
+
+const LAVA = { id: 'lava', name: 'Lava', floor: true, x: 0, y: 0.5, z: 0, sx: 46, sy: 1, sz: 12, color: 'Bright red', material: 'CrackedLava', anchored: true };
+const JUMPS = {
+  parts: [
+    LAVA,
+    { id: 'spawn', name: 'SpawnLocation', spawn: true, x: -17, y: 4.5, z: 0, sx: 6, sy: 1, sz: 6, anchored: true },
+    { id: 'step', name: 'Platform', x: -9, y: 4.5, z: 0, sx: 4, sy: 1, sz: 4, color: 'Lime green', anchored: true },
+    { id: 'goal', name: 'Finish', goal: true, x: 17, y: 4.5, z: 0, sx: 6, sy: 1, sz: 6, color: 'New Yeller', anchored: true },
+  ],
+};
+const CLIMB = {
+  parts: [
+    LAVA,
+    { id: 'spawn', name: 'SpawnLocation', spawn: true, x: -17, y: 4.5, z: 0, sx: 6, sy: 1, sz: 6, anchored: true },
+    { id: 'step', name: 'Platform', x: -9, y: 4.5, z: 0, sx: 4, sy: 1, sz: 4, color: 'Bright blue', anchored: true },
+    { id: 'goal', name: 'Finish', goal: true, x: 6, y: 12.5, z: 0, sx: 6, sy: 1, sz: 6, color: 'New Yeller', anchored: true },
+  ],
+};
+
+window.LESSON = {
+  id: 'future-studio-obby',
+  subject: 'future',
+  title: 'Build an Obby',
+  emoji: '🏁',
+  home: '../index.html',
+  midBreak: false, // the Arcade stage is the fun break
+  mascot: {
+    name: 'Professor Bolt',
+    sprite: Pixel.sprites.robot,
+    praise: ['Master builder!', 'Brilliant, builder!', 'Critical hit!', 'Studio superstar!', 'Epic building!', 'Bolt-tastic!', 'Nailed it!'],
+    oops: ['Oops! Try again.', 'Not quite – have another go!', 'Hmm, look again!', 'So close! One more try.'],
+  },
+  glossary: {
+    obby: { emoji: '🏁', def: 'An obstacle course game: jump, climb and dodge your way to the finish.' },
+    duplicate: { emoji: '📋', def: 'Make an exact copy of a part. In Studio, press ⌘D. The copy appears in the same place as the first one.' },
+    undo: { emoji: '↩️', def: 'Take back your last change. In Studio on a Mac, press ⌘Z.' },
+    model: { emoji: '📦', def: 'A group of parts that move together, like one object. Select them all and press ⌘G.' },
+    gap: { emoji: '↔️', def: 'The space between two platforms that a player has to jump over.' },
+  },
+  stages: [
+    {
+      type: 'welcome', title: 'Build an Obby', short: 'Start', minutes: 1,
+      pic: LAGGY,
+      hello: 'Welcome back, builder! Your obby has stairs, a ramp and a floating platform. Today we make LOTS of jumps, fast! But the LAG MONSTER is making games freeze and jumps go wrong…',
+      question: 'How do real builders make a whole obby without building every block one at a time?',
+      intro: 'Recap, learn the builder\'s shortcuts, watch a short how-to, test jumps in the **Jump Lab**, then build **five jumps** in your own game. Pick an arcade game, then beat the Lag Monster!',
+      nameLabel: 'Builder name:',
+    },
+
+    {
+      type: 'review', title: 'Last time…', short: 'Recap', minutes: 3,
+      from: { title: 'Colour, Material & Anchor', emoji: '⚓', url: 'studio-paint.html' },
+      facts: [
+        'Select a part, then change its Color and Material at the top of Studio.',
+        'Transparency says how see-through a part is: 0 is solid, 0.5 is half see-through, 1 is invisible.',
+        'Roblox worlds have gravity. A part floating in the air falls when you press Play.',
+        'An anchored part stays exactly where you put it. Click the Anchor button to anchor it.',
+      ],
+      questions: [
+        { type: 'type', q: 'Which button stops a floating platform from falling?', answer: ['anchor', 'the anchor button', 'anchor button'], placeholder: 'one word', hint: 'Ships drop one to stay still.' },
+        { type: 'mcq', q: 'Which Transparency number makes a part invisible?', options: ['1', '0', '0.5'], answer: 0 },
+        { type: 'tf', q: 'Neon is a material that glows.', answer: true },
+        { type: 'mcq', q: 'Why does an unanchored part fall when you press Play?', options: ['gravity pulls it down', 'it gets too tired', 'the camera pushes it'], answer: 0 },
+      ],
+    },
+
+    {
+      type: 'read', title: 'Builder shortcuts', short: 'Read', minutes: 4,
+      say: 'Real builders don\'t make every block from scratch. Here are their secrets!',
+      cards: [
+        {
+          title: 'Copy it!', pic: '🟩➡️🟩🟩',
+          text: [
+            'Select a part and press ⌘D to [[duplicate]] it. The copy appears in exactly the same place, on top of the first one.',
+            'Then use Move to drag the copy away. It keeps the same size, colour and Anchor as the first one.',
+          ],
+          check: { q: 'Nina pressed ⌘D but she can\'t see a new part. Where is it?', options: ['On top of the first one', 'It got thrown in the bin', 'Back at the SpawnLocation'], answer: 0, explain: 'The copy sits in the same place. Move it to see both!' },
+        },
+        {
+          title: 'Oops! Undo', pic: '↩️',
+          text: [
+            'Made a mistake? Press ⌘Z to [[undo]] it. You can press it again and again to go further back.',
+            'To get rid of a part on purpose, select it and press the Delete key.',
+          ],
+          check: { type: 'type', q: 'Finn deleted his best platform by accident. Which letter does he press with ⌘ to get it back?', answer: ['z', 'the z key', 'z key'], placeholder: 'one letter', hint: 'It is at the bottom left of the keyboard.' },
+        },
+        {
+          title: 'How far can you jump?', pic: '🦘',
+          text: [
+            'A Roblox player can jump about 7 studs high, and across a [[gap]] of about 8 studs.',
+            'Make your gaps smaller than that, then press Play and test every jump yourself.',
+          ],
+          check: { q: 'Grace\'s gap is 20 studs wide. What will happen to the player?', options: ['They will fall in the gap', 'They will float over it', 'They will jump it easily'], answer: 0 },
+        },
+        {
+          title: 'Group it!', pic: '📦',
+          text: [
+            'Select lots of parts, then press ⌘G to group them into a [[model]].',
+            'Now they move together, like one object. Great for a tree made of a trunk and leaves.',
+          ],
+          check: { q: 'Sam built a car from 6 parts. How can he move the whole car at once?', options: ['Group the parts into a model', 'Move each wheel very fast', 'Paint all six parts red'], answer: 0 },
+        },
+      ],
+    },
+
+    {
+      type: 'video', title: 'Copy a Block (Duplicate)', short: 'Video', minutes: 5,
+      video: { id: 'Uo2ulF6Atj8', title: 'Lesson 12: Copy a Block (Duplicate) (Roblox Studio for Beginners)', channel: 'Hoda Computer', duration: '4:39' },
+      say: 'Watch a builder make copies, and fix his mistakes!',
+      clues: [
+        'Why did the new step fall down?',
+        'How do you undo on a Mac?',
+        'Where did the copy appear?',
+      ],
+      questions: [
+        { type: 'mcq', q: 'Why did the new step fall when he pressed Play?', options: ['He forgot to anchor it', 'It was made of glass', 'It was too far away'], answer: 0 },
+        { type: 'type', q: 'He said that on a Mac you undo with command and which letter?', answer: ['z', 'the z key', 'z key', 'command z', 'cmd z'], placeholder: 'one letter', hint: 'On Windows it was Ctrl and the same letter.' },
+        { type: 'mcq', q: 'When he duplicated the block, where did the copy go?', options: ['on top of the first one', 'at the SpawnLocation', 'inside the Toolbox'], answer: 0 },
+        { type: 'tf', q: 'The copy was already anchored, because it was an exact copy.', answer: true },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Jump Lab', short: 'Lab', icon: '🦘', minutes: 6,
+      rounds: [
+        {
+          game: 'studiosim', title: 'Jump Lab',
+          intro: 'Press **▶ Play** and the player tries to jump from platform to platform to the 🏁. Too far or too high, and they fall in the lava! Use **Duplicate** and **Move** to fix the path.',
+          say: 'Test, fix, test again: that is how builders work!',
+          tools: ['select', 'move', 'dup', 'delete', 'undo', 'play'], panels: ['properties'], avatar: true, obby: true,
+          scene: JUMPS,
+          caption: '🦘 Our jump tests',
+          missions: [
+            {
+              text: 'Press **▶ Play** and watch the player try to reach the 🏁.', need: ['toofar'], yes: 'SPLASH! That gap was far too wide.',
+              ask: [{ q: 'About how far across can a player jump?', options: ['about 8 studs', 'about 80 studs', 'about 800 studs'], answer: 0 }],
+            },
+            { text: 'Press **■ Stop**. Select the green platform, press **⧉ Duplicate**, then use **Move** to drag the copy along the red arrow. Make enough copies so the player can jump all the way, then press **▶ Play**.', need: ['dup', 'goal'], tool: 'select', yes: 'Made it! Duplicate and Move: the builder\'s best friends.' },
+            {
+              text: 'Now the 🏁 is up high! Duplicate the blue platform and lift the copy with the **green** arrow to make a step up. Then press **▶ Play**.', scene: CLIMB, need: ['dup', 'goal'], tool: 'select', yes: 'Up and over! A step halfway makes a big climb easy.',
+              ask: [{ type: 'type', q: 'About how many studs high can a player jump?', answer: ['7', 'seven', '6', '8'], placeholder: 'a number', hint: 'It is a little less than the 8 studs a player can jump across.' }],
+            },
+            { text: 'Oops practice: press Stop, select a platform and **🗑️ Delete** it… then get it back with **↶ Undo**!', need: ['delete', 'undo'], yes: 'Undo saved the day!' },
+          ],
+          finish: '🏆 Jump Lab complete! You can copy, test and fix like a real builder.',
+          done: 'Jump Lab complete!',
+        },
+      ],
+    },
+
+    {
+      type: 'teach', title: 'Teach Mini Bolt: obby rules', short: 'Teach', minutes: 3,
+      say: 'Mini Bolt is building his own obby, but his rules are a mess! Fix his mistakes.',
+      robot: { name: 'Mini Bolt', emoji: '🤖' },
+      intro: 'Beep boop! My obby will have a THOUSAND jumps. Here are my obby rules!',
+      lines: [
+        { text: 'When I duplicate a part, the copy sits in a different place.', wrong: 'different', fix: 'same', options: ['secret', 'smaller'], hint: 'Where did the copy appear in the video?', why: 'The copy sits in the same place, right on top. Move it to see both.' },
+        { text: 'If I make a mistake, I press ⌘Z to undo it.', ok: true, why: 'Right! ⌘Z takes back your last change.' },
+        { text: 'A player can jump across a gap of 30 studs.', wrongAt: 8, wrong: '30', fix: '8', options: ['50', '100'], hint: 'It is about the same as the gap you made in the Jump Lab.', why: 'A player can jump about 8 studs across. Wider gaps are impossible.' },
+        { text: 'Copies of an anchored part fall down when I press Play.', wrong: 'fall', fix: 'stay', options: ['melt', 'spin'], hint: 'Does a copy keep the Anchor?', why: 'A copy keeps everything, including Anchor, so it stays put.' },
+        { text: 'To move lots of parts together, I group them into a puddle.', wrong: 'puddle', fix: 'model', options: ['window', 'sandwich'], hint: 'Press ⌘G and Studio makes one of these.', why: 'Grouped parts make a model, which moves like one object.' },
+      ],
+      outro: 'Beep! My rules are fixed: copies sit in the same place, ⌘Z undoes, gaps are smaller than 8 studs, copies stay anchored, and groups are models!',
+    },
+
+    {
+      type: 'game', title: 'Studio Mission 4: Five jumps', short: 'Mission', icon: '💻', minutes: 9,
+      rounds: [
+        {
+          game: 'studiotask', title: 'Five jumps',
+          intro: 'Over to the computer! Open **your own game** and turn it into a real obby.',
+          say: 'Time to build for real! Do each step on the computer, then check it here.',
+          steps: [
+            {
+              title: 'Open your game',
+              do: ['Open **Roblox Studio** and open your obby from last time.'],
+              where: 'file',
+            },
+            {
+              title: 'Duplicate a platform',
+              do: ['Click your floating platform (the anchored one!).', 'Press **⌘D** to duplicate it.', 'Press **2** for Move, and drag the copy away along an arrow.'],
+              keys: ['⌘', 'D'],
+              where: ['tools', 'viewport'],
+              clip: { id: 'Uo2ulF6Atj8', title: 'Copy a Block (4:39)' },
+              check: { q: 'Right after you pressed ⌘D, where was the copy?', options: ['on top of the first one', 'back at the SpawnLocation', 'far away up in the sky'], answer: 0 },
+            },
+            {
+              title: 'Make five jumps',
+              do: ['Keep pressing **⌘D** and moving the copies to make a path of **five** jumps.', 'Keep each gap smaller than **8 studs**. Lift some with the green arrow for a challenge!'],
+              keys: ['⌘', 'D'],
+              where: 'viewport',
+              tip: 'Keep the Move tool picked: then you can press ⌘D and drag straight away.',
+              clip: { id: 'ZrL51gKoK54', title: 'Make a Stair (2:43)' },
+              check: { type: 'type', q: 'Count them. How many jump platforms are in your path?', answer: ['5', 'five'], range: [5, 60], placeholder: 'a number', hint: 'Fly the camera along your path and count.' },
+            },
+            {
+              title: 'Test every jump',
+              do: ['Press **▶ Play** and try every jump.', 'Too far? Press **Stop**, and move that platform a bit closer.'],
+              where: ['play', 'test'],
+              grownup: 'The little menu next to Play has "Test Here", which starts the player where the camera is, so you can test the hard jump without running the whole obby.',
+              clip: { id: 'AcQ6Ghikbcw', title: 'Let\'s Build Some Walls (4:49)' },
+              check: { q: 'One of your jumps is too far. What do you do?', options: ['Stop, then move it closer', 'Paint it a different colour', 'Delete the SpawnLocation'], answer: 0 },
+            },
+            {
+              title: 'Oops! Undo',
+              do: ['Click one of your platforms and press the **Delete** key. It\'s gone!', 'Now press **⌘Z**. It comes back!'],
+              keys: ['⌘', 'Z'],
+              where: 'viewport',
+              check: { type: 'type', q: 'Which letter did you press with ⌘ to bring it back?', answer: ['z', 'the z key', 'z key', 'command z', 'cmd z'], placeholder: 'one letter', hint: 'Undo is ⌘ and this letter.' },
+            },
+            {
+              title: 'Group your jumps',
+              do: ['Hold **⌘** (or Shift) and click each of your five jump platforms in the Explorer.', 'Right-click one of them and choose **Group as Model** (or press **⌘G**).'],
+              keys: ['⌘', 'G'],
+              where: 'explorer',
+              clip: { id: 'ks3F-t0eaMo', title: 'Group Into a Model (1:48)' },
+              check: { type: 'type', q: 'Look in the Explorer. What is the new thing that holds your platforms called?', answer: ['model', 'a model'], placeholder: 'one word', hint: 'It is what you get when you group parts.' },
+            },
+            {
+              title: 'Save your game',
+              do: ['Click **File**, then **Save to Roblox**.'],
+              where: 'file',
+            },
+          ],
+          finish: 'Your obby has five jumps, all tested! Next time: lava that really works, with your first script.',
+          done: 'MISSION COMPLETE! You built a real obby!',
+        },
+      ],
+    },
+
+    {
+      type: 'game', title: 'Builder Arcade: pick a game!', short: 'Arcade', icon: '🕹️', minutes: 4,
+      pick: { title: '🕹️ Pick your arcade game!', say: 'Your choice! Which game do you want to play? Win one to carry on, or play them all!' },
+      rounds: [
+        {
+          game: 'platformer', title: 'Obby Dash', emoji: '🏃', blurb: 'Run and jump through an obby, and grab the right builder shortcuts.',
+          prompt: 'Grab the RIGHT shortcuts!',
+          intro: 'Run, jump and collect the **right** builder shortcuts. Leave the wrong ones!',
+          say: 'Jump like you are testing your own obby!',
+          items: [
+            { label: '⌘D = copy', ok: true }, { label: '⌘Z = undo', ok: true }, { label: '⌘G = group', ok: true }, { label: '2 = Move', ok: true },
+            { label: '⌘Z = copy', ok: false, why: '⌘Z is Undo. ⌘D makes a copy.' },
+            { label: '⌘D = delete', ok: false, why: '⌘D duplicates. The Delete key deletes.' },
+            { label: '4 = Move', ok: false, why: '4 is Rotate. 2 is Move.' },
+          ],
+        },
+        {
+          game: 'steadyhand', title: 'Steady Hand', emoji: '✏️', blurb: 'Guide your pencil along the wiggly path – don\'t touch the sides!',
+          intro: 'Press on the green dot and follow the wiggly path all the way to the 🏁, carefully! Pick Easy, Medium or Hard.',
+          say: 'Steady hands make neat jumps! Don\'t touch the sides!',
+          done: 'What a steady hand! Perfect for lining up platforms.',
+        },
+        {
+          game: 'sequence', title: 'Note Block Echo', emoji: '🎵', blurb: 'Watch the note blocks light up, then play the tune back.',
+          blocks: 4, start: 2, target: 6,
+          intro: 'Watch and listen, then **play the tune back**. It grows one note longer each time!',
+          say: 'Eyes and ears on the note blocks!',
+          done: 'What a memory for music!',
+        },
+        {
+          game: 'truefalse', title: 'Obby Myth Busters', emoji: '🔍', blurb: 'True or false? Bust the obby myths.',
+          intro: 'True or false? Bust the builder myths!',
+          say: 'Lots of new builders believe these. Which are true?',
+          statements: [
+            { text: 'A copy keeps the same colour and size.', answer: true, why: 'A duplicate is an exact copy.' },
+            { text: 'A player can jump a 25-stud gap.', answer: false, why: 'About 8 studs is the most a player can jump across.' },
+            { text: '⌘Z can undo lots of mistakes in a row.', answer: true, why: 'Press it again and again to go further back.' },
+            { text: 'Grouped parts make a model.', answer: true, why: 'A model moves like one object.' },
+            { text: 'You never need to test your obby.', answer: false, why: 'Builders test every jump with Play.' },
+            { text: 'A duplicate appears at the SpawnLocation.', answer: false, why: 'It appears in the same place as the first part.' },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'quiz', title: 'Boss Battle: The Lag Monster', short: 'Boss', kind: 'Boss battle', minutes: 6,
+      say: 'THE LAG MONSTER is freezing everyone\'s games so the jumps go wrong! Every right answer speeds things back up. Go, {name}!',
+      boss: {
+        name: 'The Lag Monster', sprite: LAGGY, attack: ['⏳'],
+        lines: {
+          prefight: ['Llllaaaag… I made your obby sooo slooow… you\'ll have to build every single block one… at… a… time…', 'No I won\'t! I build one, press ⌘D, and move the copy. Five jumps in no time!', 'Duplicate?! Grr… then I\'ll freeze YOU instead! Buffering…'],
+          intro: 'Llllaaag! I am THE LAG MONSTER! Everything goes sloooow when I\'m here!',
+          hurt: ['Ow! That was too fast!', 'You sped me up!', 'Stop testing your jumps!', 'My buffering!'],
+          taunt: ['Laaaag!', 'Frozen! Ha!', 'Loading… loading… wrong!', 'Too sloooow!'],
+          angry: 'NOW I\'M LAGGING WITH RAGE! MAXIMUM BUFFERING!',
+          dodge: 'Here come my hourglasses! Dodge them… if your screen doesn\'t freeze!',
+          miss: 'You dodged them all?! Your reactions have zero lag!',
+          last: 'Connection… lost…',
+          defeat: 'Buffering… fine… your obby runs perfectly. I\'ll go and slow down a snail instead.',
+          win: 'Llllaaag! Your obby is frozen forever!',
+          stunned: 'Loading… loading… please wait…',
+          beg: ['Wait! I\'ll make your games super fast!', 'Please! I\'m just one slow little monster!', 'Don\'t press ⌘Z on me!'],
+        },
+      },
+      bonus: {
+        title: '⭐ Bonus quest (for a grown-up to help with)',
+        text: 'Make your obby harder: add a jump that goes up, a thin balance beam and a platform that is half see-through. Ask a grown-up or a friend to test it. Can they reach the end? Remember: File → Save to Roblox.',
+      },
+      questions: [
+        { type: 'type', q: 'On a Mac, which letter do you press with ⌘ to duplicate a part?', answer: ['d', 'the d key', 'd key'], placeholder: 'one letter', hint: 'D for Duplicate.' },
+        { type: 'mcq', q: 'You press ⌘D. Where does the copy appear?', options: ['in the same place', 'at the finish line', 'in the File menu'], answer: 0 },
+        { type: 'type', q: 'A group of parts that move together is called a…', answer: ['model', 'a model'], placeholder: 'one word', hint: 'Press ⌘G to make one.' },
+        { type: 'tf', q: 'A copy of an anchored part is anchored too.', answer: true },
+        { type: 'mcq', q: 'Which gap could a player jump across?', options: ['6 studs', '20 studs', '50 studs'], answer: 0 },
+        { type: 'gap', q: 'Press ⌘___ to undo a mistake.', options: ['Z', 'D', 'G'], answer: 0 },
+        { type: 'mcq', q: 'Max\'s player keeps falling at the third jump. What should he do first?', options: ['Move that platform a bit closer', 'Make the lava a nicer colour', 'Delete his whole obby now'], answer: 0 },
+        { type: 'order', q: 'Put the steps in order to add a new jump.', items: ['🟩 Click a platform.', '⌨️ Press ⌘D to duplicate it.', '➡️ Move the copy away.', '▶️ Press Play to test it.'], ends: ['START', 'END'], hint: 'You have to copy it before you can move the copy!' },
+        { type: 'type', q: 'Which key do you press to get rid of a part you don\'t want?', answer: ['delete', 'the delete key', 'delete key', 'backspace'], placeholder: 'one word', hint: 'Its name says what it does.' },
+        { type: 'oddone', q: 'Which shortcut does NOT change your parts?', items: ['⌘D duplicate', '⌘G group', 'Delete key', 'F focus'], answer: 3, why: 'Why is F the odd one out?', reasons: ['It only moves the camera', 'It is the only letter', 'It makes parts bigger'], reason: 0 },
+      ],
+    },
+  ],
+};
+</script>
+<script src="../shared/engine.js"></script>
+</body>
+</html>
